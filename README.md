@@ -1,2 +1,2 @@
-# sensrnet-registry-backend
-SensRNet Registry Backend component
+# SensRNet Registry Backend
+
