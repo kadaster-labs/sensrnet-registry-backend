@@ -21,6 +21,7 @@ const configs = {
     // Server
     HOST: process.env.APP_HOST || '0.0.0.0',
     PORT: process.env.APP_PORT || 7070,
+    NODE_ID: process.env.NODE_ID || undefined,
     // Event Store
     EVENT_STORE_SETTINGS: {
       protocol: process.env.EVENT_STORE_PROTOCOL || 'http',

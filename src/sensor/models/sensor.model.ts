@@ -1,9 +1,8 @@
 import { AggregateRoot } from '@nestjs/cqrs';
+import { SensorRemovedEvent } from '../events/impl/sensor-removed.event';
 import { SensorRegisteredEvent } from '../events/impl/sensor-registered.event';
-import { SensorUpdatedEvent } from '../events/impl/sensor-updated.event';
-import { SensorDeletedEvent } from '../events/impl/sensor-deleted.event';
-import { SensorWelcomedEvent } from '../events/impl/sensor-welcomed.event';
-import { SensorDto } from '../dtos/sensors.dto';
+import { SensorUpdatedEvent, SensorOwnerUpdatedEvent } from '../events/impl/sensor-updated.event';
+
 
 export class Sensor extends AggregateRoot {
   [x: string]: any;
@@ -16,7 +15,7 @@ export class Sensor extends AggregateRoot {
     this.data = data;
   }
 
-  createSensor() {
+  registerSensor() {
     this.apply(new SensorRegisteredEvent(this.data));
   }
 
@@ -24,11 +23,11 @@ export class Sensor extends AggregateRoot {
     this.apply(new SensorUpdatedEvent(this.data));
   }
 
-  welcomeSensor() {
-    this.apply(new SensorWelcomedEvent(this.id));
+  updateSensorOwner() {
+    this.apply(new SensorOwnerUpdatedEvent(this.data));
   }
 
-  deleteSensor() {
-    this.apply(new SensorDeletedEvent(this.id));
+  removeSensor() {
+    this.apply(new SensorRemovedEvent(this.id));
   }
 }

@@ -1,17 +1,17 @@
 import { ModuleRef } from '@nestjs/core';
 import { EventHandlers } from './events/handlers';
-import { SensorSagas } from './sagas/sensor.sagas';
+import { OwnerSagas } from './sagas/owner.sagas';
+import { OnModuleInit, Module } from '@nestjs/common';
 import { CommandHandlers } from './commands/handlers';
 import { EventStore } from '../eventstore/event-store';
-import { OnModuleInit, Module } from '@nestjs/common';
-import { SensorService } from './services/sensor.service';
+import { OwnerService } from './services/owner.service';
 import { CommandBus, EventBus, CQRSModule } from '@nestjs/cqrs';
-import { SensorRepository } from './repository/sensor.repository';
-import { SensorController } from './controllers/sensor.controller';
+import { OwnerRepository } from './repository/owner.repository';
+import { OwnerController } from './controllers/owner.controller';
 import { EventStoreModule } from '../eventstore/event-store.module';
-import { SensorRemovedEvent } from './events/impl/sensor-removed.event';
-import { SensorUpdatedEvent } from './events/impl/sensor-updated.event';
-import { SensorRegisteredEvent } from './events/impl/sensor-registered.event';
+import { OwnerRemovedEvent } from './events/impl/owner-removed.event';
+import { OwnerUpdatedEvent } from './events/impl/owner-updated.event';
+import { OwnerRegisteredEvent } from './events/impl/owner-registered.event';
 
 
 @Module({
@@ -19,22 +19,22 @@ import { SensorRegisteredEvent } from './events/impl/sensor-registered.event';
     CQRSModule,
     EventStoreModule.forFeature(),
   ],
-  controllers: [SensorController],
+  controllers: [OwnerController],
   providers: [
-    SensorService,
-    SensorSagas,
+    OwnerService,
+    OwnerSagas,
     ...CommandHandlers,
     ...EventHandlers,
-    SensorRepository,
+    OwnerRepository,
   ],
 })
 
-export class SensorModule implements OnModuleInit {
+export class OwnerModule implements OnModuleInit {
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly command$: CommandBus,
     private readonly event$: EventBus,
-    private readonly sensorSagas: SensorSagas,
+    private readonly ownerSagas: OwnerSagas,
     private readonly eventStore: EventStore,
   ) {}
 
@@ -48,12 +48,12 @@ export class SensorModule implements OnModuleInit {
     /** ------------ */
     this.event$.register(EventHandlers);
     this.command$.register(CommandHandlers);
-    this.event$.combineSagas([this.sensorSagas.sensorCreated]);
+    this.event$.combineSagas([this.ownerSagas.ownerCreated]);
   }
 
   eventHandlers = {
-    SensorRegisteredEvent: (data) => new SensorRegisteredEvent(data),
-    SensorRemovedEvent: (data) => new SensorRemovedEvent(data),
-    SensorUpdatedEvent: (data) => new SensorUpdatedEvent(data),
+    OwnerRegisteredEvent: (data) => new OwnerRegisteredEvent(data),
+    OwnerRemovedEvent: (data) => new OwnerRemovedEvent(data),
+    OwnerUpdatedEvent: (data) => new OwnerUpdatedEvent(data),
   };
 }

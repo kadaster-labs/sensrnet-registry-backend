@@ -1,7 +1,8 @@
 import { IEvent } from '@nestjs/cqrs';
-import { SensorDto } from '../../dtos/sensors.dto';
+import { RegisterSensorDto } from '../../dtos/register-sensor.dto';
+
 
 export class SensorRegisteredEvent implements IEvent {
   constructor(
-    public readonly sensorDto: SensorDto) {}
+    public readonly dto: RegisterSensorDto) {}
 }

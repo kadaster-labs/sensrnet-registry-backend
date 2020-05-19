@@ -1,11 +1,10 @@
-import { SensorCreatedHandler} from './sensor-registered.handler';
+import { SensorRegisteredHandler} from './sensor-registered.handler';
 import { SensorUpdatedHandler} from './sensor-updated.handler';
-import { SensorDeletedHandler} from './sensor-deleted.handler';
-import { SensorWelcomedHandler} from './sensor-welcomed.handler';
+import { SensorRemovedHandler} from './sensor-removed.handler';
+
 
 export const EventHandlers = [
-  SensorCreatedHandler,
+  SensorRegisteredHandler,
   SensorUpdatedHandler,
-  SensorDeletedHandler,
-  SensorWelcomedHandler,
+  SensorRemovedHandler,
 ];

@@ -1,11 +1,11 @@
-import { CreateSensorHandler } from './create-sensor.handler';
-import { DeleteSensorHandler } from './delete-sensor.handler';
-import { UpdateSensorHandler } from './update-sensor.handler';
-import { WelcomeSensorHandler } from './welcome-sensor.handler';
+import { RemoveSensorHandler } from './remove-sensor.handler';
+import { RegisterSensorHandler } from './register-sensor.handler';
+import { UpdateSensorHandler, UpdateSensorOwnerHandler } from './update-sensor.handler';
+
 
 export const CommandHandlers = [
-  CreateSensorHandler,
-  DeleteSensorHandler,
+  RegisterSensorHandler,
   UpdateSensorHandler,
-  WelcomeSensorHandler,
+  UpdateSensorOwnerHandler,
+  RemoveSensorHandler,
 ];

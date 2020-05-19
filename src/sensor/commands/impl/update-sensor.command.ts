@@ -1,8 +1,16 @@
 import { ICommand } from '@nestjs/cqrs';
-import { SensorDto } from '../../dtos/sensors.dto';
+import { UpdateSensorDto } from '../../dtos/update-sensor.dto';
+
 
 export class UpdateSensorCommand implements ICommand {
   constructor(
-    public readonly sensorDto: SensorDto,
+    public readonly dto: UpdateSensorDto,
+  ) {}
+}
+
+
+export class UpdateSensorOwnerCommand implements ICommand {
+  constructor(
+    public readonly dto: UpdateSensorDto,
   ) {}
 }

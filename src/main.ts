@@ -1,13 +1,15 @@
-import { NestFactory, FastifyAdapter } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { config } from '../config';
 import fastifyCors from 'fastify-cors';
 import { AppModule } from './app.module';
-import { config } from '../config';
+import { ValidationPipe, Logger } from '@nestjs/common';
+import { NestFactory, FastifyAdapter } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new FastifyAdapter({
     trustProxy: true,
+    logger: true,
   }));
   const documentOptions = new DocumentBuilder()
     .setTitle(config.TITLE)
