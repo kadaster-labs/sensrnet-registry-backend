@@ -2,16 +2,19 @@ import { ModuleRef } from '@nestjs/core';
 import { EventHandlers } from './events/handlers';
 import { SensorSagas } from './sagas/sensor.sagas';
 import { CommandHandlers } from './commands/handlers';
-import { EventStore } from '../eventstore/event-store';
 import { OnModuleInit, Module } from '@nestjs/common';
+import { EventStore } from '../eventstore/event-store';
 import { SensorService } from './services/sensor.service';
 import { CommandBus, EventBus, CQRSModule } from '@nestjs/cqrs';
 import { SensorRepository } from './repository/sensor.repository';
 import { SensorController } from './controllers/sensor.controller';
 import { EventStoreModule } from '../eventstore/event-store.module';
 import { SensorRemovedEvent } from './events/impl/sensor-removed.event';
-import { SensorUpdatedEvent } from './events/impl/sensor-updated.event';
 import { SensorRegisteredEvent } from './events/impl/sensor-registered.event';
+import { SensorDetailsUpdatedEvent, SensorOwnershipTransferredEvent, 
+  SensorOwnershipSharedEvent, SensorActivatedEvent,
+  SensorDeactivatedEvent, DataStreamAddedEvent, 
+  DataStreamRemovedEvent, SensorLocationUpdatedEvent } from './events/impl/sensor-updated.event';
 
 
 @Module({
@@ -52,8 +55,15 @@ export class SensorModule implements OnModuleInit {
   }
 
   eventHandlers = {
-    SensorRegisteredEvent: (data) => new SensorRegisteredEvent(data),
     SensorRemovedEvent: (data) => new SensorRemovedEvent(data),
-    SensorUpdatedEvent: (data) => new SensorUpdatedEvent(data),
+    SensorActivatedEvent: (data) => new SensorActivatedEvent(data),
+    SensorRegisteredEvent: (data) => new SensorRegisteredEvent(data),
+    SensorDeactivatedEvent: (data) => new SensorDeactivatedEvent(data),
+    SensorDataStreamAddedEvent: (data) => new DataStreamAddedEvent(data),
+    SensorDataStreamRemovedEvent: (data) => new DataStreamRemovedEvent(data),
+    SensorDetailsUpdatedEvent: (data) => new SensorDetailsUpdatedEvent(data),
+    SensorOwnershipSharedEvent: (data) => new SensorOwnershipSharedEvent(data),
+    SensorLocationUpdatedEvent: (data) => new SensorLocationUpdatedEvent(data),
+    SensorOwnershipTransferredEvent: (data) => new SensorOwnershipTransferredEvent(data),
   };
 }

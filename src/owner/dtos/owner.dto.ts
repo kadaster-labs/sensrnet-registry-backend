@@ -1,5 +1,5 @@
-import { ApiModelProperty } from '@nestjs/swagger';
 import { IsUUID } from 'class-validator';
+import { ApiModelProperty } from '@nestjs/swagger';
 
 
 export class OwnerIdDto {

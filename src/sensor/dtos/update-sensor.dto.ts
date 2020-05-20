@@ -1,31 +1,14 @@
-import { LocationDto } from './sensor.dto';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { IsObject, IsUUID, IsArray, IsString, IsBoolean } from 'class-validator';
+import { IsObject, IsUUID, IsString } from 'class-validator';
 
 
-export class UpdateSensorDto {
+export class UpdateSensorDetailsDto {
   @IsUUID("4")
   readonly id!: string;
-
-  @IsArray()
-  @ApiModelProperty()
-  addOwnerIds?: Array<string>;
-
-  @IsArray()
-  @ApiModelProperty()
-  removeOwnerIds?: Array<string>;
-
-  @IsObject()
-  @ApiModelProperty()
-  readonly location?: LocationDto;
 
   @IsString()
   @ApiModelProperty()
   readonly legalBase?: string;
-
-  @IsBoolean()
-  @ApiModelProperty()
-  readonly active?: boolean;
 
   @IsString()
   @ApiModelProperty()
@@ -35,11 +18,29 @@ export class UpdateSensorDto {
   @ApiModelProperty()
   readonly typeDetails?: object;
 
-  @IsArray()
-  @ApiModelProperty()
-  readonly dataStreams?: Array<string>;
-
   @IsString()
   @ApiModelProperty()
   readonly comment?: string;
+}
+
+export class TransferSensorOwnershipDto {
+  @IsUUID("4")
+  readonly id!: string;
+
+  @IsUUID("4")
+  @ApiModelProperty()
+  readonly oldOwnerId!: string;
+
+  @IsUUID("4")
+  @ApiModelProperty()
+  readonly newOwnerId!: string;
+}
+
+export class ShareSensorOwnershipDto {
+  @IsUUID("4")
+  readonly id!: string;
+
+  @IsString()
+  @ApiModelProperty()
+  readonly newOwnerId!: string;
 }

@@ -1,6 +1,6 @@
 import { ModuleRef } from '@nestjs/core';
-import { EventHandlers } from './events/handlers';
 import { OwnerSagas } from './sagas/owner.sagas';
+import { EventHandlers } from './events/handlers';
 import { OnModuleInit, Module } from '@nestjs/common';
 import { CommandHandlers } from './commands/handlers';
 import { EventStore } from '../eventstore/event-store';
@@ -52,8 +52,8 @@ export class OwnerModule implements OnModuleInit {
   }
 
   eventHandlers = {
-    OwnerRegisteredEvent: (data) => new OwnerRegisteredEvent(data),
     OwnerRemovedEvent: (data) => new OwnerRemovedEvent(data),
     OwnerUpdatedEvent: (data) => new OwnerUpdatedEvent(data),
+    OwnerRegisteredEvent: (data) => new OwnerRegisteredEvent(data)    
   };
 }

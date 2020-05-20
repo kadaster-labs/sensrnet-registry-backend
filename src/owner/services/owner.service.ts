@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { OwnerIdDto } from '../dtos/owner.dto';
 import { UpdateOwnerDto } from '../dtos/update-owner.dto';
 import { RegisterOwnerDto } from '../dtos/register-owner.dto';
+import { RegisterCommand } from '../commands/impl/register-owner.command';
 import { RemoveOwnerCommand } from '../commands/impl/remove-owner.command';
-import { RegisterOwnerCommand } from '../commands/impl/register-owner.command';
 import { UpdateOwnerCommand } from '../commands/impl/update-owner.command';
 
 
@@ -14,7 +14,7 @@ export class OwnerService {
 
   async registerOwner(owner: RegisterOwnerDto) {
     return await this.commandBus.execute(
-      new RegisterOwnerCommand(owner),
+      new RegisterCommand(owner),
     );
   }
 
@@ -22,10 +22,9 @@ export class OwnerService {
     const commandPromises = [];
 
     if (Object.keys(owner).length > 1) {
-      const updateOwnerPromise = this.commandBus.execute(
+      commandPromises.push(this.commandBus.execute(
         new UpdateOwnerCommand(owner),
-      )
-      commandPromises.push(updateOwnerPromise);
+      ));
     }
 
     return await Promise.all(commandPromises);

@@ -4,7 +4,7 @@ import { OwnerService } from '../services/owner.service';
 import { UpdateOwnerDto } from '../dtos/update-owner.dto';
 import { RegisterOwnerDto } from '../dtos/register-owner.dto';
 import { ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { Controller, Post, Param, Body, Delete, Put } from '@nestjs/common';
+import { Controller, Post, Param, Body, Delete, Put, Logger } from '@nestjs/common';
 
 
 @Controller('owner')
@@ -17,7 +17,7 @@ export class OwnerController {
   @Post()
   async createOwner(@Body() ownerDto: RegisterOwnerDto): Promise<RegisterOwnerDto> {
     const id = uuidv4();
-    return this.ownerService.registerOwner({...{id}, ...ownerDto});
+    return this.ownerService.registerOwner({...{id}, ...ownerDto});;
   }
 
   @ApiOperation({ title: 'Update Owner' })

@@ -8,6 +8,10 @@ export class UpdateOwnerDto {
 
   @IsString()
   @ApiModelProperty()
+  readonly ssoId?: string;
+
+  @IsString()
+  @ApiModelProperty()
   readonly email?: string;
 
   @IsString()

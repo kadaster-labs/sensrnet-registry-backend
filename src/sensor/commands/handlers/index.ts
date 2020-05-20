@@ -1,11 +1,20 @@
 import { RemoveSensorHandler } from './remove-sensor.handler';
 import { RegisterSensorHandler } from './register-sensor.handler';
-import { UpdateSensorHandler, UpdateSensorOwnerHandler } from './update-sensor.handler';
+import { UpdateSensorDetailsHandler, TransferSensorOwnershipHandler,
+  ShareSensorOwnershipHandler, ActivateSensorHandler,
+  DeactivateSensorHandler, AddDataStreamHandler, 
+  RemoveDataStreamHandler, UpdateSensorLocationHandler } from './update-sensor.handler';
 
 
 export const CommandHandlers = [
-  RegisterSensorHandler,
-  UpdateSensorHandler,
-  UpdateSensorOwnerHandler,
   RemoveSensorHandler,
+  AddDataStreamHandler,
+  RegisterSensorHandler,
+  ActivateSensorHandler,
+  RemoveDataStreamHandler,
+  DeactivateSensorHandler,
+  UpdateSensorDetailsHandler,
+  UpdateSensorLocationHandler,
+  ShareSensorOwnershipHandler,
+  TransferSensorOwnershipHandler,
 ];

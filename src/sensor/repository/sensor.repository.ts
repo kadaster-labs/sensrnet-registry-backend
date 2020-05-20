@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Sensor } from '../models/sensor.model';
+import { Sensor, DataStream } from '../models/sensor.model';
 
 
 @Injectable()
@@ -11,18 +11,58 @@ export class SensorRepository {
     return sensor;
   }
 
-  async updateSensor(sensorDto) {
+  async updateSensorDetails(sensorDto) {
     const sensor = new Sensor(sensorDto.id);
     sensor.setData(sensorDto);
-    sensor.updateSensor();
+    sensor.updateSensorDetails();
     return sensor;
   }
 
-  async updateSensorOwner(sensorDto) {
+  async transferSensorOwnership(sensorDto) {
     const sensor = new Sensor(sensorDto.id);
     sensor.setData(sensorDto);
-    sensor.updateSensorOwner();
+    sensor.transferSensorOwnership();
     return sensor;
+  }
+
+  async shareSensorOwnership(sensorDto) {
+    const sensor = new Sensor(sensorDto.id);
+    sensor.setData(sensorDto);
+    sensor.shareSensorOwnership();
+    return sensor;
+  }
+
+  async updateSensorLocation(sensorDto) {
+    const sensor = new Sensor(sensorDto.id);
+    sensor.setData(sensorDto);
+    sensor.updateSensorLocation();
+    return sensor;
+  }
+
+  async activateSensor(sensorDto) {
+    const sensor = new Sensor(sensorDto.id);
+    sensor.activateSensor();
+    return sensor;
+  }
+
+  async deactivateSensor(sensorDto) {
+    const sensor = new Sensor(sensorDto.id);
+    sensor.deactivateSensor();
+    return sensor;
+  }
+
+  async addDataStream(dataStreamDto) {
+    const dataStream = new DataStream(dataStreamDto.id);
+    dataStream.setData(dataStreamDto);
+    dataStream.addDataStream();
+    return dataStream;
+  }
+
+  async removeDataStream(dataStreamDto) {
+    const dataStream = new DataStream(dataStreamDto.id);
+    dataStream.setData(dataStreamDto);
+    dataStream.removeDataStream();
+    return dataStream;
   }
 
   async removeSensor(sensorDto) {

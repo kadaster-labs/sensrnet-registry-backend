@@ -7,6 +7,7 @@ import { SensorRegisteredEvent } from '../events/impl/sensor-registered.event';
 
 @Injectable()
 export class SensorSagas {
+  // TODO
   sensorCreated = (events$: EventObservable<any>): Observable<ICommand> => {
     return events$
       .ofType(SensorRegisteredEvent)

@@ -1,6 +1,8 @@
-import { LocationDto } from './sensor.dto';
+import { Type } from 'class-transformer';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { IsObject, IsUUID, IsArray, IsString, IsBoolean } from 'class-validator';
+import { LocationDto, DataStreamDto } from './sensor.dto';
+import { IsObject, IsUUID, IsArray, IsString, IsBoolean, 
+  ValidateNested } from 'class-validator';
 
 
 export class RegisterSensorDto {
@@ -10,7 +12,7 @@ export class RegisterSensorDto {
     @IsUUID("4")
     readonly nodeId!: string;
 
-    @IsArray()
+    @IsUUID("4", {each: true})
     @ApiModelProperty()
     readonly ownerIds!: Array<string>;
 
@@ -20,11 +22,11 @@ export class RegisterSensorDto {
 
     @IsString()
     @ApiModelProperty()
-    readonly legalBase: string;
+    readonly legalBase?: string;
   
     @IsBoolean()
     @ApiModelProperty()
-    readonly active: boolean;
+    readonly active!: boolean;
   
     @IsString()
     @ApiModelProperty()
@@ -32,9 +34,11 @@ export class RegisterSensorDto {
   
     @IsObject()
     @ApiModelProperty()
-    readonly typeDetails: object;
-  
+    readonly typeDetails?: object;
+
     @IsArray()
-    @ApiModelProperty()
-    readonly dataStreams!: Array<string>;
+    @ApiModelProperty({ type: DataStreamDto, isArray: true })
+    @Type(() => DataStreamDto)
+    @ValidateNested({ each: true })
+    dataStreams!: Array<DataStreamDto>;
   }

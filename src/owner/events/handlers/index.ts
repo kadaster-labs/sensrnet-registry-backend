@@ -4,7 +4,7 @@ import { OwnerRegisteredHandler} from './owner-registered.handler';
 
 
 export const EventHandlers = [
-  OwnerRegisteredHandler,
   OwnerUpdatedHandler,
   OwnerRemovedHandler,
+  OwnerRegisteredHandler
 ];

@@ -13,6 +13,7 @@ export class OwnerSagas {
       .pipe(
         delay(1000),
         map(event => {
+          // TODO
           Logger.log('Inside [OwnerSagas] Saga', 'OwnerSagas');
           const id = event.dto[0].id[0];
           return id;

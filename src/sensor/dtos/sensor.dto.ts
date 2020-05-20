@@ -2,6 +2,20 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { IsUUID, IsNumber, IsString } from 'class-validator';
 
 
+export class SensorIdDto {
+  @IsUUID("4")
+  @ApiModelProperty()
+  readonly id!: string;
+}
+
+
+export class DataStreamDto {
+  @IsString()
+  @ApiModelProperty()
+  readonly name!: string;
+}
+
+
 export class LocationDto {
   @IsNumber()
   @ApiModelProperty()
@@ -18,11 +32,4 @@ export class LocationDto {
   @IsString()
   @ApiModelProperty()
   readonly baseObjectId: string;
-}
-
-
-export class SensorIdDto {
-  @IsUUID("4")
-  @ApiModelProperty()
-  readonly id!: string;
 }

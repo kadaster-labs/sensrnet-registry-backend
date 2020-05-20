@@ -14,7 +14,7 @@ export class UpdateOwnerHandler
 
   async execute(command: UpdateOwnerCommand, resolve: (value?) => void) {
     Logger.log('Async UpdateOwnerHandler...', 'UpdateOwnerCommand');
-    
+
     const {dto} = command;
     const owner = this.publisher.mergeObjectContext(
       await this.repository.updateOwner(dto),

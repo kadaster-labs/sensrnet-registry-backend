@@ -1,18 +1,18 @@
 import { Logger } from '@nestjs/common';
+import { RegisterCommand } from '../impl/register-owner.command';
 import { OwnerRepository } from '../../repository/owner.repository';
-import { RegisterOwnerCommand } from '../impl/register-owner.command';
 import { EventPublisher, ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 
 
-@CommandHandler(RegisterOwnerCommand)
+@CommandHandler(RegisterCommand)
 export class RegisterOwnerHandler
-  implements ICommandHandler<RegisterOwnerCommand> {
+  implements ICommandHandler<RegisterCommand> {
   constructor(
     private readonly repository: OwnerRepository,
     private readonly publisher: EventPublisher,
   ) {}
 
-  async execute(command: RegisterOwnerCommand, resolve: (value?) => void) {
+  async execute(command: RegisterCommand, resolve: (value?) => void) {
     Logger.log('Async RegisterOwnerHandler...', 'RegisterOwnerCommand');
 
     const {dto: registerOwnerDto} = command;
@@ -21,6 +21,6 @@ export class RegisterOwnerHandler
     );
 
     owner.commit();
-    resolve();
+    resolve(registerOwnerDto);
   }
 }

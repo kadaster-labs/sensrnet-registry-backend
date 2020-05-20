@@ -11,6 +11,10 @@ export class RegisterOwnerDto {
 
     @IsString()
     @ApiModelProperty()
+    readonly ssoId?: string;
+
+    @IsString()
+    @ApiModelProperty()
     readonly email!: string;
 
     @IsString()
@@ -20,11 +24,11 @@ export class RegisterOwnerDto {
     @IsString()
     @ApiModelProperty()
     readonly name!: string;
-  
+
     @IsString()
     @ApiModelProperty()
     readonly companyName?: string;
-  
+
     @IsUrl()
     @ApiModelProperty()
     readonly website?: string;
