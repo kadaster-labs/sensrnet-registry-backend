@@ -1,36 +1,22 @@
-import { config } from '../config';
-import fastifyCors from 'fastify-cors';
-import { AppModule } from './app.module';
-import { ValidationPipe, Logger } from '@nestjs/common';
-import { NestFactory, FastifyAdapter } from '@nestjs/core';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { DomainExceptionFilter } from "./owner/errors/domain-exception.filter";
+import { ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, new FastifyAdapter({
-    trustProxy: true,
-    logger: true,
-  }));
+  const port = process.env.PORT || 3000;
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new DomainExceptionFilter());
+
   const documentOptions = new DocumentBuilder()
-    .setTitle(config.TITLE)
-    .setDescription(config.DESCRIPTION)
-    .setVersion(config.VERSION)
-    .setBasePath(`/${config.PREFIX}`)
     .build();
   const document = SwaggerModule.createDocument(app, documentOptions);
-  const validationOptions = {
-    skipMissingProperties: true,
-    validationError: { target: false },
-  };
-  /*--------------------------------------------*/
-  app.useGlobalPipes(new ValidationPipe(validationOptions));
-  app.setGlobalPrefix(config.PREFIX);
-  app.register(fastifyCors, {
-    origin: true,
-  });
-  SwaggerModule.setup(config.API_EXPLORER_PATH, app, document);
-  await app.listen(config.PORT, config.HOST);
-  Logger.log(`Server listening on port ${config.PORT}`, 'Bootstrap');
+  SwaggerModule.setup('/api', app, document);
+
+  await app.listen(port);
 }
 
 bootstrap();

@@ -1,59 +1,34 @@
-import { ModuleRef } from '@nestjs/core';
-import { OwnerSagas } from './sagas/owner.sagas';
-import { EventHandlers } from './events/handlers';
-import { OnModuleInit, Module } from '@nestjs/common';
-import { CommandHandlers } from './commands/handlers';
-import { EventStore } from '../eventstore/event-store';
-import { OwnerService } from './services/owner.service';
-import { CommandBus, EventBus, CQRSModule } from '@nestjs/cqrs';
-import { OwnerRepository } from './repository/owner.repository';
-import { OwnerController } from './controllers/owner.controller';
-import { EventStoreModule } from '../eventstore/event-store.module';
-import { OwnerRemovedEvent } from './events/impl/owner-removed.event';
-import { OwnerUpdatedEvent } from './events/impl/owner-updated.event';
-import { OwnerRegisteredEvent } from './events/impl/owner-registered.event';
+import { OwnerController } from "./owner.controller";
+import { Module, OnModuleInit } from "@nestjs/common";
+import { CreateCommandHandler } from "./commands/create.handler";
+import { UpdateCommandHandler } from "./commands/update.handler";
+import { OwnerRepository } from "./repositories/owner.repository";
+import { WithdrawCommandHandler } from "./commands/delete.handler";
+import { EventBus, CqrsModule, EventPublisher } from "@nestjs/cqrs";
+import { EventStoreModule } from "../event-store/event-store.module";
+import { EventStorePublisher } from "../event-store/event-store.publisher";
 
 
 @Module({
-  imports: [
-    CQRSModule,
-    EventStoreModule.forFeature(),
-  ],
   controllers: [OwnerController],
+  imports: [CqrsModule, EventStoreModule, OwnerModule],
   providers: [
-    OwnerService,
-    OwnerSagas,
-    ...CommandHandlers,
-    ...EventHandlers,
+    EventBus,
+    EventStorePublisher,
+    EventPublisher,
     OwnerRepository,
-  ],
+    CreateCommandHandler,
+    UpdateCommandHandler,
+    WithdrawCommandHandler
+  ]
 })
 
 export class OwnerModule implements OnModuleInit {
   constructor(
-    private readonly moduleRef: ModuleRef,
-    private readonly command$: CommandBus,
-    private readonly event$: EventBus,
-    private readonly ownerSagas: OwnerSagas,
-    private readonly eventStore: EventStore,
+    private readonly eventBus: EventBus,
+    private readonly eventStore: EventStorePublisher
   ) {}
-
   onModuleInit() {
-    this.command$.setModuleRef(this.moduleRef);
-    this.event$.setModuleRef(this.moduleRef);
-    /** ------------ */
-    this.eventStore.setEventHandlers(this.eventHandlers);
-    this.eventStore.bridgeEventsTo((this.event$ as any).subject$);
-    this.event$.publisher = this.eventStore;
-    /** ------------ */
-    this.event$.register(EventHandlers);
-    this.command$.register(CommandHandlers);
-    this.event$.combineSagas([this.ownerSagas.ownerCreated]);
+    this.eventBus.publisher = this.eventStore;
   }
-
-  eventHandlers = {
-    OwnerRemovedEvent: (data) => new OwnerRemovedEvent(data),
-    OwnerUpdatedEvent: (data) => new OwnerUpdatedEvent(data),
-    OwnerRegisteredEvent: (data) => new OwnerRegisteredEvent(data)    
-  };
 }

@@ -1,6 +1,52 @@
-# SensRNet Registry Backend
+# SensrNet Backend Application
 
-Instructions:
-- Eventstore running
-- npm install
-- npm start
+This is the backend for the SensrNet application. It features a NodeJS backend, and makes use of Eventstore.
+
+## Getting Started
+
+The stack can be ran locally, or using docker with docker-compose.
+
+### Prerequisities
+
+In order to run this application standalone, you need npm and Eventstore installed.
+
+In order to run this application containerized, you'll need docker installed.
+
+* [Windows](https://docs.docker.com/windows/started)
+* [OS X](https://docs.docker.com/mac/started/)
+* [Linux](https://docs.docker.com/linux/started/)
+
+### Usage
+
+#### Standalone
+
+Eventstore:
+* Windows: EventStore.ClusterNode.exe --db ./db --log ./logs
+
+Backend App:
+* npm install
+* npm start
+
+#### Containerized
+Entire Stack:
+* docker-compose build
+* docker-compose up
+
+## Find Us
+
+* [GitHub](https://github.com/kad-floriw)
+
+## Contributing
+
+(TODO) Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Authors
+
+* **Wim Florijn** - *Initial work* - [Kadaster](https://kadaster.nl)
+
+See also the list of [contributors](https://github.com/your/repository/contributors) who 
+participated in this project.
+
+## License
+
+This project is licensed under the EUPL License - see the [LICENSE.md](LICENSE.md) file for details.

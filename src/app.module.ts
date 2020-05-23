@@ -1,18 +1,7 @@
-import { OwnerModule } from './owner/owner.module';
-import { Module, OnModuleInit } from '@nestjs/common';
-import { SensorModule } from './sensor/sensor.module';
-import { EventStoreModule } from './eventstore/event-store.module';
-
+import { Module } from "@nestjs/common";
+import { OwnerModule } from "./owner/owner.module";
 
 @Module({
-  imports: [
-    EventStoreModule.forRoot(),
-    OwnerModule,
-    SensorModule
-  ],
+  imports: [OwnerModule]
 })
-
-
-export class AppModule implements OnModuleInit {
-  async onModuleInit() {}
-}
+export class AppModule {}
