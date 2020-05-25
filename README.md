@@ -16,6 +16,22 @@ In order to run this application containerized, you'll need docker installed.
 * [OS X](https://docs.docker.com/mac/started/)
 * [Linux](https://docs.docker.com/linux/started/)
 
+### Architecture
+
+Module and runtime structures:
+
+![Dependency Graph](docs/images/dependency-graph.png)
+
+Modules:
+
+- command > all command side code
+- events > event definitions
+- query > 
+  - query processor to update the database projection
+  - query controllers and query features
+
+The runtime is defined by four Docker containers / `Dockerfile`s. In case of scaling up or out, the `query processor` should be put in its own container (probably stays as a single container).
+
 ### Usage
 
 #### Standalone
