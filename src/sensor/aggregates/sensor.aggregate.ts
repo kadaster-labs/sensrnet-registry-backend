@@ -11,6 +11,7 @@ import { DataStreamBody } from "../models/bodies/datastream-body";
 import { SensorLocationUpdated } from "../events/locationupdated.event";
 import { DataStreamCreated } from "../events/datastreamcreated.event";
 import { DataStreamDeleted } from "../events/datastreamdeleted.event";
+import { SensorActiveException } from "../errors/sensor-active-exception";
 import { SensorOwnershipTransferred } from "../events/ownershiptransferred.event";
 
 
@@ -56,6 +57,10 @@ export class SensorAggregate extends AggregateRoot {
   }
 
   activate() {
+    if (this.state.active) {
+      throw new SensorActiveException(this.state.id)
+    }
+
     this.apply(new SensorActivated(this.aggregateId, new Date().toISOString()));
   }
 

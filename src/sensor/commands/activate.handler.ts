@@ -1,6 +1,5 @@
 import { ActivateSensorCommand } from "./activate.command";
 import { SensorRepository } from "../repositories/sensor.repository";
-import { SensorActiveException } from "../errors/sensor-active-exception";
 import { UnknowSensorException } from "../errors/unknow-sensor-exception";
 import { ICommandHandler, EventPublisher, CommandHandler } from "@nestjs/cqrs";
 
@@ -17,8 +16,6 @@ export class ActivateSensorCommandHandler implements ICommandHandler<ActivateSen
     
     if (!sensorAggregate) {
       throw new UnknowSensorException(command.id);
-    } else if (sensorAggregate.state.active) {
-      throw new SensorActiveException(command.id)
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
