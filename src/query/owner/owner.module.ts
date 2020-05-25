@@ -1,3 +1,4 @@
+import { connect } from 'mongoose';
 import { Module, OnModuleInit } from "@nestjs/common";
 import { CqrsModule, EventPublisher } from "@nestjs/cqrs";
 import { OwnerEventHandler } from "./handlers/owner.handler"
@@ -23,6 +24,9 @@ export class OwnerQueryModule implements OnModuleInit {
     private readonly ownerEventHandler: OwnerEventHandler    
   ) {}
   onModuleInit() {
+    const host = process.env.MONGO_HOST || 'localhost';
+    connect('mongodb://' + host + ':27017/owners', { useNewUrlParser: true , useUnifiedTopology: true});
+
     this.eventStore.subscribeToStream('$ce-owner', this.ownerEventHandler);
   }
 }

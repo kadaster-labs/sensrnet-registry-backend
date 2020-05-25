@@ -16,6 +16,8 @@ services:
     image: mongo
     ports:
       - 27017:27017
+    networks:
+      - backend
 
   nodejs-cqrs:
     build:
@@ -25,11 +27,14 @@ services:
       replicas: 1
     depends_on:
       - eventstore
+      - mongo
     ports:
       - 3000:3000
     environment:
       - PORT=3000
       - NODE_ID="1"
+      - MONGO_HOST=mongo
+      - EVENT_STORE_HOSTNAME=eventstore
     links:
       - eventstore
     networks:

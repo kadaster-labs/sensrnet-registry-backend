@@ -1,3 +1,4 @@
+import { connect } from 'mongoose';
 import { Owner } from "../models/owner.model"
 import { EventType } from "../../../events/owner/events/event-type";
 

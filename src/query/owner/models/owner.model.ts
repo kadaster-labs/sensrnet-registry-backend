@@ -1,6 +1,5 @@
-import { model, Schema, connect } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
-connect('mongodb://localhost:27017/owners');
 
 export const OwnerSchema = new Schema({
     _id: { type: String, required: true },
