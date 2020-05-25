@@ -136,10 +136,7 @@ class SensorStateImpl implements SensorState {
     public actives: [string, boolean][] = []
   ) {}
 
-  // Sort descending;
-  sort = (value1: [string, any], value2: [string, any]) => value1[0] < value2[0] ? 1 : -1;
-
   get active(): boolean {
-    return this.actives.sort(this.sort).map(value => value[1])[0];
+    return this.actives.length ? this.actives.map(value => value[1])[this.actives.length - 1] : undefined;
   }
 }

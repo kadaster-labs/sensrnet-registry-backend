@@ -18,7 +18,6 @@ export class CreateOwnerCommandHandler implements ICommandHandler<CreateOwnerCom
     if (!!aggregate) {
       throw new OwnerAlreadyExistsException(command.id);
     } else {
-
       const ownerAggregate = new OwnerAggregate(command.id);
       const aggregate = this.publisher.mergeObjectContext(ownerAggregate);
 

@@ -120,34 +120,31 @@ class OwnerStateImpl implements OwnerState {
     public websites: [string, string][] = []
   ) {}
 
-  // Sort descending;
-  sort = (value1: [string, any], value2: [string, any]) => value1[0] < value2[0] ? 1 : -1;
-
   get nodeId(): string {
-    return this.nodeIds.sort(this.sort).map(value => value[1])[0];
+    return this.nodeIds.length ? this.nodeIds.map(value => value[1])[this.nodeIds.length - 1] : undefined;
   }
 
   get ssoId(): string {
-    return this.ssoIds.sort(this.sort).map(value => value[1])[0];
+    return this.ssoIds.length ? this.ssoIds.map(value => value[1])[this.ssoIds.length - 1] : undefined;
   }
 
   get email(): string {
-    return this.emails.sort(this.sort).map(value => value[1])[0];
+    return this.emails.length ? this.emails.map(value => value[1])[this.emails.length - 1] : undefined;
   }
 
   get publicName(): string {
-    return this.publicNames.sort(this.sort).map(value => value[1])[0];
+    return this.publicNames.length ? this.publicNames.map(value => value[1])[this.publicNames.length - 1] : undefined;
   }
 
   get name(): string {
-    return this.names.sort(this.sort).map(value => value[1])[0];
+    return this.names.length ? this.names.map(value => value[1])[this.names.length - 1] : undefined;
   }
 
   get companyName(): string {
-    return this.companyNames.sort(this.sort).map(value => value[1])[0];
+    return this.companyNames.length ? this.companyNames.map(value => value[1])[this.companyNames.length - 1] : undefined;
   }
 
   get website(): string {
-    return this.websites.sort(this.sort).map(value => value[1])[0];
+    return this.websites.length ? this.websites.map(value => value[1])[this.websites.length - 1] : undefined;
   }
 }
