@@ -11,6 +11,11 @@ services:
       - EVENTSTORE_START_STANDARD_PROJECTIONS=true
     networks:
       - backend
+  
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
 
   nodejs-cqrs:
     build:

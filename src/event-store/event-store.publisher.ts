@@ -17,4 +17,8 @@ export class EventStorePublisher implements IEventPublisher {
       Logger.warn(`Invalid event: ${JSON.stringify(event)}`);
     }
   }
+
+  async subscribeToStream(streamName: string, eventRouter) {
+    return await this.eventStore.subscribeToStream(streamName, eventRouter.onEventAppeared, eventRouter.onDropped);
+  }
 }
