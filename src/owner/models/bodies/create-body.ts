@@ -1,36 +1,36 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsUrl } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
 
 
-export class CreateBody {
+export class CreateOwnerBody {
  
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  readonly ssoId?: string;
+  readonly ssoId: string;
   
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  readonly email!: string;
+  readonly email: string;
+  
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  readonly publicName: string;
   
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  readonly publicName?: string;
+  readonly name: string;
   
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
-  readonly name!: string;
-  
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly companyName?: string;
+  readonly companyName: string;
   
   @IsUrl()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
-  readonly website?: string;
+  readonly website: string;
 }

@@ -1,14 +1,16 @@
 import { v4 as uuidv4 } from 'uuid';
 import { CommandBus } from "@nestjs/cqrs";
-import { CreateBody } from "./models/bodies/create-body";
-import { UpdateBody } from "./models/bodies/update-body";
-import { CreateCommand } from "./commands/create.command";
-import { UpdateCommand } from "./commands/update.command";
-import { DeleteCommand } from "./commands/delete.command";
-import { UpdateParams } from "./models/params/update-params";
-import { DeleteParams } from "./models/params/delete-params";
+import { OwnerIdParams } from "./models/params/id-params";
+import { CreateOwnerBody } from "./models/bodies/create-body";
+import { UpdateOwnerBody } from "./models/bodies/update-body";
+import { CreateOwnerCommand } from "./commands/create.command";
+import { UpdateOwnerCommand } from "./commands/update.command";
+import { DeleteOwnerCommand } from "./commands/delete.command";
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { Controller, Post, Param, Body, Put, Delete } from "@nestjs/common";
+import { DomainExceptionFilter } from "./errors/domain-exception.filter"
+import { UseFilters, Controller, Post, Param, Body, Put, Delete } from "@nestjs/common";
+
+const NODE_ID = process.env.NODE_ID || '1';
 
 
 @ApiTags('Owner')
@@ -17,27 +19,29 @@ export class OwnerController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Post()
+  @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Register Owner' })
   @ApiResponse({ status: 200, description: 'Register Owner.' })
-  async createOwner(@Body() ownerBody: CreateBody) {
+  async createOwner(@Body() ownerBody: CreateOwnerBody) {
     const id = uuidv4();
-    const nodeId = '1';
-    await this.commandBus.execute(new CreateCommand(id, nodeId, ownerBody.ssoId, ownerBody.email, ownerBody.publicName, 
-      ownerBody.name, ownerBody.companyName, ownerBody.website));
+    await this.commandBus.execute(new CreateOwnerCommand(id, NODE_ID, ownerBody.ssoId, ownerBody.email, 
+      ownerBody.publicName, ownerBody.name, ownerBody.companyName, ownerBody.website));
   }
 
+  @Put(':id')
+  @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update Owner' })
   @ApiResponse({ status: 200, description: 'Update Owner.' })
-  @Put(':id')
-  async updateOwner(@Param() params: UpdateParams, @Body() ownerBody: UpdateBody) {
-    return await this.commandBus.execute(new UpdateCommand(params.id, ownerBody.ssoId, ownerBody.email, ownerBody.publicName, 
-      ownerBody.name, ownerBody.companyName, ownerBody.website));
+  async updateOwner(@Param() params: OwnerIdParams, @Body() ownerBody: UpdateOwnerBody) {
+    return await this.commandBus.execute(new UpdateOwnerCommand(params.id, ownerBody.ssoId, ownerBody.email, 
+      ownerBody.publicName, ownerBody.name, ownerBody.companyName, ownerBody.website));
   }
 
+  @Delete(':id')
+  @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Remove Owner' })
   @ApiResponse({ status: 200, description: 'Remove Owner.' })
-  @Delete(':id')
-  async removeOwner(@Param() params: DeleteParams) {
-    return await this.commandBus.execute(new DeleteCommand(params.id));
+  async removeOwner(@Param() params: OwnerIdParams) {
+    return await this.commandBus.execute(new DeleteOwnerCommand(params.id));
   }
 }

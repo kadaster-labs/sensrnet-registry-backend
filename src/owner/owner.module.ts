@@ -1,11 +1,11 @@
 import { OwnerController } from "./owner.controller";
 import { Module, OnModuleInit } from "@nestjs/common";
-import { CreateCommandHandler } from "./commands/create.handler";
-import { UpdateCommandHandler } from "./commands/update.handler";
 import { OwnerRepository } from "./repositories/owner.repository";
-import { WithdrawCommandHandler } from "./commands/delete.handler";
 import { EventBus, CqrsModule, EventPublisher } from "@nestjs/cqrs";
 import { EventStoreModule } from "../event-store/event-store.module";
+import { CreateOwnerCommandHandler } from "./commands/create.handler";
+import { UpdateOwnerCommandHandler } from "./commands/update.handler";
+import { DeleteOwnerCommandHandler } from "./commands/delete.handler";
 import { EventStorePublisher } from "../event-store/event-store.publisher";
 
 
@@ -17,9 +17,9 @@ import { EventStorePublisher } from "../event-store/event-store.publisher";
     EventStorePublisher,
     EventPublisher,
     OwnerRepository,
-    CreateCommandHandler,
-    UpdateCommandHandler,
-    WithdrawCommandHandler
+    CreateOwnerCommandHandler,
+    UpdateOwnerCommandHandler,
+    DeleteOwnerCommandHandler
   ]
 })
 

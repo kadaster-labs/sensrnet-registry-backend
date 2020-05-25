@@ -2,7 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsUUID, IsNotEmpty } from "class-validator";
 
 
-export class DeleteParams {
+export class OwnerIdParams {
+
   @IsUUID(4)
   @IsNotEmpty()
   @ApiProperty()

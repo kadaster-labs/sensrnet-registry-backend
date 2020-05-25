@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "author": "",
-  "license": "MIT",
+  "license": "EUPL",
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\"",

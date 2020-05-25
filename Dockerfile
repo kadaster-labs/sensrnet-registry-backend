@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:12
 
 LABEL maintainer "Wim Florijn <wim.florijn@kadaster.nl>"
 
@@ -13,7 +13,7 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 7070
+EXPOSE 3000
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 

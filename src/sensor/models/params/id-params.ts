@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsUUID, IsNotEmpty } from "class-validator";
 
-export class UpdateParams {
+export class IdParams {
 
   @IsUUID(4)
   @IsNotEmpty()
   @ApiProperty()
-  readonly id!: string;
+  readonly id: string;
 }

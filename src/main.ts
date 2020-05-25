@@ -1,8 +1,8 @@
-import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { DomainExceptionFilter } from "./owner/errors/domain-exception.filter";
+import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { DomainExceptionFilter } from "./owner/errors/domain-exception.filter";
 
 
 async function bootstrap() {
@@ -12,6 +12,8 @@ async function bootstrap() {
   app.useGlobalFilters(new DomainExceptionFilter());
 
   const documentOptions = new DocumentBuilder()
+    .setTitle('Sensrnet Backend API')
+    .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, documentOptions);
   SwaggerModule.setup('/api', app, document);

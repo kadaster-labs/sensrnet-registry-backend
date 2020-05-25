@@ -1,7 +1,8 @@
-import { IEvent, IEventPublisher } from "@nestjs/cqrs";
-import { Injectable, Logger } from "@nestjs/common";
 import { EventStore } from "./event-store";
 import { isValidEvent } from "./event-utils";
+import { Injectable, Logger } from "@nestjs/common";
+import { IEvent, IEventPublisher } from "@nestjs/cqrs";
+
 
 @Injectable()
 export class EventStorePublisher implements IEventPublisher {
