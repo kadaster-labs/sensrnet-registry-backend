@@ -12,14 +12,16 @@ export class CreateDataStreamCommandHandler implements ICommandHandler<CreateDat
   ) {}
 
   async execute(command: CreateDataStreamCommand): Promise<void> {
-    const sensorAggregate = await this.repository.get(command.id);
+    const sensorAggregate = await this.repository.get(command.sensorId);
 
     if (!sensorAggregate) {
-      throw new UnknowSensorException(command.id);
+      throw new UnknowSensorException(command.sensorId);
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.createDataStream(command.name);
+    aggregate.createDataStream(command.dataStreamId, command.name, command.description, 
+      command.unitOfMeasurement, command.isPublic, command.isOpenData, command.isReusable, 
+      command.documentationUrl, command.dataLink, command.dataFrequency, command.dataQuality);
     aggregate.commit();
   }
 }

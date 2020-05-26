@@ -3,10 +3,10 @@ import { Event } from "../../../event-store/event";
 
 
 export class DataStreamDeleted extends Event {
-  constructor(aggregatedId: string, date: string, name: string) {
+  constructor(aggregatedId: string, sensorId: string, dataStreamId: string) {
     super(`sensor-${aggregatedId}`, EventType.DataStreamDeleted, {
-      date,
-      name
+      sensorId,
+      dataStreamId
     });
   }
 }

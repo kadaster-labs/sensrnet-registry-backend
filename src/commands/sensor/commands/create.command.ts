@@ -8,11 +8,18 @@ export class CreateSensorCommand implements ICommand {
     public readonly id: string,
     public readonly nodeId: string,
     public readonly ownerIds: Array<string>,
+    public readonly name: string,
     public readonly location: LocationBody,
-    public readonly legalBase: string,
+    public readonly dataStreams: Array<DataStreamBody>,
+    public readonly aim: string,
+    public readonly description: string,
+    public readonly manufacturer: string,
     public readonly active: boolean,
+    public readonly observationArea: object,
+    public readonly documentationUrl: string,
+    public readonly category: string,
+    public readonly theme: string,
     public readonly typeName: string,
-    public readonly typeDetails: object,
-    public readonly dataStreams: Array<DataStreamBody>
+    public readonly typeDetails: object
     ) {}
 }

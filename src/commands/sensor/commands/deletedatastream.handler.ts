@@ -19,7 +19,7 @@ export class DeleteDataStreamCommandHandler implements ICommandHandler<DeleteDat
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.deleteDataStream(command.name);
+    aggregate.deleteDataStream(command.id, command.dataStreamId);
     aggregate.commit();
   }
 }

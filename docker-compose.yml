@@ -32,11 +32,12 @@ services:
       - 3000:3000
     environment:
       - PORT=3000
-      - NODE_ID="1"
+      - NODE_ID=node_1
       - MONGO_HOST=mongo
       - MONGO_PORT=27017
       - MONGO_DATABASE=owners
-      - EVENT_STORE_HOSTNAME=eventstore
+      - EVENT_STORE_PORT=1113
+      - EVENT_STORE_HOST=eventstore
     links:
       - eventstore
     networks:

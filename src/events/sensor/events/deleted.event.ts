@@ -3,9 +3,7 @@ import { Event } from "../../../event-store/event";
 
 
 export class SensorDeleted extends Event {
-  constructor(aggregatedId: string, date: string) {
-    super(`sensor-${aggregatedId}`, EventType.Deleted, {
-      date
-    });
+  constructor(aggregatedId: string) {
+    super(`sensor-${aggregatedId}`, EventType.Deleted);
   }
 }

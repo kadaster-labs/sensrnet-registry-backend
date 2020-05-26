@@ -6,11 +6,17 @@ export class TransferOwnershipBody {
 
   @IsUUID(4)
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+    description: 'The ownerId of the old owner.'
+  })
   readonly oldOwnerId: string;
 
   @IsUUID(4)
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+    description: 'The ownerId of the new owner.'
+  })
   readonly newOwnerId: string;
 }

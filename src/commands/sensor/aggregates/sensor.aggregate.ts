@@ -22,38 +22,49 @@ export class SensorAggregate extends AggregateRoot {
     super();
   }
 
-  create(nodeId: string, ownerIds: Array<string>, location: LocationBody, legalBase: string, active: boolean,
-    typeName: string, typeDetails: object, dataStreams: Array<DataStreamBody>) {
-    this.apply(new SensorCreated(this.aggregateId, new Date().toISOString(), nodeId, ownerIds, 
-      location, legalBase, active, typeName, typeDetails));
+  create(nodeId: string, ownerIds: Array<string>, name: string, location: LocationBody, 
+    dataStreams: Array<DataStreamBody>, aim: string, description: string, manufacturer: string, 
+    active: boolean, observationArea: object, documentationUrl: string, category: string, theme: string,
+    typeName: string, typeDetails: object) {
+    this.apply(new SensorCreated(this.aggregateId, nodeId, ownerIds, name, location, 
+      aim, description, manufacturer, active, observationArea, documentationUrl, 
+      category, theme, typeName, typeDetails));
 
     for (const dataStream of dataStreams) {
-      this.apply(new DataStreamCreated(this.aggregateId, new Date().toISOString(), dataStream.name));
+      this.apply(new DataStreamCreated(this.aggregateId, dataStream.id, dataStream.name, dataStream.description,
+        dataStream.unitOfMeasurement, dataStream.isPublic, dataStream.isOpenData, dataStream.isReusable,
+        dataStream.documentationUrl, dataStream.dataLink, dataStream.dataFrequency, dataStream.dataQuality));
     }
   }
 
-  createDataStream(name: string) {
-    this.apply(new DataStreamCreated(this.aggregateId, new Date().toISOString(), name));
+  createDataStream(dataStreamId: string, name: string, description: string, unitOfMeasurement: string,
+    isPublic: boolean, isOpenData: boolean, isReusable: boolean, documentationUrl: string,
+    dataLink: string, dataFrequency: number, dataQuality: number) {
+    this.apply(new DataStreamCreated(this.aggregateId, dataStreamId, name, description, unitOfMeasurement, 
+      isPublic, isOpenData, isReusable, documentationUrl, dataLink, dataFrequency, dataQuality));
   }
 
-  deleteDataStream(name: string) {
-    this.apply(new DataStreamDeleted(this.aggregateId, new Date().toISOString(), name));
+  deleteDataStream(sensorId: string, dataStreamId: string) {
+    this.apply(new DataStreamDeleted(this.aggregateId, sensorId, dataStreamId));
   }
 
-  update(legalBase: string, typeName: string, typeDetails: object) {
-    this.apply(new SensorUpdated(this.aggregateId, new Date().toISOString(), legalBase, typeName, typeDetails));
+  update(name: string, aim: string, description: string, manufacturer: string, 
+    observationArea: object, documentationUrl: string, category: string, theme: string,
+    typeName: string, typeDetails: object) {
+    this.apply(new SensorUpdated(this.aggregateId, name, aim, description, manufacturer, 
+      observationArea, documentationUrl, category, theme, typeName, typeDetails));
   }
 
   transferOwnership(oldOwnerId: string, newOwnerId: string) {
-    this.apply(new SensorOwnershipTransferred(this.aggregateId, new Date().toISOString(), oldOwnerId, newOwnerId));
+    this.apply(new SensorOwnershipTransferred(this.aggregateId, oldOwnerId, newOwnerId));
   }
 
   shareOwnership(ownerId: string) {
-    this.apply(new SensorOwnershipShared(this.aggregateId, new Date().toISOString(), ownerId));
+    this.apply(new SensorOwnershipShared(this.aggregateId, ownerId));
   }
 
   updateLocation(lat: number, lon: number, height: number, baseObjectId: string) {
-    this.apply(new SensorLocationUpdated(this.aggregateId, new Date().toISOString(), lat, lon, height, baseObjectId));
+    this.apply(new SensorLocationUpdated(this.aggregateId, lat, lon, height, baseObjectId));
   }
 
   activate() {
@@ -61,21 +72,21 @@ export class SensorAggregate extends AggregateRoot {
       throw new SensorActiveException(this.state.id)
     }
 
-    this.apply(new SensorActivated(this.aggregateId, new Date().toISOString()));
+    this.apply(new SensorActivated(this.aggregateId));
   }
 
   deactivate() {
-    this.apply(new SensorDeactivated(this.aggregateId, new Date().toISOString()));
+    this.apply(new SensorDeactivated(this.aggregateId));
   }
 
   delete() {
-    this.apply(new SensorDeleted(this.aggregateId, new Date().toISOString()));
+    this.apply(new SensorDeleted(this.aggregateId));
   }
 
   private onSensorCreated(event: SensorCreated) {
     this.state = new SensorStateImpl(this.aggregateId);
 
-    this.state.actives.push([event.data["date"], event.data["active"]]);
+    this.state.actives.push(event.data["active"]);
   }
 
   private onDataStreamCreated(event: DataStreamCreated) {
@@ -103,11 +114,11 @@ export class SensorAggregate extends AggregateRoot {
   }
 
   private onActivated(event: SensorActivated) {
-    this.state.actives.push([event.data["date"], true]);
+    this.state.actives.push(true);
   }
 
   private onDeactivated(event: SensorDeactivated) {
-    this.state.actives.push([event.data["date"], false]);
+    this.state.actives.push(false);
   }
 
   private onDeleted(event: SensorDeleted) {
@@ -125,7 +136,7 @@ export class SensorAggregate extends AggregateRoot {
 
 interface SensorState {
   id: string;
-  actives: Array<[string, boolean]>;
+  actives: Array<boolean>;
 
   active: boolean;
 }
@@ -133,10 +144,10 @@ interface SensorState {
 class SensorStateImpl implements SensorState {
   constructor(
     public readonly id: string,
-    public actives: [string, boolean][] = []
+    public actives: boolean[] = []
   ) {}
 
   get active(): boolean {
-    return this.actives.length ? this.actives.map(value => value[1])[this.actives.length - 1] : undefined;
+    return this.actives.length ? this.actives[this.actives.length - 1] : undefined;
   }
 }

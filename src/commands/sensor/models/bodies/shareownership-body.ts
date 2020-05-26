@@ -6,6 +6,9 @@ export class ShareOwnershipBody {
 
   @IsUUID(4)
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+    description: 'The ownerId of the new co-owner.'
+  })
   readonly ownerId: string;
 }

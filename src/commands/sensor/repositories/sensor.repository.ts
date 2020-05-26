@@ -10,13 +10,14 @@ export class SensorRepository {
   async get(aggregateId: string): Promise<SensorAggregate> {
     const exists = await this.eventStore.exists(`sensor-${aggregateId}`);
 
+    let aggregate;
     if (!exists) {
-      return undefined;
+      aggregate = undefined;
+    } else {
+      const events = await this.eventStore.getEvents(`sensor-${aggregateId}`);
+      aggregate = new SensorAggregate(aggregateId);
+      aggregate.loadFromHistory(events);
     }
-
-    const events = await this.eventStore.getEvents(`sensor-${aggregateId}`);
-    const aggregate = new SensorAggregate(aggregateId);
-    aggregate.loadFromHistory(events);
 
     return aggregate;
   }

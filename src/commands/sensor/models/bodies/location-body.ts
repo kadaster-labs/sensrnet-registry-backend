@@ -6,21 +6,34 @@ export class LocationBody {
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiProperty()
+    @ApiProperty({
+        type: Number,
+        description: 'Sensor latitude.'
+    })
     readonly lat: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiProperty()
+    @ApiProperty({
+        type: Number,
+        description: 'Sensor longitude.'
+    })
     readonly lon: number;
-    
+
     @IsNumber()
     @IsNotEmpty()
-    @ApiProperty()
+    @ApiProperty({
+        type: Number,
+        description: 'Sensor height.'
+    })
     readonly height: number;
 
     @IsString()
     @IsOptional()
-    @ApiProperty()
+    @ApiProperty({
+        type: Number,
+        required: false,
+        description: 'Reference to an external ID.'
+    })
     readonly baseObjectId: string;
 }

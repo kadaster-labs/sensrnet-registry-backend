@@ -4,15 +4,24 @@ import { LocationBody } from '../../../commands/sensor/models/bodies/location-bo
 
 
 export class SensorCreated extends Event {
-  constructor(aggregatedId: string, date: string, nodeId: string, ownerIds: Array<string>, 
-    location: LocationBody, legalBase: string, active: boolean, typeName: string, typeDetails: object) {
+  constructor(aggregatedId: string, nodeId: string, ownerIds: Array<string>, 
+    name: string, location: LocationBody, aim: string, description: string, 
+    manufacturer: string, active: boolean, observationArea: object, 
+    documentationUrl: string, category: string, theme: string, typeName: string, 
+    typeDetails: object) {
     super(`sensor-${aggregatedId}`, EventType.SensorCreated, {
-      date,
       nodeId,
       ownerIds,
+      name,
       location,
-      legalBase,
+      aim,
+      description,
+      manufacturer,
       active,
+      observationArea,
+      documentationUrl,
+      category,
+      theme,
       typeName,
       typeDetails
     });
