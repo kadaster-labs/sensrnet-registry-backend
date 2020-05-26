@@ -1,4 +1,3 @@
-import { connect } from 'mongoose';
 import { Owner } from "../models/owner.model"
 import { EventType } from "../../../events/owner/events/event-type";
 
@@ -10,7 +9,7 @@ export class OwnerEventHandler {
         const eventType = event.eventType;
         const modulePrefixLength = modulePrefix.length;
         const id = event.streamId.substring(modulePrefixLength + 1, event.streamId.length);
-        
+
         if (eventType == EventType.Created) {
             const ownerInstance = new Owner({
                 _id: id,

@@ -25,7 +25,11 @@ export class OwnerQueryModule implements OnModuleInit {
   ) {}
   onModuleInit() {
     const host = process.env.MONGO_HOST || 'localhost';
-    connect('mongodb://' + host + ':27017/owners', { useNewUrlParser: true , useUnifiedTopology: true});
+    const port = process.env.MONGO_PORT || 27017;
+    const database = process.env.MONGO_DATABASE || 'owners';
+
+    const url = 'mongodb://' + host + ':' + port.toString() + '/' + database;
+    connect(url, { useNewUrlParser: true , useUnifiedTopology: true});
 
     this.eventStore.subscribeToStream('$ce-owner', this.ownerEventHandler);
   }

@@ -5,10 +5,10 @@ import { IsString, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
 export class CreateOwnerBody {
  
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
   readonly ssoId: string;
-  
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty()

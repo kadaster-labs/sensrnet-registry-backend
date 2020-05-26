@@ -34,6 +34,8 @@ services:
       - PORT=3000
       - NODE_ID="1"
       - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DATABASE=owners
       - EVENT_STORE_HOSTNAME=eventstore
     links:
       - eventstore
