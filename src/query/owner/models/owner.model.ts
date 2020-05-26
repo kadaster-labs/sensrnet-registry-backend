@@ -4,7 +4,7 @@ import { model, Schema } from 'mongoose';
 export const OwnerSchema = new Schema({
     _id: { type: String, required: true },
     nodeId: { type: String, required: true },
-    ssoId: { type: String, required: false },
+    ssoId: { type: String, required: true },
     email: { type: String, required: true },
     publicName: { type: String, required: false },
     name: { type: String, required: true },

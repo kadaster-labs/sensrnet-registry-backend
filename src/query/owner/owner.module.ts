@@ -1,9 +1,11 @@
 import { connect } from 'mongoose';
+import { OwnerController } from "./owner.controller";
 import { Module, OnModuleInit } from "@nestjs/common";
 import { CqrsModule, EventPublisher } from "@nestjs/cqrs";
-import { OwnerEventHandler } from "./handlers/owner.handler"
+import { OwnerEventHandler } from "./handlers/owner.handler";
 import { EventStoreModule } from "../../event-store/event-store.module";
 import { EventStorePublisher } from "../../event-store/event-store.publisher";
+import { RetrieveOwnerQueryHandler } from "./queries/retrieve.handler";
 
 
 @Module({
@@ -12,9 +14,11 @@ import { EventStorePublisher } from "../../event-store/event-store.publisher";
     EventStoreModule,
     OwnerQueryModule
   ],
+  controllers: [OwnerController],
   providers: [
     EventPublisher,
     OwnerEventHandler,
+    RetrieveOwnerQueryHandler
   ]
 })
 
