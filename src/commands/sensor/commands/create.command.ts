@@ -5,7 +5,7 @@ import { DataStreamBody } from '../models/bodies/datastream-body';
 
 export class CreateSensorCommand implements ICommand {
   constructor(
-    public readonly id: string,
+    public readonly sensorId: string,
     public readonly nodeId: string,
     public readonly ownerIds: Array<string>,
     public readonly name: string,

@@ -3,7 +3,7 @@ import { ICommand } from "@nestjs/cqrs";
 
 export class UpdateSensorCommand implements ICommand {
   constructor(
-    public readonly id: string,
+    public readonly sensorId: string,
     public readonly name: string,
     public readonly aim: string,
     public readonly description: string,

@@ -13,12 +13,12 @@ export class CreateOwnerCommandHandler implements ICommandHandler<CreateOwnerCom
   ) {}
 
   async execute(command: CreateOwnerCommand): Promise<void> {
-    const aggregate = await this.repository.get(command.id);
+    const aggregate = await this.repository.get(command.ownerId);
 
     if (!!aggregate) {
-      throw new OwnerAlreadyExistsException(command.id);
+      throw new OwnerAlreadyExistsException(command.ownerId);
     } else {
-      const ownerAggregate = new OwnerAggregate(command.id);
+      const ownerAggregate = new OwnerAggregate(command.ownerId);
       const aggregate = this.publisher.mergeObjectContext(ownerAggregate);
 
       aggregate.create(command.nodeId, command.ssoId, command.email, command.publicName,

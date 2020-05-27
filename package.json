@@ -33,7 +33,9 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.5",
     "swagger-ui-express": "^4.1.4",
-    "mongoose": "^5.9.15"
+    "mongoose": "^5.9.15",
+    "@nestjs/websockets": "^7.1.0",
+    "@nestjs/platform-socket.io": "^7.1.0"
   },
   "devDependencies": {
     "@nestjs/testing": "^6.8.5",

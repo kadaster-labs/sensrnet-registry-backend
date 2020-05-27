@@ -8,6 +8,7 @@ export class DataStreamCreated extends Event {
     isReusable: boolean, documentationUrl: string, dataLink: string,
     dataFrequency: number, dataQuality: number) {
     super(`sensor-${aggregatedId}`, EventType.DataStreamCreated, {
+      sensorId: aggregatedId,
       dataStreamId,
       name,
       reason,

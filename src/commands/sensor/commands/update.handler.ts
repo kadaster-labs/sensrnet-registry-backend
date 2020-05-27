@@ -12,10 +12,10 @@ export class UpdateSensorCommandHandler implements ICommandHandler<UpdateSensorC
   ) {}
 
   async execute(command: UpdateSensorCommand): Promise<void> {
-    const sensorAggregate = await this.repository.get(command.id);
+    const sensorAggregate = await this.repository.get(command.sensorId);
 
     if (!sensorAggregate) {
-      throw new UnknowSensorException(command.id);
+      throw new UnknowSensorException(command.sensorId);
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);

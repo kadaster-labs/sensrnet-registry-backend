@@ -3,9 +3,9 @@ import { Event } from "../../../event-store/event";
 
 
 export class OwnerDeleted extends Event {
-  constructor(aggregatedId: string, date: string) {
+  constructor(aggregatedId: string) {
     super(`owner-${aggregatedId}`, EventType.Deleted, {
-      date
+      ownerId: aggregatedId
     });
   }
 }

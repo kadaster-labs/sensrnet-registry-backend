@@ -13,10 +13,10 @@ export class UpdateOwnerCommandHandler
   ) {}
 
   async execute(command: UpdateOwnerCommand): Promise<void> {
-    const ownerAggregate = await this.repository.get(command.id);
+    const ownerAggregate = await this.repository.get(command.ownerId);
 
     if (!ownerAggregate) {
-      throw new UnknowOwnerException(command.id);
+      throw new UnknowOwnerException(command.ownerId);
     }
 
     const aggregate = this.publisher.mergeObjectContext(ownerAggregate);

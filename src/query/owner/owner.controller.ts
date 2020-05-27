@@ -10,11 +10,11 @@ import { Controller, Get, Param } from "@nestjs/common";
 export class OwnerController {
   constructor(private readonly queryBus: QueryBus) {}
 
-  @Get(':id')
+  @Get(':ownerId')
   @ApiOperation({ summary: 'Retrieve Owner' })
   @ApiResponse({ status: 200, description: 'Owner retrieved' })
   @ApiResponse({ status: 400, description: 'Owner retrieval failed' })
   async retrieveOwner(@Param() ownerIdParams: OwnerIdParams) {
-    return await this.queryBus.execute(new RetrieveOwnersQuery(ownerIdParams.id));
+    return await this.queryBus.execute(new RetrieveOwnersQuery(ownerIdParams.ownerId));
   }
 }

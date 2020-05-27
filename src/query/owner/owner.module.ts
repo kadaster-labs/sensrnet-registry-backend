@@ -8,6 +8,7 @@ import { RetrieveOwnerQueryHandler } from "./queries/retrieve.handler";
 import { EventType } from "../../events/owner/events/event-type";
 import { OwnerCreatedHandler, OwnerUpdatedHandler, OwnerDeletedHandler  } from './commands';
 import { OwnerCreatedCommand, OwnerUpdatedCommand, OwnerDeletedCommand  } from './commands';
+import { OwnerGateway } from './owner.gateway';
 
 
 @Module({
@@ -19,6 +20,7 @@ import { OwnerCreatedCommand, OwnerUpdatedCommand, OwnerDeletedCommand  } from '
   controllers: [OwnerController],
   providers: [
     EventPublisher,
+    OwnerGateway,
     RetrieveOwnerQueryHandler,
     OwnerCreatedHandler, OwnerUpdatedHandler, OwnerDeletedHandler
   ]
@@ -32,7 +34,7 @@ export class OwnerQueryModule implements OnModuleInit {
   onModuleInit() {
     const host = process.env.MONGO_HOST || 'localhost';
     const port = process.env.MONGO_PORT || 27017;
-    const database = process.env.MONGO_DATABASE || 'owners';
+    const database = process.env.MONGO_DATABASE || 'sensrnet';
 
     const url = 'mongodb://' + host + ':' + port.toString() + '/' + database;
     connect(url, { useNewUrlParser: true , useUnifiedTopology: true});

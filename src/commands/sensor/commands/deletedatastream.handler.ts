@@ -12,14 +12,14 @@ export class DeleteDataStreamCommandHandler implements ICommandHandler<DeleteDat
   ) {}
 
   async execute(command: DeleteDataStreamCommand): Promise<void> {
-    const sensorAggregate = await this.repository.get(command.id);
+    const sensorAggregate = await this.repository.get(command.sensorId);
 
     if (!sensorAggregate) {
-      throw new UnknowSensorException(command.id);
+      throw new UnknowSensorException(command.sensorId);
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.deleteDataStream(command.id, command.dataStreamId);
+    aggregate.deleteDataStream(command.dataStreamId);
     aggregate.commit();
   }
 }

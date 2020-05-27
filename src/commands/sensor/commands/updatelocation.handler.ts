@@ -12,10 +12,10 @@ export class UpdateSensorLocationCommandHandler implements ICommandHandler<Updat
   ) {}
 
   async execute(command: UpdateSensorLocationCommand): Promise<void> {
-    const sensorAggregate = await this.repository.get(command.id);
+    const sensorAggregate = await this.repository.get(command.sensorId);
 
     if (!sensorAggregate) {
-      throw new UnknowSensorException(command.id);
+      throw new UnknowSensorException(command.sensorId);
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);

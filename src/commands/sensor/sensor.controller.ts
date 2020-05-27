@@ -46,97 +46,99 @@ export class OwnerController {
       sensorBody.manufacturer, sensorBody.active, sensorBody.observationArea, 
       sensorBody.documentationUrl, sensorBody.theme, sensorBody.typeName, 
       sensorBody.typeDetails));
+    
+    return {sensorId};
   }
 
-  @Put(':id/details')
+  @Put(':sensorId/details')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update sensor details' })
   @ApiResponse({ status: 200, description: 'Sensor updated' })
   @ApiResponse({ status: 400, description: 'Sensor update failed' })
   async updateSensorDetails(@Param() params: SensorIdParams, @Body() sensorBody: UpdateSensorBody) {
-    return await this.commandBus.execute(new UpdateSensorCommand(params.id, 
+    return await this.commandBus.execute(new UpdateSensorCommand(params.sensorId, 
       sensorBody.name, sensorBody.aim, sensorBody.description, 
       sensorBody.manufacturer, sensorBody.observationArea, sensorBody.documentationUrl, 
       sensorBody.theme, sensorBody.typeName, sensorBody.typeDetails));
   }
 
-  @Put(':id/transfer')
+  @Put(':sensorId/transfer')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Transfer sensor ownership' })
   @ApiResponse({ status: 200, description: 'Sensor ownership transferred' })
   @ApiResponse({ status: 400, description: 'Sensor ownership transfer failed' })
   async transferSensorOwnership(@Param() params: SensorIdParams, @Body() transferOwnershipBody: TransferOwnershipBody) {
-    return await this.commandBus.execute(new TransferSensorOwnershipCommand(params.id,
+    return await this.commandBus.execute(new TransferSensorOwnershipCommand(params.sensorId,
       transferOwnershipBody.oldOwnerId, transferOwnershipBody.newOwnerId));
   }
 
-  @Put(':id/share')
+  @Put(':sensorId/share')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Share sensor ownership' })
   @ApiResponse({ status: 200, description: 'Sensor ownership shared' })
   @ApiResponse({ status: 400, description: 'Sensor ownership sharing failed' })
   async shareSensorOwnership(@Param() params: SensorIdParams, @Body() shareOwnershipBody: ShareOwnershipBody) {
-    return await this.commandBus.execute(new ShareSensorOwnershipCommand(params.id, 
-      shareOwnershipBody.ownerId));
+    return await this.commandBus.execute(new ShareSensorOwnershipCommand(params.sensorId, 
+      shareOwnershipBody.ownerIds));
   }
 
-  @Put(':id/location')
+  @Put(':sensorId/location')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update sensor location' })
   @ApiResponse({ status: 200, description: 'Sensor location updated' })
   @ApiResponse({ status: 400, description: 'Sensor location update failed' })
   async updateSensorLocation(@Param() params: SensorIdParams, @Body() locationBody: LocationBody) {
-    return await this.commandBus.execute(new UpdateSensorLocationCommand(params.id, 
+    return await this.commandBus.execute(new UpdateSensorLocationCommand(params.sensorId, 
       locationBody.x, locationBody.y, locationBody.z, locationBody.epsgCode, locationBody.baseObjectId));
   }
 
-  @Put(':id/activate')
+  @Put(':sensorId/activate')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Activate sensor' })
   @ApiResponse({ status: 200, description: 'Sensor activated' })
   @ApiResponse({ status: 400, description: 'Sensor activation failed' })
   async activateSensor(@Param() params: SensorIdParams) {
-    return await this.commandBus.execute(new ActivateSensorCommand(params.id));
+    return await this.commandBus.execute(new ActivateSensorCommand(params.sensorId));
   }
 
-  @Put(':id/deactivate')
+  @Put(':sensorId/deactivate')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Deactivate sensor' })
   @ApiResponse({ status: 200, description: 'Sensor deactivated' })
   @ApiResponse({ status: 400, description: 'Sensor deactivation failed' })
   async deActivateSensor(@Param() params: SensorIdParams) {
-    return await this.commandBus.execute(new DeactivateSensorCommand(params.id));
+    return await this.commandBus.execute(new DeactivateSensorCommand(params.sensorId));
   }
 
-  @Post(':id/create/datastream')
+  @Post(':sensorId/create/datastream')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Add sensor dataStream' })
   @ApiResponse({ status: 200, description: 'Datastream added to sensor' })
   @ApiResponse({ status: 400, description: 'Datastream addition failed' })
   async addSensorDataStream(@Param() params: SensorIdParams, @Body() dataStreamBody: DataStreamBody) {
     const dataStreamId = uuidv4();
-    return await this.commandBus.execute(new CreateDataStreamCommand(params.id, dataStreamId, 
+    return await this.commandBus.execute(new CreateDataStreamCommand(params.sensorId, dataStreamId, 
       dataStreamBody.name, dataStreamBody.reason, dataStreamBody.description, dataStreamBody.observedProperty, 
       dataStreamBody.unitOfMeasurement, dataStreamBody.isPublic, dataStreamBody.isOpenData, 
       dataStreamBody.isReusable, dataStreamBody.documentationUrl, dataStreamBody.dataLink, 
       dataStreamBody.dataFrequency, dataStreamBody.dataQuality));
   }
 
-  @Delete(':id/delete/datastream/:dataStreamId')
+  @Delete(':sensorId/delete/datastream/:dataStreamId')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Remove sensor dataStream' })
   @ApiResponse({ status: 200, description: 'Datastream removed from sensor' })
   @ApiResponse({ status: 400, description: 'Datastream removal failed' })
   async removeSensorDataStream(@Param() params: DataStreamIdParams) {
-    return await this.commandBus.execute(new DeleteDataStreamCommand(params.id, params.dataStreamId));
+    return await this.commandBus.execute(new DeleteDataStreamCommand(params.sensorId, params.dataStreamId));
   }
 
-  @Delete(':id')
+  @Delete(':sensorId')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Remove sensor' })
   @ApiResponse({ status: 200, description: 'Sensor removed' })
   @ApiResponse({ status: 400, description: 'Sensor removal failed' })
   async removeOwner(@Param() params: SensorIdParams) {
-    return await this.commandBus.execute(new DeleteSensorCommand(params.id));
+    return await this.commandBus.execute(new DeleteSensorCommand(params.sensorId));
   }
 }

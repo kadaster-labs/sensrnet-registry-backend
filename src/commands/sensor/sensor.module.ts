@@ -18,7 +18,7 @@ import { TransferSensorOwnershipCommandHandler } from "./commands/transferowners
 
 @Module({
   controllers: [OwnerController],
-  imports: [CqrsModule, EventStoreModule, SensorModule],
+  imports: [CqrsModule, EventStoreModule, SensorCommandModule],
   providers: [
     EventBus,
     EventStorePublisher,
@@ -37,7 +37,7 @@ import { TransferSensorOwnershipCommandHandler } from "./commands/transferowners
   ]
 })
 
-export class SensorModule implements OnModuleInit {
+export class SensorCommandModule implements OnModuleInit {
   constructor(
     private readonly eventBus: EventBus,
     private readonly eventStore: EventStorePublisher

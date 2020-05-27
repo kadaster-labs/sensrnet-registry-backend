@@ -24,28 +24,29 @@ export class OwnerController {
   @ApiResponse({ status: 200, description: 'Owner registered' })
   @ApiResponse({ status: 400, description: 'Owner registration failed' })
   async createOwner(@Body() ownerBody: CreateOwnerBody) {
-    const id = uuidv4();
-    await this.commandBus.execute(new CreateOwnerCommand(id, NODE_ID, ownerBody.ssoId, ownerBody.email, 
+    const ownerId = uuidv4();
+    await this.commandBus.execute(new CreateOwnerCommand(ownerId, NODE_ID, ownerBody.ssoId, ownerBody.email, 
       ownerBody.publicName, ownerBody.name, ownerBody.companyName, ownerBody.website));
-    return id;
+
+    return {ownerId};
   }
 
-  @Put(':id')
+  @Put(':ownerId')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update owner' })
   @ApiResponse({ status: 200, description: 'Owner updated' })
   @ApiResponse({ status: 400, description: 'Owner update failed' })
   async updateOwner(@Param() params: OwnerIdParams, @Body() ownerBody: UpdateOwnerBody) {
-    return await this.commandBus.execute(new UpdateOwnerCommand(params.id, ownerBody.ssoId, ownerBody.email, 
+    return await this.commandBus.execute(new UpdateOwnerCommand(params.ownerId, ownerBody.ssoId, ownerBody.email, 
       ownerBody.publicName, ownerBody.name, ownerBody.companyName, ownerBody.website));
   }
 
-  @Delete(':id')
+  @Delete(':ownerId')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Remove owner' })
   @ApiResponse({ status: 200, description: 'Owner removed' })
   @ApiResponse({ status: 400, description: 'Owner removal failed' })
   async removeOwner(@Param() params: OwnerIdParams) {
-    return await this.commandBus.execute(new DeleteOwnerCommand(params.id));
+    return await this.commandBus.execute(new DeleteOwnerCommand(params.ownerId));
   }
 }

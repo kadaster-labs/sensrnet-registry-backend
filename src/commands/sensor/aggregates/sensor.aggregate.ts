@@ -45,8 +45,8 @@ export class SensorAggregate extends AggregateRoot {
       unitOfMeasurement, isPublic, isOpenData, isReusable, documentationUrl, dataLink, dataFrequency, dataQuality));
   }
 
-  deleteDataStream(sensorId: string, dataStreamId: string) {
-    this.apply(new DataStreamDeleted(this.aggregateId, sensorId, dataStreamId));
+  deleteDataStream(dataStreamId: string) {
+    this.apply(new DataStreamDeleted(this.aggregateId, dataStreamId));
   }
 
   update(name: string, aim: string, description: string, manufacturer: string, 
@@ -60,8 +60,8 @@ export class SensorAggregate extends AggregateRoot {
     this.apply(new SensorOwnershipTransferred(this.aggregateId, oldOwnerId, newOwnerId));
   }
 
-  shareOwnership(ownerId: string) {
-    this.apply(new SensorOwnershipShared(this.aggregateId, ownerId));
+  shareOwnership(ownerIds: Array<string>) {
+    this.apply(new SensorOwnershipShared(this.aggregateId, ownerIds));
   }
 
   updateLocation(x: number, y: number, z: number, epsgCode: number, baseObjectId: string) {
@@ -91,27 +91,21 @@ export class SensorAggregate extends AggregateRoot {
   }
 
   private onDataStreamCreated(event: DataStreamCreated) {
-    // Called on DataStreamCreated -> Update Database.
   }
 
   private onDataStreamDeleted(event: DataStreamDeleted) {
-    // Called on DataStreamDeleted -> Update Database.
   }
 
   private onUpdated(event: SensorUpdated) {
-    // Called on Updated -> Update Database.
   }
 
   private onOwnershipTransferred(event: SensorOwnershipTransferred) {
-    // Called on OwnershipTransferred -> Update Database.
   }
 
   private onOwnershipShared(event: SensorOwnershipShared) {
-    // Called on OwnershipShared -> Update Database.
   }
 
   private onLocationUpdated(event: SensorLocationUpdated) {
-    // Called on LocationUpdated -> Update Database.
   }
 
   private onActivated(event: SensorActivated) {
@@ -123,7 +117,6 @@ export class SensorAggregate extends AggregateRoot {
   }
 
   private onDeleted(event: SensorDeleted) {
-    // Called on Deleted -> Update Database.
   }
 
   protected getEventName(event): string {

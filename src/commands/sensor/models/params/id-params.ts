@@ -9,7 +9,7 @@ export class SensorIdParams {
     type: String,
     description: 'The sensorId of the sensor.'
   })
-  readonly id: string;
+  readonly sensorId: string;
 }
 
 export class DataStreamIdParams {
@@ -20,7 +20,7 @@ export class DataStreamIdParams {
     type: String,
     description: 'The sensorId of the sensor.'
   })
-  readonly id: string;
+  readonly sensorId: string;
 
   @IsUUID(4)
   @IsNotEmpty()

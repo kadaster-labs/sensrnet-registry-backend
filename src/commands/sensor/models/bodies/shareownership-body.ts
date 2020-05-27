@@ -4,11 +4,12 @@ import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class ShareOwnershipBody {
 
-  @IsUUID(4)
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    description: 'The ownerId of the new co-owner.'
+    isArray: true,
+    description: 'The ownerId(s) of the new co-owner(s).'
   })
-  readonly ownerId: string;
+  @IsUUID(4, {each: true})
+  readonly ownerIds: Array<string>;
 }

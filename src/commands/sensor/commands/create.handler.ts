@@ -13,12 +13,12 @@ export class CreateSensorCommandHandler implements ICommandHandler<CreateSensorC
   ) {}
 
   async execute(command: CreateSensorCommand): Promise<void> {
-    const aggregate = await this.repository.get(command.id);
+    const aggregate = await this.repository.get(command.sensorId);
 
     if (!!aggregate) {
-      throw new SensorAlreadyExistsException(command.id);
+      throw new SensorAlreadyExistsException(command.sensorId);
     } else {
-      const sensorAggregate = new SensorAggregate(command.id);
+      const sensorAggregate = new SensorAggregate(command.sensorId);
       const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
 
       aggregate.create(command.nodeId, command.ownerIds,

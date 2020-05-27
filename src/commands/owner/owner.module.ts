@@ -11,7 +11,7 @@ import { EventStorePublisher } from "../../event-store/event-store.publisher";
 
 @Module({
   controllers: [OwnerController],
-  imports: [CqrsModule, EventStoreModule, OwnerModule],
+  imports: [CqrsModule, EventStoreModule, OwnerCommandModule],
   providers: [
     EventBus,
     EventStorePublisher,
@@ -23,7 +23,7 @@ import { EventStorePublisher } from "../../event-store/event-store.publisher";
   ]
 })
 
-export class OwnerModule implements OnModuleInit {
+export class OwnerCommandModule implements OnModuleInit {
   constructor(
     private readonly eventBus: EventBus,
     private readonly eventStore: EventStorePublisher

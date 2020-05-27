@@ -10,6 +10,7 @@ export class SensorCreated extends Event {
     documentationUrl: string, theme: Array<string>, typeName: string, 
     typeDetails: object) {
     super(`sensor-${aggregatedId}`, EventType.SensorCreated, {
+      sensorId: aggregatedId,
       nodeId,
       ownerIds,
       name,

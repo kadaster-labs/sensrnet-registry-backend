@@ -7,5 +7,5 @@ export class OwnerIdParams {
   @IsUUID(4)
   @IsNotEmpty()
   @ApiProperty()
-  readonly id!: string;
+  readonly ownerId: string;
 }
