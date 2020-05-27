@@ -54,7 +54,7 @@ export class UpdateSensorBody {
   @IsOptional()
   @ApiProperty({
       type: String,
-      required: false,        
+      required: false,
       description: 'A link to sensor documentation.'
   })
   readonly documentationUrl: string;
@@ -65,15 +65,16 @@ export class UpdateSensorBody {
       type: String,
       isArray: true,
       required: false,
-      enum: Theme,  
+      enum: Theme,
       description: 'The sensor theme.'
   })
   readonly theme: Array<string>;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
-    type: String,     
+    type: String,
+    required: false,
     description: 'The type of sensor.'
   })
   readonly typeName: string;
@@ -81,7 +82,8 @@ export class UpdateSensorBody {
   @IsObject()
   @IsOptional()
   @ApiProperty({
-    type: Object,     
+    type: Object,
+    required: false,  
     description: 'Type-specific characteristics of the sensor.'
   })
   readonly typeDetails: object;
