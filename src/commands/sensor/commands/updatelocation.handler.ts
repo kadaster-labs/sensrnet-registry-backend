@@ -19,7 +19,7 @@ export class UpdateSensorLocationCommandHandler implements ICommandHandler<Updat
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.updateLocation(command.lat, command.lon, command.height, command.baseObjectId);
+    aggregate.updateLocation(command.x, command.y, command.z, command.epsgCode, command.baseObjectId);
     aggregate.commit();
   }
 }

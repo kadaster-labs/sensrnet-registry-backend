@@ -8,30 +8,38 @@ export class LocationBody {
     @IsNotEmpty()
     @ApiProperty({
         type: Number,
-        description: 'Sensor latitude.'
+        description: 'Sensor x coordinate.'
     })
-    readonly lat: number;
+    readonly x: number;
 
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty({
         type: Number,
-        description: 'Sensor longitude.'
+        description: 'Sensor y coordinate.'
     })
-    readonly lon: number;
+    readonly y: number;
 
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty({
         type: Number,
-        description: 'Sensor height.'
+        description: 'Sensor z coordinate.'
     })
-    readonly height: number;
+    readonly z: number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    @ApiProperty({
+        type: Number,
+        description: 'The EPSG code of the coordinate.'
+    })
+    readonly epsgCode: number;
 
     @IsString()
     @IsOptional()
     @ApiProperty({
-        type: Number,
+        type: String,
         required: false,
         description: 'Reference to an external ID.'
     })

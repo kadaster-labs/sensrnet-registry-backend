@@ -3,12 +3,13 @@ import { Event } from "../../../event-store/event";
 
 
 export class SensorLocationUpdated extends Event {
-  constructor(aggregatedId: string, lon: number, lat: number, height: number, 
+  constructor(aggregatedId: string, x: number, y: number, z: number, epsgCode: number, 
     baseObjectId: string) {
     super(`sensor-${aggregatedId}`, EventType.LocationUpdated, {
-      lon,
-      lat,
-      height,
+      x,
+      y,
+      z,
+      epsgCode,
       baseObjectId
     });
   }

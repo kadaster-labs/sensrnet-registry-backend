@@ -8,10 +8,11 @@ import { IsString, IsNotEmpty, IsBoolean, IsUUID, IsObject, IsArray, IsUrl,
 
 export class CreateSensorBody {
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     type: String,
     isArray: true,
+    required: false,
     description: 'Owner IDs.'
   })
   @IsUUID(4, {each: true})

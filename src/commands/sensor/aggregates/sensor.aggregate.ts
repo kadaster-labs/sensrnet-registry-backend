@@ -63,8 +63,8 @@ export class SensorAggregate extends AggregateRoot {
     this.apply(new SensorOwnershipShared(this.aggregateId, ownerId));
   }
 
-  updateLocation(lat: number, lon: number, height: number, baseObjectId: string) {
-    this.apply(new SensorLocationUpdated(this.aggregateId, lat, lon, height, baseObjectId));
+  updateLocation(x: number, y: number, z: number, epsgCode: number, baseObjectId: string) {
+    this.apply(new SensorLocationUpdated(this.aggregateId, x, y, z, epsgCode, baseObjectId));
   }
 
   activate() {

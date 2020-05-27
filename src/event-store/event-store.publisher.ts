@@ -18,7 +18,7 @@ export class EventStorePublisher implements IEventPublisher {
     }
   }
 
-  async subscribeToStream(streamName: string, eventRouter) {
-    return await this.eventStore.subscribeToStream(streamName, eventRouter.onEventAppeared, eventRouter.onDropped);
+  async subscribeToStream(streamName: string, onEvent, onDropped) {
+    return await this.eventStore.subscribeToStream(streamName, onEvent, onDropped);
   }
 }

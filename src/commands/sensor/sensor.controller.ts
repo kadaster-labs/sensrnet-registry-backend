@@ -87,7 +87,7 @@ export class OwnerController {
   @ApiResponse({ status: 400, description: 'Sensor location update failed' })
   async updateSensorLocation(@Param() params: SensorIdParams, @Body() locationBody: LocationBody) {
     return await this.commandBus.execute(new UpdateSensorLocationCommand(params.id, 
-      locationBody.lat, locationBody.lon, locationBody.height, locationBody.baseObjectId));
+      locationBody.x, locationBody.y, locationBody.z, locationBody.epsgCode, locationBody.baseObjectId));
   }
 
   @Put(':id/activate')
