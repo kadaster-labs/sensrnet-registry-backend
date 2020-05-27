@@ -20,7 +20,7 @@ export class UpdateSensorCommandHandler implements ICommandHandler<UpdateSensorC
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
     aggregate.update(command.name, command.aim, command.description, command.manufacturer, 
-      command.observationArea, command.documentationUrl, command.category, command.theme,
+      command.observationArea, command.documentationUrl, command.theme,
       command.typeName, command.typeDetails);
     aggregate.commit();
   }

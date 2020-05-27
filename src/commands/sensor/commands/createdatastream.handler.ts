@@ -19,8 +19,8 @@ export class CreateDataStreamCommandHandler implements ICommandHandler<CreateDat
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.createDataStream(command.dataStreamId, command.name, command.description, 
-      command.unitOfMeasurement, command.isPublic, command.isOpenData, command.isReusable, 
+    aggregate.createDataStream(command.dataStreamId, command.name, command.reason, command.description, 
+      command.observedProperty, command.unitOfMeasurement, command.isPublic, command.isOpenData, command.isReusable, 
       command.documentationUrl, command.dataLink, command.dataFrequency, command.dataQuality);
     aggregate.commit();
   }

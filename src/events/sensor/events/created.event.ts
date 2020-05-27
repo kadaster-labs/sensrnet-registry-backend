@@ -7,7 +7,7 @@ export class SensorCreated extends Event {
   constructor(aggregatedId: string, nodeId: string, ownerIds: Array<string>, 
     name: string, location: LocationBody, aim: string, description: string, 
     manufacturer: string, active: boolean, observationArea: object, 
-    documentationUrl: string, category: string, theme: string, typeName: string, 
+    documentationUrl: string, theme: Array<string>, typeName: string, 
     typeDetails: object) {
     super(`sensor-${aggregatedId}`, EventType.SensorCreated, {
       nodeId,
@@ -20,7 +20,6 @@ export class SensorCreated extends Event {
       active,
       observationArea,
       documentationUrl,
-      category,
       theme,
       typeName,
       typeDetails

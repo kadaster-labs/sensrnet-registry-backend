@@ -24,24 +24,25 @@ export class SensorAggregate extends AggregateRoot {
 
   create(nodeId: string, ownerIds: Array<string>, name: string, location: LocationBody, 
     dataStreams: Array<DataStreamBody>, aim: string, description: string, manufacturer: string, 
-    active: boolean, observationArea: object, documentationUrl: string, category: string, theme: string,
+    active: boolean, observationArea: object, documentationUrl: string, theme: Array<string>,
     typeName: string, typeDetails: object) {
     this.apply(new SensorCreated(this.aggregateId, nodeId, ownerIds, name, location, 
       aim, description, manufacturer, active, observationArea, documentationUrl, 
-      category, theme, typeName, typeDetails));
+      theme, typeName, typeDetails));
 
     for (const dataStream of dataStreams) {
-      this.apply(new DataStreamCreated(this.aggregateId, dataStream.id, dataStream.name, dataStream.description,
-        dataStream.unitOfMeasurement, dataStream.isPublic, dataStream.isOpenData, dataStream.isReusable,
-        dataStream.documentationUrl, dataStream.dataLink, dataStream.dataFrequency, dataStream.dataQuality));
+      this.createDataStream(dataStream.dataStreamId, dataStream.name, dataStream.reason, dataStream.description,
+        dataStream.observedProperty, dataStream.unitOfMeasurement, dataStream.isPublic, dataStream.isOpenData, 
+        dataStream.isReusable, dataStream.documentationUrl, dataStream.dataLink, dataStream.dataFrequency, 
+        dataStream.dataQuality);
     }
   }
 
-  createDataStream(dataStreamId: string, name: string, description: string, unitOfMeasurement: string,
-    isPublic: boolean, isOpenData: boolean, isReusable: boolean, documentationUrl: string,
+  createDataStream(dataStreamId: string, name: string, reason: string, description: string, observedProperty: string, 
+    unitOfMeasurement: string, isPublic: boolean, isOpenData: boolean, isReusable: boolean, documentationUrl: string,
     dataLink: string, dataFrequency: number, dataQuality: number) {
-    this.apply(new DataStreamCreated(this.aggregateId, dataStreamId, name, description, unitOfMeasurement, 
-      isPublic, isOpenData, isReusable, documentationUrl, dataLink, dataFrequency, dataQuality));
+    this.apply(new DataStreamCreated(this.aggregateId, dataStreamId, name, reason, description, observedProperty, 
+      unitOfMeasurement, isPublic, isOpenData, isReusable, documentationUrl, dataLink, dataFrequency, dataQuality));
   }
 
   deleteDataStream(sensorId: string, dataStreamId: string) {
@@ -49,10 +50,10 @@ export class SensorAggregate extends AggregateRoot {
   }
 
   update(name: string, aim: string, description: string, manufacturer: string, 
-    observationArea: object, documentationUrl: string, category: string, theme: string,
+    observationArea: object, documentationUrl: string, theme: Array<string>,
     typeName: string, typeDetails: object) {
     this.apply(new SensorUpdated(this.aggregateId, name, aim, description, manufacturer, 
-      observationArea, documentationUrl, category, theme, typeName, typeDetails));
+      observationArea, documentationUrl, theme, typeName, typeDetails));
   }
 
   transferOwnership(oldOwnerId: string, newOwnerId: string) {

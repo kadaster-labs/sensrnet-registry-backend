@@ -7,7 +7,7 @@ export class DataStreamBody {
 
     @IsUUID(4)
     @IsOptional()
-    id: string;
+    dataStreamId: string;
 
     @IsString()
     @IsNotEmpty()
@@ -22,9 +22,27 @@ export class DataStreamBody {
     @ApiProperty({
         type: String,
         required: false,
+        description: 'Reason for the DataStream.'
+    })
+    readonly reason: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty({
+        type: String,
+        required: false,
         description: 'DataStream description.'
     })
     readonly description: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty({
+        type: String,
+        required: false,
+        description: 'The property the DataStream observes (e.g. temperature).'
+    })
+    readonly observedProperty: string;
 
     @IsString()
     @IsOptional()
@@ -51,7 +69,7 @@ export class DataStreamBody {
         type: Boolean,
         default: true,
         required: false,        
-        description: 'Whether the DataStream is open data.'
+        description: 'Whether the DataStream is considered open data.'
     })
     readonly isOpenData: boolean;
 

@@ -37,15 +37,15 @@ export class OwnerController {
   async createOwner(@Body() sensorBody: CreateSensorBody) {
     const sensorId = uuidv4();
     for (const dataStream of sensorBody.dataStreams) {
-      dataStream.id = uuidv4();
+      dataStream.dataStreamId = uuidv4();
     }
 
     await this.commandBus.execute(new CreateSensorCommand(sensorId, NODE_ID,
       sensorBody.ownerIds, sensorBody.name, sensorBody.location,
       sensorBody.dataStreams, sensorBody.aim, sensorBody.description, 
       sensorBody.manufacturer, sensorBody.active, sensorBody.observationArea, 
-      sensorBody.documentationUrl, sensorBody.category, sensorBody.theme, 
-      sensorBody.typeName, sensorBody.typeDetails));
+      sensorBody.documentationUrl, sensorBody.theme, sensorBody.typeName, 
+      sensorBody.typeDetails));
   }
 
   @Put(':id/details')
@@ -57,7 +57,7 @@ export class OwnerController {
     return await this.commandBus.execute(new UpdateSensorCommand(params.id, 
       sensorBody.name, sensorBody.aim, sensorBody.description, 
       sensorBody.manufacturer, sensorBody.observationArea, sensorBody.documentationUrl, 
-      sensorBody.category, sensorBody.theme, sensorBody.typeName, sensorBody.typeDetails));
+      sensorBody.theme, sensorBody.typeName, sensorBody.typeDetails));
   }
 
   @Put(':id/transfer')
@@ -116,9 +116,10 @@ export class OwnerController {
   async addSensorDataStream(@Param() params: SensorIdParams, @Body() dataStreamBody: DataStreamBody) {
     const dataStreamId = uuidv4();
     return await this.commandBus.execute(new CreateDataStreamCommand(params.id, dataStreamId, 
-      dataStreamBody.name, dataStreamBody.description, dataStreamBody.unitOfMeasurement, dataStreamBody.isPublic, 
-      dataStreamBody.isOpenData, dataStreamBody.isReusable, dataStreamBody.documentationUrl,
-      dataStreamBody.dataLink, dataStreamBody.dataFrequency, dataStreamBody.dataQuality));
+      dataStreamBody.name, dataStreamBody.reason, dataStreamBody.description, dataStreamBody.observedProperty, 
+      dataStreamBody.unitOfMeasurement, dataStreamBody.isPublic, dataStreamBody.isOpenData, 
+      dataStreamBody.isReusable, dataStreamBody.documentationUrl, dataStreamBody.dataLink, 
+      dataStreamBody.dataFrequency, dataStreamBody.dataQuality));
   }
 
   @Delete(':id/delete/datastream/:dataStreamId')

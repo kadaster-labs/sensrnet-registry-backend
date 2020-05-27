@@ -1,12 +1,13 @@
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { LocationBody } from './location-body';
+import { Theme } from './theme-body';
 import { DataStreamBody } from './datastream-body';
 import { IsString, IsNotEmpty, IsBoolean, IsUUID, IsObject, IsArray, IsUrl, 
   ValidateNested, IsOptional } from 'class-validator';
 
 
-export class CreateSensorBody {
+  export class CreateSensorBody {
 
   @IsOptional()
   @ApiProperty({
@@ -99,23 +100,16 @@ export class CreateSensorBody {
   })
   readonly documentationUrl: string;
 
-  @IsString()
+  @IsArray()
   @IsOptional()
   @ApiProperty({
       type: String,
-      required: false,        
-      description: 'The category of the sensor.'
+      isArray: true,
+      required: false,
+      enum: Theme,  
+      description: 'The sensor theme.'
   })
-  readonly category: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-      type: String,
-      required: false,        
-      description: 'The theme of the sensor.'
-  })
-  readonly theme: string;
+  readonly theme: Array<string>;
 
   @IsString()
   @IsNotEmpty()

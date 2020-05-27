@@ -1,5 +1,6 @@
+import { Theme } from './theme-body';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUrl, IsNotEmpty, IsObject, IsOptional } from 'class-validator';
+import { IsString, IsUrl, IsNotEmpty, IsObject, IsOptional, IsArray } from 'class-validator';
 
 
 export class UpdateSensorBody {
@@ -58,23 +59,16 @@ export class UpdateSensorBody {
   })
   readonly documentationUrl: string;
 
-  @IsString()
+  @IsArray()
   @IsOptional()
   @ApiProperty({
       type: String,
-      required: false,        
-      description: 'The category of the sensor.'
+      isArray: true,
+      required: false,
+      enum: Theme,  
+      description: 'The sensor theme.'
   })
-  readonly category: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-      type: String,
-      required: false,        
-      description: 'The theme of the sensor.'
-  })
-  readonly theme: string;
+  readonly theme: Array<string>;
 
   @IsString()
   @IsNotEmpty()

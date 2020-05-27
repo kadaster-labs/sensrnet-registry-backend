@@ -25,7 +25,7 @@ export class CreateSensorCommandHandler implements ICommandHandler<CreateSensorC
         command.name, command.location, command.dataStreams,
         command.aim, command.description, command.manufacturer,
         command.active, command.observationArea, command.documentationUrl,
-        command.category, command.theme, command.typeName, command.typeDetails);
+        command.theme, command.typeName, command.typeDetails);
       aggregate.commit();
     }
   }

@@ -17,8 +17,7 @@ export class CreateSensorCommand implements ICommand {
     public readonly active: boolean,
     public readonly observationArea: object,
     public readonly documentationUrl: string,
-    public readonly category: string,
-    public readonly theme: string,
+    public readonly theme: Array<string>,
     public readonly typeName: string,
     public readonly typeDetails: object
     ) {}
