@@ -5,7 +5,6 @@ import { CqrsModule, EventPublisher } from "@nestjs/cqrs";
 import { EventStoreModule } from "../../event-store/event-store.module";
 import { EventStorePublisher } from "../../event-store/event-store.publisher";
 import { RetrieveOwnerQueryHandler } from "./queries/retrieve.handler";
-import { EventType } from "../../events/owner/events/event-type";
 import { OwnerProcessor } from './processors';
 
 

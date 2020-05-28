@@ -1,16 +1,15 @@
 import { Owner } from "../models/owner.model";
 import { plainToClass } from "class-transformer";
 import { Injectable, Logger } from "@nestjs/common";
-import { OwnerCreated, OwnerUpdated, OwnerDeleted }  from "src/events/owner/events";
+import { OwnerCreated, OwnerUpdated, OwnerDeleted, eventType }  from "src/events/owner/events";
 
 
 @Injectable()
 export class OwnerProcessor {
 
     async process(event): Promise<void> {
-        for (const ownerEvent of [OwnerCreated, OwnerUpdated, OwnerDeleted]) {
-            if (event.eventType == ownerEvent.eventType) event = plainToClass(ownerEvent, event)
-        }
+
+        event = plainToClass(eventType.getType(event.eventType), event);
 
         if (event instanceof OwnerCreated) {
             this.processCreated(event);
@@ -18,6 +17,9 @@ export class OwnerProcessor {
             this.processUpdated(event);
         } else if (event instanceof OwnerDeleted) {
             this.processDeleted(event);
+        }
+        else {
+            Logger.warn(`Caught unsupported event: ${event}`)
         }
     }
 
