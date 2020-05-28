@@ -1,13 +1,11 @@
-import { EventType } from "./event-type";
 import { Event } from "../../../event-store/event";
 
-
 export class DataStreamCreated extends Event {
-  constructor(aggregatedId: string, dataStreamId: string, name: string, reason: string, description: string, 
-    observedProperty: string, unitOfMeasurement: string, isPublic: boolean, isOpenData: boolean, 
+  constructor(aggregatedId: string, dataStreamId: string, name: string, reason: string, description: string,
+    observedProperty: string, unitOfMeasurement: string, isPublic: boolean, isOpenData: boolean,
     isReusable: boolean, documentationUrl: string, dataLink: string,
     dataFrequency: number, dataQuality: number) {
-    super(`sensor-${aggregatedId}`, EventType.DataStreamCreated, {
+    super(`sensor-${aggregatedId}`, DataStreamCreated.name, {
       sensorId: aggregatedId,
       dataStreamId,
       name,

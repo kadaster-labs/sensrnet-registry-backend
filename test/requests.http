@@ -12,4 +12,4 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3000/owner/0ce82a3a-cc03-4292-a4d7-1059a6fa5332
+GET http://localhost:3000/owner/abde4a4f-da50-493c-9f5a-4621a3aa2b6d
