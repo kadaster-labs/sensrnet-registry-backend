@@ -1,0 +1,15 @@
+POST http://localhost:3000/owner HTTP/1.1
+Content-Type: application/json
+
+{
+  "ssoId": "azure-id",
+  "email": "me@comp.nl",
+  "publicName": "me",
+  "name": "me",
+  "companyName": "comp",
+  "website": "comp.nl"
+}
+
+###
+
+GET http://localhost:3000/owner/0ce82a3a-cc03-4292-a4d7-1059a6fa5332
