@@ -11,6 +11,13 @@ services:
       - EVENTSTORE_START_STANDARD_PROJECTIONS=true
     networks:
       - backend
+  
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    networks:
+      - backend
 
   nodejs-cqrs:
     build:
@@ -20,11 +27,17 @@ services:
       replicas: 1
     depends_on:
       - eventstore
+      - mongo
     ports:
       - 3000:3000
     environment:
       - PORT=3000
-      - NODE_ID="1"
+      - NODE_ID=node_1
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DATABASE=sensrnet
+      - EVENT_STORE_PORT=1113
+      - EVENT_STORE_HOST=eventstore
     links:
       - eventstore
     networks:

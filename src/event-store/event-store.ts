@@ -33,4 +33,8 @@ export class EventStore {
   async getEvents(streamName: string) {
     return await this.client.getAllStreamEvents(streamName);
   }
+
+  async subscribeToStream(streamName: string, onEventAppeared, onDropped) {
+    return await this.client.subscribeToStream(streamName, onEventAppeared, onDropped, true);
+  }
 }

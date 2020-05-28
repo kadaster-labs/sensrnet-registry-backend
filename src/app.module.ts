@@ -1,10 +1,17 @@
 import { Module } from "@nestjs/common";
-import { OwnerModule } from "./owner/owner.module";
-import { SensorModule } from "./sensor/sensor.module";
+import { OwnerCommandModule } from "./commands/owner/owner.module";
+import { SensorCommandModule } from "./commands/sensor/sensor.module";
+import { OwnerQueryModule } from "./query/owner/owner.module";
+import { SensorQueryModule } from "./query/sensor/sensor.module";
 
 
 @Module({
-  imports: [OwnerModule, SensorModule]
+  imports: [
+    OwnerCommandModule,
+    SensorCommandModule,
+    OwnerQueryModule,
+    SensorQueryModule,
+  ]
 })
 
 export class AppModule {}
