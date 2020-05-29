@@ -1,11 +1,11 @@
-import { OwnerCreated } from "./created.event"
+import { OwnerRegistered } from "./registered.event"
 import { OwnerUpdated } from "./updated.event"
 import { OwnerDeleted } from "./deleted.event"
 import { Logger } from "@nestjs/common"
 
 class EventType {
   constructor() {
-    this.add(OwnerCreated)
+    this.add(OwnerRegistered)
     this.add(OwnerUpdated)
     this.add(OwnerDeleted)
   }

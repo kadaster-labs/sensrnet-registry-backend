@@ -1,10 +1,10 @@
 import { Event } from "../../../event-store/event";
 
-export class OwnerCreated extends Event {
+export class OwnerRegistered extends Event {
 
   constructor(aggregatedId: string, nodeId: string, ssoId: string, email: string, publicName: string,
     name: string, companyName: string, website: string) {
-    super(`owner-${aggregatedId}`, OwnerCreated.name, {
+    super(`owner-${aggregatedId}`, OwnerRegistered.name, {
       ownerId: aggregatedId,
       nodeId,
       ssoId,

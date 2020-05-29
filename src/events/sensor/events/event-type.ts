@@ -1,42 +1,29 @@
-// export enum EventType {
-//   Updated = "Updated",
-//   Deleted = "Deleted",
-//   Activated = "Activated",
-//   Deactivated = "Deactivated",
-//   SensorCreated = "SensorCreated",
-//   OwnershipShared = "OwnershipShared",
-//   LocationUpdated = "LocationUpdated",
-//   DataStreamCreated = "DataStreamCreated",
-//   DataStreamDeleted = "DataStreamDeleted",
-//   OwnershipTransferred = "OwnershipTransferred"  
-// }
-
 import {
-  SensorCreated,
+  SensorRegistered,
   SensorUpdated,
   SensorDeleted,
   SensorActivated,
   SensorDeactivated,
   SensorOwnershipShared,
   SensorOwnershipTransferred,
-  DataStreamCreated,
-  DataStreamDeleted,
-  SensorLocationUpdated
+  DatastreamAdded,
+  DatastreamDeleted,
+  SensorRelocated
 } from '.';
 import { Logger } from "@nestjs/common"
 
 class EventType {
   constructor() {
-    this.add(SensorCreated)
+    this.add(SensorRegistered)
     this.add(SensorUpdated)
     this.add(SensorDeleted)
     this.add(SensorActivated)
     this.add(SensorDeactivated)
-    this.add(SensorLocationUpdated)
+    this.add(SensorRelocated)
     this.add(SensorOwnershipShared)
     this.add(SensorOwnershipTransferred)
-    this.add(DataStreamCreated)
-    this.add(DataStreamDeleted)
+    this.add(DatastreamAdded)
+    this.add(DatastreamDeleted)
   }
 
   private supportedTypes: { [key: string]: any; } = {}

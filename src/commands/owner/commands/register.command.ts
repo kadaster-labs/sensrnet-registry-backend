@@ -1,7 +1,7 @@
 import { ICommand } from "@nestjs/cqrs";
 
 
-export class CreateOwnerCommand implements ICommand {
+export class RegisterOwnerCommand implements ICommand {
   constructor(
     public readonly ownerId: string,
     public readonly nodeId: string,

@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { CommandBus } from "@nestjs/cqrs";
 import { OwnerIdParams } from "./models/params/id-params";
-import { CreateOwnerBody } from "./models/bodies/create-body";
+import { RegisterOwnerBody } from "./models/bodies/register-body";
 import { UpdateOwnerBody } from "./models/bodies/update-body";
-import { CreateOwnerCommand } from "./commands/create.command";
+import { RegisterOwnerCommand } from "./commands/register.command";
 import { UpdateOwnerCommand } from "./commands/update.command";
 import { DeleteOwnerCommand } from "./commands/delete.command";
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
@@ -23,9 +23,9 @@ export class OwnerController {
   @ApiOperation({ summary: 'Owner registered' })
   @ApiResponse({ status: 200, description: 'Owner registered' })
   @ApiResponse({ status: 400, description: 'Owner registration failed' })
-  async createOwner(@Body() ownerBody: CreateOwnerBody) {
+  async createOwner(@Body() ownerBody: RegisterOwnerBody) {
     const ownerId = uuidv4();
-    await this.commandBus.execute(new CreateOwnerCommand(ownerId, NODE_ID, ownerBody.ssoId, ownerBody.email, 
+    await this.commandBus.execute(new RegisterOwnerCommand(ownerId, NODE_ID, ownerBody.ssoId, ownerBody.email, 
       ownerBody.publicName, ownerBody.name, ownerBody.companyName, ownerBody.website));
 
     return {ownerId};

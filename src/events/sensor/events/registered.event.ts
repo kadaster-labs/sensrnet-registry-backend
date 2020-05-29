@@ -1,13 +1,13 @@
 import { Event } from "../../../event-store/event";
 import { LocationBody } from '../../../commands/sensor/models/bodies/location-body';
 
-export class SensorCreated extends Event {
+export class SensorRegistered extends Event {
   constructor(aggregatedId: string, nodeId: string, ownerIds: Array<string>,
     name: string, location: LocationBody, aim: string, description: string,
     manufacturer: string, active: boolean, observationArea: object,
     documentationUrl: string, theme: Array<string>, typeName: string,
     typeDetails: object) {
-    super(`sensor-${aggregatedId}`, SensorCreated.name, {
+    super(`sensor-${aggregatedId}`, SensorRegistered.name, {
       sensorId: aggregatedId,
       nodeId,
       ownerIds,

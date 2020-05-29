@@ -1,6 +1,6 @@
 import { AggregateRoot } from "@nestjs/cqrs";
 import { isValidEvent } from "../../../event-store/event-utils";
-import { OwnerCreated } from "../../../events/owner/events/created.event";
+import { OwnerRegistered } from "../../../events/owner/events/registered.event";
 import { OwnerDeleted } from "../../../events/owner/events/deleted.event";
 import { OwnerUpdated } from "../../../events/owner/events/updated.event";
 
@@ -12,9 +12,9 @@ export class OwnerAggregate extends AggregateRoot {
     super();
   }
 
-  create(nodeId: string, ssoId: string, email: string, publicName: string, name: string,
+  register(nodeId: string, ssoId: string, email: string, publicName: string, name: string,
     companyName: string, website: string) {
-    this.apply(new OwnerCreated(this.aggregateId, nodeId, ssoId, email, publicName, 
+    this.apply(new OwnerRegistered(this.aggregateId, nodeId, ssoId, email, publicName, 
       name, companyName, website));
   }
 
@@ -28,7 +28,7 @@ export class OwnerAggregate extends AggregateRoot {
     this.apply(new OwnerDeleted(this.aggregateId));
   }
 
-  private onCreated(event: OwnerCreated) {
+  private onRegistered(event: OwnerRegistered) {
     this.state = new OwnerStateImpl(this.aggregateId);
 
     this.state.nodeIds.push(event.data["nodeId"]);

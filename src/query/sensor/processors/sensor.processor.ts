@@ -2,16 +2,16 @@ import { plainToClass } from "class-transformer";
 import { Injectable, Logger } from "@nestjs/common";
 import {
     eventType,
-    SensorCreated,
+    SensorRegistered,
     SensorUpdated,
     SensorDeleted,
     SensorActivated,
     SensorDeactivated,
     SensorOwnershipShared,
     SensorOwnershipTransferred,
-    DataStreamCreated,
-    DataStreamDeleted,
-    SensorLocationUpdated
+    DatastreamAdded,
+    DatastreamDeleted,
+    SensorRelocated
 } from "src/events/sensor/events";
 import { Sensor } from "../models/sensor.model";
 
@@ -23,7 +23,7 @@ export class SensorProcessor {
 
         event = plainToClass(eventType.getType(event.eventType), event);
 
-        if (event instanceof SensorCreated) {
+        if (event instanceof SensorRegistered) {
             this.processCreated(event);
         }
         else if (event instanceof SensorUpdated) {
@@ -44,20 +44,20 @@ export class SensorProcessor {
         else if (event instanceof SensorOwnershipTransferred) {
             this.processOwnershipTransferred(event);
         }
-        else if (event instanceof DataStreamCreated) {
+        else if (event instanceof DatastreamAdded) {
             this.processDataStreamCreated(event);
         }
-        else if (event instanceof DataStreamDeleted) {
+        else if (event instanceof DatastreamDeleted) {
             this.processDataStreamDeleted(event);
         }
-        else if (event instanceof SensorLocationUpdated) {
+        else if (event instanceof SensorRelocated) {
             this.processLocationUpdated(event);
         }
         else {
             Logger.warn(`Caught unsupported event: ${event}`)
         }
     }
-    async processCreated(event: SensorCreated): Promise<void> {
+    async processCreated(event: SensorRegistered): Promise<void> {
         const sensorData = {
             _id: event.data["sensorId"],
             nodeId: event.data["nodeId"],
@@ -158,7 +158,7 @@ export class SensorProcessor {
         });
     }
 
-    async processDataStreamCreated(event: DataStreamCreated): Promise<void> {
+    async processDataStreamCreated(event: DatastreamAdded): Promise<void> {
         const dataStreamData = {
             dataStreamId: event.data["dataStreamId"],
             name: event.data["name"],
@@ -187,7 +187,7 @@ export class SensorProcessor {
         });
     }
 
-    async processDataStreamDeleted(event: DataStreamDeleted): Promise<void> {
+    async processDataStreamDeleted(event: DatastreamDeleted): Promise<void> {
         const sensorData = {
             $pull: {
                 'dataStreams': {
@@ -201,7 +201,7 @@ export class SensorProcessor {
         });
     }
 
-    async processLocationUpdated(event: SensorLocationUpdated): Promise<void> {
+    async processLocationUpdated(event: SensorRelocated): Promise<void> {
         const sensorData = {
             location: {
                 x: event.data["x"],

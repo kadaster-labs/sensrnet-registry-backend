@@ -1,7 +1,7 @@
 import { Owner } from "../models/owner.model";
 import { plainToClass } from "class-transformer";
 import { Injectable, Logger } from "@nestjs/common";
-import { OwnerCreated, OwnerUpdated, OwnerDeleted, eventType }  from "src/events/owner/events";
+import { OwnerRegistered, OwnerUpdated, OwnerDeleted, eventType }  from "src/events/owner/events";
 
 
 @Injectable()
@@ -11,7 +11,7 @@ export class OwnerProcessor {
 
         event = plainToClass(eventType.getType(event.eventType), event);
 
-        if (event instanceof OwnerCreated) {
+        if (event instanceof OwnerRegistered) {
             this.processCreated(event);
         } else if (event instanceof OwnerUpdated) {
             this.processUpdated(event);
@@ -23,7 +23,7 @@ export class OwnerProcessor {
         }
     }
 
-    async processCreated(event: OwnerCreated): Promise<void> {
+    async processCreated(event: OwnerRegistered): Promise<void> {
         const ownerInstance = new Owner({
             _id: event.data["ownerId"],
             nodeId: event.data["nodeId"],

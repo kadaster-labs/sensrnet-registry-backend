@@ -7,7 +7,7 @@ import { IsString, IsNotEmpty, IsBoolean, IsUUID, IsObject, IsArray, IsUrl,
   ValidateNested, IsOptional } from 'class-validator';
 
 
-  export class CreateSensorBody {
+  export class RegisterSensorBody {
 
   @IsOptional()
   @ApiProperty({

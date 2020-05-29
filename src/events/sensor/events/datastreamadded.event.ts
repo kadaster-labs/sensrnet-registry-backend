@@ -1,11 +1,11 @@
 import { Event } from "../../../event-store/event";
 
-export class DataStreamCreated extends Event {
+export class DatastreamAdded extends Event {
   constructor(aggregatedId: string, dataStreamId: string, name: string, reason: string, description: string,
     observedProperty: string, unitOfMeasurement: string, isPublic: boolean, isOpenData: boolean,
     isReusable: boolean, documentationUrl: string, dataLink: string,
     dataFrequency: number, dataQuality: number) {
-    super(`sensor-${aggregatedId}`, DataStreamCreated.name, {
+    super(`sensor-${aggregatedId}`, DatastreamAdded.name, {
       sensorId: aggregatedId,
       dataStreamId,
       name,
