@@ -48,6 +48,9 @@ Entire Stack:
 * docker-compose build
 * docker-compose up
 
+* [Registry Backend OpenAPI](http://localhost:3000/api/)
+* [EventStore UI](http://localhost:2113/web/index.html#/streams)
+
 ## Find Us
 
 * [GitHub](https://github.com/kad-floriw)

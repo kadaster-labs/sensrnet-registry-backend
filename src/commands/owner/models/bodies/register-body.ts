@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
 
 
-export class CreateOwnerBody {
+export class RegisterOwnerBody {
 
   @IsString()
   @IsOptional()

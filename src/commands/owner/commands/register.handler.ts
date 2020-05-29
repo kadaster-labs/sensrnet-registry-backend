@@ -1,18 +1,18 @@
-import { CreateOwnerCommand } from "./create.command";
+import { RegisterOwnerCommand as RegisterOwnerCommand } from "./register.command";
 import { OwnerAggregate } from "../aggregates/owner.aggregate";
 import { OwnerRepository } from "../repositories/owner.repository";
 import { ICommandHandler, EventPublisher, CommandHandler } from "@nestjs/cqrs";
 import { OwnerAlreadyExistsException } from "../errors/owner-already-exists-exception";
 
 
-@CommandHandler(CreateOwnerCommand)
-export class CreateOwnerCommandHandler implements ICommandHandler<CreateOwnerCommand> {
+@CommandHandler(RegisterOwnerCommand)
+export class RegisterOwnerCommandHandler implements ICommandHandler<RegisterOwnerCommand> {
   constructor(
     private readonly publisher: EventPublisher,
     private readonly repository: OwnerRepository
   ) {}
 
-  async execute(command: CreateOwnerCommand): Promise<void> {
+  async execute(command: RegisterOwnerCommand): Promise<void> {
     const aggregate = await this.repository.get(command.ownerId);
 
     if (!!aggregate) {
@@ -21,7 +21,7 @@ export class CreateOwnerCommandHandler implements ICommandHandler<CreateOwnerCom
       const ownerAggregate = new OwnerAggregate(command.ownerId);
       const aggregate = this.publisher.mergeObjectContext(ownerAggregate);
 
-      aggregate.create(command.nodeId, command.ssoId, command.email, command.publicName,
+      aggregate.register(command.nodeId, command.ssoId, command.email, command.publicName,
         command.name, command.companyName, command.website);
       aggregate.commit();
     }
