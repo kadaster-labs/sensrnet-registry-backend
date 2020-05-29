@@ -18,7 +18,7 @@ export const SensorSchema = new Schema({
     description: { type: String, required: false },
     manufacturer: { type: String, required: false },
     active: { type: Boolean, required: true },
-    observationArea: { type: String, required: false },
+    observationArea: { type: Object, required: false },
     documentationUrl: { type: String, required: false },
     theme: { type: [String], required: false },
     typeName: { type: [String], required: true },

@@ -22,9 +22,6 @@ services:
   nodejs-cqrs:
     build:
       context: "."
-    deploy:
-      mode: replicated
-      replicas: 1
     depends_on:
       - eventstore
       - mongo

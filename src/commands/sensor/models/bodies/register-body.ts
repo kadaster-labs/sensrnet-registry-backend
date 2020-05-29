@@ -122,7 +122,8 @@ import { IsString, IsNotEmpty, IsBoolean, IsUUID, IsObject, IsArray, IsUrl,
   @IsObject()
   @IsOptional()
   @ApiProperty({
-    type: Object,     
+    type: Object,
+    required: false,
     description: 'Type-specific characteristics of the sensor.'
   })
   readonly typeDetails: object;
