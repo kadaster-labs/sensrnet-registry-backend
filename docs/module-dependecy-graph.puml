@@ -1,0 +1,39 @@
+@startuml "dependency-graph"
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/release/1-0/C4_Component.puml
+
+Container(queryDBContainer, "query db", "mongodb container") {
+    ComponentDb(queryDB, "query db", "mongodb container")
+}
+Container(eventStoreContainer, "event store", "eventstore container") {
+    ComponentDb(eventStore, "event store", "eventstore container")
+}
+
+Container(commandModule, "command module", "docker") {
+    Component(cmdController, "command controllers", "The controllers of the 'command side'")
+    Component(cmdHandler, "command handlers", "The Command Handlers processing commands and producing Events")
+
+    Rel(cmdController, cmdHandler, " ")
+    Rel(cmdHandler, eventStore, "publish")
+}
+
+Container(queryModule, "query module", "docker") {
+    Component(qryController, "query controllers", "API for publishing data")
+    Rel(qryController, queryDB, "reads")
+
+    Component(qryProcessor, "query processor", "Processes the events and updates the database")
+    Rel(qryProcessor, queryDB, "updates")
+    Rel(qryProcessor, eventStore, "subscribe")
+}
+
+Container_Boundary(eventsModule, "events module") {
+    Component(events, "events", "Definitions of the events (no runtime component)")
+}
+
+Rel(cmdHandler, events, "includes")
+Rel(qryProcessor, events, "includes")
+
+System(client, "http client")
+Rel(client, cmdController, "call (post|put|delete)")
+Rel(client, qryController, "call (get)")
+
+@enduml

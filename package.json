@@ -1,0 +1,71 @@
+{
+  "name": "app",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "license": "EUPL",
+  "scripts": {
+    "build": "rimraf dist && tsc -p tsconfig.build.json",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "start": "ts-node -r tsconfig-paths/register src/main.ts",
+    "start:dev": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
+    "start:debug": "tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
+    "start:prod": "node dist/main.js",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "dependencies": {
+    "@nestjs/common": "^7.0.13",
+    "@nestjs/swagger": "^4.5.7",
+    "@nestjs/core": "^7.0.13",
+    "@nestjs/cqrs": "^7.0.0",
+    "@nestjs/mongoose": "^7.0.1",
+    "@nestjs/platform-express": "^7.0.13",
+    "class-transformer": "^0.2.3",
+    "class-validator": "^0.12.2",
+    "geteventstore-promise": "^3.2.1",
+    "moment": "^2.26.0",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.2",
+    "rxjs": "^6.5.5",
+    "swagger-ui-express": "^4.1.4",
+    "mongoose": "^5.9.15",
+    "@nestjs/websockets": "^7.1.0",
+    "@nestjs/platform-socket.io": "^7.1.0"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^6.8.5",
+    "@types/express": "4.17.1",
+    "@types/jest": "24.0.20",
+    "@types/node": "12.11.7",
+    "@types/supertest": "2.0.8",
+    "@types/mongoose": "5.7.21",
+    "jest": "24.9.0",
+    "prettier": "1.18.2",
+    "supertest": "4.0.2",
+    "ts-jest": "24.1.0",
+    "ts-node": "8.4.1",
+    "tsc-watch": "4.0.0",
+    "tsconfig-paths": "3.9.0",
+    "tslint": "5.20.0",
+    "typescript": "3.6.4"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".spec.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}
