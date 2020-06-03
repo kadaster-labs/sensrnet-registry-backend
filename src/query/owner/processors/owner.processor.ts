@@ -5,6 +5,8 @@ import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from 'src/events/owner';
 @Injectable()
 export class OwnerProcessor {
 
+  protected logger: Logger = new Logger(this.constructor.name);
+
   async process(event): Promise<void> {
 
     if (event instanceof OwnerRegistered) {
@@ -14,7 +16,7 @@ export class OwnerProcessor {
     } else if (event instanceof OwnerDeleted) {
       await this.processDeleted(event);
     } else {
-      Logger.warn(`Caught unsupported event: ${event}`);
+      this.logger.warn(`Caught unsupported event: ${event}`);
     }
   }
 
@@ -55,7 +57,7 @@ export class OwnerProcessor {
 
     Owner.updateOne({_id: event.ownerId}, ownerData, (err) => {
       if (err) {
-        Logger.error('Error while updating projection.');
+        this.logger.error('Error while updating projection.');
       }
     });
   }
@@ -63,7 +65,7 @@ export class OwnerProcessor {
   async processDeleted(event: OwnerDeleted): Promise<void> {
     Owner.deleteOne({_id: event.aggregateId}, (err) => {
       if (err) {
-        Logger.error('Error while deleting projection.');
+        this.logger.error('Error while deleting projection.');
       }
     });
   }
