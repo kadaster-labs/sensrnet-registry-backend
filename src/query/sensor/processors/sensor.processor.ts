@@ -16,6 +16,8 @@ import {Sensor} from '../models/sensor.model';
 @Injectable()
 export class SensorProcessor {
 
+  protected logger: Logger = new Logger(this.constructor.name);
+
   async process(event): Promise<void> {
 
     if (event instanceof SensorRegistered) {
@@ -39,13 +41,11 @@ export class SensorProcessor {
     } else if (event instanceof SensorRelocated) {
       await this.processLocationUpdated(event);
     } else {
-      Logger.warn(`Caught unsupported event: ${event}`);
+      this.logger.warn(`Caught unsupported event: ${event}`);
     }
   }
 
   async processCreated(event: SensorRegistered): Promise<void> {
-
-    Logger.debug(`processing event ${event.constructor.name} \n${JSON.stringify(event)}`);
 
     let sensorData = {};
     sensorData = {
@@ -90,7 +90,7 @@ export class SensorProcessor {
       sensorData = {...sensorData, typeDetails: event.typeDetails};
     }
 
-    await new Sensor(sensorData).save().catch((reason => Logger.warn(`Error saving sensorData: \n${JSON.stringify(sensorData)}`)));
+    await new Sensor(sensorData).save().catch((reason => this.logger.warn(`Error saving sensorData: \n${JSON.stringify(sensorData)}`)));
   }
 
   async processUpdated(event: SensorUpdated): Promise<void> {
@@ -134,7 +134,7 @@ export class SensorProcessor {
   async processDeleted(event: SensorDeleted): Promise<void> {
     Sensor.deleteOne({_id: event.sensorId}, (err) => {
       if (err) {
-        Logger.error('Error while deleting projection.');
+        this.logger.error('Error while deleting projection.');
       }
     });
   }
@@ -283,7 +283,7 @@ export class SensorProcessor {
   }
 
   private logError(event) {
-    Logger.error(`Error while updating projection for ${event.eventType}.`);
+    this.logger.error(`Error while updating projection for ${event.eventType}.`);
   }
 
 }

@@ -26,6 +26,8 @@ import {sensorEventType} from '../../events/sensor';
 })
 
 export class SensorQueryModule implements OnModuleInit {
+  protected logger: Logger = new Logger(this.constructor.name);
+
   constructor(
       private readonly eventStore: EventStorePublisher,
       private readonly sensorProcessor: SensorProcessor,
@@ -46,7 +48,7 @@ export class SensorQueryModule implements OnModuleInit {
     };
 
     this.eventStore.subscribeToStream('$ce-sensor', onEvent, () => {
-      Logger.warn('Event stream dropped');
+      this.logger.warn('Event stream dropped');
     });
   }
 }

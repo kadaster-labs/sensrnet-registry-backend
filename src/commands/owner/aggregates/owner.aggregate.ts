@@ -2,6 +2,7 @@ import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from '../../../events/owner
 import {Aggregate} from '../../../event-store/aggregate';
 import {OwnerState, OwnerStateImpl} from './owner-state';
 import {Logger} from '@nestjs/common';
+import {EventMessage} from '../../../event-store/event-message';
 
 export class OwnerAggregate extends Aggregate {
   state!: OwnerState;
@@ -26,7 +27,9 @@ export class OwnerAggregate extends Aggregate {
     this.simpleApply(new OwnerDeleted(this.aggregateId));
   }
 
-  private onOwnerRegistered(event: OwnerRegistered) {
+  private onOwnerRegistered(eventMessage: EventMessage) {
+    const event: OwnerRegistered = eventMessage.data as OwnerRegistered;
+
     this.state = new OwnerStateImpl(this.aggregateId);
 
     this.state.nodeIds.push(event.nodeId);
@@ -48,7 +51,8 @@ export class OwnerAggregate extends Aggregate {
     }
   }
 
-  private onOwnerUpdated(event: OwnerUpdated) {
+  private onOwnerUpdated(eventMessage: EventMessage) {
+    const event: OwnerUpdated = eventMessage.data as OwnerUpdated;
     if (event.ssoId) {
       this.state.ssoIds.push(event.ssoId);
     }
@@ -74,7 +78,8 @@ export class OwnerAggregate extends Aggregate {
     }
   }
 
-  private onOwnerDeleted(event: OwnerDeleted) {
+  private onOwnerDeleted(eventMessage: EventMessage) {
+    const event: OwnerDeleted = eventMessage.data as OwnerDeleted;
     // Called on Deleted.
     Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
