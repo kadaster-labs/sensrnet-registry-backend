@@ -1,12 +1,37 @@
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+    MessageBody,
+    SubscribeMessage,
+    WebSocketGateway,
+    WebSocketServer,
+    OnGatewayConnection,
+    ConnectedSocket,
+} from '@nestjs/websockets';
+import { Socket, Server } from 'socket.io';
+import { Logger } from '@nestjs/common';
 
+const NAMESPACE = 'owner';
 
-@WebSocketGateway()
-export class OwnerGateway {
+@WebSocketGateway({namespace: NAMESPACE})
+export class OwnerGateway implements OnGatewayConnection {
+    @WebSocketServer()
+    server: Server;
 
-    @WebSocketServer() server;
+    private logger: Logger = new Logger('OwnerGateway');
 
-    async notifyClients(message){
-        this.server.emit('created', message);
+    handleConnection(@ConnectedSocket() client: Socket, ...args: any[]): void {
+        this.logger.log(`Client connected: ${client.id}`);
+    }
+
+    emit(event: string, ...args: any[]) {
+        this.server.emit(event, ...args);
+    }
+
+    @SubscribeMessage('create')
+    handleEvent(
+        @MessageBody() data: string,
+        @ConnectedSocket() client: Socket,
+    ): string {
+        // create the command
+        return data;
     }
 }
