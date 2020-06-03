@@ -1,5 +1,6 @@
+import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, IsOptional, Min, Max } from 'class-validator';
 
 export class LocationBody {
 
@@ -7,33 +8,31 @@ export class LocationBody {
     @IsNotEmpty()
     @ApiProperty({
         type: Number,
-        description: 'Sensor x coordinate.',
+        description: 'Sensor longitude.',
     })
-    readonly x: number;
+    @Min(-180, { message: 'Longitude should be greater than or equal to -180' })
+    @Max(180, { message: 'Longitude should be less than or equal to 180' })
+    @Type(() => Number)
+    readonly longitude: number;
 
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty({
         type: Number,
-        description: 'Sensor y coordinate.',
+        description: 'Sensor latitude.',
     })
-    readonly y: number;
+    @Min(-90, { message: 'Latitude should be greater than or equal to -90' })
+    @Max(90, { message: 'Latitude should be less than or equal to 90' })
+    @Type(() => Number)
+    readonly latitude: number;
 
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty({
         type: Number,
-        description: 'Sensor z coordinate.',
+        description: 'Sensor height.',
     })
-    readonly z: number;
-
-    @IsNumber()
-    @IsNotEmpty()
-    @ApiProperty({
-        type: Number,
-        description: 'The EPSG code of the coordinate.',
-    })
-    readonly epsgCode: number;
+    readonly height: number;
 
     @IsString()
     @IsOptional()

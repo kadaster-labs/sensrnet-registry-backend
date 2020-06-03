@@ -5,10 +5,9 @@ export class SensorRegistered extends SensorEvent {
   readonly nodeId: string;
   readonly ownerIds: string[];
   readonly name: string;
-  readonly x: number;
-  readonly y: number;
-  readonly z: number;
-  readonly epsgCode: number;
+  readonly longitude: number;
+  readonly latitude: number;
+  readonly height: number;
   readonly baseObjectId: string;
   readonly aim: string;
   readonly description: string;
@@ -21,7 +20,7 @@ export class SensorRegistered extends SensorEvent {
   readonly typeDetails: object;
 
   constructor(sensorId: string, nodeId: string, ownerIds: string[],
-              name: string, x: number, y: number, z: number, epsgCode: number,
+              name: string, longitude: number, latitude: number, height: number,
               baseObjectId: string, aim: string, description: string,
               manufacturer: string, active: boolean, observationArea: object,
               documentationUrl: string, theme: string[], typeName: string,
@@ -30,10 +29,9 @@ export class SensorRegistered extends SensorEvent {
     this.nodeId = nodeId;
     this.ownerIds = ownerIds;
     this.name = name;
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.epsgCode = epsgCode;
+    this.longitude = longitude;
+    this.latitude = latitude;
+    this.height = height;
     this.baseObjectId = baseObjectId;
     this.aim = aim;
     this.description = description;

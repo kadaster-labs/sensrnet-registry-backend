@@ -29,9 +29,11 @@ export class RegisterSensorBody {
 
   @IsObject()
   @IsNotEmpty()
+  @ValidateNested()
   @ApiProperty({
     type: LocationBody,
   })
+  @Type(() => LocationBody)
   readonly location: LocationBody;
 
   @IsArray()

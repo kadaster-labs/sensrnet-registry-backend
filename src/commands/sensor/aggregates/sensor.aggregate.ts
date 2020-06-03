@@ -28,8 +28,8 @@ export class SensorAggregate extends Aggregate {
            dataStreams: DataStreamBody[], aim: string, description: string, manufacturer: string,
            active: boolean, observationArea: object, documentationUrl: string, theme: string[],
            typeName: string, typeDetails: object) {
-    this.simpleApply(new SensorRegistered(this.aggregateId, nodeId, ownerIds, name, location.x, location.y, location.z, location.epsgCode,
-        location.baseObjectId, aim, description, manufacturer, active, observationArea, documentationUrl,
+    this.simpleApply(new SensorRegistered(this.aggregateId, nodeId, ownerIds, name, location.longitude, location.latitude,
+        location.height, location.baseObjectId, aim, description, manufacturer, active, observationArea, documentationUrl,
         theme, typeName, typeDetails));
 
     for (const dataStream of dataStreams) {
@@ -66,8 +66,8 @@ export class SensorAggregate extends Aggregate {
     this.simpleApply(new SensorOwnershipShared(this.aggregateId, ownerIds));
   }
 
-  relocate(x: number, y: number, z: number, epsgCode: number, baseObjectId: string) {
-    this.simpleApply(new SensorRelocated(this.aggregateId, x, y, z, epsgCode, baseObjectId));
+  relocate(longitude: number, latitude: number, height: number, baseObjectId: string) {
+    this.simpleApply(new SensorRelocated(this.aggregateId, longitude, latitude, height, baseObjectId));
   }
 
   activate() {
