@@ -7,6 +7,7 @@ import { ActivateSensorCommandHandler } from './commands/activate.handler';
 import { CreateSensorCommandHandler } from './commands/create.handler';
 import { UpdateSensorCommandHandler } from './commands/update.handler';
 import { DeleteSensorCommandHandler } from './commands/delete.handler';
+import { OwnerRepository } from '../owner/repositories/owner.repository';
 import { DeactivateSensorCommandHandler } from './commands/deactivate.handler';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { UpdateSensorLocationCommandHandler } from './commands/updatelocation.handler';
@@ -22,6 +23,7 @@ import { TransferSensorOwnershipCommandHandler } from './commands/transferowners
     EventBus,
     EventStorePublisher,
     EventPublisher,
+    OwnerRepository,
     SensorRepository,
     CreateSensorCommandHandler,
     UpdateSensorCommandHandler,
