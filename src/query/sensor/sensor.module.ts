@@ -31,7 +31,6 @@ export class SensorQueryModule implements OnModuleInit {
   constructor(
       private readonly eventStore: EventStorePublisher,
       private readonly sensorProcessor: SensorProcessor,
-      private readonly sensorGateway: SensorGateway,
   ) {
   }
   onModuleInit() {
@@ -45,7 +44,6 @@ export class SensorQueryModule implements OnModuleInit {
     const onEvent = (_, eventMessage) => {
       const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
       this.sensorProcessor.process(event);
-      this.sensorGateway.emit(eventMessage.eventType, event);
     };
 
     this.eventStore.subscribeToStream('$ce-sensor', onEvent, () => {
