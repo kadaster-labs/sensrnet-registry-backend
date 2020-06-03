@@ -1,5 +1,4 @@
-import { DomainException } from "./domain-exception";
-
+import { DomainException } from './domain-exception';
 
 export class UnknowSensorException extends DomainException {
   constructor(id: string) {

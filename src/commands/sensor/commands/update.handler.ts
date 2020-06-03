@@ -1,14 +1,13 @@
-import { UpdateSensorCommand } from "./update.command";
-import { SensorRepository } from "../repositories/sensor.repository";
-import { UnknowSensorException } from "../errors/unknow-sensor-exception";
-import { ICommandHandler, EventPublisher, CommandHandler } from "@nestjs/cqrs";
-
+import { UpdateSensorCommand } from './update.command';
+import { SensorRepository } from '../repositories/sensor.repository';
+import { UnknowSensorException } from '../errors/unknow-sensor-exception';
+import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(UpdateSensorCommand)
 export class UpdateSensorCommandHandler implements ICommandHandler<UpdateSensorCommand> {
   constructor(
     private readonly publisher: EventPublisher,
-    private readonly repository: SensorRepository
+    private readonly repository: SensorRepository,
   ) {}
 
   async execute(command: UpdateSensorCommand): Promise<void> {
@@ -19,7 +18,7 @@ export class UpdateSensorCommandHandler implements ICommandHandler<UpdateSensorC
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.update(command.name, command.aim, command.description, command.manufacturer, 
+    aggregate.update(command.name, command.aim, command.description, command.manufacturer,
       command.observationArea, command.documentationUrl, command.theme,
       command.typeName, command.typeDetails);
     aggregate.commit();

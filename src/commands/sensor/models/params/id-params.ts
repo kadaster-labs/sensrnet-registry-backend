@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsNotEmpty } from "class-validator";
+import { IsUUID, IsNotEmpty } from 'class-validator';
 
 export class SensorIdParams {
 
@@ -7,7 +7,7 @@ export class SensorIdParams {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    description: 'The sensorId of the sensor.'
+    description: 'The sensorId of the sensor.',
   })
   readonly sensorId: string;
 }
@@ -18,7 +18,7 @@ export class DataStreamIdParams {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    description: 'The sensorId of the sensor.'
+    description: 'The sensorId of the sensor.',
   })
   readonly sensorId: string;
 
@@ -26,7 +26,7 @@ export class DataStreamIdParams {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    description: 'The datastreamId of the datastream.'
+    description: 'The datastreamId of the datastream.',
   })
   readonly dataStreamId: string;
 }

@@ -1,6 +1,5 @@
 import { model, Schema } from 'mongoose';
 
-
 export const SensorSchema = new Schema({
     _id: { type: String, required: true },
     nodeId: { type: String, required: true },

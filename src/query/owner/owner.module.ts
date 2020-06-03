@@ -1,31 +1,32 @@
 import { connect } from 'mongoose';
-import { OwnerController } from "./owner.controller";
-import { Module, OnModuleInit } from "@nestjs/common";
-import { CqrsModule, EventPublisher } from "@nestjs/cqrs";
-import { EventStoreModule } from "../../event-store/event-store.module";
-import { EventStorePublisher } from "../../event-store/event-store.publisher";
-import { RetrieveOwnerQueryHandler } from "./queries/retrieve.handler";
+import { OwnerController } from './owner.controller';
+import {Logger, Module, OnModuleInit} from '@nestjs/common';
+import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
+import { EventStoreModule } from '../../event-store/event-store.module';
+import { EventStorePublisher } from '../../event-store/event-store.publisher';
+import { RetrieveOwnerQueryHandler } from './queries/retrieve.handler';
 import { OwnerProcessor } from './processors';
-
+import {plainToClass} from 'class-transformer';
+import {ownerEventType} from '../../events/owner';
 
 @Module({
   imports: [
     CqrsModule,
     EventStoreModule,
-    OwnerQueryModule
+    OwnerQueryModule,
   ],
   controllers: [OwnerController],
   providers: [
     EventPublisher,
     OwnerProcessor,
-    RetrieveOwnerQueryHandler
-  ]
+    RetrieveOwnerQueryHandler,
+  ],
 })
 
 export class OwnerQueryModule implements OnModuleInit {
   constructor(
     private readonly eventStore: EventStorePublisher,
-    private readonly ownerProcessor: OwnerProcessor
+    private readonly ownerProcessor: OwnerProcessor,
   ) { }
   onModuleInit() {
     const host = process.env.MONGO_HOST || 'localhost';
@@ -35,10 +36,11 @@ export class OwnerQueryModule implements OnModuleInit {
     const url = 'mongodb://' + host + ':' + port.toString() + '/' + database;
     connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 
-    const onEvent = (_, event) => {
+    const onEvent = (_, eventMessage) => {
+      const event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessage.data);
       this.ownerProcessor.process(event);
     };
 
-    this.eventStore.subscribeToStream('$ce-owner', onEvent, () => { });
+    this.eventStore.subscribeToStream('$ce-owner', onEvent, () => { Logger.warn(`event stream dropped!`); });
   }
 }

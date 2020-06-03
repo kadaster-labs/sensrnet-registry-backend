@@ -5,5 +5,5 @@ export enum Theme {
     Safety = 'Safety',
     Mobility = 'Mobility',
     SoilAndUnderground = 'SoilAndUnderground',
-    Other = 'Other'
+    Other = 'Other',
 }
