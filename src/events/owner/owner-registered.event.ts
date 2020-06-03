@@ -2,7 +2,6 @@ import {OwnerEvent} from './owner.event';
 
 export class OwnerRegistered extends OwnerEvent {
 
-  public readonly ownerId: string;
   public readonly nodeId: string;
   public readonly ssoId: string;
   public readonly email: string;
@@ -14,7 +13,6 @@ export class OwnerRegistered extends OwnerEvent {
   constructor(ownerId: string, nodeId: string, ssoId: string, email: string, publicName: string,
               name: string, companyName: string, website: string) {
     super(ownerId);
-    this.ownerId = ownerId;
     this.nodeId = nodeId;
     this.ssoId = ssoId;
     this.email = email;

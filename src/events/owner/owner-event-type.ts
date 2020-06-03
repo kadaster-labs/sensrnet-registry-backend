@@ -1,9 +1,7 @@
-import { OwnerRegistered } from './registered.event';
-import { OwnerUpdated } from './updated.event';
-import { OwnerDeleted } from './deleted.event';
-import { Logger } from '@nestjs/common';
+import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from '.';
+import {Logger} from '@nestjs/common';
 
-class EventType {
+class OwnerEventType {
   constructor() {
     this.add(OwnerRegistered);
     this.add(OwnerUpdated);
@@ -14,7 +12,9 @@ class EventType {
 
   getType(eventTypeName: string) {
     const t = this.supportedTypes[eventTypeName];
-    if (!t) { Logger.warn(`Unsupported event received! eventType: ${eventTypeName}`); }
+    if (!t) {
+      Logger.warn(`Unsupported event received! eventType: ${eventTypeName}`);
+    }
     return t;
   }
 
@@ -24,4 +24,4 @@ class EventType {
 
 }
 
-export const eventType = new EventType();
+export const eventType = new OwnerEventType();
