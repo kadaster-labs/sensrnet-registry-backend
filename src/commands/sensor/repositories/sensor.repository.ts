@@ -1,7 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import { EventStore } from "../../../event-store/event-store";
-import { SensorAggregate } from "../aggregates/sensor.aggregate";
-
+import { Injectable } from '@nestjs/common';
+import { EventStore } from '../../../event-store/event-store';
+import { SensorAggregate } from '../aggregates/sensor.aggregate';
 
 @Injectable()
 export class SensorRepository {

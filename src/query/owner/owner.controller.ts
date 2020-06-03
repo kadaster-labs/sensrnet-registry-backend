@@ -1,12 +1,11 @@
-import { QueryBus } from "@nestjs/cqrs";
-import { OwnerIdParams } from "./models/id-params"
+import { QueryBus } from '@nestjs/cqrs';
+import { OwnerIdParams } from './models/id-params';
 import { RetrieveOwnersQuery } from './queries/retrieve.query';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { Controller, Get, Param } from "@nestjs/common";
-
+import { Controller, Get, Param } from '@nestjs/common';
 
 @ApiTags('Owner')
-@Controller("Owner")
+@Controller('Owner')
 export class OwnerController {
   constructor(private readonly queryBus: QueryBus) {}
 

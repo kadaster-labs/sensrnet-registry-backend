@@ -1,5 +1,4 @@
-import { DomainException } from "./domain-exception";
-
+import { DomainException } from './domain-exception';
 
 export class SensorAlreadyExistsException extends DomainException {
   constructor(name: string) {

@@ -1,5 +1,4 @@
-import { DomainException } from "./domain-exception";
-
+import { DomainException } from './domain-exception';
 
 export class SensorActiveException extends DomainException {
   constructor(id: string) {
@@ -12,4 +11,3 @@ export class SensorInActiveException extends DomainException {
     super(`Sensor ${id} is already inactive.`);
   }
 }
-

@@ -1,14 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNumber, IsNotEmpty, IsOptional } from 'class-validator';
 
-
 export class LocationBody {
 
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty({
         type: Number,
-        description: 'Sensor x coordinate.'
+        description: 'Sensor x coordinate.',
     })
     readonly x: number;
 
@@ -16,7 +15,7 @@ export class LocationBody {
     @IsNotEmpty()
     @ApiProperty({
         type: Number,
-        description: 'Sensor y coordinate.'
+        description: 'Sensor y coordinate.',
     })
     readonly y: number;
 
@@ -24,7 +23,7 @@ export class LocationBody {
     @IsNotEmpty()
     @ApiProperty({
         type: Number,
-        description: 'Sensor z coordinate.'
+        description: 'Sensor z coordinate.',
     })
     readonly z: number;
 
@@ -32,7 +31,7 @@ export class LocationBody {
     @IsNotEmpty()
     @ApiProperty({
         type: Number,
-        description: 'The EPSG code of the coordinate.'
+        description: 'The EPSG code of the coordinate.',
     })
     readonly epsgCode: number;
 
@@ -41,7 +40,7 @@ export class LocationBody {
     @ApiProperty({
         type: String,
         required: false,
-        description: 'Reference to an external ID.'
+        description: 'Reference to an external ID.',
     })
     readonly baseObjectId: string;
 }

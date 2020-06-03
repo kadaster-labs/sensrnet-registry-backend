@@ -1,25 +1,25 @@
-import { CreateSensorCommand } from "./create.command";
-import { SensorAggregate } from "../aggregates/sensor.aggregate";
-import { SensorRepository } from "../repositories/sensor.repository";
-import { ICommandHandler, EventPublisher, CommandHandler } from "@nestjs/cqrs";
-import { SensorAlreadyExistsException } from "../errors/sensor-already-exists-exception";
-
+import { CreateSensorCommand } from './create.command';
+import { SensorAggregate } from '../aggregates/sensor.aggregate';
+import { SensorRepository } from '../repositories/sensor.repository';
+import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
+import { SensorAlreadyExistsException } from '../errors/sensor-already-exists-exception';
 
 @CommandHandler(CreateSensorCommand)
 export class CreateSensorCommandHandler implements ICommandHandler<CreateSensorCommand> {
   constructor(
     private readonly publisher: EventPublisher,
-    private readonly repository: SensorRepository
+    private readonly repository: SensorRepository,
   ) {}
 
   async execute(command: CreateSensorCommand): Promise<void> {
-    const aggregate = await this.repository.get(command.sensorId);
+    let aggregate: SensorAggregate;
+    aggregate = await this.repository.get(command.sensorId);
 
     if (!!aggregate) {
       throw new SensorAlreadyExistsException(command.sensorId);
     } else {
       const sensorAggregate = new SensorAggregate(command.sensorId);
-      const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
+      aggregate = this.publisher.mergeObjectContext(sensorAggregate);
 
       aggregate.register(command.nodeId, command.ownerIds,
         command.name, command.location, command.dataStreams,
