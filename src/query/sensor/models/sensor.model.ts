@@ -6,12 +6,10 @@ export const SensorSchema = new Schema({
     ownerIds: { type: [String], required: false },
     name: { type: String, required: false },
     location: {
-        x: { type: Number, required: true },
-        y: { type: Number, required: true },
-        z: { type: Number, required: true },
-        epsgCode: { type: Number, required: true },
-        baseObjectId: { type: String, required: true },
+        type: { type: String, enum: ['Point'], required: true },
+        coordinates: { type: [Number], required: true },
     },
+    baseObjectId: { type: String, required: true },
     dataStreams: { type: [], required: false },
     aim: { type: String, required: false },
     description: { type: String, required: false },
@@ -24,4 +22,5 @@ export const SensorSchema = new Schema({
     typeDetails: { type: [Object], required: false },
 });
 
+SensorSchema.index({ location: '2dsphere' });
 export const Sensor = model('Sensor', SensorSchema);

@@ -2,19 +2,16 @@ import {SensorEvent} from './sensor.event';
 
 export class SensorRelocated extends SensorEvent {
 
-  readonly x: number;
-  readonly y: number;
-  readonly z: number;
-  readonly epsgCode: number;
+  readonly longitude: number;
+  readonly latitude: number;
+  readonly height: number;
   readonly baseObjectId: string;
 
-  constructor(sensorId: string, x: number, y: number, z: number, epsgCode: number,
-              baseObjectId: string) {
+  constructor(sensorId: string, longitude: number, latitude: number, height: number, baseObjectId: string) {
     super(sensorId);
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.epsgCode = epsgCode;
+    this.longitude = longitude;
+    this.latitude = latitude;
+    this.height = height;
     this.baseObjectId = baseObjectId;
   }
 

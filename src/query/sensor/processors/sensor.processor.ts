@@ -52,11 +52,8 @@ export class SensorProcessor {
       _id: event.sensorId,
       nodeId: event.nodeId,
       location: {
-        x: event.x,
-        y: event.y,
-        z: event.z,
-        epsgCode: event.epsgCode,
-        baseObjectId: event.baseObjectId,
+        type: 'Point',
+        coordinates: [event.longitude, event.latitude, event.height],
       },
       active: event.active,
       typeName: event.typeName,
@@ -64,6 +61,9 @@ export class SensorProcessor {
 
     if (event.ownerIds) {
       sensorData = {...sensorData, ownerIds: event.ownerIds};
+    }
+    if (event.baseObjectId) {
+      sensorData = {...sensorData, baseObjectId: event.baseObjectId};
     }
     if (event.name) {
       sensorData = {...sensorData, name: event.name};
@@ -263,18 +263,16 @@ export class SensorProcessor {
   }
 
   async processLocationUpdated(event: SensorRelocated): Promise<void> {
-    const sensorData = {
-      location: {},
-    };
-    sensorData.location = {
-      x: event.x,
-      y: event.y,
-      z: event.z,
-      epsgCode: event.epsgCode,
+    let sensorData;
+    sensorData = {
+      location: {
+        type: 'Point',
+        coordinates: [event.longitude, event.latitude, event.height],
+      },
     };
 
     if (event.baseObjectId) {
-      sensorData.location = {...sensorData.location, baseObjectId: event.baseObjectId};
+      sensorData = {...sensorData, baseObjectId: event.baseObjectId};
     }
 
     Sensor.updateOne({_id: event.sensorId}, sensorData, (err) => {

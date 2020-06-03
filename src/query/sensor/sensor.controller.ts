@@ -2,8 +2,9 @@ import { QueryBus } from '@nestjs/cqrs';
 import { SensorIdParams } from './models/id-params';
 import { RetrieveSensorQuery } from './queries/sensor.query';
 import { RetrieveSensorsQuery } from './queries/sensors.query';
+import { RetrieveSensorsParams } from './models/retrieve-sensors-params';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 
 @ApiTags('Sensor')
 @Controller('Sensor')
@@ -22,7 +23,8 @@ export class SensorController {
   @ApiOperation({ summary: 'Retrieve Sensors' })
   @ApiResponse({ status: 200, description: 'Sensors retrieved' })
   @ApiResponse({ status: 400, description: 'Sensors retrieval failed' })
-  async retrieveSensosr() {
-    return await this.queryBus.execute(new RetrieveSensorsQuery());
+  async retrieveSensors(@Query() sensorParams: RetrieveSensorsParams) {
+    return await this.queryBus.execute(new RetrieveSensorsQuery(sensorParams.bottomLeftLongitude,
+        sensorParams.bottomLeftLatitude, sensorParams.upperRightLongitude, sensorParams.upperRightLatitude));
   }
 }
