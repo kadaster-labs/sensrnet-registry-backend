@@ -7,7 +7,7 @@ import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { RetrieveOwnerQueryHandler } from './queries/retrieve.handler';
 import { OwnerProcessor } from './processors';
 import {plainToClass} from 'class-transformer';
-import {eventType} from '../../events/owner';
+import {ownerEventType} from '../../events/owner';
 
 @Module({
   imports: [
@@ -37,7 +37,7 @@ export class OwnerQueryModule implements OnModuleInit {
     connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 
     const onEvent = (_, eventMessage) => {
-      const event = plainToClass(eventType.getType(eventMessage.eventType), eventMessage.data);
+      const event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessage.data);
       this.ownerProcessor.process(event);
     };
 

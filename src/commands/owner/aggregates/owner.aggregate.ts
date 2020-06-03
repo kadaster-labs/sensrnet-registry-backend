@@ -26,7 +26,7 @@ export class OwnerAggregate extends Aggregate {
     this.simpleApply(new OwnerDeleted(this.aggregateId));
   }
 
-  private onRegistered(event: OwnerRegistered) {
+  private onOwnerRegistered(event: OwnerRegistered) {
     this.state = new OwnerStateImpl(this.aggregateId);
 
     this.state.nodeIds.push(event.nodeId);
@@ -48,7 +48,7 @@ export class OwnerAggregate extends Aggregate {
     }
   }
 
-  private onUpdated(event: OwnerUpdated) {
+  private onOwnerUpdated(event: OwnerUpdated) {
     if (event.ssoId) {
       this.state.ssoIds.push(event.ssoId);
     }
@@ -74,7 +74,7 @@ export class OwnerAggregate extends Aggregate {
     }
   }
 
-  private onDeleted(event: OwnerDeleted) {
+  private onOwnerDeleted(event: OwnerDeleted) {
     // Called on Deleted.
     Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }

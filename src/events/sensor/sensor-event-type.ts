@@ -42,4 +42,4 @@ class SensorEventType {
 
 }
 
-export const eventType = new SensorEventType();
+export const sensorEventType = new SensorEventType();

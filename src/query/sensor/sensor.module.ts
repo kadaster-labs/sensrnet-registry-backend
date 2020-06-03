@@ -8,7 +8,7 @@ import {RetrieveSensorQueryHandler} from './queries/sensor.handler';
 import {RetrieveSensorsQueryHandler} from './queries/sensors.handler';
 import {SensorProcessor} from './processors';
 import {plainToClass} from 'class-transformer';
-import {eventType} from '../../events/sensor';
+import {sensorEventType} from '../../events/sensor';
 
 @Module({
   imports: [
@@ -41,7 +41,7 @@ export class SensorQueryModule implements OnModuleInit {
     connect(url, {useNewUrlParser: true, useUnifiedTopology: true});
 
     const onEvent = (_, eventMessage) => {
-      const event = plainToClass(eventType.getType(eventMessage.eventType), eventMessage.data);
+      const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
       this.sensorProcessor.process(event);
     };
 

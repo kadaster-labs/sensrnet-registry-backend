@@ -24,4 +24,4 @@ class OwnerEventType {
 
 }
 
-export const eventType = new OwnerEventType();
+export const ownerEventType = new OwnerEventType();

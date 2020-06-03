@@ -90,45 +90,45 @@ export class SensorAggregate extends Aggregate {
     this.simpleApply(new SensorDeleted(this.aggregateId));
   }
 
-  private onSensorCreated(event: SensorRegistered) {
+  private onSensorRegistered(event: SensorRegistered) {
     this.state = new SensorStateImpl(this.aggregateId);
 
     this.state.actives.push(event.active);
   }
 
-  private onDataStreamCreated(event: DatastreamAdded) {
+  private onDatastreamAdded(event: DatastreamAdded) {
     Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onDataStreamDeleted(event: DatastreamDeleted) {
+  private onDatastreamDeleted(event: DatastreamDeleted) {
     Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onUpdated(event: SensorUpdated) {
+  private onSensorUpdated(event: SensorUpdated) {
     Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onOwnershipTransferred(event: SensorOwnershipTransferred) {
+  private onSensorOwnershipTransferred(event: SensorOwnershipTransferred) {
     Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onOwnershipShared(event: SensorOwnershipShared) {
+  private onSensorOwnershipShared(event: SensorOwnershipShared) {
     Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onLocationUpdated(event: SensorRelocated) {
+  private onSensorRelocated(event: SensorRelocated) {
     Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onActivated(event: SensorActivated) {
+  private onSensorActivated(event: SensorActivated) {
     this.state.actives.push(true);
   }
 
-  private onDeactivated(event: SensorDeactivated) {
+  private onSensorDeactivated(event: SensorDeactivated) {
     this.state.actives.push(false);
   }
 
-  private onDeleted(event: SensorDeleted) {
+  private onSensorDeleted(event: SensorDeleted) {
     Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
