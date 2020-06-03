@@ -1,5 +1,4 @@
-import { ICommand } from "@nestjs/cqrs";
-
+import { ICommand } from '@nestjs/cqrs';
 
 export class UpdateSensorCommand implements ICommand {
   constructor(
@@ -10,8 +9,8 @@ export class UpdateSensorCommand implements ICommand {
     public readonly manufacturer: string,
     public readonly observationArea: object,
     public readonly documentationUrl: string,
-    public readonly theme: Array<string>,
+    public readonly theme: string[],
     public readonly typeName: string,
-    public readonly typeDetails: object
+    public readonly typeDetails: object,
     ) {}
 }

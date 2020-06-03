@@ -1,6 +1,3 @@
-import { IQuery } from "@nestjs/cqrs";
+import { IQuery } from '@nestjs/cqrs';
 
-
-export class RetrieveSensorsQuery implements IQuery{
-    constructor() {}
-}
+export class RetrieveSensorsQuery implements IQuery {}

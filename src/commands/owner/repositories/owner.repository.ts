@@ -1,7 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import { EventStore } from "../../../event-store/event-store";
-import { OwnerAggregate } from "../aggregates/owner.aggregate";
-
+import { Injectable } from '@nestjs/common';
+import { EventStore } from '../../../event-store/event-store';
+import { OwnerAggregate } from '../aggregates/owner.aggregate';
 
 @Injectable()
 export class OwnerRepository {

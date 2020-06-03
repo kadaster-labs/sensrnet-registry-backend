@@ -1,5 +1,4 @@
-import { ICommand } from "@nestjs/cqrs";
-
+import { ICommand } from '@nestjs/cqrs';
 
 export class CreateDataStreamCommand implements ICommand {
   constructor(
@@ -16,6 +15,6 @@ export class CreateDataStreamCommand implements ICommand {
     public readonly documentationUrl: string,
     public readonly dataLink: string,
     public readonly dataFrequency: number,
-    public readonly dataQuality: number
+    public readonly dataQuality: number,
     ) {}
 }

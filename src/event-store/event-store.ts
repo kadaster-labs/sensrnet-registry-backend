@@ -1,13 +1,14 @@
-import { TCPClient } from "geteventstore-promise";
-import { EventStoreConfiguration } from "./event-store.configuration";
-import { Event } from "./event";
-import { Injectable } from "@nestjs/common";
+import {TCPClient} from 'geteventstore-promise';
+import {EventStoreConfiguration} from './event-store.configuration';
+import {Injectable} from '@nestjs/common';
+import {EventMessage} from './event-message';
 
 @Injectable()
 export class EventStore {
   private client!: TCPClient;
 
-  constructor(private configuration: EventStoreConfiguration) {}
+  constructor(private configuration: EventStoreConfiguration) {
+  }
 
   connect() {
     this.client = new TCPClient(this.configuration.config);
@@ -21,12 +22,12 @@ export class EventStore {
     return await this.client.checkStreamExists(streamName);
   }
 
-  async createEvent(event: Event) {
+  async createEvent(event: EventMessage) {
     await this.client.writeEvent(
-      event.streamId,
-      event.eventType,
-      event.data,
-      event.metadata
+        event.streamId,
+        event.eventType,
+        event.data,
+        event.metadata,
     );
   }
 

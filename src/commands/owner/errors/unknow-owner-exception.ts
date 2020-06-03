@@ -1,5 +1,4 @@
-import { DomainException } from "./domain-exception";
-
+import { DomainException } from './domain-exception';
 
 export class UnknowOwnerException extends DomainException {
   constructor(id: string) {

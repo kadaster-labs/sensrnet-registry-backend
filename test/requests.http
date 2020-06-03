@@ -13,3 +13,43 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3000/owner/abde4a4f-da50-493c-9f5a-4621a3aa2b6d
+
+###
+
+POST http://localhost:3000/sensor HTTP/1.1
+Content-Type: application/json
+
+{
+  "ownerIds": [
+    "0e394590-ebeb-4a44-9765-7237d72aafb8"
+  ],
+  "name": "camera",
+  "location": {
+    "x": 38.978,
+    "y": 12.83,
+    "z": 30.2,
+    "epsgCode": 28992,
+    "baseObjectId": "string"
+  },
+  "dataStreams": [
+    {
+      "name": "camera feed",
+      "reason": "because",
+      "description": "the camera feed",
+      "observedProperty": "visual",
+      "unitOfMeasurement": "yes, something",
+      "isPublic": true,
+      "isOpenData": true,
+      "isReusable": false
+    }
+  ],
+  "aim": "string",
+  "description": "string",
+  "manufacturer": "string",
+  "active": true,
+  "theme": [
+    "Weather"
+  ],
+  "typeName": "camera1"
+}
+

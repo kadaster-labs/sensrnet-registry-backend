@@ -1,14 +1,13 @@
-import { UpdateSensorLocationCommand } from "./updatelocation.command";
-import { SensorRepository } from "../repositories/sensor.repository";
-import { UnknowSensorException } from "../errors/unknow-sensor-exception";
-import { ICommandHandler, EventPublisher, CommandHandler } from "@nestjs/cqrs";
-
+import { UpdateSensorLocationCommand } from './updatelocation.command';
+import { SensorRepository } from '../repositories/sensor.repository';
+import { UnknowSensorException } from '../errors/unknow-sensor-exception';
+import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(UpdateSensorLocationCommand)
 export class UpdateSensorLocationCommandHandler implements ICommandHandler<UpdateSensorLocationCommand> {
   constructor(
     private readonly publisher: EventPublisher,
-    private readonly repository: SensorRepository
+    private readonly repository: SensorRepository,
   ) {}
 
   async execute(command: UpdateSensorLocationCommand): Promise<void> {

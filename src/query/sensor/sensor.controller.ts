@@ -1,13 +1,12 @@
-import { QueryBus } from "@nestjs/cqrs";
-import { SensorIdParams } from "./models/id-params"
+import { QueryBus } from '@nestjs/cqrs';
+import { SensorIdParams } from './models/id-params';
 import { RetrieveSensorQuery } from './queries/sensor.query';
 import { RetrieveSensorsQuery } from './queries/sensors.query';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { Controller, Get, Param } from "@nestjs/common";
-
+import { Controller, Get, Param } from '@nestjs/common';
 
 @ApiTags('Sensor')
-@Controller("Sensor")
+@Controller('Sensor')
 export class SensorController {
   constructor(private readonly queryBus: QueryBus) {}
 

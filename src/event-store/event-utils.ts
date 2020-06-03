@@ -1,10 +1,10 @@
-import { Event } from "./event";
+import {EventMessage} from './event-message';
 
-export function isValidEvent(value: any): value is Event {
+export function isValidEvent(value: any): value is EventMessage {
   return (
-    value.hasOwnProperty("streamId") &&
-    value.hasOwnProperty("eventType") &&
-    value.hasOwnProperty("data") &&
-    value.hasOwnProperty("metadata")
+      value.hasOwnProperty('streamId') &&
+      value.hasOwnProperty('eventType') &&
+      value.hasOwnProperty('data') &&
+      value.hasOwnProperty('metadata')
   );
 }

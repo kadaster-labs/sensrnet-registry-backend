@@ -1,9 +1,8 @@
-import { ICommand } from "@nestjs/cqrs";
-
+import { ICommand } from '@nestjs/cqrs';
 
 export class ShareSensorOwnershipCommand implements ICommand {
   constructor(
     public readonly sensorId: string,
-    public readonly ownerIds: Array<string>
+    public readonly ownerIds: string[],
     ) {}
 }

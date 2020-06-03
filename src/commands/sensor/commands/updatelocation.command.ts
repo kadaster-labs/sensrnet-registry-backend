@@ -1,5 +1,4 @@
-import { ICommand } from "@nestjs/cqrs";
-
+import { ICommand } from '@nestjs/cqrs';
 
 export class UpdateSensorLocationCommand implements ICommand {
   constructor(
@@ -8,6 +7,6 @@ export class UpdateSensorLocationCommand implements ICommand {
     public readonly y: number,
     public readonly z: number,
     public readonly epsgCode: number,
-    public readonly baseObjectId: string
+    public readonly baseObjectId: string,
     ) {}
 }
