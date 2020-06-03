@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsUrl, IsNumber, IsUUID, 
+import { IsString, IsBoolean, IsUrl, IsNumber, IsUUID,
     IsNotEmpty, IsOptional } from 'class-validator';
-
 
 export class DataStreamBody {
 
@@ -13,7 +12,7 @@ export class DataStreamBody {
     @IsNotEmpty()
     @ApiProperty({
         type: String,
-        description: 'DataStream name.'
+        description: 'DataStream name.',
     })
     readonly name: string;
 
@@ -22,7 +21,7 @@ export class DataStreamBody {
     @ApiProperty({
         type: String,
         required: false,
-        description: 'Reason for the DataStream.'
+        description: 'Reason for the DataStream.',
     })
     readonly reason: string;
 
@@ -31,7 +30,7 @@ export class DataStreamBody {
     @ApiProperty({
         type: String,
         required: false,
-        description: 'DataStream description.'
+        description: 'DataStream description.',
     })
     readonly description: string;
 
@@ -40,7 +39,7 @@ export class DataStreamBody {
     @ApiProperty({
         type: String,
         required: false,
-        description: 'The property the DataStream observes (e.g. temperature).'
+        description: 'The property the DataStream observes (e.g. temperature).',
     })
     readonly observedProperty: string;
 
@@ -49,7 +48,7 @@ export class DataStreamBody {
     @ApiProperty({
         type: String,
         required: false,
-        description: 'DataStream unit of measurement.'
+        description: 'DataStream unit of measurement.',
     })
     readonly unitOfMeasurement: string;
 
@@ -58,8 +57,8 @@ export class DataStreamBody {
     @ApiProperty({
         type: Boolean,
         default: true,
-        required: false,        
-        description: 'Whether the DataStream is public.'
+        required: false,
+        description: 'Whether the DataStream is public.',
     })
     readonly isPublic: boolean;
 
@@ -68,8 +67,8 @@ export class DataStreamBody {
     @ApiProperty({
         type: Boolean,
         default: true,
-        required: false,        
-        description: 'Whether the DataStream is considered open data.'
+        required: false,
+        description: 'Whether the DataStream is considered open data.',
     })
     readonly isOpenData: boolean;
 
@@ -78,8 +77,8 @@ export class DataStreamBody {
     @ApiProperty({
         type: Boolean,
         default: true,
-        required: false,        
-        description: 'Whether the DataStream is reusable.'
+        required: false,
+        description: 'Whether the DataStream is reusable.',
     })
     readonly isReusable: boolean;
 
@@ -87,8 +86,8 @@ export class DataStreamBody {
     @IsOptional()
     @ApiProperty({
         type: String,
-        required: false,        
-        description: 'A link to sensor documentation.'
+        required: false,
+        description: 'A link to sensor documentation.',
     })
     readonly documentationUrl: string;
 
@@ -96,8 +95,8 @@ export class DataStreamBody {
     @IsOptional()
     @ApiProperty({
         type: String,
-        required: false,        
-        description: 'Data link.'
+        required: false,
+        description: 'Data link.',
     })
     readonly dataLink: string;
 
@@ -105,8 +104,8 @@ export class DataStreamBody {
     @IsOptional()
     @ApiProperty({
         type: Number,
-        required: false,        
-        description: 'Data frequency.'
+        required: false,
+        description: 'Data frequency.',
     })
     readonly dataFrequency: number;
 
@@ -114,8 +113,8 @@ export class DataStreamBody {
     @IsOptional()
     @ApiProperty({
         type: Number,
-        required: false,        
-        description: 'Data quality.'
+        required: false,
+        description: 'Data quality.',
     })
     readonly dataQuality: number;
 }

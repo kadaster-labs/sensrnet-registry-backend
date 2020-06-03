@@ -1,7 +1,7 @@
-import { TCPClient } from "geteventstore-promise";
-import { EventStoreConfiguration } from "./event-store.configuration";
-import { Event } from "./event";
-import { Injectable } from "@nestjs/common";
+import { TCPClient } from 'geteventstore-promise';
+import { EventStoreConfiguration } from './event-store.configuration';
+import { Event } from './event';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class EventStore {
@@ -26,7 +26,7 @@ export class EventStore {
       event.streamId,
       event.eventType,
       event.data,
-      event.metadata
+      event.metadata,
     );
   }
 

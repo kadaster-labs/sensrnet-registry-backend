@@ -1,15 +1,14 @@
-import { DeleteSensorCommand } from "./delete.command";
-import { SensorRepository } from "../repositories/sensor.repository";
-import { UnknowSensorException } from "../errors/unknow-sensor-exception";
-import { ICommandHandler, EventPublisher, CommandHandler } from "@nestjs/cqrs";
-
+import { DeleteSensorCommand } from './delete.command';
+import { SensorRepository } from '../repositories/sensor.repository';
+import { UnknowSensorException } from '../errors/unknow-sensor-exception';
+import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(DeleteSensorCommand)
 export class DeleteSensorCommandHandler
   implements ICommandHandler<DeleteSensorCommand> {
   constructor(
     private readonly publisher: EventPublisher,
-    private readonly repository: SensorRepository
+    private readonly repository: SensorRepository,
   ) {}
 
   async execute(command: DeleteSensorCommand): Promise<void> {

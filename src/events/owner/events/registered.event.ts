@@ -1,18 +1,26 @@
-import { Event } from "../../../event-store/event";
+import {OwnerEvent} from './owner.event';
 
-export class OwnerRegistered extends Event {
+export class OwnerRegistered extends OwnerEvent {
 
-  constructor(aggregatedId: string, nodeId: string, ssoId: string, email: string, publicName: string,
-    name: string, companyName: string, website: string) {
-    super(`owner-${aggregatedId}`, OwnerRegistered.name, {
-      ownerId: aggregatedId,
-      nodeId,
-      ssoId,
-      email,
-      publicName,
-      name,
-      companyName,
-      website
-    });
+  public readonly ownerId: string;
+  public readonly nodeId: string;
+  public readonly ssoId: string;
+  public readonly email: string;
+  public readonly publicName: string;
+  public readonly name: string;
+  public readonly companyName: string;
+  public readonly website: string;
+
+  constructor(ownerId: string, nodeId: string, ssoId: string, email: string, publicName: string,
+              name: string, companyName: string, website: string) {
+    super(ownerId);
+    this.ownerId = ownerId;
+    this.nodeId = nodeId;
+    this.ssoId = ssoId;
+    this.email = email;
+    this.publicName = publicName;
+    this.name = name;
+    this.companyName = companyName;
+    this.website = website;
   }
 }

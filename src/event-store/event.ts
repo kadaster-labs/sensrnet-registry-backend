@@ -1,10 +1,19 @@
-import { IEvent } from "@nestjs/cqrs";
+import {EventMessage} from './event-message';
 
-export abstract class Event implements IEvent {
-  constructor(
-    public readonly streamId: string,
-    public readonly eventType: string,
-    public readonly data: object = {},
-    public readonly metadata: object = {}
-  ) {}
+export abstract class Event {
+  public readonly aggregateId: string;
+
+  constructor(aggregateId: string) {
+    this.aggregateId = aggregateId;
+  }
+
+  abstract streamRoot(): string;
+
+  toEventMessage(): EventMessage {
+    return new EventMessage(
+        `${this.streamRoot()}-${this.aggregateId}`,
+        this.constructor.name,
+        this,
+    );
+  }
 }

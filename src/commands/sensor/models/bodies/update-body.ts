@@ -2,7 +2,6 @@ import { Theme } from './theme-body';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUrl, IsNotEmpty, IsObject, IsOptional, IsArray } from 'class-validator';
 
-
 export class UpdateSensorBody {
 
   @IsString()
@@ -10,7 +9,7 @@ export class UpdateSensorBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The name of the sensor.'
+    description: 'The name of the sensor.',
   })
   readonly name: string;
 
@@ -19,7 +18,7 @@ export class UpdateSensorBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The goal of the sensor.'
+    description: 'The goal of the sensor.',
   })
   readonly aim: string;
 
@@ -28,7 +27,7 @@ export class UpdateSensorBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'A description of the sensor.'
+    description: 'A description of the sensor.',
   })
   readonly description: string;
 
@@ -37,7 +36,7 @@ export class UpdateSensorBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The name of the sensor manufacturer.'
+    description: 'The name of the sensor manufacturer.',
   })
   readonly manufacturer: string;
 
@@ -46,7 +45,7 @@ export class UpdateSensorBody {
   @ApiProperty({
     type: Object,
     required: false,
-    description: 'GeoJSON of a drawn area (https://openlayers.org/en/latest/examples/draw-freehand.html?q=freehand).'
+    description: 'GeoJSON of a drawn area (https://openlayers.org/en/latest/examples/draw-freehand.html?q=freehand).',
   })
   readonly observationArea: object;
 
@@ -55,7 +54,7 @@ export class UpdateSensorBody {
   @ApiProperty({
       type: String,
       required: false,
-      description: 'A link to sensor documentation.'
+      description: 'A link to sensor documentation.',
   })
   readonly documentationUrl: string;
 
@@ -66,16 +65,16 @@ export class UpdateSensorBody {
       isArray: true,
       required: false,
       enum: Theme,
-      description: 'The sensor theme.'
+      description: 'The sensor theme.',
   })
-  readonly theme: Array<string>;
+  readonly theme: string[];
 
   @IsString()
   @IsOptional()
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The type of sensor.'
+    description: 'The type of sensor.',
   })
   readonly typeName: string;
 
@@ -83,8 +82,8 @@ export class UpdateSensorBody {
   @IsOptional()
   @ApiProperty({
     type: Object,
-    required: false,  
-    description: 'Type-specific characteristics of the sensor.'
+    required: false,
+    description: 'Type-specific characteristics of the sensor.',
   })
   readonly typeDetails: object;
 }

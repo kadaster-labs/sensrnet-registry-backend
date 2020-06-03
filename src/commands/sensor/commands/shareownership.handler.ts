@@ -1,14 +1,13 @@
-import { ShareSensorOwnershipCommand } from "./shareownership.command";
-import { SensorRepository } from "../repositories/sensor.repository";
-import { UnknowSensorException } from "../errors/unknow-sensor-exception";
-import { ICommandHandler, EventPublisher, CommandHandler } from "@nestjs/cqrs";
-
+import { ShareSensorOwnershipCommand } from './shareownership.command';
+import { SensorRepository } from '../repositories/sensor.repository';
+import { UnknowSensorException } from '../errors/unknow-sensor-exception';
+import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(ShareSensorOwnershipCommand)
 export class ShareSensorOwnershipCommandHandler implements ICommandHandler<ShareSensorOwnershipCommand> {
   constructor(
     private readonly publisher: EventPublisher,
-    private readonly repository: SensorRepository
+    private readonly repository: SensorRepository,
   ) {}
 
   async execute(command: ShareSensorOwnershipCommand): Promise<void> {

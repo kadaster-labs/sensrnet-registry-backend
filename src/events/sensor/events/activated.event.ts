@@ -1,4 +1,4 @@
-import { Event } from "../../../event-store/event";
+import { Event } from '../../../event-store/event';
 
 export class SensorActivated extends Event {
   constructor(aggregatedId: string) {

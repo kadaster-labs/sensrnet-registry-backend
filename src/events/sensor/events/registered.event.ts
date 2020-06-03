@@ -1,12 +1,12 @@
-import { Event } from "../../../event-store/event";
+import { Event } from '../../../event-store/event';
 import { LocationBody } from '../../../commands/sensor/models/bodies/location-body';
 
 export class SensorRegistered extends Event {
-  constructor(aggregatedId: string, nodeId: string, ownerIds: Array<string>,
-    name: string, location: LocationBody, aim: string, description: string,
-    manufacturer: string, active: boolean, observationArea: object,
-    documentationUrl: string, theme: Array<string>, typeName: string,
-    typeDetails: object) {
+  constructor(aggregatedId: string, nodeId: string, ownerIds: string[],
+              name: string, location: LocationBody, aim: string, description: string,
+              manufacturer: string, active: boolean, observationArea: object,
+              documentationUrl: string, theme: string[], typeName: string,
+              typeDetails: object) {
     super(`sensor-${aggregatedId}`, SensorRegistered.name, {
       sensorId: aggregatedId,
       nodeId,
@@ -21,7 +21,7 @@ export class SensorRegistered extends Event {
       documentationUrl,
       theme,
       typeName,
-      typeDetails
+      typeDetails,
     });
   }
 }
