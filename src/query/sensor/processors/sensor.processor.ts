@@ -1,9 +1,7 @@
-import {plainToClass} from 'class-transformer';
 import {Injectable, Logger} from '@nestjs/common';
 import {
   DatastreamAdded,
   DatastreamDeleted,
-  eventType,
   SensorActivated,
   SensorDeactivated,
   SensorDeleted,
@@ -19,8 +17,6 @@ import {Sensor} from '../models/sensor.model';
 export class SensorProcessor {
 
   async process(event): Promise<void> {
-
-    event = plainToClass(eventType.getType(event.eventType), event);
 
     if (event instanceof SensorRegistered) {
       await this.processCreated(event);

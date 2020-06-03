@@ -6,6 +6,8 @@ import { EventStoreModule } from '../../event-store/event-store.module';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { RetrieveOwnerQueryHandler } from './queries/retrieve.handler';
 import { OwnerProcessor } from './processors';
+import {plainToClass} from 'class-transformer';
+import {eventType} from '../../events/sensor';
 
 @Module({
   imports: [
@@ -34,7 +36,8 @@ export class OwnerQueryModule implements OnModuleInit {
     const url = 'mongodb://' + host + ':' + port.toString() + '/' + database;
     connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 
-    const onEvent = (_, event) => {
+    const onEvent = (_, eventMessage) => {
+      const event = plainToClass(eventType.getType(eventMessage.eventType), eventMessage.data);
       this.ownerProcessor.process(event);
     };
 

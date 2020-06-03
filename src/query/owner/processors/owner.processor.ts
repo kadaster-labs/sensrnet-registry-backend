@@ -1,14 +1,11 @@
 import {Owner} from '../models/owner.model';
-import {plainToClass} from 'class-transformer';
 import {Injectable, Logger} from '@nestjs/common';
-import {eventType, OwnerDeleted, OwnerRegistered, OwnerUpdated} from 'src/events/owner';
+import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from 'src/events/owner';
 
 @Injectable()
 export class OwnerProcessor {
 
   async process(event): Promise<void> {
-
-    event = plainToClass(eventType.getType(event.eventType), event);
 
     if (event instanceof OwnerRegistered) {
       await this.processCreated(event);
