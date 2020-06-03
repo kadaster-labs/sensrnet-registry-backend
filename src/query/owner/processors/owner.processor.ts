@@ -1,9 +1,16 @@
 import {Owner} from '../models/owner.model';
 import {Injectable, Logger} from '@nestjs/common';
 import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from 'src/events/owner';
+import {OwnerGateway} from '../owner.gateway';
 
 @Injectable()
 export class OwnerProcessor {
+  constructor(
+      private readonly ownerGateway: OwnerGateway,
+  ) {
+  }
+
+  protected logger: Logger = new Logger(this.constructor.name);
 
   async process(event): Promise<void> {
 
@@ -14,8 +21,10 @@ export class OwnerProcessor {
     } else if (event instanceof OwnerDeleted) {
       await this.processDeleted(event);
     } else {
-      Logger.warn(`Caught unsupported event: ${event}`);
+      this.logger.warn(`Caught unsupported event: ${event}`);
     }
+
+    this.ownerGateway.emit(event.constructor.name, event);
   }
 
   async processCreated(event: OwnerRegistered): Promise<void> {
@@ -55,7 +64,7 @@ export class OwnerProcessor {
 
     Owner.updateOne({_id: event.ownerId}, ownerData, (err) => {
       if (err) {
-        Logger.error('Error while updating projection.');
+        this.logger.error('Error while updating projection.');
       }
     });
   }
@@ -63,7 +72,7 @@ export class OwnerProcessor {
   async processDeleted(event: OwnerDeleted): Promise<void> {
     Owner.deleteOne({_id: event.aggregateId}, (err) => {
       if (err) {
-        Logger.error('Error while deleting projection.');
+        this.logger.error('Error while deleting projection.');
       }
     });
   }

@@ -15,8 +15,8 @@ import {DataStreamBody} from '../models/bodies/datastream-body';
 import {SensorActiveException, SensorInActiveException} from '../errors/sensor-active-exception';
 import {IsAlreadyOwnerException} from '../errors/is-already-owner-exception';
 import {Aggregate} from '../../../event-store/aggregate';
-import {Logger} from '@nestjs/common';
 import {SensorState, SensorStateImpl} from './sensor-state';
+import {EventMessage} from '../../../event-store/event-message';
 
 export class SensorAggregate extends Aggregate {
   state!: SensorState;
@@ -60,15 +60,15 @@ export class SensorAggregate extends Aggregate {
   }
 
   transferOwnership(oldOwnerId: string, newOwnerId: string) {
-    if (newOwnerId in this.state.ownerIds) {
+    if (this.state.ownerIds.includes(newOwnerId)) {
       throw new IsAlreadyOwnerException(newOwnerId);
     }
     this.simpleApply(new SensorOwnershipTransferred(this.aggregateId, oldOwnerId, newOwnerId));
   }
 
   shareOwnership(ownerIds: string[]) {
-    for (const ownerId in ownerIds) {
-      if (ownerId in this.state.ownerIds) {
+    for (const ownerId of ownerIds) {
+      if (this.state.ownerIds.includes(ownerId)) {
         throw new IsAlreadyOwnerException(ownerId);
       }
     }
@@ -99,48 +99,58 @@ export class SensorAggregate extends Aggregate {
     this.simpleApply(new SensorDeleted(this.aggregateId));
   }
 
-  private onSensorRegistered(event: SensorRegistered) {
+  private onSensorRegistered(eventMessage: EventMessage) {
+    const event: SensorRegistered = eventMessage.data as SensorRegistered;
     this.state = new SensorStateImpl(this.aggregateId);
 
     this.state.actives.push(event.active);
     this.state.ownerIds = event.ownerIds ? event.ownerIds : [];
   }
 
-  private onDatastreamAdded(event: DatastreamAdded) {
-    Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+  private onDatastreamAdded(eventMessage: EventMessage) {
+    const event: DatastreamAdded = eventMessage.data as DatastreamAdded;
+    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onDatastreamDeleted(event: DatastreamDeleted) {
-    Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+  private onDatastreamDeleted(eventMessage: EventMessage) {
+    const event: DatastreamDeleted = eventMessage.data as DatastreamDeleted;
+    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onSensorUpdated(event: SensorUpdated) {
-    Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+  private onSensorUpdated(eventMessage: EventMessage) {
+    const event: SensorUpdated = eventMessage.data as SensorUpdated;
+    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onSensorOwnershipTransferred(event: SensorOwnershipTransferred) {
-    this.state.ownerIds.filter((ownerId) => ownerId !== event.oldOwnerId);
+  private onSensorOwnershipTransferred(eventMessage: EventMessage) {
+    const event: SensorOwnershipTransferred = eventMessage.data as SensorOwnershipTransferred;
+    this.state.ownerIds = this.state.ownerIds.filter((ownerId) => ownerId !== event.oldOwnerId);
     this.state.ownerIds.push(event.newOwnerId);
   }
 
-  private onSensorOwnershipShared(event: SensorOwnershipShared) {
-    Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+  private onSensorOwnershipShared(eventMessage: EventMessage) {
+    const event: SensorOwnershipShared = eventMessage.data as SensorOwnershipShared;
+    this.state.ownerIds = this.state.ownerIds.concat(event.ownerIds);
   }
 
-  private onSensorRelocated(event: SensorRelocated) {
-    Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+  private onSensorRelocated(eventMessage: EventMessage) {
+    const event: SensorRelocated = eventMessage.data as SensorRelocated;
+    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onSensorActivated(event: SensorActivated) {
+  private onSensorActivated(eventMessage: EventMessage) {
+    const event: SensorActivated = eventMessage.data as SensorActivated;
     this.state.actives.push(true);
   }
 
-  private onSensorDeactivated(event: SensorDeactivated) {
+  private onSensorDeactivated(eventMessage: EventMessage) {
+    const event: SensorDeactivated = eventMessage.data as SensorDeactivated;
     this.state.actives.push(false);
   }
 
-  private onSensorDeleted(event: SensorDeleted) {
-    Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+  private onSensorDeleted(eventMessage: EventMessage) {
+    const event: SensorDeleted = eventMessage.data as SensorDeleted;
+    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
 }

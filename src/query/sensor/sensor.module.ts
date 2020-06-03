@@ -9,6 +9,7 @@ import {RetrieveSensorsQueryHandler} from './queries/sensors.handler';
 import {SensorProcessor} from './processors';
 import {plainToClass} from 'class-transformer';
 import {sensorEventType} from '../../events/sensor';
+import { SensorGateway } from './sensor.gateway';
 
 @Module({
   imports: [
@@ -22,16 +23,18 @@ import {sensorEventType} from '../../events/sensor';
     RetrieveSensorQueryHandler,
     RetrieveSensorsQueryHandler,
     SensorProcessor,
+    SensorGateway,
   ],
 })
 
 export class SensorQueryModule implements OnModuleInit {
+  protected logger: Logger = new Logger(this.constructor.name);
+
   constructor(
       private readonly eventStore: EventStorePublisher,
       private readonly sensorProcessor: SensorProcessor,
   ) {
   }
-
   onModuleInit() {
     const host = process.env.MONGO_HOST || 'localhost';
     const port = process.env.MONGO_PORT || 27017;
@@ -46,7 +49,7 @@ export class SensorQueryModule implements OnModuleInit {
     };
 
     this.eventStore.subscribeToStream('$ce-sensor', onEvent, () => {
-      Logger.warn('Event stream dropped');
+      this.logger.warn('Event stream dropped');
     });
   }
 }
