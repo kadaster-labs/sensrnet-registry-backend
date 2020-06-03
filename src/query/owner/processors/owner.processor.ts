@@ -1,9 +1,14 @@
 import {Owner} from '../models/owner.model';
 import {Injectable, Logger} from '@nestjs/common';
 import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from 'src/events/owner';
+import {OwnerGateway} from '../owner.gateway';
 
 @Injectable()
 export class OwnerProcessor {
+  constructor(
+      private readonly ownerGateway: OwnerGateway,
+  ) {
+  }
 
   protected logger: Logger = new Logger(this.constructor.name);
 
@@ -18,6 +23,8 @@ export class OwnerProcessor {
     } else {
       this.logger.warn(`Caught unsupported event: ${event}`);
     }
+
+    this.ownerGateway.emit(event.constructor.name, event);
   }
 
   async processCreated(event: OwnerRegistered): Promise<void> {

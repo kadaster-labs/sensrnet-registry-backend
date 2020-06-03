@@ -12,9 +12,14 @@ import {
   SensorUpdated,
 } from 'src/events/sensor';
 import {Sensor} from '../models/sensor.model';
+import {SensorGateway} from '../sensor.gateway';
 
 @Injectable()
 export class SensorProcessor {
+  constructor(
+      private readonly sensorGateway: SensorGateway,
+  ) {
+  }
 
   protected logger: Logger = new Logger(this.constructor.name);
 
@@ -43,6 +48,8 @@ export class SensorProcessor {
     } else {
       this.logger.warn(`Caught unsupported event: ${event}`);
     }
+
+    this.sensorGateway.emit(event.constructor.name, event);
   }
 
   async processCreated(event: SensorRegistered): Promise<void> {
