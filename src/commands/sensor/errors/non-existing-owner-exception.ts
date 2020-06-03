@@ -1,6 +1,6 @@
 import { DomainException } from './domain-exception';
 
-export class OwnerNotExistsException extends DomainException {
+export class NonExistingOwnerException extends DomainException {
   constructor(id: string) {
     super(`Owner ${id} does not exist.`);
   }

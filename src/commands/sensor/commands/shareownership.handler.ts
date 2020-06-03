@@ -2,7 +2,7 @@ import { ShareSensorOwnershipCommand } from './shareownership.command';
 import { SensorRepository } from '../repositories/sensor.repository';
 import { UnknowSensorException } from '../errors/unknow-sensor-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { OwnerNotExistsException } from '../errors/owner-not-exists-exception';
+import { NonExistingOwnerException } from '../errors/non-existing-owner-exception';
 import {OwnerRepository} from '../../owner/repositories/owner.repository';
 
 @CommandHandler(ShareSensorOwnershipCommand)
@@ -22,7 +22,7 @@ export class ShareSensorOwnershipCommandHandler implements ICommandHandler<Share
 
     for (const ownerId of command.ownerIds) {
       if (!await this.ownerRepository.get(ownerId)) {
-        throw new OwnerNotExistsException(ownerId);
+        throw new NonExistingOwnerException(ownerId);
       }
     }
 

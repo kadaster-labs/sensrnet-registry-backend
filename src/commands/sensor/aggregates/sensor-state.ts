@@ -3,12 +3,14 @@ export interface SensorState {
   actives: boolean[];
 
   active: boolean;
+  ownerIds: string[];
 }
 
 export class SensorStateImpl implements SensorState {
   constructor(
       public readonly id: string,
       public actives: boolean[] = [],
+      public ownerIds: string[] = [],
   ) {
   }
 

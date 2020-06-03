@@ -13,6 +13,7 @@ import {
 import {LocationBody} from '../models/bodies/location-body';
 import {DataStreamBody} from '../models/bodies/datastream-body';
 import {SensorActiveException, SensorInActiveException} from '../errors/sensor-active-exception';
+import {IsAlreadyOwnerException} from '../errors/is-already-owner-exception';
 import {Aggregate} from '../../../event-store/aggregate';
 import {Logger} from '@nestjs/common';
 import {SensorState, SensorStateImpl} from './sensor-state';
@@ -59,10 +60,18 @@ export class SensorAggregate extends Aggregate {
   }
 
   transferOwnership(oldOwnerId: string, newOwnerId: string) {
+    if (newOwnerId in this.state.ownerIds) {
+      throw new IsAlreadyOwnerException(newOwnerId);
+    }
     this.simpleApply(new SensorOwnershipTransferred(this.aggregateId, oldOwnerId, newOwnerId));
   }
 
   shareOwnership(ownerIds: string[]) {
+    for (const ownerId in ownerIds) {
+      if (ownerId in this.state.ownerIds) {
+        throw new IsAlreadyOwnerException(ownerId);
+      }
+    }
     this.simpleApply(new SensorOwnershipShared(this.aggregateId, ownerIds));
   }
 
@@ -94,6 +103,7 @@ export class SensorAggregate extends Aggregate {
     this.state = new SensorStateImpl(this.aggregateId);
 
     this.state.actives.push(event.active);
+    this.state.ownerIds = event.ownerIds ? event.ownerIds : [];
   }
 
   private onDatastreamAdded(event: DatastreamAdded) {
@@ -109,7 +119,8 @@ export class SensorAggregate extends Aggregate {
   }
 
   private onSensorOwnershipTransferred(event: SensorOwnershipTransferred) {
-    Logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+    this.state.ownerIds.filter((ownerId) => ownerId !== event.oldOwnerId);
+    this.state.ownerIds.push(event.newOwnerId);
   }
 
   private onSensorOwnershipShared(event: SensorOwnershipShared) {
