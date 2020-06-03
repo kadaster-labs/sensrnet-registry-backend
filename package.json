@@ -16,7 +16,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "uml": "tplant -C --input src/events/**/*.ts --output docs/images/events-uml.svg"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.13",
@@ -47,6 +48,7 @@
     "jest": "24.9.0",
     "prettier": "1.18.2",
     "supertest": "4.0.2",
+    "tplant": "^2.3.3",
     "ts-jest": "24.1.0",
     "ts-node": "8.4.1",
     "tsc-watch": "4.0.0",
