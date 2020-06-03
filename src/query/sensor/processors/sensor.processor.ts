@@ -267,12 +267,10 @@ export class SensorProcessor {
       location: {},
     };
     sensorData.location = {
-      location: {
-        x: event.x,
-        y: event.y,
-        z: event.z,
-        epsgCode: event.epsgCode,
-      },
+      x: event.x,
+      y: event.y,
+      z: event.z,
+      epsgCode: event.epsgCode,
     };
 
     if (event.baseObjectId) {

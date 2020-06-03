@@ -7,7 +7,7 @@ import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { RetrieveOwnerQueryHandler } from './queries/retrieve.handler';
 import { OwnerProcessor } from './processors';
 import {plainToClass} from 'class-transformer';
-import {eventType} from '../../events/sensor';
+import {eventType} from '../../events/owner';
 
 @Module({
   imports: [
