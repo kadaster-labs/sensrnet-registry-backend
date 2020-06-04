@@ -21,9 +21,11 @@ export class CreateSensorCommandHandler implements ICommandHandler<CreateSensorC
     if (!!aggregate) {
       throw new SensorAlreadyExistsException(command.sensorId);
     } else {
-      for (const ownerId of command.ownerIds) {
-        if (!await this.ownerRepository.get(ownerId)) {
-          throw new NonExistingOwnerException(ownerId);
+      if (command.ownerIds) {
+        for (const ownerId of command.ownerIds) {
+          if (!await this.ownerRepository.get(ownerId)) {
+            throw new NonExistingOwnerException(ownerId);
+          }
         }
       }
       const sensorAggregate = new SensorAggregate(command.sensorId);

@@ -1,6 +1,5 @@
 export interface SensorState {
   id: string;
-  actives: boolean[];
 
   active: boolean;
   ownerIds: string[];
@@ -9,12 +8,8 @@ export interface SensorState {
 export class SensorStateImpl implements SensorState {
   constructor(
       public readonly id: string,
-      public actives: boolean[] = [],
+      public active: boolean = true,
       public ownerIds: string[] = [],
   ) {
-  }
-
-  get active(): boolean {
-    return this.actives.length ? this.actives[this.actives.length - 1] : undefined;
   }
 }

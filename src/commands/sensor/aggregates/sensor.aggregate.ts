@@ -101,10 +101,9 @@ export class SensorAggregate extends Aggregate {
 
   private onSensorRegistered(eventMessage: EventMessage) {
     const event: SensorRegistered = eventMessage.data as SensorRegistered;
-    this.state = new SensorStateImpl(this.aggregateId);
 
-    this.state.actives.push(event.active);
-    this.state.ownerIds = event.ownerIds ? event.ownerIds : [];
+    const ownerIds = event.ownerIds ? event.ownerIds : [];
+    this.state = new SensorStateImpl(this.aggregateId, event.active, ownerIds);
   }
 
   private onDatastreamAdded(eventMessage: EventMessage) {
@@ -124,6 +123,7 @@ export class SensorAggregate extends Aggregate {
 
   private onSensorOwnershipTransferred(eventMessage: EventMessage) {
     const event: SensorOwnershipTransferred = eventMessage.data as SensorOwnershipTransferred;
+
     this.state.ownerIds = this.state.ownerIds.filter((ownerId) => ownerId !== event.oldOwnerId);
     this.state.ownerIds.push(event.newOwnerId);
   }
@@ -140,12 +140,12 @@ export class SensorAggregate extends Aggregate {
 
   private onSensorActivated(eventMessage: EventMessage) {
     const event: SensorActivated = eventMessage.data as SensorActivated;
-    this.state.actives.push(true);
+    this.state.active = true;
   }
 
   private onSensorDeactivated(eventMessage: EventMessage) {
     const event: SensorDeactivated = eventMessage.data as SensorDeactivated;
-    this.state.actives.push(false);
+    this.state.active = false;
   }
 
   private onSensorDeleted(eventMessage: EventMessage) {
