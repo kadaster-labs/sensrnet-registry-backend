@@ -11,7 +11,7 @@ import {
   SensorRelocated,
   SensorUpdated,
 } from 'src/events/sensor';
-import {Sensor} from '../models/sensor.model';
+import {Sensor, ISensor} from '../models/sensor.model';
 import {SensorGateway} from '../sensor.gateway';
 
 @Injectable()
@@ -21,38 +21,45 @@ export class SensorProcessor {
   ) {
   }
 
+  private errorCallback(error: any): void {
+    if (error) {
+      this.logError(event);
+    }
+  }
+
   protected logger: Logger = new Logger(this.constructor.name);
 
   async process(event): Promise<void> {
 
+    let result: ISensor;
     if (event instanceof SensorRegistered) {
-      await this.processCreated(event);
+      result = await this.processCreated(event);
     } else if (event instanceof SensorUpdated) {
-      await this.processUpdated(event);
+      result = await this.processUpdated(event);
     } else if (event instanceof SensorDeleted) {
-      await this.processDeleted(event);
+      result = await this.processDeleted(event);
     } else if (event instanceof SensorActivated) {
-      await this.processActivated(event);
+      result = await this.processActivated(event);
     } else if (event instanceof SensorDeactivated) {
-      await this.processDeactivated(event);
+      result = await this.processDeactivated(event);
     } else if (event instanceof SensorOwnershipShared) {
-      await this.processOwnershipShared(event);
+      result = await this.processOwnershipShared(event);
     } else if (event instanceof SensorOwnershipTransferred) {
-      await this.processOwnershipTransferred(event);
+      result = await this.processOwnershipTransferred(event);
     } else if (event instanceof DatastreamAdded) {
-      await this.processDataStreamCreated(event);
+      result = await this.processDataStreamCreated(event);
     } else if (event instanceof DatastreamDeleted) {
-      await this.processDataStreamDeleted(event);
+      result = await this.processDataStreamDeleted(event);
     } else if (event instanceof SensorRelocated) {
-      await this.processLocationUpdated(event);
+      result = await this.processLocationUpdated(event);
     } else {
       this.logger.warn(`Caught unsupported event: ${event}`);
     }
 
-    this.sensorGateway.emit(event.constructor.name, event);
+    this.sensorGateway.emit(event.constructor.name, result.toObject());
   }
 
-  async processCreated(event: SensorRegistered): Promise<void> {
+  async processCreated(event: SensorRegistered): Promise<ISensor> {
 
     let sensorData = {};
     sensorData = {
@@ -97,10 +104,12 @@ export class SensorProcessor {
       sensorData = {...sensorData, typeDetails: event.typeDetails};
     }
 
-    await new Sensor(sensorData).save().catch((reason => this.logger.warn(`Error saving sensorData: \n${JSON.stringify(sensorData)}`)));
+    const sensor: ISensor = await new Sensor(sensorData).save();
+
+    return sensor;
   }
 
-  async processUpdated(event: SensorUpdated): Promise<void> {
+  async processUpdated(event: SensorUpdated): Promise<ISensor> {
     let sensorData = {};
 
     if (event.typeName) {
@@ -131,46 +140,52 @@ export class SensorProcessor {
       sensorData = {...sensorData, typeDetails: event.typeDetails};
     }
 
-    Sensor.updateOne({_id: event.sensorId}, sensorData, (err) => {
-      if (err) {
-        this.logError(event);
-      }
-    });
+    const sensor: ISensor = await Sensor.findByIdAndUpdate(
+      event.sensorId,
+      sensorData,
+      this.errorCallback,
+    ).exec();
+
+    return sensor;
   }
 
-  async processDeleted(event: SensorDeleted): Promise<void> {
-    Sensor.deleteOne({_id: event.sensorId}, (err) => {
-      if (err) {
-        this.logger.error('Error while deleting projection.');
-      }
-    });
+  async processDeleted(event: SensorDeleted): Promise<ISensor> {
+    const sensor: ISensor = await Sensor.findByIdAndDelete(
+      event.sensorId,
+    ).exec();
+
+    return sensor;
   }
 
-  async processActivated(event: SensorActivated): Promise<void> {
+  async processActivated(event: SensorActivated): Promise<ISensor> {
     const sensorData = {
       active: true,
     };
 
-    Sensor.updateOne({_id: event.sensorId}, sensorData, (err) => {
-      if (err) {
-        this.logError(event);
-      }
-    });
+    const sensor: ISensor = await Sensor.findByIdAndUpdate(
+      event.sensorId,
+      sensorData,
+      this.errorCallback,
+    ).exec();
+
+    return sensor;
   }
 
-  async processDeactivated(event: SensorDeactivated): Promise<void> {
+  async processDeactivated(event: SensorDeactivated): Promise<ISensor> {
     const sensorData = {
       active: false,
     };
 
-    Sensor.updateOne({_id: event.sensorId}, sensorData, (err) => {
-      if (err) {
-        this.logError(event);
-      }
-    });
+    const sensor: ISensor = await Sensor.findByIdAndUpdate(
+      event.sensorId,
+      sensorData,
+      this.errorCallback,
+    ).exec();
+
+    return sensor;
   }
 
-  async processOwnershipShared(event: SensorOwnershipShared): Promise<void> {
+  async processOwnershipShared(event: SensorOwnershipShared): Promise<ISensor> {
     const updateSensorData = {
       $push: {
         ownerIds: {
@@ -179,14 +194,16 @@ export class SensorProcessor {
       },
     };
 
-    Sensor.updateOne({_id: event.sensorId}, updateSensorData, (err) => {
-      if (err) {
-        this.logError(event);
-      }
-    });
+    const sensor: ISensor = await Sensor.findByIdAndUpdate(
+      event.sensorId,
+      updateSensorData,
+      this.errorCallback,
+    ).exec();
+
+    return sensor;
   }
 
-  async processOwnershipTransferred(event: SensorOwnershipTransferred): Promise<void> {
+  async processOwnershipTransferred(event: SensorOwnershipTransferred): Promise<ISensor> {
     const filterData = {
       _id: event.sensorId,
       ownerIds: event.oldOwnerId,
@@ -198,14 +215,16 @@ export class SensorProcessor {
       },
     };
 
-    Sensor.updateOne(filterData, updateSensorData, (err) => {
-      if (err) {
-        this.logError(event);
-      }
-    });
+    const sensor: ISensor = await Sensor.findOneAndUpdate(
+      filterData,
+      updateSensorData,
+      this.errorCallback,
+    ).exec();
+
+    return sensor;
   }
 
-  async processDataStreamCreated(event: DatastreamAdded): Promise<void> {
+  async processDataStreamCreated(event: DatastreamAdded): Promise<ISensor> {
     let dataStreamData = {};
     dataStreamData = {
       dataStreamId: event.dataStreamId,
@@ -246,14 +265,16 @@ export class SensorProcessor {
       },
     };
 
-    Sensor.updateOne({_id: event.sensorId}, sensorData, (err) => {
-      if (err) {
-        this.logError(event);
-      }
-    });
+    const sensor: ISensor = await Sensor.findByIdAndUpdate(
+      event.sensorId,
+      sensorData,
+      this.errorCallback,
+    ).exec();
+
+    return sensor;
   }
 
-  async processDataStreamDeleted(event: DatastreamDeleted): Promise<void> {
+  async processDataStreamDeleted(event: DatastreamDeleted): Promise<ISensor> {
     const sensorData = {
       $pull: {
         dataStreams: {
@@ -262,14 +283,16 @@ export class SensorProcessor {
       },
     };
 
-    Sensor.updateOne({_id: event.sensorId}, sensorData, (err) => {
-      if (err) {
-        this.logError(event);
-      }
-    });
+    const sensor: ISensor = await Sensor.findByIdAndUpdate(
+      event.sensorId,
+      sensorData,
+      this.errorCallback,
+    ).exec();
+
+    return sensor;
   }
 
-  async processLocationUpdated(event: SensorRelocated): Promise<void> {
+  async processLocationUpdated(event: SensorRelocated): Promise<ISensor> {
     let sensorData;
     sensorData = {
       location: {
@@ -282,11 +305,13 @@ export class SensorProcessor {
       sensorData = {...sensorData, baseObjectId: event.baseObjectId};
     }
 
-    Sensor.updateOne({_id: event.sensorId}, sensorData, (err) => {
-      if (err) {
-        this.logError(event);
-      }
-    });
+    const sensor: ISensor = await Sensor.findByIdAndUpdate(
+      event.sensorId,
+      sensorData,
+      this.errorCallback,
+    ).exec();
+
+    return sensor;
   }
 
   private logError(event) {
