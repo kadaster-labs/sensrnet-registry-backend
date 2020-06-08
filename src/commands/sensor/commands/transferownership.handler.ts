@@ -3,7 +3,7 @@ import { TransferSensorOwnershipCommand } from './transferownership.command';
 import { UnknowSensorException } from '../errors/unknow-sensor-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 import {OwnerRepository} from '../../owner/repositories/owner.repository';
-import {NonExistingOwnerException} from '../errors/non-existing-owner-exception';
+import {validateOwner} from '../utils/owner.utils';
 
 @CommandHandler(TransferSensorOwnershipCommand)
 export class TransferSensorOwnershipCommandHandler implements ICommandHandler<TransferSensorOwnershipCommand> {
@@ -21,9 +21,9 @@ export class TransferSensorOwnershipCommandHandler implements ICommandHandler<Tr
     }
 
     if (!await this.ownerRepository.get(command.oldOwnerId)) {
-      throw new NonExistingOwnerException(command.oldOwnerId);
+      await validateOwner(this.ownerRepository, command.oldOwnerId);
     } else if (!await this.ownerRepository.get(command.newOwnerId)) {
-      throw new NonExistingOwnerException(command.newOwnerId);
+      await validateOwner(this.ownerRepository, command.newOwnerId);
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);

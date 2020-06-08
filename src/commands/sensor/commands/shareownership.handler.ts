@@ -2,8 +2,8 @@ import { ShareSensorOwnershipCommand } from './shareownership.command';
 import { SensorRepository } from '../repositories/sensor.repository';
 import { UnknowSensorException } from '../errors/unknow-sensor-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { NonExistingOwnerException } from '../errors/non-existing-owner-exception';
 import {OwnerRepository} from '../../owner/repositories/owner.repository';
+import {validateOwner} from '../utils/owner.utils';
 
 @CommandHandler(ShareSensorOwnershipCommand)
 export class ShareSensorOwnershipCommandHandler implements ICommandHandler<ShareSensorOwnershipCommand> {
@@ -21,9 +21,7 @@ export class ShareSensorOwnershipCommandHandler implements ICommandHandler<Share
     }
 
     for (const ownerId of command.ownerIds) {
-      if (!await this.ownerRepository.get(ownerId)) {
-        throw new NonExistingOwnerException(ownerId);
-      }
+      await validateOwner(this.ownerRepository, ownerId);
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);

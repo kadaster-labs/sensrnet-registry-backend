@@ -1,9 +1,9 @@
+import { validateOwner } from '../utils/owner.utils';
 import { CreateSensorCommand } from './create.command';
 import { SensorAggregate } from '../aggregates/sensor.aggregate';
 import { SensorRepository } from '../repositories/sensor.repository';
 import { OwnerRepository } from '../../owner/repositories/owner.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { NonExistingOwnerException } from '../errors/non-existing-owner-exception';
 import { SensorAlreadyExistsException } from '../errors/sensor-already-exists-exception';
 
 @CommandHandler(CreateSensorCommand)
@@ -23,9 +23,7 @@ export class CreateSensorCommandHandler implements ICommandHandler<CreateSensorC
     } else {
       if (command.ownerIds) {
         for (const ownerId of command.ownerIds) {
-          if (!await this.ownerRepository.get(ownerId)) {
-            throw new NonExistingOwnerException(ownerId);
-          }
+          await validateOwner(this.ownerRepository, ownerId);
         }
       }
       const sensorAggregate = new SensorAggregate(command.sensorId);
