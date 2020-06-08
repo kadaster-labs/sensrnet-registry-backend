@@ -101,7 +101,6 @@ export class SensorAggregate extends Aggregate {
 
   private onSensorRegistered(eventMessage: EventMessage) {
     const event: SensorRegistered = eventMessage.data as SensorRegistered;
-
     const ownerIds = event.ownerIds ? event.ownerIds : [];
     this.state = new SensorStateImpl(this.aggregateId, event.active, ownerIds);
   }
@@ -123,7 +122,6 @@ export class SensorAggregate extends Aggregate {
 
   private onSensorOwnershipTransferred(eventMessage: EventMessage) {
     const event: SensorOwnershipTransferred = eventMessage.data as SensorOwnershipTransferred;
-
     this.state.ownerIds = this.state.ownerIds.filter((ownerId) => ownerId !== event.oldOwnerId);
     this.state.ownerIds.push(event.newOwnerId);
   }

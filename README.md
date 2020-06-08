@@ -1,6 +1,6 @@
 # SensrNet Backend Application
 
-This is the backend for the SensrNet application. It features a NodeJS backend, and makes use of Eventstore.
+This is the backend for the SensrNet application. It features a NodeJS backend, and makes use of Eventstore and MongoDB.
 
 ## Getting Started
 
@@ -8,7 +8,7 @@ The stack can be ran locally, or using docker with docker-compose.
 
 ### Prerequisities
 
-In order to run this application standalone, you need npm and Eventstore installed.
+In order to run this application standalone, you need npm, Eventstore and MongoDB installed.
 
 In order to run this application containerized, you'll need docker installed.
 

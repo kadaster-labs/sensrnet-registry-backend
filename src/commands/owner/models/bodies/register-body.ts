@@ -8,7 +8,7 @@ export class RegisterOwnerBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The sso ID of the owner.',
+    description: 'The SSO ID of the owner.',
   })
   readonly ssoId: string;
 
