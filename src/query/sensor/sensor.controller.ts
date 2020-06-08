@@ -3,9 +3,12 @@ import { SensorIdParams } from './models/id-params';
 import { RetrieveSensorQuery } from './queries/sensor.query';
 import { RetrieveSensorsQuery } from './queries/sensors.query';
 import { RetrieveSensorsParams } from './models/retrieve-sensors-params';
-import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {ApiTags, ApiResponse, ApiOperation, ApiBearerAuth} from '@nestjs/swagger';
+import {Controller, Get, Param, Query, UseGuards} from '@nestjs/common';
+import {JwtAuthGuard} from '../../auth/jwt-auth.guard';
 
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @ApiTags('Sensor')
 @Controller('Sensor')
 export class SensorController {

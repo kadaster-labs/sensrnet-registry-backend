@@ -8,7 +8,7 @@ export class AuthenticateBody {
     @ApiProperty({
         type: String,
         required: true,
-        description: 'The owner username.',
+        description: 'The user name.',
     })
     readonly username: string;
 
@@ -17,9 +17,7 @@ export class AuthenticateBody {
     @ApiProperty({
         type: String,
         required: true,
-        description: 'The owner password.',
+        description: 'The user password.',
     })
     readonly password: string;
-
-    user: Promise<any>;
 }

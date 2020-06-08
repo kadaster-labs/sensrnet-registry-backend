@@ -10,7 +10,7 @@ import { UpdateSensorCommand } from './commands/update.command';
 import { DeleteSensorCommand } from './commands/delete.command';
 import { DataStreamBody } from './models/bodies/datastream-body';
 import { DeactivateSensorCommand } from './commands/deactivate.command';
-import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import {ApiTags, ApiResponse, ApiOperation, ApiBearerAuth} from '@nestjs/swagger';
 import { DomainExceptionFilter } from './errors/domain-exception.filter';
 import { ShareOwnershipBody } from './models/bodies/shareownership-body';
 import { ShareSensorOwnershipCommand } from './commands/shareownership.command';
@@ -19,10 +19,13 @@ import { CreateDataStreamCommand } from './commands/createdatastream.command';
 import { DeleteDataStreamCommand } from './commands/deletedatastream.command';
 import { TransferOwnershipBody } from './models/bodies/transferownership-body';
 import { TransferSensorOwnershipCommand } from './commands/transferownership.command';
-import { Controller, Param, Post, Put, Body, Delete, UseFilters } from '@nestjs/common';
+import {Controller, Param, Post, Put, Body, Delete, UseFilters, UseGuards} from '@nestjs/common';
+import {JwtAuthGuard} from '../../auth/jwt-auth.guard';
 
 const NODE_ID = process.env.NODE_ID || '1';
 
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @ApiTags('Sensor')
 @Controller('Sensor')
 export class OwnerController {

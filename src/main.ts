@@ -14,6 +14,7 @@ async function bootstrap() {
   const documentOptions = new DocumentBuilder()
     .setTitle('Sensrnet Backend API')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, documentOptions);
   SwaggerModule.setup('/api', app, document);

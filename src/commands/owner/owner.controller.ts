@@ -6,12 +6,15 @@ import { UpdateOwnerBody } from './models/bodies/update-body';
 import { RegisterOwnerCommand } from './commands/register.command';
 import { UpdateOwnerCommand } from './commands/update.command';
 import { DeleteOwnerCommand } from './commands/delete.command';
-import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { DomainExceptionFilter } from './errors/domain-exception.filter';
-import { UseFilters, Controller, Post, Param, Body, Put, Delete } from '@nestjs/common';
+import {UseFilters, Controller, Post, Param, Body, Put, Delete, UseGuards} from '@nestjs/common';
+import {JwtAuthGuard} from '../../auth/jwt-auth.guard';
 
 const NODE_ID = process.env.NODE_ID || '1';
 
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @ApiTags('Owner')
 @Controller('Owner')
 export class OwnerController {
