@@ -41,7 +41,7 @@ export class SensorQueryModule implements OnModuleInit {
     const database = process.env.MONGO_DATABASE || 'sensrnet';
 
     const url = 'mongodb://' + host + ':' + port.toString() + '/' + database;
-    connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true});
+    connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false});
 
     const onEvent = (_, eventMessage) => {
       const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
