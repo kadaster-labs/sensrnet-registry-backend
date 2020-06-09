@@ -41,13 +41,13 @@ export class OwnerController {
     for (const dataStream of sensorBody.dataStreams) {
       dataStream.dataStreamId = uuidv4();
     }
-
+    const uniqueOwnerIds = sensorBody.ownerIds ? [...new Set(sensorBody.ownerIds)] : undefined;
     await this.commandBus.execute(new CreateSensorCommand(sensorId, NODE_ID,
-      sensorBody.ownerIds, sensorBody.name, sensorBody.location,
-      sensorBody.dataStreams, sensorBody.aim, sensorBody.description,
-      sensorBody.manufacturer, sensorBody.active, sensorBody.observationArea,
-      sensorBody.documentationUrl, sensorBody.theme, sensorBody.typeName,
-      sensorBody.typeDetails));
+        uniqueOwnerIds, sensorBody.name, sensorBody.location,
+        sensorBody.dataStreams, sensorBody.aim, sensorBody.description,
+        sensorBody.manufacturer, sensorBody.active, sensorBody.observationArea,
+        sensorBody.documentationUrl, sensorBody.theme, sensorBody.typeName,
+        sensorBody.typeDetails));
 
     return { sensorId };
   }
@@ -80,8 +80,8 @@ export class OwnerController {
   @ApiResponse({ status: 200, description: 'Sensor ownership shared' })
   @ApiResponse({ status: 400, description: 'Sensor ownership sharing failed' })
   async shareSensorOwnership(@Param() params: SensorIdParams, @Body() shareOwnershipBody: ShareOwnershipBody) {
-    return await this.commandBus.execute(new ShareSensorOwnershipCommand(params.sensorId,
-      shareOwnershipBody.ownerIds));
+    const uniqueOwnerIds = shareOwnershipBody.ownerIds ? [...new Set(shareOwnershipBody.ownerIds)] : undefined;
+    return await this.commandBus.execute(new ShareSensorOwnershipCommand(params.sensorId, uniqueOwnerIds));
   }
 
   @Put(':sensorId/location')

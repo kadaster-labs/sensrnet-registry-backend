@@ -35,6 +35,10 @@ export class EventStore {
     return await this.client.getAllStreamEvents(streamName);
   }
 
+  async deleteStream(streamName: string, hardDelete?: boolean) {
+    return await this.client.deleteStream(streamName, hardDelete);
+  }
+
   async subscribeToStream(streamName: string, onEventAppeared, onDropped) {
     return await this.client.subscribeToStream(streamName, onEventAppeared, onDropped, true);
   }
