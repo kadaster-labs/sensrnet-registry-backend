@@ -13,7 +13,7 @@ const database = process.env.MONGO_DATABASE || 'sensrnet';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://' + host + ':' + port.toString() + '/' + database),
+    MongooseModule.forRoot(`mongodb://${host}:${port}/${database}`),
     AuthModule,
     UsersModule,
     OwnerCommandModule,
