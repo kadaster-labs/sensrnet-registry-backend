@@ -1,4 +1,26 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Document, Types, Model } from 'mongoose';
+
+export interface ISensor extends Document {
+    _id: string;
+    nodeId: string;
+    ownerIds?: Types.Array<string>;
+    name?: string;
+    location: {
+        type: 'Point',
+        coordinates: Types.Array<number>,
+    };
+    baseObjectId: string;
+    dataStreams?: Types.Array<any>;
+    aim?: string;
+    description?: string;
+    manufacturer?: string;
+    active: boolean;
+    observationArea?: object;
+    documentationUrl?: string;
+    theme?: Types.Array<string>;
+    typeName: Types.Array<string>;
+    typeDetails?: Types.Array<object>;
+}
 
 export const SensorSchema = new Schema({
     _id: { type: String, required: true },
@@ -23,4 +45,4 @@ export const SensorSchema = new Schema({
 });
 
 SensorSchema.index({ location: '2dsphere' });
-export const Sensor = model('Sensor', SensorSchema);
+export const Sensor = model<ISensor, Model<ISensor>>('Sensor', SensorSchema);
