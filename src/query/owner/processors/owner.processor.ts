@@ -1,11 +1,14 @@
-import {Owner} from '../models/owner.model';
+import {Owner} from '../owner.interface';
 import {OwnerGateway} from '../owner.gateway';
 import {Injectable, Logger} from '@nestjs/common';
 import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from 'src/events/owner';
+import {InjectModel} from '@nestjs/mongoose';
+import {Model} from 'mongoose';
 
 @Injectable()
 export class OwnerProcessor {
   constructor(
+      @InjectModel('Owner') private ownerModel: Model<Owner>,
       private readonly ownerGateway: OwnerGateway,
   ) {
   }
@@ -28,7 +31,7 @@ export class OwnerProcessor {
   }
 
   async processCreated(event: OwnerRegistered): Promise<void> {
-    const ownerInstance = new Owner({
+    const ownerInstance = new this.ownerModel({
       _id: event.ownerId,
       nodeId: event.nodeId,
       organisationName: event.organisationName,
@@ -58,7 +61,7 @@ export class OwnerProcessor {
       ownerData = {...ownerData, contactPhone: event.contactPhone};
     }
 
-    Owner.updateOne({_id: event.ownerId}, ownerData, (err) => {
+    this.ownerModel.updateOne({_id: event.ownerId}, ownerData, (err) => {
       if (err) {
         this.logger.error('Error while updating projection.');
       }
@@ -66,7 +69,7 @@ export class OwnerProcessor {
   }
 
   async processDeleted(event: OwnerDeleted): Promise<void> {
-    Owner.deleteOne({_id: event.aggregateId}, (err) => {
+    this.ownerModel.deleteOne({_id: event.aggregateId}, (err) => {
       if (err) {
         this.logger.error('Error while deleting projection.');
       }

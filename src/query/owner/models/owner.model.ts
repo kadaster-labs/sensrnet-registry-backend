@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 
 export const OwnerSchema = new Schema({
     _id: { type: String, required: true },
@@ -9,5 +9,3 @@ export const OwnerSchema = new Schema({
     contactEmail: { type: String, required: true },
     contactPhone: { type: String, required: false },
 });
-
-export const Owner = model('Owner', OwnerSchema);
