@@ -8,27 +8,18 @@ export class RegisterOwnerBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The SSO ID of the owner.',
+    description: 'The name of the owner organization.',
   })
-  readonly ssoId: string;
+  readonly organisationName: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    type: String,
-    required: true,
-    description: 'The email of the owner.',
-  })
-  readonly email: string;
-
-  @IsString()
+  @IsUrl()
   @IsOptional()
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The public name (alias) of the owner.',
+    description: 'The website of the owner organization.',
   })
-  readonly publicName: string;
+  readonly website: string;
 
   @IsString()
   @IsNotEmpty()
@@ -40,20 +31,38 @@ export class RegisterOwnerBody {
   readonly name: string;
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   @ApiProperty({
     type: String,
-    required: false,
-    description: 'The name of the company the owner is associated with.',
+    required: true,
+    description: 'The contact email of the owner.',
   })
-  readonly companyName: string;
+  readonly contactEmail: string;
 
-  @IsUrl()
+  @IsString()
   @IsOptional()
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The website of the owner (company).',
+    description: 'The contact phone of the owner.',
   })
-  readonly website: string;
+  readonly contactPhone: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
+    required: true,
+    description: 'The (unique) email of the owner user.',
+  })
+  readonly email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
+    required: true,
+    description: 'The password of the owner user.',
+  })
+  readonly password: string;
 }

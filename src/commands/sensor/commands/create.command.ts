@@ -6,7 +6,7 @@ export class CreateSensorCommand implements ICommand {
   constructor(
     public readonly sensorId: string,
     public readonly nodeId: string,
-    public readonly ownerIds: string[],
+    public readonly ownerId: string,
     public readonly name: string,
     public readonly location: LocationBody,
     public readonly dataStreams: DataStreamBody[],

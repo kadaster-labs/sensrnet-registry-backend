@@ -3,11 +3,9 @@ import { Schema } from 'mongoose';
 import { User } from '../user.interface';
 
 export const UserSchema = new Schema({
-    username: { type: String, required: true, unique: true },
+    _id: { type: String, required: true },
+    ownerId: { type: String, required: true },
     password: { type: String, required: true },
-    provider: { type: String, required: false },
-    email: { type: String, required: false },
-    role: { type: Number, required: false },
 });
 
 UserSchema.pre<User>('save', function(next) {

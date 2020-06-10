@@ -1,7 +1,7 @@
 import {Owner} from '../models/owner.model';
+import {OwnerGateway} from '../owner.gateway';
 import {Injectable, Logger} from '@nestjs/common';
 import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from 'src/events/owner';
-import {OwnerGateway} from '../owner.gateway';
 
 @Injectable()
 export class OwnerProcessor {
@@ -31,35 +31,31 @@ export class OwnerProcessor {
     const ownerInstance = new Owner({
       _id: event.ownerId,
       nodeId: event.nodeId,
-      ssoId: event.ssoId,
-      email: event.email,
-      publicName: event.publicName,
-      name: event.name,
-      companyName: event.companyName,
+      organisationName: event.organisationName,
       website: event.website,
+      name: event.name,
+      contactEmail: event.contactEmail,
+      contactPhone: event.contactPhone,
     });
     await ownerInstance.save();
   }
 
   async processUpdated(event: OwnerUpdated): Promise<void> {
     let ownerData = {};
-    if (event.ssoId) {
-      ownerData = {...ownerData, ssoId: event.ssoId};
-    }
-    if (event.email) {
-      ownerData = {...ownerData, email: event.email};
-    }
-    if (event.publicName) {
-      ownerData = {...ownerData, publicName: event.publicName};
-    }
-    if (event.name) {
-      ownerData = {...ownerData, name: event.name};
-    }
-    if (event.companyName) {
-      ownerData = {...ownerData, companyName: event.companyName};
+    if (event.organisationName) {
+      ownerData = {...ownerData, organisationName: event.organisationName};
     }
     if (event.website) {
       ownerData = {...ownerData, website: event.website};
+    }
+    if (event.contactName) {
+      ownerData = {...ownerData, contactName: event.contactName};
+    }
+    if (event.contactEmail) {
+      ownerData = {...ownerData, contactEmail: event.contactEmail};
+    }
+    if (event.contactPhone) {
+      ownerData = {...ownerData, contactPhone: event.contactPhone};
     }
 
     Owner.updateOne({_id: event.ownerId}, ownerData, (err) => {

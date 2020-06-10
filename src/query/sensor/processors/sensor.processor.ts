@@ -66,8 +66,8 @@ export class SensorProcessor {
       typeName: event.typeName,
     };
 
-    if (event.ownerIds) {
-      sensorData = {...sensorData, ownerIds: event.ownerIds};
+    if (event.ownerId) {
+      sensorData = {...sensorData, ownerIds: [event.ownerId]};
     }
     if (event.baseObjectId) {
       sensorData = {...sensorData, baseObjectId: event.baseObjectId};

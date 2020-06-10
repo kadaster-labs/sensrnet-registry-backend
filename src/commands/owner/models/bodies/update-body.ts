@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsUrl } from 'class-validator';
+import {IsString, IsOptional, IsUrl} from 'class-validator';
 
 export class UpdateOwnerBody {
 
@@ -8,27 +8,18 @@ export class UpdateOwnerBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The sso ID of the owner.',
+    description: 'The name of the owner organization.',
   })
-  readonly ssoId: string;
+  readonly organisationName: string;
 
-  @IsString()
+  @IsUrl()
   @IsOptional()
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The email of the owner.',
+    description: 'The website of the owner organization.',
   })
-  readonly email: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    type: String,
-    required: false,
-    description: 'The public name (alias) of the owner.',
-  })
-  readonly publicName: string;
+  readonly website: string;
 
   @IsString()
   @IsOptional()
@@ -44,16 +35,16 @@ export class UpdateOwnerBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The name of the company the owner is associated with.',
+    description: 'The contact email of the owner.',
   })
-  readonly companyName: string;
+  readonly contactEmail: string;
 
-  @IsUrl()
+  @IsString()
   @IsOptional()
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The website of the owner (company).',
+    description: 'The contact phone of the owner.',
   })
-  readonly website: string;
+  readonly contactPhone: string;
 }

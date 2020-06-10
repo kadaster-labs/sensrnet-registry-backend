@@ -5,6 +5,7 @@ import { OwnerQueryModule } from './query/owner/owner.module';
 import { SensorQueryModule } from './query/sensor/sensor.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { UserQueryModule } from './query/user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 
 const port = process.env.MONGO_PORT || 27017;
@@ -20,6 +21,7 @@ const database = process.env.MONGO_DATABASE || 'sensrnet';
     SensorCommandModule,
     OwnerQueryModule,
     SensorQueryModule,
+    UserQueryModule,
   ],
 })
 

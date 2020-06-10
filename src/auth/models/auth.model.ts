@@ -8,9 +8,9 @@ export class AuthenticateBody {
     @ApiProperty({
         type: String,
         required: true,
-        description: 'The user name.',
+        description: 'The user email address.',
     })
-    readonly username: string;
+    readonly username: string; // Needs to be 'username' otherwise it will not work.
 
     @IsString()
     @IsNotEmpty()

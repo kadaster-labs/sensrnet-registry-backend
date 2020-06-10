@@ -8,16 +8,6 @@ import { IsString, IsNotEmpty, IsBoolean, IsUUID, IsObject, IsArray, IsUrl,
 
 export class RegisterSensorBody {
 
-  @IsOptional()
-  @ApiProperty({
-    type: String,
-    isArray: true,
-    required: false,
-    description: 'Owner IDs.',
-  })
-  @IsUUID(4, {each: true})
-  readonly ownerIds: string[];
-
   @IsString()
   @IsOptional()
   @ApiProperty({
