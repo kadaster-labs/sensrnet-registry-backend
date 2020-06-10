@@ -19,8 +19,8 @@ export class UpdateOwnerCommandHandler
     }
 
     const aggregate = this.publisher.mergeObjectContext(ownerAggregate);
-    aggregate.update(command.ssoId, command.email, command.publicName,
-      command.name, command.companyName, command.website);
+    aggregate.update(command.organisationName, command.website,
+      command.contactName, command.contactEmail, command.contactPhone);
     aggregate.commit();
   }
 }

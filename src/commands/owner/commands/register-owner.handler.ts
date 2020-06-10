@@ -1,4 +1,4 @@
-import { RegisterOwnerCommand as RegisterOwnerCommand } from './register.command';
+import { RegisterOwnerCommand as RegisterOwnerCommand } from './register-owner.command';
 import { OwnerAggregate } from '../aggregates/owner.aggregate';
 import { OwnerRepository } from '../repositories/owner.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
@@ -21,8 +21,8 @@ export class RegisterOwnerCommandHandler implements ICommandHandler<RegisterOwne
       const ownerAggregate = new OwnerAggregate(command.ownerId);
       aggregate = this.publisher.mergeObjectContext(ownerAggregate);
 
-      aggregate.register(command.nodeId, command.ssoId, command.email, command.publicName,
-        command.name, command.companyName, command.website);
+      aggregate.register(command.nodeId, command.organisationName, command.website, command.name,
+        command.contactEmail, command.contactPhone);
       aggregate.commit();
     }
   }

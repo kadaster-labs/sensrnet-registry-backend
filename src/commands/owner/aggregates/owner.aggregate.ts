@@ -1,7 +1,7 @@
-import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from '../../../events/owner';
 import {Aggregate} from '../../../event-store/aggregate';
 import {OwnerState, OwnerStateImpl} from './owner-state';
 import {EventMessage} from '../../../event-store/event-message';
+import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from '../../../events/owner';
 
 export class OwnerAggregate extends Aggregate {
   state!: OwnerState;
@@ -10,16 +10,16 @@ export class OwnerAggregate extends Aggregate {
     super();
   }
 
-  register(nodeId: string, ssoId: string, email: string, publicName: string, name: string,
-           companyName: string, website: string) {
-    this.simpleApply(new OwnerRegistered(this.aggregateId, nodeId, ssoId, email, publicName,
-        name, companyName, website));
+  register(nodeId: string, organisationName: string, website: string, name: string,
+           contactEmail: string, contactPhone: string) {
+    this.simpleApply(new OwnerRegistered(this.aggregateId, nodeId, organisationName, website,
+        name, contactEmail, contactPhone));
   }
 
-  update(ssoId: string, email: string, publicName: string, name: string,
-         companyName: string, website: string) {
-    this.simpleApply(new OwnerUpdated(this.aggregateId, ssoId, email, publicName, name,
-        companyName, website));
+  update(organisationName: string, website: string, contactName: string, contactEmail: string,
+         contactPhone: string) {
+    this.simpleApply(new OwnerUpdated(this.aggregateId, organisationName, website, contactName,
+        contactEmail, contactPhone));
   }
 
   delete() {

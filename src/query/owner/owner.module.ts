@@ -1,4 +1,3 @@
-import {connect} from 'mongoose';
 import {OwnerController} from './owner.controller';
 import {Logger, Module, OnModuleInit} from '@nestjs/common';
 import {CqrsModule, EventPublisher} from '@nestjs/cqrs';
@@ -9,12 +8,15 @@ import {OwnerProcessor} from './processors';
 import {plainToClass} from 'class-transformer';
 import {ownerEventType} from '../../events/owner';
 import {OwnerGateway} from './owner.gateway';
+import {MongooseModule} from '@nestjs/mongoose';
+import {OwnerSchema} from './models/owner.model';
 
 @Module({
   imports: [
     CqrsModule,
     EventStoreModule,
     OwnerQueryModule,
+    MongooseModule.forFeature([{name: 'Owner', schema: OwnerSchema}]),
   ],
   controllers: [OwnerController],
   providers: [
@@ -33,13 +35,6 @@ export class OwnerQueryModule implements OnModuleInit {
   }
 
   onModuleInit() {
-    const host = process.env.MONGO_HOST || 'localhost';
-    const port = process.env.MONGO_PORT || 27017;
-    const database = process.env.MONGO_DATABASE || 'sensrnet';
-
-    const url = 'mongodb://' + host + ':' + port.toString() + '/' + database;
-    connect(url, {useNewUrlParser: true, useUnifiedTopology: true});
-
     const onEvent = (_, eventMessage) => {
       const event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessage.data);
       this.ownerProcessor.process(event);

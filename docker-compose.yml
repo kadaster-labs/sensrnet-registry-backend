@@ -35,6 +35,7 @@ services:
       - MONGO_DATABASE=sensrnet
       - EVENT_STORE_PORT=1113
       - EVENT_STORE_HOST=eventstore
+      - JWT_SECRET=example-secret-key
     links:
       - eventstore
     networks:

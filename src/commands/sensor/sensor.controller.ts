@@ -10,7 +10,7 @@ import { UpdateSensorCommand } from './commands/update.command';
 import { DeleteSensorCommand } from './commands/delete.command';
 import { DataStreamBody } from './models/bodies/datastream-body';
 import { DeactivateSensorCommand } from './commands/deactivate.command';
-import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import {ApiTags, ApiResponse, ApiOperation, ApiBearerAuth} from '@nestjs/swagger';
 import { DomainExceptionFilter } from './errors/domain-exception.filter';
 import { ShareOwnershipBody } from './models/bodies/shareownership-body';
 import { ShareSensorOwnershipCommand } from './commands/shareownership.command';
@@ -19,10 +19,13 @@ import { CreateDataStreamCommand } from './commands/createdatastream.command';
 import { DeleteDataStreamCommand } from './commands/deletedatastream.command';
 import { TransferOwnershipBody } from './models/bodies/transferownership-body';
 import { TransferSensorOwnershipCommand } from './commands/transferownership.command';
-import { Controller, Param, Post, Put, Body, Delete, UseFilters } from '@nestjs/common';
+import {Controller, Param, Post, Put, Body, Delete, UseFilters, Request, UseGuards} from '@nestjs/common';
+import {JwtAuthGuard} from '../../auth/jwt-auth.guard';
 
 const NODE_ID = process.env.NODE_ID || '1';
 
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @ApiTags('Sensor')
 @Controller('Sensor')
 export class OwnerController {
@@ -33,14 +36,14 @@ export class OwnerController {
   @ApiOperation({ summary: 'Register sensor' })
   @ApiResponse({ status: 200, description: 'Sensor registered' })
   @ApiResponse({ status: 400, description: 'Sensor registration failed' })
-  async registerOwner(@Body() sensorBody: RegisterSensorBody) {
+  async registerOwner(@Body() sensorBody: RegisterSensorBody, @Request() req) {
     const sensorId = uuidv4();
     for (const dataStream of sensorBody.dataStreams) {
       dataStream.dataStreamId = uuidv4();
     }
-    const uniqueOwnerIds = sensorBody.ownerIds ? [...new Set(sensorBody.ownerIds)] : undefined;
+
     await this.commandBus.execute(new CreateSensorCommand(sensorId, NODE_ID,
-        uniqueOwnerIds, sensorBody.name, sensorBody.location,
+        req.user.ownerId, sensorBody.name, sensorBody.location,
         sensorBody.dataStreams, sensorBody.aim, sensorBody.description,
         sensorBody.manufacturer, sensorBody.active, sensorBody.observationArea,
         sensorBody.documentationUrl, sensorBody.theme, sensorBody.typeName,
@@ -66,9 +69,10 @@ export class OwnerController {
   @ApiOperation({ summary: 'Transfer sensor ownership' })
   @ApiResponse({ status: 200, description: 'Sensor ownership transferred' })
   @ApiResponse({ status: 400, description: 'Sensor ownership transfer failed' })
-  async transferSensorOwnership(@Param() params: SensorIdParams, @Body() transferOwnershipBody: TransferOwnershipBody) {
+  async transferSensorOwnership(@Param() params: SensorIdParams, @Body() transferOwnershipBody: TransferOwnershipBody,
+                                @Request() req) {
     return await this.commandBus.execute(new TransferSensorOwnershipCommand(params.sensorId,
-      transferOwnershipBody.oldOwnerId, transferOwnershipBody.newOwnerId));
+        req.user.ownerId, transferOwnershipBody.newOwnerId));
   }
 
   @Put(':sensorId/share')

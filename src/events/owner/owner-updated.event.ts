@@ -2,21 +2,19 @@ import {OwnerEvent} from './owner.event';
 
 export class OwnerUpdated extends OwnerEvent {
 
-  public readonly ssoId: string;
-  public readonly email: string;
-  public readonly publicName: string;
-  public readonly name: string;
-  public readonly companyName: string;
+  public readonly organisationName: string;
   public readonly website: string;
+  public readonly contactName: string;
+  public readonly contactEmail: string;
+  public readonly contactPhone: string;
 
-  constructor(ownerId: string, ssoId: string, email: string, publicName: string,
-              name: string, companyName: string, website: string) {
+  constructor(ownerId: string, organisationName: string, website: string,
+              contactName: string, contactEmail: string, contactPhone: string) {
     super(ownerId);
-    this.ssoId = ssoId;
-    this.email = email;
-    this.publicName = publicName;
-    this.name = name;
-    this.companyName = companyName;
+    this.organisationName = organisationName;
     this.website = website;
+    this.contactName = contactName;
+    this.contactEmail = contactEmail;
+    this.contactPhone = contactPhone;
   }
 }
