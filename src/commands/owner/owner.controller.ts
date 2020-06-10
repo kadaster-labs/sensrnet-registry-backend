@@ -26,9 +26,9 @@ export class OwnerController {
   async createOwner(@Body() ownerBody: RegisterOwnerBody) {
     const ownerId = uuidv4();
 
-    await this.commandBus.execute(new RegisterUserCommand(ownerBody.email, ownerId, ownerBody.password));
-    await this.commandBus.execute(new RegisterOwnerCommand(ownerId, NODE_ID, ownerBody.organisationName,
-        ownerBody.website, ownerBody.name, ownerBody.contactEmail, ownerBody.contactPhone));
+    await this.commandBus.execute(new RegisterUserCommand(ownerBody.email, ownerId, ownerBody.password))
+        .then(() => this.commandBus.execute(new RegisterOwnerCommand(ownerId, NODE_ID, ownerBody.organisationName,
+            ownerBody.website, ownerBody.name, ownerBody.contactEmail, ownerBody.contactPhone)));
 
     return {ownerId};
   }
