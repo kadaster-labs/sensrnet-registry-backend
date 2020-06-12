@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: nodejs-cqrs
+  name: nodejs-cqrs
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: nodejs-cqrs
+    spec:
+      containers:
+      - env:
+        - name: EVENT_STORE_HOST
+          value: eventstore
+        - name: EVENT_STORE_PORT
+          value: "1113"
+        - name: JWT_SECRET
+          value: example-secret-key
+        - name: MONGO_DATABASE
+          value: sensrnet
+        - name: MONGO_HOST
+          value: mongo
+        - name: MONGO_PORT
+          value: "27017"
+        - name: NODE_ID
+          value: node_1
+        - name: PORT
+          value: "3000"
+        image: nodejs-cqrs
+        name: nodejs-cqrs
+        ports:
+        - containerPort: 3000
+        resources: {}
+      restartPolicy: Always
+status: {}

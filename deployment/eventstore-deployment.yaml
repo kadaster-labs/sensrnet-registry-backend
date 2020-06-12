@@ -1,0 +1,36 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: eventstore
+  name: eventstore
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: eventstore
+    spec:
+      containers:
+      - env:
+        - name: EVENTSTORE_RUN_PROJECTIONS
+          value: All
+        - name: EVENTSTORE_START_STANDARD_PROJECTIONS
+          value: "true"
+        image: eventstore/eventstore
+        name: eventstore
+        ports:
+        - containerPort: 2113
+        - containerPort: 1113
+        resources: {}
+      restartPolicy: Always
+status: {}
