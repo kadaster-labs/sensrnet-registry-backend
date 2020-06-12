@@ -4,6 +4,8 @@ LABEL maintainer="Wim Florijn <wim.florijn@kadaster.nl>"
 
 WORKDIR /app
 
+ADD VERSION .
+
 COPY entrypoint.sh entrypoint.sh
 RUN chmod +x entrypoint.sh
 
