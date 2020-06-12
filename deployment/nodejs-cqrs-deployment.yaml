@@ -39,7 +39,7 @@ spec:
           value: node_1
         - name: PORT
           value: "3000"
-        image: sensrnetacr.azurecr.io/sensrnet-nodejs-cqrs:202006121016
+        image: sensrnetacr.azurecr.io/sensrnet-nodejs-cqrs:202006121310
         name: nodejs-cqrs
         ports:
         - containerPort: 3000
