@@ -5,6 +5,10 @@ set -ex
 USERNAME=sensrnet
 # image name
 IMAGE=registry-backend
+
+# ensure we're logged on at the registry
+az acr login --name sensrnetregistry
+
 # ensure we're up to date
 git pull
 # bump version
