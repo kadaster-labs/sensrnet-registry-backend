@@ -8,6 +8,7 @@ metadata:
   labels:
     io.kompose.service: eventstore
   name: eventstore
+  namespace: sensrnet-backend
 spec:
   replicas: 1
   strategy: {}

@@ -8,6 +8,7 @@ metadata:
   labels:
     io.kompose.service: nodejs-cqrs
   name: nodejs-cqrs
+  namespace: sensrnet-backend
 spec:
   replicas: 1
   strategy: {}
