@@ -27,6 +27,8 @@ spec:
           value: All
         - name: EVENTSTORE_START_STANDARD_PROJECTIONS
           value: "true"
+        - name: EVENTSTORE_DEV
+          value: "true"
         image: eventstore/eventstore
         name: eventstore
         ports:
