@@ -16,8 +16,6 @@ echo "version: $VERSION"
 rm VERSION
 echo "$VERSION" >> VERSION
 
-exit 0
-
 # run build
 ./build.sh
 
