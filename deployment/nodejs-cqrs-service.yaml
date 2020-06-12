@@ -15,6 +15,6 @@ spec:
     port: 3000
     targetPort: 3000
   selector:
-    io.kompose.service: sensrnetacr.azurecr.io/nodejs-cqrs:latest
+    io.kompose.service: nodejs-cqrs
 status:
   loadBalancer: {}
