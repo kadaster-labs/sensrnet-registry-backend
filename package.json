@@ -1,9 +1,12 @@
 {
-  "name": "app",
+  "name": "sensrnet-registery-backend",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
-  "license": "EUPL",
+  "description": "SensRNet Registery Backend Application",
+  "author": "https://github.com/kadaster-labs/sensrnet-home/blob/master/MAINTAINERS.md",
+  "license": "EUPL-1.2",
+  "repository": {
+    "url": "https://github.com/kadaster-labs/sensrnet-backend"
+  },
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -48,11 +51,11 @@
     "@nestjs/testing": "^7.0.0",
     "@types/express": "^4.17.3",
     "@types/jest": "25.2.3",
+    "@types/mongoose": "5.7.21",
     "@types/node": "^13.9.1",
+    "@types/passport-local": "1.0.33",
     "@types/socket.io": "^2.1.8",
     "@types/supertest": "2.0.8",
-    "@types/mongoose": "5.7.21",
-    "@types/passport-local": "1.0.33",
     "jest": "26.0.1",
     "prettier": "^1.19.1",
     "supertest": "^4.0.2",
