@@ -12,6 +12,13 @@ async function bootstrap() {
   app.useGlobalFilters(new DomainExceptionFilter());
   app.setGlobalPrefix('api');
 
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+    next();
+  });
+
   const documentOptions = new DocumentBuilder()
     .setTitle('Sensrnet Backend API')
     .setVersion('1.0')
