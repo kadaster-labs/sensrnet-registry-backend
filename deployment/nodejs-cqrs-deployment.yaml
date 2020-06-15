@@ -27,7 +27,7 @@ spec:
       containers:
       - env:
         - name: EVENT_STORE_HOST
-          value: eventstore
+          value: eventstore-cluster
         - name: EVENT_STORE_PORT
           value: "1113"
         - name: JWT_SECRET
@@ -42,7 +42,7 @@ spec:
           value: node_1
         - name: PORT
           value: "3000"
-        image: sensrnetregistry.azurecr.io/sensrnet/registry-backend:0.0.1
+        image: sensrnetregistry.azurecr.io/sensrnet/registry-backend:0.0.2
         name: nodejs-cqrs
         ports:
         - containerPort: 3000
