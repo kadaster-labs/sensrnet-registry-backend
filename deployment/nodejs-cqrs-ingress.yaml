@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nodejs-cqrs-ingress
+  namespace: sensrnet-backend
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/preserve-host: "true"
+spec:
+  rules:
+  - host: sensrnet-test.westeurope.cloudapp.azure.com
+    http:
+      paths:
+      - backend:
+          serviceName: nodejs-cqrs
+          servicePort: 80
+        path: /api/
