@@ -53,19 +53,16 @@ Entire Stack:
 
 ## Find Us
 
-* [GitHub](https://github.com/kad-floriw)
+* [GitHub](https://github.com/kadaster-labs/sensrnet-home)
 
 ## Contributing
 
-(TODO) Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-## Authors
+## Maintainers <a name="maintainers"></a>
 
-* **Wim Florijn** - *Initial work* - [Kadaster](https://kadaster.nl)
-
-See also the list of [contributors](https://github.com/your/repository/contributors) who 
-participated in this project.
+Should you have any questions or concerns, please reach out to one of the project's [Maintainers](./MAINTAINERS.md).
 
 ## License
 
-This project is licensed under the EUPL License - see the [LICENSE.md](LICENSE.md) file for details.
+This work is licensed under a [EUPL v1.2 license](./LICENSE.md).
