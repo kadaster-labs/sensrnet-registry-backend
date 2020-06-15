@@ -2,6 +2,7 @@
 
 set -ex
 # SET THE FOLLOWING VARIABLES
+REGISTRY=sensrnetregistry.azurecr.io
 USERNAME=sensrnet
 # image name
 IMAGE=registry-backend
@@ -29,8 +30,8 @@ git commit -m "release v$VERSION"
 git tag -a "$VERSION" -m "release v$VERSION"
 git push
 git push --tags
-docker tag $USERNAME/$IMAGE:latest $USERNAME/$IMAGE:$VERSION
+docker tag $REGISTRY/$USERNAME/$IMAGE:latest $REGISTRY/$USERNAME/$IMAGE:$VERSION
 
 # push it
-docker push sensrnetregistry.azurecr.io/$USERNAME/$IMAGE:latest
-docker push sensrnetregistry.azurecr.io/$USERNAME/$IMAGE:$VERSION
+docker push $REGISTRY/$USERNAME/$IMAGE:latest
+docker push $REGISTRY/$USERNAME/$IMAGE:$VERSION
