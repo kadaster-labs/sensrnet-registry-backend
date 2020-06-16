@@ -42,7 +42,7 @@ spec:
           value: node_1
         - name: PORT
           value: "3000"
-        image: sensrnetregistry.azurecr.io/sensrnet/registry-backend:0.0.2
+        image: sensrnetregistry.azurecr.io/sensrnet/registry-backend:latest
         name: nodejs-cqrs
         ports:
         - containerPort: 3000
