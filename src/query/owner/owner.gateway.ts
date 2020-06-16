@@ -9,9 +9,10 @@ import {
 import { Socket, Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
 
-const NAMESPACE = 'owner';
-
-@WebSocketGateway({namespace: NAMESPACE})
+@WebSocketGateway({
+    namespace: 'owner',
+    path: '/api/socket.io',
+})
 export class OwnerGateway implements OnGatewayConnection {
     @WebSocketServer()
     server: Server;
