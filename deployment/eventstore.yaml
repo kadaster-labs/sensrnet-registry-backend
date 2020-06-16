@@ -59,3 +59,22 @@ spec:
       resources:
         requests:
           storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eventstore-cluster
+  namespace: sensrnet-backend
+  labels:
+    app: eventstore-cluster
+spec:
+  clusterIP: "None"
+  ports:
+  - port: 2113
+    name: eventstore-web
+  - port: 1113
+    name: eventstore-tcp
+  - port: 2112
+    name: gossip
+  selector:
+    app: eventstore-cluster
