@@ -10,6 +10,7 @@ async function bootstrap() {
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new DomainExceptionFilter());
+  app.setGlobalPrefix('api');
 
   const documentOptions = new DocumentBuilder()
     .setTitle('Sensrnet Backend API')

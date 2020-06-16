@@ -9,9 +9,10 @@ import { Logger } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { RetrieveSensorsQuery } from '../sensor/queries/sensors.query';
 
-const NAMESPACE = 'sensor';
-
-@WebSocketGateway({namespace: NAMESPACE})
+@WebSocketGateway({
+    namespace: 'sensor',
+    path: '/api/socket.io',
+})
 export class SensorGateway implements OnGatewayConnection {
     @WebSocketServer()
     server: Server;

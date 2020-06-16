@@ -19,7 +19,7 @@ services:
     networks:
       - backend
 
-  nodejs-cqrs:
+  registry-backend:
     build:
       context: .
     depends_on:

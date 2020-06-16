@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: eventstore-cluster
+  namespace: sensrnet-backend
+spec:
+  selector:
+    matchLabels:
+      app: eventstore-cluster 
+  serviceName: eventstore-cluster
+  replicas: 1 # Needs to be the same as EVENTSTORE_CLUSTER_SIZE
+  template:
+    metadata:
+      labels:
+        app: eventstore-cluster 
+    spec:
+      containers:
+      - name: eventstore
+        image: eventstore/eventstore:release-4.1.1-hotfix1
+        env:
+        - name: EVENTSTORE_CLUSTER_SIZE #Needs to match spec.replicas
+          value: "1"
+        - name: EVENTSTORE_DISCOVER_VIA_DNS
+          value: "true"
+        - name: EVENTSTORE_CLUSTER_DNS #Should match service name
+          value: "eventstore-cluster"
+        - name: EVENTSTORE_EXT_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        ports: 
+        - containerPort: 2113
+          name: eventstore-web
+        - containerPort: 1113
+          name: eventstore-tcp
+        - containerPort: 2112
+          name: gossip
+        volumeMounts:
+        - name: eventstore-cluster-data
+          mountPath: /var/lib/eventstore
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 2113
+          initialDelaySeconds: 30
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 2113
+          initialDelaySeconds: 5
+          periodSeconds: 5
+  volumeClaimTemplates:
+  - metadata:
+      name: eventstore-cluster-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "managed-premium-retain"
+      resources:
+        requests:
+          storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eventstore-cluster
+  namespace: sensrnet-backend
+  labels:
+    app: eventstore-cluster
+spec:
+  clusterIP: "None"
+  ports:
+  - port: 2113
+    name: eventstore-web
+  - port: 1113
+    name: eventstore-tcp
+  - port: 2112
+    name: gossip
+  selector:
+    app: eventstore-cluster
