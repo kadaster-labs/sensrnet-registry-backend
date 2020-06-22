@@ -2,7 +2,6 @@ import {SensorEvent} from './sensor.event';
 
 export class SensorRegistered extends SensorEvent {
 
-  readonly nodeId: string;
   readonly ownerId: string;
   readonly name: string;
   readonly longitude: number;
@@ -19,14 +18,13 @@ export class SensorRegistered extends SensorEvent {
   readonly typeName: string;
   readonly typeDetails: object;
 
-  constructor(sensorId: string, nodeId: string, ownerId: string,
+  constructor(sensorId: string, ownerId: string,
               name: string, longitude: number, latitude: number, height: number,
               baseObjectId: string, aim: string, description: string,
               manufacturer: string, active: boolean, observationArea: object,
               documentationUrl: string, theme: string[], typeName: string,
               typeDetails: object) {
     super(sensorId);
-    this.nodeId = nodeId;
     this.ownerId = ownerId;
     this.name = name;
     this.longitude = longitude;

@@ -25,11 +25,11 @@ export class SensorAggregate extends Aggregate {
     super();
   }
 
-  register(nodeId: string, ownerId: string, name: string, location: LocationBody,
+  register(ownerId: string, name: string, location: LocationBody,
            dataStreams: DataStreamBody[], aim: string, description: string, manufacturer: string,
            active: boolean, observationArea: object, documentationUrl: string, theme: string[],
            typeName: string, typeDetails: object) {
-    this.simpleApply(new SensorRegistered(this.aggregateId, nodeId, ownerId, name, location.longitude, location.latitude,
+    this.simpleApply(new SensorRegistered(this.aggregateId, ownerId, name, location.longitude, location.latitude,
         location.height, location.baseObjectId, aim, description, manufacturer, active, observationArea, documentationUrl,
         theme, typeName, typeDetails));
 
