@@ -131,7 +131,7 @@ done
 
 # Determine mode of operation and printing out what we asked for
 if [ "$MODE" == "up" ]; then
-  echo "Starting all backend components using ${FABRIC_DIR} and ${BRIDGE_DIR} folders"
+  echo "Starting all backend components"
   echo
 elif [ "$MODE" == "down" ]; then
   echo "Stopping all backend components"

@@ -7,10 +7,13 @@ services:
       - 2113:2113
       - 1113:1113
     environment:
+      - EVENTSTORE_DEV=true
       - EVENTSTORE_RUN_PROJECTIONS=All
       - EVENTSTORE_START_STANDARD_PROJECTIONS=true
     networks:
       - backend
+    command:
+      --dev --enable-external-tcp --ext-ip=0.0.0.0 --int-ip=0.0.0.0 --disable-external-tcp-tls
 
   mongo:
     image: mongo
