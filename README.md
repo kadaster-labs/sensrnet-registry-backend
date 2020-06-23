@@ -44,12 +44,22 @@ Backend App:
 * npm start
 
 #### Containerized
-Entire Stack:
-* docker-compose build
-* docker-compose up
+
+Start entire stack:
+
+```bash
+$ ./backend up
+```
 
 * [Registry Backend OpenAPI](http://localhost:3000/api/)
 * [EventStore UI](http://localhost:2113/web/index.html#/streams)
+
+Stop entire stack:
+
+```bash
+$ ./backend down
+```
+
 
 ## Find Us
 
