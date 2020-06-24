@@ -1,4 +1,9 @@
-version: '3.5'
+version: '3.8'
+
+networks:
+  backend:
+    name: backend
+    driver: bridge
 
 services:
   eventstore:
@@ -43,8 +48,3 @@ services:
       - eventstore
     networks:
       - backend
-
-networks:
-  backend:
-    name: backend
-    driver: bridge

@@ -7,6 +7,7 @@ export abstract class SensorEvent extends Event {
 
   readonly sensorId: string;
   readonly nodeId: string = NODE_ID;
+  readonly eventId: string = uuidv4();
 
   constructor(sensorId: string) {
     super(sensorId);
