@@ -44,8 +44,12 @@ export class SensorQueryModule implements OnModuleInit {
     connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false});
 
     const onEvent = (_, eventMessage) => {
-      const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
-      this.sensorProcessor.process(event);
+      if (eventMessage.metadata && eventMessage.metadata.originSync) {
+        this.logger.debug('Not implemented: Handle event from sync.');
+      } else {
+        const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
+        this.sensorProcessor.process(event);
+      }
     };
 
     this.eventStore.subscribeToStream('$ce-sensor', onEvent, () => {
