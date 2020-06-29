@@ -18,53 +18,31 @@ if (commandLineArgs.length > 1) {
 
     const UserSchema = new mongoose.Schema({
         _id: { type: String, required: true },
+        role: { type: String, required: false },
         ownerId: { type: String, required: true },
         password: { type: String, required: true },
-        isStaff: { type: Boolean, required: false },
-        isAdmin: { type: Boolean, required: false },
     });
 
     const UserModel = mongoose.model('User', UserSchema);
 
     const userId = commandLineArgs[0];
-    const makeStaff = commandLineArgs[1] === 'staff';
-    if (makeStaff) {
-        console.log(`Elevating ${userId} to staff.`);
+    const role = commandLineArgs[1];
+    console.log(`Elevating ${userId} to ${role}.`);
 
-        const filterKwargs = {
-            _id: userId
-        };
-        const updateKwargs = {
-            isStaff: true
-        }
-        UserModel.updateOne(filterKwargs, updateKwargs).then(() => {
-            console.log(`Successfully elevated ${userId} to staff.`);
-            process.exit();
-        }, () => {
-            console.log(`Failed to elevate ${userId} to staff.`);
-            process.exit();
-        });
-    } else {
-        const makeAdmin = commandLineArgs[1] === 'admin';
-        if (makeAdmin) {
-            console.log(`Elevating ${userId} to admin.`);
-
-            const filterKwargs = {
-                _id: commandLineArgs[0]
-            };
-            const updateKwargs = {
-                isAdmin: true
-            }
-            UserModel.updateOne(filterKwargs, updateKwargs).then(() => {
-                console.log(`Successfully elevated ${userId} to admin.`);
-                process.exit();
-            }, () => {
-                console.log(`Failed to elevate ${userId} to admin.`);
-                process.exit();
-            });
-        }
+    const filterKwargs = {
+        _id: userId
+    };
+    const updateKwargs = {
+        role: role
     }
+    UserModel.updateOne(filterKwargs, updateKwargs).then(() => {
+        console.log(`Successfully elevated ${userId} to ${role}.`);
+        process.exit();
+    }, () => {
+        console.log(`Failed to elevate ${userId} to ${role}.`);
+        process.exit();
+    });
 } else {
-    console.log('Supply command line arguments (1) email (2) staff / admin.');
+    console.log('Supply command line arguments (1) email (2) role.');
     process.exit();
 }

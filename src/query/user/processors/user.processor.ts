@@ -27,8 +27,7 @@ export class UserProcessor {
 
     async processCreated(event: UserRegistered): Promise<void> {
         const userInstance = new this.userModel({
-            isStaff: false,
-            isAdmin: false,
+            role: 'user',
             _id: event.email,
             ownerId: event.ownerId,
             password: event.password,

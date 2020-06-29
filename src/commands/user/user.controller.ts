@@ -31,7 +31,7 @@ export class UserController {
     @ApiResponse({ status: 200, description: 'User removed' })
     @ApiResponse({ status: 400, description: 'User removal failed' })
     async removeOwnerById(@Request() req, @Param() param: DeleteUserParams) {
-        if (req.user.isAdmin || req.user.isStaff) {
+        if (req.user.role === 'admin') {
             return await this.commandBus.execute(new DeleteUserCommand(param.id));
         } else {
             throw new NoRightsException(req.user);

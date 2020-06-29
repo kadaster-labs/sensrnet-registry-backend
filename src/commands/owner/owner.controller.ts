@@ -66,7 +66,7 @@ export class OwnerController {
   @ApiResponse({ status: 200, description: 'Owner removed' })
   @ApiResponse({ status: 400, description: 'Owner removal failed' })
   async removeOwnerById(@Request() req, @Param() param: DeleteOwnerParams) {
-    if (req.user.isAdmin || req.user.isStaff) {
+    if (req.user.role === 'admin') {
       return await this.commandBus.execute(new DeleteOwnerCommand(param.id));
     } else {
       throw new NoRightsException(req.user);

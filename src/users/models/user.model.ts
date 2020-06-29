@@ -4,10 +4,9 @@ import { User } from '../user.interface';
 
 export const UserSchema = new Schema({
     _id: { type: String, required: true },
+    role: { type: String, required: false },
     ownerId: { type: String, required: true },
     password: { type: String, required: true },
-    isStaff: { type: Boolean, required: false },
-    isAdmin: { type: Boolean, required: false },
 });
 
 UserSchema.pre<User>('save', function(next) {
