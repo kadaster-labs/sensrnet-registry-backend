@@ -1,13 +1,11 @@
 import { UserProcessor } from './processors';
 import { plainToClass } from 'class-transformer';
 import { userEventType } from '../../events/user';
-import {InjectModel, MongooseModule} from '@nestjs/mongoose';
+import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from '../../users/models/user.model';
 import { Module, OnModuleInit, Logger } from '@nestjs/common';
 import { EventStoreModule } from '../../event-store/event-store.module';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import {Model} from "mongoose";
-import {User} from '../../users/user.interface';
 
 @Module({
     imports: [
@@ -29,11 +27,11 @@ export class UserQueryModule implements OnModuleInit {
     onModuleInit() {
       const onEvent = (_, eventMessage) => {
         const event = plainToClass(userEventType.getType(eventMessage.eventType), eventMessage.data);
-        this.userProcessor.process(event);
+        this.userProcessor.process(event).then();
       };
 
       this.eventStore.subscribeToStream('$ce-user', onEvent, () => {
         Logger.warn(`event stream dropped!`);
-      });
+      }).then();
     }
 }
