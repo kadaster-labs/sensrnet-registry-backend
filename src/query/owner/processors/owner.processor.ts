@@ -33,7 +33,7 @@ export class OwnerProcessor {
     }
 
     if (result) {
-      this.ownerGateway.emit(event.constructor.name, event);
+      this.ownerGateway.emit(event.constructor.name, result);
     }
   }
 
