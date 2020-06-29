@@ -1,17 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
-import { DeleteOwnerBody } from './models/bodies/delete-body';
 import { UpdateOwnerBody } from './models/bodies/update-body';
 import { UpdateOwnerCommand } from './commands/update.command';
 import { DeleteOwnerCommand } from './commands/delete.command';
 import { NoRightsException } from './errors/no-rights-exception';
+import { DeleteOwnerParams } from './models/params/delete-params';
 import { RegisterOwnerBody } from './models/bodies/register-body';
 import { RegisterOwnerCommand } from './commands/register.command';
 import { RegisterUserCommand } from '../user/commands/register.command';
 import { DomainExceptionFilter } from './errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UseFilters, Controller, Post, Body, Put, Delete, UseGuards, Request } from '@nestjs/common';
+import { UseFilters, Controller, Post, Body, Put, Delete, UseGuards, Request, Param } from '@nestjs/common';
 
 const NODE_ID = process.env.NODE_ID || '1';
 
@@ -65,9 +65,9 @@ export class OwnerController {
   @ApiOperation({ summary: 'Remove owner' })
   @ApiResponse({ status: 200, description: 'Owner removed' })
   @ApiResponse({ status: 400, description: 'Owner removal failed' })
-  async removeOwnerById(@Request() req, @Body() body: DeleteOwnerBody) {
+  async removeOwnerById(@Request() req, @Param() param: DeleteOwnerParams) {
     if (req.user.isAdmin || req.user.isStaff) {
-      return await this.commandBus.execute(new DeleteOwnerCommand(body.ownerId));
+      return await this.commandBus.execute(new DeleteOwnerCommand(param.id));
     } else {
       throw new NoRightsException(req.user);
     }

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty } from 'class-validator';
 
-export class DeleteOwnerBody {
+export class DeleteOwnerParams {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
@@ -9,5 +9,5 @@ export class DeleteOwnerBody {
     required: true,
     description: 'The id of the owner.',
   })
-  readonly ownerId: string;
+  readonly id: string;
 }

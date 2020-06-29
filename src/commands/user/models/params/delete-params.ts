@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
 
-export class DeleteUserBody {
+export class DeleteUserParams {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
@@ -9,5 +9,5 @@ export class DeleteUserBody {
     required: true,
     description: 'The email of the user.',
   })
-  readonly email: string;
+  readonly id: string;
 }
