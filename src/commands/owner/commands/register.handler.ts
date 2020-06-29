@@ -1,4 +1,4 @@
-import { RegisterOwnerCommand as RegisterOwnerCommand } from './register-owner.command';
+import { RegisterOwnerCommand } from './register.command';
 import { OwnerAggregate } from '../aggregates/owner.aggregate';
 import { OwnerRepository } from '../repositories/owner.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';

@@ -1,4 +1,4 @@
-import {UserEvent} from './user.event';
+import { UserEvent } from './user.event';
 
 export class UserRegistered extends UserEvent {
 

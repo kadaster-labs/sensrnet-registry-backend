@@ -4,6 +4,8 @@ import { User } from '../user.interface';
 
 export const UserSchema = new Schema({
     _id: { type: String, required: true },
+    staff: { type: Boolean, required: false },
+    admin: { type: Boolean, required: false },
     ownerId: { type: String, required: true },
     password: { type: String, required: true },
 });

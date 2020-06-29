@@ -13,11 +13,15 @@ import {
 } from 'src/events/sensor';
 import {Sensor, ISensor} from '../models/sensor.model';
 import {SensorGateway} from '../sensor.gateway';
+import {EventStorePublisher} from '../../../event-store/event-store.publisher';
 
 @Injectable()
 export class SensorProcessor {
+  /* This processor processes sensor events. Events like soft-delete are not handled because they do not need to be processed. */
+
   constructor(
       private readonly sensorGateway: SensorGateway,
+      private readonly eventStore: EventStorePublisher,
   ) {
   }
 
@@ -30,7 +34,6 @@ export class SensorProcessor {
   protected logger: Logger = new Logger(this.constructor.name);
 
   async process(event): Promise<void> {
-
     let result: ISensor;
     if (event instanceof SensorRegistered) {
       result = await this.processCreated(event);
@@ -52,11 +55,11 @@ export class SensorProcessor {
       result = await this.processDataStreamDeleted(event);
     } else if (event instanceof SensorRelocated) {
       result = await this.processLocationUpdated(event);
-    } else {
-      this.logger.warn(`Caught unsupported event: ${event}`);
     }
 
-    this.sensorGateway.emit(event.constructor.name, result.toObject());
+    if (result) {
+      this.sensorGateway.emit(event.constructor.name, result.toObject());
+    }
   }
 
   async processCreated(event: SensorRegistered): Promise<ISensor> {
@@ -153,6 +156,9 @@ export class SensorProcessor {
     const sensor: ISensor = await Sensor.findByIdAndDelete(
       event.sensorId,
     ).exec();
+
+    const eventMessage = event.toEventMessage();
+    await this.eventStore.deleteStream(eventMessage.streamId);
 
     return sensor;
   }

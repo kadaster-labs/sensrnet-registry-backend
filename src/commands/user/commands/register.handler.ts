@@ -1,8 +1,8 @@
+import { RegisterUserCommand } from './register.command';
 import { UserAggregate } from '../aggregates/user.aggregate';
-import { RegisterUserCommand } from './register-user.command';
 import { UserRepository } from '../repositories/user.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { UserAlreadyExistsException } from '../errors/user-already-exists-exception';
+import { UserAlreadyExistsException } from '../../owner/errors/user-already-exists-exception';
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserCommandHandler implements ICommandHandler<RegisterUserCommand> {
