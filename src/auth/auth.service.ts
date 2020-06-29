@@ -20,7 +20,13 @@ export class AuthService {
                     reject();
                 } else {
                     if (isMatch) {
-                        resolve({_id: user._id, ownerId: user.ownerId});
+                        const userObject = {
+                            _id: user._id,
+                            ownerId: user.ownerId,
+                            isStaff: user.isStaff,
+                            isAdmin: user.isAdmin,
+                        };
+                        resolve(userObject);
                     } else {
                         reject();
                     }
@@ -40,7 +46,7 @@ export class AuthService {
     }
 
     async login(user: User) {
-        const payload = { sub: user.ownerId, userId: user._id };
+        const payload = { sub: user.ownerId, userId: user._id, isStaff: !!user.isStaff, isAdmin: !!user.isAdmin };
         return {
             access_token: this.jwtService.sign(payload),
         };

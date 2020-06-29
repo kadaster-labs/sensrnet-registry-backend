@@ -1,9 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { DeleteOwnerBody } from './models/bodies/delete-body';
 import { UpdateOwnerBody } from './models/bodies/update-body';
 import { UpdateOwnerCommand } from './commands/update.command';
 import { DeleteOwnerCommand } from './commands/delete.command';
+import { NoRightsException } from './errors/no-rights-exception';
 import { RegisterOwnerBody } from './models/bodies/register-body';
 import { RegisterOwnerCommand } from './commands/register.command';
 import { RegisterUserCommand } from '../user/commands/register.command';
@@ -54,5 +56,20 @@ export class OwnerController {
   @ApiResponse({ status: 400, description: 'Owner removal failed' })
   async removeOwner(@Request() req) {
     return await this.commandBus.execute(new DeleteOwnerCommand(req.user.ownerId));
+  }
+
+  @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @UseFilters(new DomainExceptionFilter())
+  @ApiOperation({ summary: 'Remove owner' })
+  @ApiResponse({ status: 200, description: 'Owner removed' })
+  @ApiResponse({ status: 400, description: 'Owner removal failed' })
+  async removeOwnerById(@Request() req, @Body() body: DeleteOwnerBody) {
+    if (req.user.isAdmin || req.user.isStaff) {
+      return await this.commandBus.execute(new DeleteOwnerCommand(body.ownerId));
+    } else {
+      throw new NoRightsException(req.user);
+    }
   }
 }
