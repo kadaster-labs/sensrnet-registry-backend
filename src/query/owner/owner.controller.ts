@@ -1,11 +1,11 @@
 import { QueryBus } from '@nestjs/cqrs';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { RetrieveOwnersQuery } from './queries/retrieve.query';
 import { Controller, Get, UseGuards, Request } from '@nestjs/common';
+import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(AccessJwtAuthGuard)
 @ApiTags('Owner')
 @Controller('Owner')
 export class OwnerController {
