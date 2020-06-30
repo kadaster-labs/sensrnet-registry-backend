@@ -45,7 +45,8 @@
     "swagger-ui-express": "^4.1.4",
     "mongoose": "^5.9.15",
     "@nestjs/websockets": "^7.1.0",
-    "@nestjs/platform-socket.io": "^7.1.0"
+    "@nestjs/platform-socket.io": "^7.1.0",
+    "cookie-parser": "^1.4.5"
   },
   "devDependencies": {
     "@nestjs/testing": "^7.0.0",
