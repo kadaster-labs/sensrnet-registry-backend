@@ -1,19 +1,9 @@
-import {Injectable, Logger} from '@nestjs/common';
-import {
-  DatastreamAdded,
-  DatastreamDeleted,
-  SensorActivated,
-  SensorDeactivated,
-  SensorDeleted,
-  SensorOwnershipShared,
-  SensorOwnershipTransferred,
-  SensorRegistered,
-  SensorRelocated,
-  SensorUpdated,
-} from 'src/events/sensor';
-import {Sensor, ISensor} from '../models/sensor.model';
-import {SensorGateway} from '../sensor.gateway';
-import {EventStorePublisher} from '../../../event-store/event-store.publisher';
+import { SensorGateway } from '../sensor.gateway';
+import { Injectable, Logger } from '@nestjs/common';
+import { Sensor, ISensor } from '../models/sensor.model';
+import { EventStorePublisher } from '../../../event-store/event-store.publisher';
+import { DatastreamAdded, DatastreamDeleted, SensorActivated, SensorDeactivated, SensorDeleted,
+  SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated } from 'src/events/sensor';
 
 @Injectable()
 export class SensorProcessor {
@@ -323,5 +313,4 @@ export class SensorProcessor {
   private logError(event) {
     this.logger.error(`Error while updating projection for ${event.eventType}.`);
   }
-
 }

@@ -1,9 +1,9 @@
-import { ShareSensorOwnershipCommand } from './shareownership.command';
+import { validateOwner } from '../utils/owner.utils';
 import { SensorRepository } from '../repositories/sensor.repository';
+import { ShareSensorOwnershipCommand } from './shareownership.command';
 import { UnknowSensorException } from '../errors/unknow-sensor-exception';
+import { OwnerRepository } from '../../owner/repositories/owner.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import {OwnerRepository} from '../../owner/repositories/owner.repository';
-import {validateOwner} from '../utils/owner.utils';
 
 @CommandHandler(ShareSensorOwnershipCommand)
 export class ShareSensorOwnershipCommandHandler implements ICommandHandler<ShareSensorOwnershipCommand> {

@@ -22,8 +22,6 @@ import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagg
 import { TransferSensorOwnershipCommand } from './commands/transferownership.command';
 import { Controller, Param, Post, Put, Body, Delete, UseFilters, Request, UseGuards } from '@nestjs/common';
 
-const NODE_ID = process.env.NODE_ID || '1';
-
 @ApiBearerAuth()
 @UseGuards(AccessJwtAuthGuard)
 @ApiTags('Sensor')

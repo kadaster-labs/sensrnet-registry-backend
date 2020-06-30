@@ -20,6 +20,6 @@ export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensor
               },
           };
       }
-      return await Sensor.find(kwargs);
+      return Sensor.find(kwargs);
   }
 }

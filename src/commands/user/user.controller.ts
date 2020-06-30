@@ -1,8 +1,8 @@
 import { CommandBus } from '@nestjs/cqrs';
 import { DeleteUserCommand } from './commands/delete.command';
 import { DeleteUserParams } from './models/params/delete-params';
+import { NoRightsException } from './errors/no-rights-exception';
 import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
-import { NoRightsException } from '../owner/errors/no-rights-exception';
 import { DomainExceptionFilter } from './errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UseFilters, Controller, Delete, UseGuards, Request, Param } from '@nestjs/common';

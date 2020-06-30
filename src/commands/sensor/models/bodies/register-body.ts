@@ -3,8 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { LocationBody } from './location-body';
 import { Theme } from './theme-body';
 import { DataStreamBody } from './datastream-body';
-import { IsString, IsNotEmpty, IsBoolean, IsUUID, IsObject, IsArray, IsUrl,
-  ValidateNested, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsBoolean, IsObject, IsArray, IsUrl, ValidateNested, IsOptional } from 'class-validator';
 
 export class RegisterSensorBody {
 

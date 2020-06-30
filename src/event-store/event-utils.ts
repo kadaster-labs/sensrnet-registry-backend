@@ -1,4 +1,4 @@
-import {EventMessage} from './event-message';
+import { EventMessage } from './event-message';
 
 export function isValidEvent(value: any): value is EventMessage {
   return (

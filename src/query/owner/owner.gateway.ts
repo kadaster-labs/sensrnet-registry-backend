@@ -1,13 +1,7 @@
-import {
-    MessageBody,
-    SubscribeMessage,
-    WebSocketGateway,
-    WebSocketServer,
-    OnGatewayConnection,
-    ConnectedSocket,
-} from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
+import { Socket, Server } from 'socket.io';
+import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection,
+    ConnectedSocket } from '@nestjs/websockets';
 
 @WebSocketGateway({
     namespace: 'owner',

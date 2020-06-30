@@ -1,22 +1,12 @@
-import {
-  DatastreamAdded,
-  DatastreamDeleted,
-  SensorActivated,
-  SensorDeactivated,
-  SensorDeleted,
-  SensorOwnershipShared,
-  SensorOwnershipTransferred,
-  SensorRegistered,
-  SensorRelocated,
-  SensorUpdated,
-} from '../../../events/sensor';
-import {LocationBody} from '../models/bodies/location-body';
-import {DataStreamBody} from '../models/bodies/datastream-body';
-import {SensorActiveException, SensorInActiveException} from '../errors/sensor-active-exception';
-import {IsAlreadyOwnerException} from '../errors/is-already-owner-exception';
-import {Aggregate} from '../../../event-store/aggregate';
-import {SensorState, SensorStateImpl} from './sensor-state';
-import {EventMessage} from '../../../event-store/event-message';
+import { Aggregate } from '../../../event-store/aggregate';
+import { SensorState, SensorStateImpl } from './sensor-state';
+import { LocationBody } from '../models/bodies/location-body';
+import { EventMessage } from '../../../event-store/event-message';
+import { DataStreamBody } from '../models/bodies/datastream-body';
+import { IsAlreadyOwnerException } from '../errors/is-already-owner-exception';
+import { SensorActiveException, SensorInActiveException } from '../errors/sensor-active-exception';
+import { DatastreamAdded, DatastreamDeleted, SensorActivated, SensorDeactivated, SensorDeleted,
+  SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated } from '../../../events/sensor';
 
 export class SensorAggregate extends Aggregate {
   state!: SensorState;
@@ -150,5 +140,4 @@ export class SensorAggregate extends Aggregate {
     const event: SensorDeleted = eventMessage.data as SensorDeleted;
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
-
 }

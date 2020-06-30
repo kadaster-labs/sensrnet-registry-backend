@@ -1,4 +1,4 @@
-import {UserException} from './user-exception';
+import { UserException } from './user-exception';
 
 export class UserAlreadyExistsException extends UserException {
   constructor(name: string) {

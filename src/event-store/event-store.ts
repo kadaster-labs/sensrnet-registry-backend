@@ -1,7 +1,7 @@
-import {TCPClient} from 'geteventstore-promise';
-import {EventStoreConfiguration} from './event-store.configuration';
-import {Injectable} from '@nestjs/common';
-import {EventMessage} from './event-message';
+import { Injectable } from '@nestjs/common';
+import { EventMessage } from './event-message';
+import { TCPClient } from 'geteventstore-promise';
+import { EventStoreConfiguration } from './event-store.configuration';
 
 @Injectable()
 export class EventStore {

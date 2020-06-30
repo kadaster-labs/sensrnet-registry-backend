@@ -1,13 +1,8 @@
-import {
-    WebSocketGateway,
-    WebSocketServer,
-    OnGatewayConnection,
-    ConnectedSocket,
-} from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { RetrieveSensorsQuery } from '../sensor/queries/sensors.query';
+import { Socket, Server } from 'socket.io';
+import { RetrieveSensorsQuery } from './queries/sensors.query';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket } from '@nestjs/websockets';
 
 @WebSocketGateway({
     namespace: 'sensor',

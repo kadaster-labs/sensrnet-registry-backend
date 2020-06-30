@@ -1,4 +1,4 @@
-import {OwnerEvent} from './owner.event';
+import { OwnerEvent } from './owner.event';
 
 export class OwnerUpdated extends OwnerEvent {
 

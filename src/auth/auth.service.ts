@@ -1,7 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
-import {Injectable, UnauthorizedException} from '@nestjs/common';
 import { User } from '../users/user.interface';
 import { UsersService } from '../users/users.service';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -88,9 +88,9 @@ export class AuthService {
         }
 
         if (refreshTokenMatches) {
+            const accessToken = this.jwtService.sign({ type: 'access' }, { expiresIn: this.accessTokenExpiresIn });
             return {
-                access_token: this.jwtService.sign({ type: 'access' },
-                    { expiresIn: this.accessTokenExpiresIn }),
+                access_token: accessToken,
                 access_token_expires_in: this.accessTokenExpiresIn,
             };
         } else {
@@ -107,10 +107,8 @@ export class AuthService {
         const accessToken = this.jwtService.sign(accessPayload, { expiresIn: this.accessTokenExpiresIn });
 
         return {
-            access_token: accessToken,
-            refresh_token: refreshToken,
-            access_token_expires_in: this.accessTokenExpiresIn,
-            refresh_token_expires_in: this.refreshTokenExpiresIn,
+            access_token: accessToken, access_token_expires_in: this.accessTokenExpiresIn,
+            refresh_token: refreshToken, refresh_token_expires_in: this.refreshTokenExpiresIn,
         };
     }
 }

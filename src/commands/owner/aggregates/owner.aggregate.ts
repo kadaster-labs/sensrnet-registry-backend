@@ -1,7 +1,7 @@
-import {Aggregate} from '../../../event-store/aggregate';
-import {OwnerState, OwnerStateImpl} from './owner-state';
-import {EventMessage} from '../../../event-store/event-message';
-import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from '../../../events/owner';
+import { Aggregate } from '../../../event-store/aggregate';
+import { OwnerState, OwnerStateImpl } from './owner-state';
+import { EventMessage } from '../../../event-store/event-message';
+import { OwnerDeleted, OwnerRegistered, OwnerUpdated } from '../../../events/owner';
 
 export class OwnerAggregate extends Aggregate {
   state!: OwnerState;
@@ -41,5 +41,4 @@ export class OwnerAggregate extends Aggregate {
     const event: OwnerDeleted = eventMessage.data as OwnerDeleted;
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
-
 }

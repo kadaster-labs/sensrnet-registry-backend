@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { EventStore } from '../../../event-store/event-store';
 import { UserAggregate } from '../aggregates/user.aggregate';
+import { EventStore } from '../../../event-store/event-store';
 
 @Injectable()
 export class UserRepository {

@@ -1,5 +1,5 @@
-import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from '.';
-import {Logger} from '@nestjs/common';
+import { Logger } from '@nestjs/common';
+import { OwnerDeleted, OwnerRegistered, OwnerUpdated } from '.';
 
 class OwnerEventType {
   constructor() {
