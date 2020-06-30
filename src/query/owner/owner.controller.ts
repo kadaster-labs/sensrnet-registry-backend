@@ -1,8 +1,8 @@
 import { QueryBus } from '@nestjs/cqrs';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { RetrieveOwnersQuery } from './queries/retrieve.query';
-import {ApiTags, ApiResponse, ApiOperation, ApiBearerAuth} from '@nestjs/swagger';
-import {Controller, Get, UseGuards, Request} from '@nestjs/common';
-import {JwtAuthGuard} from '../../auth/jwt-auth.guard';
+import { Controller, Get, UseGuards, Request } from '@nestjs/common';
+import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)

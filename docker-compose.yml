@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.7'
 
 networks:
   backend:
@@ -13,6 +13,7 @@ services:
       - 1113:1113
     environment:
       - EVENTSTORE_DEV=true
+      - EVENTSTORE_MEM_DB=false
       - EVENTSTORE_RUN_PROJECTIONS=All
       - EVENTSTORE_START_STANDARD_PROJECTIONS=true
     networks:
@@ -43,6 +44,7 @@ services:
       - MONGO_DATABASE=sensrnet
       - EVENT_STORE_PORT=1113
       - EVENT_STORE_HOST=eventstore
+      - JWT_ACCESS_EXPIRES_IN=24h
       - JWT_SECRET=example-secret-key
     links:
       - eventstore

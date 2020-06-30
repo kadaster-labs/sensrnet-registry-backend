@@ -2,7 +2,7 @@
 set -e
 
 if [ "$1" = "run" ]; then
-  npm start
+  exec npm start
 else
   exec "$@"
 fi

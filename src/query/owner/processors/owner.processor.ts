@@ -1,33 +1,40 @@
-import {Owner} from '../owner.interface';
-import {OwnerGateway} from '../owner.gateway';
-import {Injectable, Logger} from '@nestjs/common';
-import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from 'src/events/owner';
-import {InjectModel} from '@nestjs/mongoose';
-import {Model} from 'mongoose';
+import { Model } from 'mongoose';
+import { Owner } from '../owner.interface';
+import { InjectModel } from '@nestjs/mongoose';
+import { OwnerGateway } from '../owner.gateway';
+import { Injectable, Logger } from '@nestjs/common';
+import { OwnerDeleted, OwnerRegistered, OwnerUpdated } from 'src/events/owner';
+import { EventStorePublisher } from '../../../event-store/event-store.publisher';
 
 @Injectable()
 export class OwnerProcessor {
+  /* This processor processes owner events. Events like soft-delete are not handled because they do not need to be processed. */
+
   constructor(
-      @InjectModel('Owner') private ownerModel: Model<Owner>,
       private readonly ownerGateway: OwnerGateway,
+      private readonly eventStore: EventStorePublisher,
+      @InjectModel('Owner') private ownerModel: Model<Owner>,
   ) {
   }
 
   protected logger: Logger = new Logger(this.constructor.name);
 
   async process(event): Promise<void> {
-
+    let result;
     if (event instanceof OwnerRegistered) {
       await this.processCreated(event);
+      result = event;
     } else if (event instanceof OwnerUpdated) {
       await this.processUpdated(event);
+      result = event;
     } else if (event instanceof OwnerDeleted) {
       await this.processDeleted(event);
-    } else {
-      this.logger.warn(`Caught unsupported event: ${event}`);
+      result = event;
     }
 
-    this.ownerGateway.emit(event.constructor.name, event);
+    if (result) {
+      this.ownerGateway.emit(event.constructor.name, result);
+    }
   }
 
   async processCreated(event: OwnerRegistered): Promise<void> {
@@ -74,6 +81,9 @@ export class OwnerProcessor {
         this.logger.error('Error while deleting projection.');
       }
     });
+
+    const eventMessage = event.toEventMessage();
+    await this.eventStore.deleteStream(eventMessage.streamId);
   }
 
 }

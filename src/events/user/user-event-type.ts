@@ -1,8 +1,9 @@
-import {UserRegistered} from '.';
-import {Logger} from '@nestjs/common';
+import { Logger } from '@nestjs/common';
+import { UserDeleted, UserRegistered } from '.';
 
 class UserEventType {
   constructor() {
+    this.add(UserDeleted);
     this.add(UserRegistered);
   }
 

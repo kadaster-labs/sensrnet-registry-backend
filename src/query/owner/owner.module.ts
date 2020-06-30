@@ -29,8 +29,8 @@ import {OwnerSchema} from './models/owner.model';
 
 export class OwnerQueryModule implements OnModuleInit {
   constructor(
-      private readonly eventStore: EventStorePublisher,
       private readonly ownerProcessor: OwnerProcessor,
+      private readonly eventStore: EventStorePublisher,
   ) {
   }
 

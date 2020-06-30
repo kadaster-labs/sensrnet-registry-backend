@@ -20,4 +20,8 @@ export class EventStorePublisher implements IEventPublisher {
   async subscribeToStream(streamName: string, onEvent, onDropped) {
     return await this.eventStore.subscribeToStream(streamName, onEvent, onDropped);
   }
+
+  async deleteStream(streamName: string, hardDelete?: boolean) {
+    return await this.eventStore.deleteStream(streamName, hardDelete);
+  }
 }

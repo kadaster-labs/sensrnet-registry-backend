@@ -5,10 +5,14 @@ import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
+    private readonly accessTokenExpiresIn: string;
+
     constructor(
-        private usersService: UsersService,
         private jwtService: JwtService,
-    ) {}
+        private usersService: UsersService,
+    ) {
+        this.accessTokenExpiresIn = process.env.JWT_ACCESS_EXPIRES_IN || '24h';
+    }
 
     async validateUser(username: string, pass: string): Promise<any> {
         const user = await this.usersService.findOne(username);
@@ -20,7 +24,12 @@ export class AuthService {
                     reject();
                 } else {
                     if (isMatch) {
-                        resolve({_id: user._id, ownerId: user.ownerId});
+                        const userObject = {
+                            _id: user._id,
+                            role: user.role,
+                            ownerId: user.ownerId,
+                        };
+                        resolve(userObject);
                     } else {
                         reject();
                     }
@@ -40,9 +49,10 @@ export class AuthService {
     }
 
     async login(user: User) {
-        const payload = { sub: user.ownerId, userId: user._id };
+        const payload = { sub: user.ownerId, userId: user._id, role: user.role };
         return {
             access_token: this.jwtService.sign(payload),
+            access_token_expires_in: this.accessTokenExpiresIn,
         };
     }
 }
