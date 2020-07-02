@@ -88,7 +88,8 @@ export class AuthService {
         }
 
         if (refreshTokenMatches) {
-            const accessToken = this.jwtService.sign({ type: 'access' }, { expiresIn: this.accessTokenExpiresIn });
+            const accessPayload = { sub: user.ownerId, userId: user._id, role: user.role, type: 'access' };
+            const accessToken = this.jwtService.sign(accessPayload, { expiresIn: this.accessTokenExpiresIn });
             return {
                 access_token: accessToken,
                 access_token_expires_in: this.accessTokenExpiresIn,
