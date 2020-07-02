@@ -10,7 +10,7 @@ export const UserSchema = new Schema({
     refreshToken: { type: String, required: false },
 });
 
-export const hashAbleFields = ['password', 'refreshToken'];
+export const hashableFields = ['password', 'refreshToken'];
 
 export const hashField = (field, resolve, reject) => {
     bcrypt.genSalt(10, (err, salt) => {
@@ -33,10 +33,10 @@ UserSchema.pre<User>('save', function(next) {
 
     const fields = [];
     const promises = [];
-    for (const hashAbleField of hashAbleFields) {
-        if (user.isModified(hashAbleField)) {
-            fields.push(hashAbleField);
-            promises.push(new Promise((resolve, reject) => hashField(user[hashAbleField], resolve, reject)));
+    for (const hashableField of hashableFields) {
+        if (user.isModified(hashableField)) {
+            fields.push(hashableField);
+            promises.push(new Promise((resolve, reject) => hashField(user[hashableField], resolve, reject)));
         }
     }
 

@@ -27,7 +27,7 @@ export class AuthController {
         const refreshCookie = `Authentication=${refresh_token}; HttpOnly; Path=/api/auth/; Max-Age=${refresh_token_expires_in}; SameSite=Strict;`;
         res.setHeader('Set-Cookie', refreshCookie);
 
-        return res.send({ access_token, access_token_expires_in });
+        return res.send({ access_token, expires_in: access_token_expires_in });
     }
 
     @UseGuards(new RefreshJwtAuthGuard(RefreshJwtStrategy))
@@ -43,7 +43,12 @@ export class AuthController {
     @Post('auth/refresh')
     async refresh(@Request() req) {
         if (req.cookies && req.cookies.Authentication) {
-            return this.authService.refresh(req.user, req.cookies.Authentication);
+            const {
+                access_token,
+                access_token_expires_in,
+            } = await this.authService.refresh(req.user, req.cookies.Authentication);
+
+            return { access_token, expires_in: access_token_expires_in };
         } else {
             throw new UnauthorizedException();
         }

@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { User } from './user.interface';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { hashField, hashAbleFields } from './models/user.model';
+import { hashField, hashableFields } from './models/user.model';
 
 @Injectable()
 export class UsersService {
@@ -14,14 +14,14 @@ export class UsersService {
     }
 
     async updateOne(username: string, updateFields: any) {
-        for (const hashAbleField of hashAbleFields) {
-            if (updateFields[hashAbleField]) {
+        for (const hashableField of hashableFields) {
+            if (updateFields[hashableField]) {
                 const promise = new Promise((resolve, reject) => {
-                    hashField(updateFields[hashAbleField], resolve, reject);
+                    hashField(updateFields[hashableField], resolve, reject);
                 });
                 await promise.then((hash) => {
-                    updateFields[hashAbleField] = hash;
-                }, () => delete updateFields[hashAbleField]);
+                    updateFields[hashableField] = hash;
+                }, () => delete updateFields[hashableField]);
             }
         }
 
