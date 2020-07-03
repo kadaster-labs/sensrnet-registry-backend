@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { UpdateOwnerBody } from './models/bodies/update-body';
 import { UpdateOwnerCommand } from './commands/update.command';
 import { DeleteOwnerCommand } from './commands/delete.command';
@@ -8,6 +7,7 @@ import { NoRightsException } from './errors/no-rights-exception';
 import { DeleteOwnerParams } from './models/params/delete-params';
 import { RegisterOwnerBody } from './models/bodies/register-body';
 import { RegisterOwnerCommand } from './commands/register.command';
+import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
 import { RegisterUserCommand } from '../user/commands/register.command';
 import { DomainExceptionFilter } from './errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
@@ -37,7 +37,7 @@ export class OwnerController {
 
   @Put()
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessJwtAuthGuard)
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update owner' })
   @ApiResponse({ status: 200, description: 'Owner updated' })
@@ -49,7 +49,7 @@ export class OwnerController {
 
   @Delete()
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessJwtAuthGuard)
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Remove owner' })
   @ApiResponse({ status: 200, description: 'Owner removed' })
@@ -60,7 +60,7 @@ export class OwnerController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessJwtAuthGuard)
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Remove owner' })
   @ApiResponse({ status: 200, description: 'Owner removed' })

@@ -2,18 +2,18 @@ import { OwnerController } from './sensor.controller';
 import { Module, OnModuleInit } from '@nestjs/common';
 import { SensorRepository } from './repositories/sensor.repository';
 import { EventBus, CqrsModule, EventPublisher } from '@nestjs/cqrs';
-import { EventStoreModule } from '../../event-store/event-store.module';
-import { ActivateSensorCommandHandler } from './commands/activate.handler';
 import { CreateSensorCommandHandler } from './commands/create.handler';
 import { UpdateSensorCommandHandler } from './commands/update.handler';
 import { DeleteSensorCommandHandler } from './commands/delete.handler';
+import { EventStoreModule } from '../../event-store/event-store.module';
 import { OwnerRepository } from '../owner/repositories/owner.repository';
-import { DeactivateSensorCommandHandler } from './commands/deactivate.handler';
+import { ActivateSensorCommandHandler } from './commands/activate.handler';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import { UpdateSensorLocationCommandHandler } from './commands/updatelocation.handler';
-import { ShareSensorOwnershipCommandHandler } from './commands/shareownership.handler';
+import { DeactivateSensorCommandHandler } from './commands/deactivate.handler';
 import { CreateDataStreamCommandHandler } from './commands/createdatastream.handler';
 import { DeleteDataStreamCommandHandler } from './commands/deletedatastream.handler';
+import { UpdateSensorLocationCommandHandler } from './commands/updatelocation.handler';
+import { ShareSensorOwnershipCommandHandler } from './commands/shareownership.handler';
 import { TransferSensorOwnershipCommandHandler } from './commands/transferownership.handler';
 
 @Module({
@@ -21,19 +21,19 @@ import { TransferSensorOwnershipCommandHandler } from './commands/transferowners
   imports: [CqrsModule, EventStoreModule, SensorCommandModule],
   providers: [
     EventBus,
-    EventStorePublisher,
     EventPublisher,
     OwnerRepository,
     SensorRepository,
+    EventStorePublisher,
     CreateSensorCommandHandler,
     UpdateSensorCommandHandler,
     DeleteSensorCommandHandler,
     ActivateSensorCommandHandler,
     DeactivateSensorCommandHandler,
-    UpdateSensorLocationCommandHandler,
-    ShareSensorOwnershipCommandHandler,
     CreateDataStreamCommandHandler,
     DeleteDataStreamCommandHandler,
+    UpdateSensorLocationCommandHandler,
+    ShareSensorOwnershipCommandHandler,
     TransferSensorOwnershipCommandHandler,
   ],
 })

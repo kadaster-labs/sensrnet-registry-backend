@@ -44,8 +44,9 @@ services:
       - MONGO_DATABASE=sensrnet
       - EVENT_STORE_PORT=1113
       - EVENT_STORE_HOST=eventstore
-      - JWT_ACCESS_EXPIRES_IN=24h
+      - JWT_ACCESS_EXPIRES_IN=86400
       - JWT_SECRET=example-secret-key
+      - JWT_REFRESH_EXPIRES_IN=604800
     links:
       - eventstore
     networks:

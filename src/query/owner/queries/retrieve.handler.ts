@@ -1,8 +1,8 @@
+import { Model } from 'mongoose';
+import { Owner } from '../owner.interface';
+import { InjectModel } from '@nestjs/mongoose';
 import { RetrieveOwnersQuery } from './retrieve.query';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import {InjectModel} from '@nestjs/mongoose';
-import {Model} from 'mongoose';
-import {Owner} from '../owner.interface';
 
 @QueryHandler(RetrieveOwnersQuery)
 export class RetrieveOwnerQueryHandler implements IQueryHandler<RetrieveOwnersQuery> {
@@ -13,6 +13,6 @@ export class RetrieveOwnerQueryHandler implements IQueryHandler<RetrieveOwnersQu
     }
 
     async execute(query: RetrieveOwnersQuery) {
-        return await this.ownerModel.find({_id: query.id});
+        return this.ownerModel.find({_id: query.id});
     }
 }

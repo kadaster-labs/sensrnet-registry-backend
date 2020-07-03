@@ -1,6 +1,6 @@
+import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import {IsNumber, IsOptional, Min, Max} from 'class-validator';
-import {Type} from 'class-transformer';
+import { IsNumber, IsOptional, Min, Max } from 'class-validator';
 
 export class RetrieveSensorsParams {
 

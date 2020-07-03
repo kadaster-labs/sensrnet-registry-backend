@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { LocationBody } from './models/bodies/location-body';
 import { UpdateSensorBody } from './models/bodies/update-body';
 import { CreateSensorCommand } from './commands/create.command';
@@ -9,6 +8,7 @@ import { DeleteSensorCommand } from './commands/delete.command';
 import { DataStreamBody } from './models/bodies/datastream-body';
 import { RegisterSensorBody } from './models/bodies/register-body';
 import { ActivateSensorCommand } from './commands/activate.command';
+import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
 import { DeactivateSensorCommand } from './commands/deactivate.command';
 import { DomainExceptionFilter } from './errors/domain-exception.filter';
 import { ShareOwnershipBody } from './models/bodies/shareownership-body';
@@ -22,10 +22,8 @@ import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagg
 import { TransferSensorOwnershipCommand } from './commands/transferownership.command';
 import { Controller, Param, Post, Put, Body, Delete, UseFilters, Request, UseGuards } from '@nestjs/common';
 
-const NODE_ID = process.env.NODE_ID || '1';
-
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(AccessJwtAuthGuard)
 @ApiTags('Sensor')
 @Controller('Sensor')
 export class OwnerController {

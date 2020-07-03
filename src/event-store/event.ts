@@ -1,4 +1,4 @@
-import {EventMessage} from './event-message';
+import { EventMessage } from './event-message';
 
 export abstract class Event {
   public readonly aggregateId: string;

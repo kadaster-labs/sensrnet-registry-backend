@@ -1,6 +1,6 @@
 import { Theme } from './theme-body';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUrl, IsNotEmpty, IsObject, IsOptional, IsArray } from 'class-validator';
+import { IsString, IsUrl, IsObject, IsOptional, IsArray } from 'class-validator';
 
 export class UpdateSensorBody {
 

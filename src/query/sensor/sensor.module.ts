@@ -1,15 +1,15 @@
-import {connect} from 'mongoose';
-import {SensorController} from './sensor.controller';
-import {Logger, Module, OnModuleInit} from '@nestjs/common';
-import {CqrsModule, EventPublisher} from '@nestjs/cqrs';
-import {EventStoreModule} from '../../event-store/event-store.module';
-import {EventStorePublisher} from '../../event-store/event-store.publisher';
-import {RetrieveSensorQueryHandler} from './queries/sensor.handler';
-import {RetrieveSensorsQueryHandler} from './queries/sensors.handler';
-import {SensorProcessor} from './processors';
-import {plainToClass} from 'class-transformer';
-import {sensorEventType} from '../../events/sensor';
+import { connect } from 'mongoose';
+import { SensorProcessor } from './processors';
 import { SensorGateway } from './sensor.gateway';
+import { plainToClass } from 'class-transformer';
+import { sensorEventType } from '../../events/sensor';
+import { SensorController } from './sensor.controller';
+import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
+import { Logger, Module, OnModuleInit } from '@nestjs/common';
+import { RetrieveSensorQueryHandler } from './queries/sensor.handler';
+import { RetrieveSensorsQueryHandler } from './queries/sensors.handler';
+import { EventStoreModule } from '../../event-store/event-store.module';
+import { EventStorePublisher } from '../../event-store/event-store.publisher';
 
 @Module({
   imports: [
@@ -19,11 +19,11 @@ import { SensorGateway } from './sensor.gateway';
   ],
   controllers: [SensorController],
   providers: [
+    SensorGateway,
     EventPublisher,
+    SensorProcessor,
     RetrieveSensorQueryHandler,
     RetrieveSensorsQueryHandler,
-    SensorProcessor,
-    SensorGateway,
   ],
 })
 
@@ -41,19 +41,19 @@ export class SensorQueryModule implements OnModuleInit {
     const database = process.env.MONGO_DATABASE || 'sensrnet';
 
     const url = 'mongodb://' + host + ':' + port.toString() + '/' + database;
-    connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false});
+    connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false}).then();
 
     const onEvent = (_, eventMessage) => {
       if (eventMessage.metadata && eventMessage.metadata.originSync) {
         this.logger.debug('Not implemented: Handle event from sync.');
       } else {
         const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
-        this.sensorProcessor.process(event);
+        this.sensorProcessor.process(event).then();
       }
     };
 
     this.eventStore.subscribeToStream('$ce-sensor', onEvent, () => {
       this.logger.warn('Event stream dropped');
-    });
+    }).then();
   }
 }

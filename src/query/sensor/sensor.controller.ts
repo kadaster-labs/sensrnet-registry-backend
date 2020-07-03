@@ -2,13 +2,13 @@ import { QueryBus } from '@nestjs/cqrs';
 import { SensorIdParams } from './models/id-params';
 import { RetrieveSensorQuery } from './queries/sensor.query';
 import { RetrieveSensorsQuery } from './queries/sensors.query';
+import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
 import { RetrieveSensorsParams } from './models/retrieve-sensors-params';
-import {ApiTags, ApiResponse, ApiOperation, ApiBearerAuth} from '@nestjs/swagger';
-import {Controller, Get, Param, Query, UseGuards} from '@nestjs/common';
-import {JwtAuthGuard} from '../../auth/jwt-auth.guard';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(AccessJwtAuthGuard)
 @ApiTags('Sensor')
 @Controller('Sensor')
 export class SensorController {

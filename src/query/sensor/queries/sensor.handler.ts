@@ -6,6 +6,6 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 export class RetrieveSensorQueryHandler implements IQueryHandler<RetrieveSensorQuery> {
 
   async execute(query: RetrieveSensorQuery) {
-      return await Sensor.find({_id: query.id});
+      return Sensor.find({_id: query.id});
   }
 }

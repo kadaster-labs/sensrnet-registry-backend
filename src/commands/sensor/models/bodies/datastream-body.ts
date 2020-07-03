@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsUrl, IsNumber, IsUUID,
-    IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsBoolean, IsUrl, IsNumber, IsUUID, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class DataStreamBody {
 

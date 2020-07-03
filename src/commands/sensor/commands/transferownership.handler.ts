@@ -1,16 +1,16 @@
+import { validateOwner } from '../utils/owner.utils';
 import { SensorRepository } from '../repositories/sensor.repository';
-import { TransferSensorOwnershipCommand } from './transferownership.command';
 import { UnknowSensorException } from '../errors/unknow-sensor-exception';
+import { OwnerRepository } from '../../owner/repositories/owner.repository';
+import { TransferSensorOwnershipCommand } from './transferownership.command';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import {OwnerRepository} from '../../owner/repositories/owner.repository';
-import {validateOwner} from '../utils/owner.utils';
 
 @CommandHandler(TransferSensorOwnershipCommand)
 export class TransferSensorOwnershipCommandHandler implements ICommandHandler<TransferSensorOwnershipCommand> {
   constructor(
     private readonly publisher: EventPublisher,
-    private readonly sensorRepository: SensorRepository,
     private readonly ownerRepository: OwnerRepository,
+    private readonly sensorRepository: SensorRepository,
   ) {}
 
   async execute(command: TransferSensorOwnershipCommand): Promise<void> {

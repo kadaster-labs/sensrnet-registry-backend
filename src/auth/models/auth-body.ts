@@ -10,7 +10,7 @@ export class AuthenticateBody {
         required: true,
         description: 'The user email address.',
     })
-    readonly username: string; // Needs to be 'username' otherwise it will not work.
+    readonly username: string;
 
     @IsString()
     @IsNotEmpty()

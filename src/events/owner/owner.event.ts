@@ -1,4 +1,4 @@
-import {Event} from '../../event-store/event';
+import { Event } from '../../event-store/event';
 
 export abstract class OwnerEvent extends Event {
 

@@ -3,7 +3,7 @@ import { Owner } from '../owner.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { OwnerGateway } from '../owner.gateway';
 import { Injectable, Logger } from '@nestjs/common';
-import { OwnerDeleted, OwnerRegistered, OwnerUpdated } from 'src/events/owner';
+import { OwnerDeleted, OwnerRegistered, OwnerUpdated } from '../../../events/owner';
 import { EventStorePublisher } from '../../../event-store/event-store.publisher';
 
 @Injectable()
@@ -59,7 +59,7 @@ export class OwnerProcessor {
       ownerData = {...ownerData, website: event.website};
     }
     if (event.contactName) {
-      ownerData = {...ownerData, contactName: event.contactName};
+      ownerData = {...ownerData, name: event.contactName};
     }
     if (event.contactEmail) {
       ownerData = {...ownerData, contactEmail: event.contactEmail};

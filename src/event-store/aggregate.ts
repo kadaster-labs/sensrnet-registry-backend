@@ -1,7 +1,7 @@
-import {AggregateRoot} from '@nestjs/cqrs';
-import {Event} from './event';
-import {isValidEvent} from './event-utils';
-import {Logger} from '@nestjs/common';
+import { Event } from './event';
+import { Logger } from '@nestjs/common';
+import { AggregateRoot } from '@nestjs/cqrs';
+import { isValidEvent } from './event-utils';
 
 export abstract class Aggregate extends AggregateRoot {
 
@@ -18,5 +18,4 @@ export abstract class Aggregate extends AggregateRoot {
       return super.getEventName(event);
     }
   }
-
 }
