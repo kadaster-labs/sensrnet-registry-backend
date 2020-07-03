@@ -59,7 +59,7 @@ export class OwnerProcessor {
       ownerData = {...ownerData, website: event.website};
     }
     if (event.contactName) {
-      ownerData = {...ownerData, contactName: event.contactName};
+      ownerData = {...ownerData, name: event.contactName};
     }
     if (event.contactEmail) {
       ownerData = {...ownerData, contactEmail: event.contactEmail};
