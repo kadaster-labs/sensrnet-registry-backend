@@ -4,7 +4,8 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { AuthenticateBody } from './models/auth-body';
 import { RefreshJwtStrategy } from './refresh-jwt.strategy';
 import { RefreshJwtAuthGuard } from './refresh-jwt-auth.guard';
-import { Controller, Request, Response, Post, UseGuards, Body, UnauthorizedException } from '@nestjs/common';
+import { Controller, Req, Res, Post, UseGuards, Body, UnauthorizedException } from '@nestjs/common';
+import { Response } from 'express';
 
 @ApiTags('Authentication')
 @Controller()
@@ -16,7 +17,7 @@ export class AuthController {
 
     @UseGuards(LocalAuthGuard)
     @Post('auth/login')
-    async login(@Body() body: AuthenticateBody, @Request() req, @Response() res) {
+    async login(@Body() body: AuthenticateBody, @Req() req, @Res() res: Response) {
         const {
             access_token,
             refresh_token,
@@ -24,24 +25,31 @@ export class AuthController {
             refresh_token_expires_in,
         } = await this.authService.login(req.user);
 
-        const refreshCookie = `Authentication=${refresh_token}; HttpOnly; Path=/api/auth/; Max-Age=${refresh_token_expires_in}; SameSite=Strict;`;
-        res.setHeader('Set-Cookie', refreshCookie);
+        res.cookie('Authentication', refresh_token, {
+          httpOnly: true,
+          maxAge: refresh_token_expires_in,
+          path: '/api/auth/refresh',
+          sameSite: 'strict',
+        });
 
         return res.send({ access_token, expires_in: access_token_expires_in });
     }
 
-    @UseGuards(new RefreshJwtAuthGuard(RefreshJwtStrategy))
     @Post('auth/logout')
-    async logout(@Request() req, @Response() res) {
-        const logoutCookie = `Authentication=; HttpOnly; Path=/api/auth/; Max-Age=0; SameSite=Strict;`;
-        res.setHeader('Set-Cookie', logoutCookie);
+    async logout(@Req() req, @Res() res: Response) {
+        res.cookie('Authentication', '', {
+          httpOnly: true,
+          maxAge: 0,
+          path: '/api/auth/refresh',
+          sameSite: 'strict',
+        });
 
         return res.send();
     }
 
     @UseGuards(new RefreshJwtAuthGuard(RefreshJwtStrategy))
     @Post('auth/refresh')
-    async refresh(@Request() req) {
+    async refresh(@Req() req) {
         if (req.cookies && req.cookies.Authentication) {
             const {
                 access_token,
