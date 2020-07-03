@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Sensor, ISensor } from '../models/sensor.model';
 import { EventStorePublisher } from '../../../event-store/event-store.publisher';
 import { DatastreamAdded, DatastreamDeleted, SensorActivated, SensorDeactivated, SensorDeleted,
-  SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated } from 'src/events/sensor';
+  SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated } from '../../../events/sensor';
 
 @Injectable()
 export class SensorProcessor {

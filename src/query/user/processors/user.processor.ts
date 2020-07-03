@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, Logger } from '@nestjs/common';
 import { User } from '../../../users/user.interface';
-import { UserRegistered, UserDeleted } from 'src/events/user';
+import { UserRegistered, UserDeleted } from '../../../events/user';
 import { EventStorePublisher } from '../../../event-store/event-store.publisher';
 import { UserAlreadyExistsException } from '../errors/user-already-exists-exception';
 
