@@ -5,6 +5,7 @@ import { plainToClass } from 'class-transformer';
 import { sensorEventType } from '../../events/sensor';
 import { SensorController } from './sensor.controller';
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
+import { NODE_ID } from '../../events/sensor/sensor.event';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { RetrieveSensorQueryHandler } from './queries/sensor.handler';
 import { RetrieveSensorsQueryHandler } from './queries/sensors.handler';
@@ -45,7 +46,12 @@ export class SensorQueryModule implements OnModuleInit {
 
     const onEvent = (_, eventMessage) => {
       if (eventMessage.metadata && eventMessage.metadata.originSync) {
-        this.logger.debug('Not implemented: Handle event from sync.');
+        if (!eventMessage.data || eventMessage.data.nodeId === NODE_ID) {
+          this.logger.debug('Not implemented: Handle sync event of current node.');
+        } else {
+          const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
+          this.sensorProcessor.process(event).then();
+        }
       } else {
         const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
         this.sensorProcessor.process(event).then();

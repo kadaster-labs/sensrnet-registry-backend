@@ -10,8 +10,8 @@ import { SensorAlreadyExistsException } from '../errors/sensor-already-exists-ex
 export class CreateSensorCommandHandler implements ICommandHandler<CreateSensorCommand> {
   constructor(
     private readonly publisher: EventPublisher,
-    private readonly sensorRepository: SensorRepository,
     private readonly ownerRepository: OwnerRepository,
+    private readonly sensorRepository: SensorRepository,
   ) {}
 
   async execute(command: CreateSensorCommand): Promise<void> {

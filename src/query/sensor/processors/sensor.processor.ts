@@ -17,8 +17,27 @@ export class SensorProcessor {
 
   private errorCallback(error: any): void {
     if (error) {
-      this.logError(event);
+      this.logError(error);
     }
+  }
+
+  private logError(event) {
+    this.logger.error(`Error while updating projection for ${event.eventType}.`);
+  }
+
+  private async updateSensorById(sensorId, sensorData, event) {
+    let sensor: ISensor;
+    try {
+      sensor = await Sensor.findByIdAndUpdate(
+          sensorId,
+          sensorData,
+          {new: true},
+      ).exec();
+    } catch (_) {
+      this.errorCallback(event);
+    }
+
+    return sensor;
   }
 
   protected logger: Logger = new Logger(this.constructor.name);
@@ -53,7 +72,6 @@ export class SensorProcessor {
   }
 
   async processCreated(event: SensorRegistered): Promise<ISensor> {
-
     let sensorData = {};
     sensorData = {
       _id: event.sensorId,
@@ -97,7 +115,12 @@ export class SensorProcessor {
       sensorData = {...sensorData, typeDetails: event.typeDetails};
     }
 
-    const sensor: ISensor = await new Sensor(sensorData).save();
+    let sensor: ISensor;
+    try {
+      sensor = await new Sensor(sensorData).save();
+    } catch (_) {
+      this.errorCallback(event);
+    }
 
     return sensor;
   }
@@ -133,13 +156,7 @@ export class SensorProcessor {
       sensorData = {...sensorData, typeDetails: event.typeDetails};
     }
 
-    const sensor: ISensor = await Sensor.findByIdAndUpdate(
-      event.sensorId,
-      sensorData,
-      this.errorCallback,
-    ).exec();
-
-    return sensor;
+    return await this.updateSensorById(event.sensorId, sensorData, event);
   }
 
   async processDeleted(event: SensorDeleted): Promise<ISensor> {
@@ -158,13 +175,7 @@ export class SensorProcessor {
       active: true,
     };
 
-    const sensor: ISensor = await Sensor.findByIdAndUpdate(
-      event.sensorId,
-      sensorData,
-      this.errorCallback,
-    ).exec();
-
-    return sensor;
+    return await this.updateSensorById(event.sensorId, sensorData, event);
   }
 
   async processDeactivated(event: SensorDeactivated): Promise<ISensor> {
@@ -172,31 +183,19 @@ export class SensorProcessor {
       active: false,
     };
 
-    const sensor: ISensor = await Sensor.findByIdAndUpdate(
-      event.sensorId,
-      sensorData,
-      this.errorCallback,
-    ).exec();
-
-    return sensor;
+    return await this.updateSensorById(event.sensorId, sensorData, event);
   }
 
   async processOwnershipShared(event: SensorOwnershipShared): Promise<ISensor> {
     const updateSensorData = {
-      $push: {
+      $addToSet: {
         ownerIds: {
           $each: event.ownerIds,
         },
       },
     };
 
-    const sensor: ISensor = await Sensor.findByIdAndUpdate(
-      event.sensorId,
-      updateSensorData,
-      this.errorCallback,
-    ).exec();
-
-    return sensor;
+    return await this.updateSensorById(event.sensorId, updateSensorData, event);
   }
 
   async processOwnershipTransferred(event: SensorOwnershipTransferred): Promise<ISensor> {
@@ -211,11 +210,16 @@ export class SensorProcessor {
       },
     };
 
-    const sensor: ISensor = await Sensor.findOneAndUpdate(
-      filterData,
-      updateSensorData,
-      this.errorCallback,
-    ).exec();
+    let sensor: ISensor;
+    try {
+      sensor = await Sensor.findOneAndUpdate(
+        filterData,
+        updateSensorData,
+        {new: true},
+      ).exec();
+    } catch (_) {
+      this.errorCallback(event);
+    }
 
     return sensor;
   }
@@ -255,17 +259,27 @@ export class SensorProcessor {
       dataStreamData = {...dataStreamData, dataQuality: event.dataQuality};
     }
 
+    const filterKwargs = {
+      '_id': event.sensorId,
+      'dataStreams.dataStreamId': { $ne: event.dataStreamId },
+    };
+
     const sensorData = {
       $push: {
         dataStreams: dataStreamData,
       },
     };
 
-    const sensor: ISensor = await Sensor.findByIdAndUpdate(
-      event.sensorId,
-      sensorData,
-      this.errorCallback,
-    ).exec();
+    let sensor: ISensor;
+    try {
+      sensor = await Sensor.findOneAndUpdate(
+        filterKwargs,
+        sensorData,
+        {new: true},
+      ).exec();
+    } catch (_) {
+      this.errorCallback(event);
+    }
 
     return sensor;
   }
@@ -279,13 +293,7 @@ export class SensorProcessor {
       },
     };
 
-    const sensor: ISensor = await Sensor.findByIdAndUpdate(
-      event.sensorId,
-      sensorData,
-      this.errorCallback,
-    ).exec();
-
-    return sensor;
+    return await this.updateSensorById(event.sensorId, sensorData, event);
   }
 
   async processLocationUpdated(event: SensorRelocated): Promise<ISensor> {
@@ -301,16 +309,6 @@ export class SensorProcessor {
       sensorData = {...sensorData, baseObjectId: event.baseObjectId};
     }
 
-    const sensor: ISensor = await Sensor.findByIdAndUpdate(
-      event.sensorId,
-      sensorData,
-      this.errorCallback,
-    ).exec();
-
-    return sensor;
-  }
-
-  private logError(event) {
-    this.logger.error(`Error while updating projection for ${event.eventType}.`);
+    return await this.updateSensorById(event.sensorId, sensorData, event);
   }
 }
