@@ -21,6 +21,25 @@ export class SensorProcessor {
     }
   }
 
+  private logError(event) {
+    this.logger.error(`Error while updating projection for ${event.eventType}.`);
+  }
+
+  private async updateSensorById(sensorId, sensorData, event) {
+    let sensor: ISensor;
+    try {
+      sensor = await Sensor.findByIdAndUpdate(
+          sensorId,
+          sensorData,
+          {new: true},
+      ).exec();
+    } catch (_) {
+      this.errorCallback(event);
+    }
+
+    return sensor;
+  }
+
   protected logger: Logger = new Logger(this.constructor.name);
 
   async process(event): Promise<void> {
@@ -137,18 +156,7 @@ export class SensorProcessor {
       sensorData = {...sensorData, typeDetails: event.typeDetails};
     }
 
-    let sensor: ISensor;
-    try {
-      sensor = await Sensor.findByIdAndUpdate(
-        event.sensorId,
-        sensorData,
-        {new: true},
-      ).exec();
-    } catch (_) {
-      this.errorCallback(event);
-    }
-
-    return sensor;
+    return await this.updateSensorById(event.sensorId, sensorData, event);
   }
 
   async processDeleted(event: SensorDeleted): Promise<ISensor> {
@@ -167,18 +175,7 @@ export class SensorProcessor {
       active: true,
     };
 
-    let sensor: ISensor;
-    try {
-      sensor = await Sensor.findByIdAndUpdate(
-        event.sensorId,
-        sensorData,
-        {new: true},
-      ).exec();
-    } catch (_) {
-      this.errorCallback(event);
-    }
-
-    return sensor;
+    return await this.updateSensorById(event.sensorId, sensorData, event);
   }
 
   async processDeactivated(event: SensorDeactivated): Promise<ISensor> {
@@ -186,18 +183,7 @@ export class SensorProcessor {
       active: false,
     };
 
-    let sensor: ISensor;
-    try {
-      sensor = await Sensor.findByIdAndUpdate(
-        event.sensorId,
-        sensorData,
-        {new: true},
-      ).exec();
-    } catch (_) {
-      this.errorCallback(event);
-    }
-
-    return sensor;
+    return await this.updateSensorById(event.sensorId, sensorData, event);
   }
 
   async processOwnershipShared(event: SensorOwnershipShared): Promise<ISensor> {
@@ -209,18 +195,7 @@ export class SensorProcessor {
       },
     };
 
-    let sensor: ISensor;
-    try {
-      sensor = await Sensor.findByIdAndUpdate(
-        event.sensorId,
-        updateSensorData,
-        {new: true},
-      ).exec();
-    } catch (_) {
-      this.errorCallback(event);
-    }
-
-    return sensor;
+    return await this.updateSensorById(event.sensorId, updateSensorData, event);
   }
 
   async processOwnershipTransferred(event: SensorOwnershipTransferred): Promise<ISensor> {
@@ -318,18 +293,7 @@ export class SensorProcessor {
       },
     };
 
-    let sensor: ISensor;
-    try {
-      sensor = await Sensor.findByIdAndUpdate(
-        event.sensorId,
-        sensorData,
-        {new: true},
-      ).exec();
-    } catch (_) {
-      this.errorCallback(event);
-    }
-
-    return sensor;
+    return await this.updateSensorById(event.sensorId, sensorData, event);
   }
 
   async processLocationUpdated(event: SensorRelocated): Promise<ISensor> {
@@ -345,21 +309,6 @@ export class SensorProcessor {
       sensorData = {...sensorData, baseObjectId: event.baseObjectId};
     }
 
-    let sensor: ISensor;
-    try {
-      sensor = await Sensor.findByIdAndUpdate(
-        event.sensorId,
-        sensorData,
-        {new: true},
-      ).exec();
-    } catch (_) {
-      this.errorCallback(event);
-    }
-
-    return sensor;
-  }
-
-  private logError(event) {
-    this.logger.error(`Error while updating projection for ${event.eventType}.`);
+    return await this.updateSensorById(event.sensorId, sensorData, event);
   }
 }
