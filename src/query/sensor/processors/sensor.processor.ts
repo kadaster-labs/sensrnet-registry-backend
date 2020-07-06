@@ -53,7 +53,6 @@ export class SensorProcessor {
   }
 
   async processCreated(event: SensorRegistered): Promise<ISensor> {
-
     let sensorData = {};
     sensorData = {
       _id: event.sensorId,
