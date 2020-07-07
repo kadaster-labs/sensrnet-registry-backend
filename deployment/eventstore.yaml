@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: eventstore-cluster
-  namespace: sensrnet-backend
 spec:
   selector:
     matchLabels:
@@ -16,7 +15,7 @@ spec:
     spec:
       containers:
       - name: eventstore
-        image: eventstore/eventstore:release-4.1.1-hotfix1
+        image: eventstore/eventstore:release-5.0.8
         env:
         - name: EVENTSTORE_CLUSTER_SIZE #Needs to match spec.replicas
           value: "1"
@@ -24,6 +23,18 @@ spec:
           value: "true"
         - name: EVENTSTORE_CLUSTER_DNS #Should match service name
           value: "eventstore-cluster"
+        - name: EVENTSTORE_DEV
+          value: "true"
+        - name : EVENTSTORE_MEM_DB
+          value: "false"
+        - name: EVENTSTORE_RUN_PROJECTIONS
+          value: "All"
+        - name: EVENTSTORE_START_STANDARD_PROJECTIONS
+          value: "true"
+        - name: EVENTSTORE_ENABLE_EXTERNAL_TCP
+          value: "true"
+        - name: EVENTSTORE_DISABLE_EXTERNAL_TCP_TLS
+          value: "true"
         - name: EVENTSTORE_EXT_IP
           valueFrom:
             fieldRef:

@@ -1,28 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.19.0 (f63a961c)
-  creationTimestamp: null
   labels:
-    io.kompose.service: registry-backend
+    app: registry-backend
   name: registry-backend
   namespace: sensrnet-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: registry-backend
+      app: registry-backend
   strategy: {}
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.19.0 (f63a961c)
-      creationTimestamp: null
       labels:
-        io.kompose.service: registry-backend
+        app: registry-backend
     spec:
       containers:
       - env:
@@ -32,6 +24,10 @@ spec:
           value: "1113"
         - name: JWT_SECRET
           value: example-secret-key
+        - name: JWT_ACCESS_EXPIRES_IN
+          value: "86400"
+        - name: JWT_REFRESH_EXPIRES_IN
+          value: "604800"
         - name: MONGO_DATABASE
           value: sensrnet
         - name: MONGO_HOST
@@ -53,12 +49,8 @@ status: {}
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.19.0 (f63a961c)
-  creationTimestamp: null
   labels:
-    io.kompose.service: registry-backend
+    app: registry-backend
   name: registry-backend
   namespace: sensrnet-backend
 spec:
@@ -66,7 +58,7 @@ spec:
   - port: 80
     targetPort: 3000
   selector:
-    io.kompose.service: registry-backend
+    app: registry-backend
 status:
   loadBalancer: {}
 ---
@@ -81,8 +73,7 @@ metadata:
     traefik.backend.loadbalancer.stickiness: "true"
 spec:
   rules:
-  - host: sensrnet-test.westeurope.cloudapp.azure.com
-    http:
+  - http:
       paths:
       - backend:
           serviceName: registry-backend
