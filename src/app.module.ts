@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
-import { UserQueryModule } from './query/user/user.module';
 import { OwnerQueryModule } from './query/owner/owner.module';
 import { UserCommandModule } from './commands/user/user.module';
 import { SensorQueryModule } from './query/sensor/sensor.module';
@@ -17,7 +16,6 @@ const database = process.env.MONGO_DATABASE || 'sensrnet';
   imports: [
     AuthModule,
     UsersModule,
-    UserQueryModule,
     OwnerQueryModule,
     SensorQueryModule,
     UserCommandModule,

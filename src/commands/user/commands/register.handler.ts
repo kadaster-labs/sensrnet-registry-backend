@@ -1,28 +1,40 @@
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from '../../../users/user.interface';
 import { RegisterUserCommand } from './register.command';
-import { UserAggregate } from '../aggregates/user.aggregate';
-import { UserRepository } from '../repositories/user.repository';
-import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { UserAlreadyExistsException } from '../../owner/errors/user-already-exists-exception';
+import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
+import { UserAlreadyExistsException } from '../errors/user-already-exists-exception';
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserCommandHandler implements ICommandHandler<RegisterUserCommand> {
+
   constructor(
-    private readonly publisher: EventPublisher,
-    private readonly repository: UserRepository,
+      @InjectModel('User') private userModel: Model<User>,
   ) {}
 
   async execute(command: RegisterUserCommand): Promise<void> {
-    let aggregate: UserAggregate;
-    aggregate = await this.repository.get(command.email);
+    const userInstance = new this.userModel({
+      role: 'user',
+      _id: command.email,
+      ownerId: command.ownerId,
+      password: command.password,
+    });
 
-    if (!!aggregate) {
+    const savePromise = new Promise((resolve, reject) => userInstance.save((err) => {
+      if (err) {
+        reject();
+      } else {
+        resolve();
+      }
+    }));
+
+    let user = null;
+    await savePromise.then(() => {
+      user = {id: userInstance._id};
+    }, () => {
       throw new UserAlreadyExistsException(command.email);
-    } else {
-      const userAggregate = new UserAggregate(command.email);
-      aggregate = this.publisher.mergeObjectContext(userAggregate);
+    });
 
-      aggregate.register(command.ownerId, command.password);
-      aggregate.commit();
-    }
+    return user;
   }
 }

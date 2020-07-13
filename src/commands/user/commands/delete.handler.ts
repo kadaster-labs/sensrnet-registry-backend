@@ -1,25 +1,22 @@
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from '../../../users/user.interface';
 import { DeleteUserCommand } from './delete.command';
-import { UserRepository } from '../repositories/user.repository';
-import { UnknowUserException } from '../errors/unknow-user-exception';
-import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
+import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
+import { DeleteFailedException } from '../errors/delete-failed-exception';
 
 @CommandHandler(DeleteUserCommand)
-export class DeleteUserCommandHandler
-  implements ICommandHandler<DeleteUserCommand> {
+export class DeleteUserCommandHandler implements ICommandHandler<DeleteUserCommand> {
+
   constructor(
-    private readonly publisher: EventPublisher,
-    private readonly repository: UserRepository,
+      @InjectModel('User') private userModel: Model<User>,
   ) {}
 
   async execute(command: DeleteUserCommand): Promise<void> {
-    const userAggregate = await this.repository.get(command.email);
-
-    if (!userAggregate) {
-      throw new UnknowUserException(command.email);
-    }
-
-    const aggregate = this.publisher.mergeObjectContext(userAggregate);
-    aggregate.delete();
-    aggregate.commit();
+    this.userModel.deleteOne({_id: command.email}, (err) => {
+      if (err) {
+        throw new DeleteFailedException(command.email);
+      }
+    });
   }
 }
