@@ -29,13 +29,11 @@ export class EventStorePublisher implements IEventPublisher {
 
     const onDropped = () => {
       this.logger.warn(`Event stream dropped. Retrying in ${timeoutMs}ms.`);
-      setTimeout(() => {
-        this.subscribeToStream(streamName, onEvent);
-      }, timeoutMs);
+      setTimeout(() => this.subscribeToStream(streamName, onEvent), timeoutMs);
     };
 
     this.eventStore.subscribeToStream(streamName, onEvent, onDropped)
-        .then(() => clearTimeout(timeout), () => this.logger.warn('Failed to subscribe to stream.'));
+        .then(() => clearTimeout(timeout), () => this.logger.error('Failed to subscribe to stream.'));
   }
 
   async deleteStream(streamName: string, hardDelete?: boolean) {
