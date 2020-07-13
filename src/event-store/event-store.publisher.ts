@@ -20,7 +20,7 @@ export class EventStorePublisher implements IEventPublisher {
   }
 
   subscribeToStream(streamName: string, onEvent) {
-    const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 5000;
+    const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
 
     const timeout = setTimeout(() => {
       this.logger.error(`Failed to connect to EventStore. Exiting.`);
