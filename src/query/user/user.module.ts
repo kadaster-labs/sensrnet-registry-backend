@@ -30,8 +30,6 @@ export class UserQueryModule implements OnModuleInit {
         this.userProcessor.process(event).then();
       };
 
-      this.eventStore.subscribeToStream('$ce-user', onEvent, () => {
-        Logger.warn(`event stream dropped!`);
-      }).then();
+      this.eventStore.subscribeToStream('$ce-user', onEvent);
     }
 }

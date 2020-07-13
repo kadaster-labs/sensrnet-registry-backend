@@ -5,8 +5,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { OwnerSchema } from './models/owner.model';
 import { ownerEventType } from '../../events/owner';
 import { OwnerController } from './owner.controller';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
-import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { RetrieveOwnerQueryHandler } from './queries/retrieve.handler';
 import { EventStoreModule } from '../../event-store/event-store.module';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
@@ -40,8 +40,6 @@ export class OwnerQueryModule implements OnModuleInit {
       this.ownerProcessor.process(event).then();
     };
 
-    this.eventStore.subscribeToStream('$ce-owner', onEvent, () => {
-      Logger.warn(`event stream dropped!`);
-    }).then();
+    this.eventStore.subscribeToStream('$ce-owner', onEvent);
   }
 }

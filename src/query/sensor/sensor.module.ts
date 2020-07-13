@@ -58,8 +58,6 @@ export class SensorQueryModule implements OnModuleInit {
       }
     };
 
-    this.eventStore.subscribeToStream('$ce-sensor', onEvent, () => {
-      this.logger.warn('Event stream dropped');
-    }).then();
+    this.eventStore.subscribeToStream('$ce-sensor', onEvent);
   }
 }

@@ -5,6 +5,8 @@ import { IEvent, IEventPublisher } from '@nestjs/cqrs';
 
 @Injectable()
 export class EventStorePublisher implements IEventPublisher {
+  protected logger: Logger = new Logger(this.constructor.name);
+
   constructor(private eventStore: EventStore) {
     this.eventStore.connect();
   }
@@ -17,8 +19,23 @@ export class EventStorePublisher implements IEventPublisher {
     }
   }
 
-  async subscribeToStream(streamName: string, onEvent, onDropped) {
-    return await this.eventStore.subscribeToStream(streamName, onEvent, onDropped);
+  subscribeToStream(streamName: string, onEvent) {
+    const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 5000;
+
+    const timeout = setTimeout(() => {
+      this.logger.error(`Failed to connect to EventStore. Exiting.`);
+      process.exit(0);
+    }, timeoutMs);
+
+    const onDropped = () => {
+      this.logger.warn(`Event stream dropped. Retrying in ${timeoutMs}ms.`);
+      setTimeout(() => {
+        this.subscribeToStream(streamName, onEvent);
+      }, timeoutMs);
+    };
+
+    this.eventStore.subscribeToStream(streamName, onEvent, onDropped)
+        .then(() => clearTimeout(timeout), () => this.logger.warn('Failed to subscribe to stream.'));
   }
 
   async deleteStream(streamName: string, hardDelete?: boolean) {
