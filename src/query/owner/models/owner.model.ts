@@ -8,4 +8,6 @@ export const OwnerSchema = new Schema({
     name: { type: String, required: true },
     contactEmail: { type: String, required: true },
     contactPhone: { type: String, required: false },
+}, {
+  autoCreate: true,
 });

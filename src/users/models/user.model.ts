@@ -8,6 +8,8 @@ export const UserSchema = new Schema({
     ownerId: { type: String, required: true },
     password: { type: String, required: true },
     refreshToken: { type: String, required: false },
+}, {
+  autoCreate: true,
 });
 
 export const hashableFields = ['password', 'refreshToken'];
