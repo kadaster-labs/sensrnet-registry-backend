@@ -1,0 +1,7 @@
+resources:
+- ../../base
+- eventstore/storageclass.yaml
+
+patchesStrategicMerge:
+- eventstore/statefulset.yaml
+- registry-backend/deployment.yaml

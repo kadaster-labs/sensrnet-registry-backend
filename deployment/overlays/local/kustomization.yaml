@@ -1,0 +1,6 @@
+resources:
+- ../../base
+
+patchesStrategicMerge:
+- eventstore/statefulset.yaml
+- registry-backend/deployment.yaml
