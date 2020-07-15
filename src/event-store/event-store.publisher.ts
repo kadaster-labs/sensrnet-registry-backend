@@ -5,6 +5,8 @@ import { IEvent, IEventPublisher } from '@nestjs/cqrs';
 
 @Injectable()
 export class EventStorePublisher implements IEventPublisher {
+  protected logger: Logger = new Logger(this.constructor.name);
+
   constructor(private eventStore: EventStore) {
     this.eventStore.connect();
   }
@@ -17,8 +19,8 @@ export class EventStorePublisher implements IEventPublisher {
     }
   }
 
-  async subscribeToStream(streamName: string, onEvent, onDropped) {
-    return await this.eventStore.subscribeToStream(streamName, onEvent, onDropped);
+  subscribeToStreamFrom(streamName, fromEventNumber, onEvent, onLiveProcessingStarted, onDropped) {
+    return this.eventStore.subscribeToStreamFrom(streamName, fromEventNumber, onEvent, onLiveProcessingStarted, onDropped);
   }
 
   async deleteStream(streamName: string, hardDelete?: boolean) {
