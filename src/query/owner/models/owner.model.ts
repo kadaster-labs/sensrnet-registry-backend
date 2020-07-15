@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
 
 export const OwnerSchema = new Schema({
-    _id: { type: String, required: true, index: true },
+    _id: { type: String, required: true },
     nodeId: { type: String, required: true },
     organisationName: { type: String, required: false },
     website: { type: String, required: false },
