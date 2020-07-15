@@ -74,17 +74,16 @@ export class SensorQueryModule implements OnModuleInit {
 
     const onEvent = (_, eventMessage) => {
       const offset = eventMessage.positionEventNumber;
-      const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
       const callback = () => this.checkpointService.updateOne({_id: 'sensor'}, {offset});
-      this.sensorProcessor.process(event).then(callback, callback);
-    };
 
-    const onSyncEvent = (_, eventMessage) => {
-      const offset = eventMessage.positionEventNumber;
-      const callback = () => this.checkpointService.updateOne({_id: 'sensor_sync'}, {offset});
-      if (!eventMessage.data || eventMessage.data.nodeId === NODE_ID) {
-        this.logger.debug('Not implemented: Handle sync event of current node.');
-        callback().then();
+      if (eventMessage.metadata && eventMessage.metadata.originSync) {
+        if (!eventMessage.data || eventMessage.data.nodeId === NODE_ID) {
+          this.logger.debug('Not implemented: Handle sync event of current node.');
+          callback().then();
+        } else {
+          const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
+          this.sensorProcessor.process(event).then(callback, callback);
+        }
       } else {
         const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
         this.sensorProcessor.process(event).then(callback, callback);
@@ -92,6 +91,5 @@ export class SensorQueryModule implements OnModuleInit {
     };
 
     this.subscribeToStreamWithReconnect('$ce-sensor', 'sensor', onEvent);
-    this.subscribeToStreamWithReconnect('$ce-sensor_sync', 'sensor_sync', onSyncEvent);
   }
 }
