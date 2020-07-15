@@ -41,17 +41,17 @@ export class SensorQueryModule implements OnModuleInit {
     const port = process.env.MONGO_PORT || 27017;
     const database = process.env.MONGO_DATABASE || 'sensrnet';
 
-    const url = 'mongodb://' + host + ':' + port.toString() + '/' + database;
+    const url = `mongodb://${host}:${port}/${database}`;
     connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false}).then();
 
     const onEvent = (_, eventMessage) => {
-      if (eventMessage.metadata && eventMessage.metadata.originSync) {
-        if (!eventMessage.data || eventMessage.data.nodeId === NODE_ID) {
-          this.logger.debug('Not implemented: Handle sync event of current node.');
-        } else {
-          const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
-          this.sensorProcessor.process(event).then();
-        }
+      const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
+      this.sensorProcessor.process(event).then();
+    };
+
+    const onSyncEvent = (_, eventMessage) => {
+      if (!eventMessage.data || eventMessage.data.nodeId === NODE_ID) {
+        this.logger.debug('Not implemented: Handle sync event of current node.');
       } else {
         const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
         this.sensorProcessor.process(event).then();
@@ -59,5 +59,6 @@ export class SensorQueryModule implements OnModuleInit {
     };
 
     this.eventStore.subscribeToStream('$ce-sensor', onEvent);
+    this.eventStore.subscribeToStream('$ce-sensor_sync', onSyncEvent);
   }
 }
