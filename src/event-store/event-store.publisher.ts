@@ -19,21 +19,8 @@ export class EventStorePublisher implements IEventPublisher {
     }
   }
 
-  subscribeToStream(streamName: string, onEvent) {
-    const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
-
-    const timeout = setTimeout(() => {
-      this.logger.error(`Failed to connect to EventStore. Exiting.`);
-      process.exit(0);
-    }, timeoutMs);
-
-    const onDropped = () => {
-      this.logger.warn(`Event stream dropped. Retrying in ${timeoutMs}ms.`);
-      setTimeout(() => this.subscribeToStream(streamName, onEvent), timeoutMs);
-    };
-
-    this.eventStore.subscribeToStream(streamName, onEvent, onDropped)
-        .then(() => clearTimeout(timeout), () => this.logger.error('Failed to subscribe to stream.'));
+  subscribeToStreamFrom(streamName, fromEventNumber, onEvent, onLiveProcessingStarted, onDropped) {
+    return this.eventStore.subscribeToStreamFrom(streamName, fromEventNumber, onEvent, onLiveProcessingStarted, onDropped);
   }
 
   async deleteStream(streamName: string, hardDelete?: boolean) {

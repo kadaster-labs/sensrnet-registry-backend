@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventMessage } from './event-message';
-import { TCPClient } from 'geteventstore-promise';
+import {MappedEventAppearedCallback, SubscribeToStreamFromSettings, TCPClient} from 'geteventstore-promise';
 import { EventStoreConfiguration } from './event-store.configuration';
 
 @Injectable()
@@ -41,5 +41,14 @@ export class EventStore {
 
   async subscribeToStream(streamName: string, onEventAppeared, onDropped) {
     return await this.client.subscribeToStream(streamName, onEventAppeared, onDropped, true);
+  }
+
+  async subscribeToStreamFrom(streamName: string, fromEventNumber: number, onEventAppeared, onLiveProcessingStarted, onDropped) {
+    const settings = {
+      resolveLinkTos: true,
+      readBatchSize: 1,
+    };
+
+    return await this.client.subscribeToStreamFrom(streamName, fromEventNumber, onEventAppeared, onLiveProcessingStarted, onDropped, settings);
   }
 }
