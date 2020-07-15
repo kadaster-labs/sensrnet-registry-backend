@@ -3,11 +3,13 @@ import { Schema } from 'mongoose';
 import { User } from '../user.interface';
 
 export const UserSchema = new Schema({
-    _id: { type: String, required: true },
+    _id: { type: String, required: true, index: true },
     role: { type: String, required: false },
     ownerId: { type: String, required: true },
     password: { type: String, required: true },
     refreshToken: { type: String, required: false },
+}, {
+  autoCreate: true,
 });
 
 export const hashableFields = ['password', 'refreshToken'];
