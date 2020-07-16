@@ -1,6 +1,8 @@
 resources:
 - ../../base
+- mongo/pvc.yaml
 
 patchesStrategicMerge:
 - eventstore/statefulset.yaml
+- mongo/patch.yaml
 - registry-backend/deployment.yaml
