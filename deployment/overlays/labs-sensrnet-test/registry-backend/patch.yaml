@@ -3,15 +3,10 @@ kind: Deployment
 metadata:
   name: registry-backend
 spec:
-  selector:
-    matchLabels:
-      app: registry-backend
   template:
     spec:
       containers:
-      - image: sensrnetregistry.azurecr.io/sensrnet/registry-backend:latest
-        name: registry-backend
+      - name: registry-backend
         env:
         - name: NODE_ID
           value: node_test-aks
-        resources: {}

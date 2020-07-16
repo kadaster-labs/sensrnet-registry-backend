@@ -1,0 +1,5 @@
+resources:
+- ../../base
+
+patchesStrategicMerge:
+- registry-backend/patch.yaml
