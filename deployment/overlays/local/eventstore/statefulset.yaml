@@ -3,14 +3,7 @@ kind: StatefulSet
 metadata:
   name: eventstore-cluster
 spec:
-  selector:
-    matchLabels:
-      app: eventstore-cluster 
-  serviceName: eventstore-cluster
   template:
-    metadata:
-      labels:
-        app: eventstore-cluster
     spec:
       containers:
       - name: eventstore

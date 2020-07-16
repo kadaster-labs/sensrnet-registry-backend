@@ -1,5 +1,5 @@
 resources:
-- ../cluster-pls
+- ../pls-shared
 
 patchesStrategicMerge:
 - registry-backend/patch.yaml
