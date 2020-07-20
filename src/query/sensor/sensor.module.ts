@@ -57,7 +57,7 @@ export class SensorQueryModule implements OnModuleInit {
     };
 
     this.checkpointService.findOne({_id: checkpointId}).then((data) => {
-      const offset = data ? data.offset : 0;
+      const offset = data ? data.offset : -1;
       this.logger.log(`Subscribing to stream ${streamName} from offset ${offset}.`);
       this.eventStore.subscribeToStreamFrom(streamName, offset, onEvent, null, onDropped)
           .then(() => clearTimeout(timeout), () => this.logger.error(`Failed to subscribe to stream ${streamName}.`));
