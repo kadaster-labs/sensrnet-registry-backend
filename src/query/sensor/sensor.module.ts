@@ -43,23 +43,20 @@ export class SensorQueryModule implements OnModuleInit {
       private readonly checkpointService: CheckpointService,
   ) {}
 
-  subscribeToStreamWithReconnect(streamName, checkpointId, onEvent) {
+  subscribeToStreamFrom(streamName, checkpointId, onEvent) {
     const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
 
-    const timeout = setTimeout(() => {
+    const exitCallback = () => {
       this.logger.error(`Failed to connect to EventStore. Exiting.`);
       process.exit(0);
-    }, timeoutMs);
-
-    const onDropped = () => {
-      this.logger.warn(`Event stream dropped. Retrying in ${timeoutMs}ms.`);
-      setTimeout(() => this.subscribeToStreamWithReconnect(streamName, checkpointId, onEvent), timeoutMs);
     };
 
+    const timeout = setTimeout(exitCallback, timeoutMs);
     this.checkpointService.findOne({_id: checkpointId}).then((data) => {
       const offset = data ? data.offset : -1;
-      this.logger.log(`Subscribing to stream ${streamName} from offset ${offset}.`);
-      this.eventStore.subscribeToStreamFrom(streamName, offset, onEvent, null, onDropped)
+      this.logger.log(`Subscribing to ES stream ${streamName} from offset ${offset}.`);
+
+      this.eventStore.subscribeToStreamFrom(streamName, offset, onEvent, null, exitCallback)
           .then(() => clearTimeout(timeout), () => this.logger.error(`Failed to subscribe to stream ${streamName}.`));
     }, () => this.logger.error(`Failed to determine offset of stream ${streamName}.`));
   }
@@ -90,6 +87,6 @@ export class SensorQueryModule implements OnModuleInit {
       }
     };
 
-    this.subscribeToStreamWithReconnect('$ce-sensor', 'sensor', onEvent);
+    this.subscribeToStreamFrom('$ce-sensor', 'sensor', onEvent);
   }
 }
