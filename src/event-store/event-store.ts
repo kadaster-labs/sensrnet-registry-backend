@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventMessage } from './event-message';
-import {MappedEventAppearedCallback, SubscribeToStreamFromSettings, TCPClient} from 'geteventstore-promise';
+import { TCPClient} from 'geteventstore-promise';
 import { EventStoreConfiguration } from './event-store.configuration';
 
 @Injectable()
