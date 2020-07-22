@@ -1,7 +1,9 @@
 resources:
 - ../../base
 - eventstore/storageclass.yaml
+- mongo/pvc.yaml
 
 patchesStrategicMerge:
 - eventstore/patch.yaml
+- mongo/patch.yaml
 - registry-backend/patch.yaml
