@@ -1,0 +1,5 @@
+resources:
+- ../labs-shared
+
+patchesStrategicMerge:
+- registry-backend/patch.yaml

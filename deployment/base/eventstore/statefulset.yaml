@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  namespace: sensrnet-backend
   name: eventstore-cluster
 spec:
   selector:
@@ -62,31 +61,3 @@ spec:
             port: 2113
           initialDelaySeconds: 5
           periodSeconds: 5
-  volumeClaimTemplates:
-  - metadata:
-      name: eventstore-cluster-data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "managed-premium-retain"
-      resources:
-        requests:
-          storage: 5Gi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: eventstore-cluster
-  namespace: sensrnet-backend
-  labels:
-    app: eventstore-cluster
-spec:
-  clusterIP: "None"
-  ports:
-  - port: 2113
-    name: eventstore-web
-  - port: 1113
-    name: eventstore-tcp
-  - port: 2112
-    name: gossip
-  selector:
-    app: eventstore-cluster

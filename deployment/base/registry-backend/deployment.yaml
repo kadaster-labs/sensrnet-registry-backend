@@ -4,7 +4,6 @@ metadata:
   labels:
     app: registry-backend
   name: registry-backend
-  namespace: sensrnet-backend
 spec:
   replicas: 1
   selector:
@@ -43,39 +42,11 @@ spec:
         ports:
         - containerPort: 3000
         resources: {}
+      initContainers:
+        - name: check-mongo-ready
+          image: mongo
+          command: ['sh', '-c', 
+            'until mongo --host mongo:27017 --eval "printjson(db.serverStatus())"; 
+            do echo waiting for mongo; sleep 10; done;']
       restartPolicy: Always
 status: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: registry-backend
-  name: registry-backend
-  namespace: sensrnet-backend
-spec:
-  ports:
-  - port: 80
-    targetPort: 3000
-  selector:
-    app: registry-backend
-status:
-  loadBalancer: {}
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: registry-backend-ingress
-  namespace: sensrnet-backend
-  annotations:
-    kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/preserve-host: "true"
-    traefik.backend.loadbalancer.stickiness: "true"
-spec:
-  rules:
-  - http:
-      paths:
-      - backend:
-          serviceName: registry-backend
-          servicePort: 80
-        path: /api/

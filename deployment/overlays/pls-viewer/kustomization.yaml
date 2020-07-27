@@ -1,0 +1,5 @@
+resources:
+- ../pls-shared
+
+patchesStrategicMerge:
+- registry-backend/patch.yaml

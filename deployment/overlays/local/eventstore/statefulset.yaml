@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: eventstore-cluster
+spec:
+  template:
+    spec:
+      containers:
+      - name: eventstore
+        volumeMounts:
+        - name: local-vol
+          mountPath: /var/lib/eventstore
+  volumeClaimTemplates:
+  - metadata:
+      name: local-vol
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi
