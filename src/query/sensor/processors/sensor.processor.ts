@@ -1,6 +1,8 @@
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { ISensor } from '../models/sensor.model';
 import { SensorGateway } from '../sensor.gateway';
 import { Injectable, Logger } from '@nestjs/common';
-import { Sensor, ISensor } from '../models/sensor.model';
 import { EventStorePublisher } from '../../../event-store/event-store.publisher';
 import { DatastreamAdded, DatastreamDeleted, SensorActivated, SensorDeactivated, SensorDeleted,
   SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated } from '../../../events/sensor';
@@ -12,6 +14,7 @@ export class SensorProcessor {
   constructor(
       private readonly sensorGateway: SensorGateway,
       private readonly eventStore: EventStorePublisher,
+      @InjectModel('Sensor') private sensorModel: Model<ISensor>,
   ) {
   }
 
@@ -28,12 +31,12 @@ export class SensorProcessor {
   private async updateSensorById(sensorId, sensorData, event) {
     let sensor: ISensor;
     try {
-      sensor = await Sensor.findByIdAndUpdate(
+      sensor = await this.sensorModel.findByIdAndUpdate(
           sensorId,
           sensorData,
           {new: true},
-      ).exec();
-    } catch (_) {
+          ).exec();
+    } catch {
       this.errorCallback(event);
     }
 
@@ -117,7 +120,7 @@ export class SensorProcessor {
 
     let sensor: ISensor;
     try {
-      sensor = await new Sensor(sensorData).save();
+      sensor = await new this.sensorModel(sensorData).save();
     } catch (_) {
       this.errorCallback(event);
     }
@@ -160,7 +163,7 @@ export class SensorProcessor {
   }
 
   async processDeleted(event: SensorDeleted): Promise<ISensor> {
-    const sensor: ISensor = await Sensor.findByIdAndDelete(
+    const sensor: ISensor = await this.sensorModel.findByIdAndDelete(
       event.sensorId,
     ).exec();
 
@@ -212,12 +215,12 @@ export class SensorProcessor {
 
     let sensor: ISensor;
     try {
-      sensor = await Sensor.findOneAndUpdate(
+      sensor = await this.sensorModel.findOneAndUpdate(
         filterData,
         updateSensorData,
         {new: true},
       ).exec();
-    } catch (_) {
+    } catch {
       this.errorCallback(event);
     }
 
@@ -272,12 +275,12 @@ export class SensorProcessor {
 
     let sensor: ISensor;
     try {
-      sensor = await Sensor.findOneAndUpdate(
+      sensor = await this.sensorModel.findOneAndUpdate(
         filterKwargs,
         sensorData,
         {new: true},
       ).exec();
-    } catch (_) {
+    } catch {
       this.errorCallback(event);
     }
 

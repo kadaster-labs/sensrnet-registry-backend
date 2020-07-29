@@ -9,8 +9,7 @@ export class RetrieveOwnerQueryHandler implements IQueryHandler<RetrieveOwnersQu
 
     constructor(
         @InjectModel('Owner') private ownerModel: Model<Owner>,
-    ) {
-    }
+    ) {}
 
     async execute(query: RetrieveOwnersQuery) {
         return this.ownerModel.find({_id: query.id});

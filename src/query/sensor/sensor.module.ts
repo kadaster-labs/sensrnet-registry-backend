@@ -1,18 +1,16 @@
-import { connect } from 'mongoose';
+import { Module } from '@nestjs/common';
 import { SensorProcessor } from './processors';
 import { SensorGateway } from './sensor.gateway';
-import { plainToClass } from 'class-transformer';
-import { sensorEventType } from '../../events/sensor';
+import { MongooseModule } from '@nestjs/mongoose';
+import { SensorSchema } from './models/sensor.model';
 import { SensorController } from './sensor.controller';
+import { SensorEsListener } from './sensor.es.listener';
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
-import { NODE_ID } from '../../events/sensor/sensor.event';
-import { Logger, Module, OnModuleInit } from '@nestjs/common';
+import { SensorESController } from './sensor.es.controller';
 import { CheckpointModule } from '../checkpoint/checkpoint.module';
-import { CheckpointService } from '../checkpoint/checkpoint.service';
 import { RetrieveSensorQueryHandler } from './queries/sensor.handler';
 import { RetrieveSensorsQueryHandler } from './queries/sensors.handler';
 import { EventStoreModule } from '../../event-store/event-store.module';
-import { EventStorePublisher } from '../../event-store/event-store.publisher';
 
 @Module({
   imports: [
@@ -20,73 +18,20 @@ import { EventStorePublisher } from '../../event-store/event-store.publisher';
     CheckpointModule,
     EventStoreModule,
     SensorQueryModule,
+    MongooseModule.forFeature([{name: 'Sensor', schema: SensorSchema}]),
   ],
   controllers: [
-      SensorController,
+    SensorController,
+    SensorESController,
   ],
   providers: [
     SensorGateway,
     EventPublisher,
     SensorProcessor,
+    SensorEsListener,
     RetrieveSensorQueryHandler,
     RetrieveSensorsQueryHandler,
   ],
 })
 
-export class SensorQueryModule implements OnModuleInit {
-
-  protected logger: Logger = new Logger(this.constructor.name);
-
-  constructor(
-      private readonly eventStore: EventStorePublisher,
-      private readonly sensorProcessor: SensorProcessor,
-      private readonly checkpointService: CheckpointService,
-  ) {}
-
-  subscribeToStreamFrom(streamName, checkpointId, onEvent) {
-    const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
-
-    const exitCallback = () => {
-      this.logger.error(`Failed to connect to EventStore. Exiting.`);
-      process.exit(0);
-    };
-
-    const timeout = setTimeout(exitCallback, timeoutMs);
-    this.checkpointService.findOne({_id: checkpointId}).then((data) => {
-      const offset = data ? data.offset : -1;
-      this.logger.log(`Subscribing to ES stream ${streamName} from offset ${offset}.`);
-
-      this.eventStore.subscribeToStreamFrom(streamName, offset, onEvent, null, exitCallback)
-          .then(() => clearTimeout(timeout), () => this.logger.error(`Failed to subscribe to stream ${streamName}.`));
-    }, () => this.logger.error(`Failed to determine offset of stream ${streamName}.`));
-  }
-
-  onModuleInit() {
-    const host = process.env.MONGO_HOST || 'localhost';
-    const port = process.env.MONGO_PORT || 27017;
-    const database = process.env.MONGO_DATABASE || 'sensrnet';
-
-    const url = `mongodb://${host}:${port}/${database}`;
-    connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false}).then();
-
-    const onEvent = (_, eventMessage) => {
-      const offset = eventMessage.positionEventNumber;
-      const callback = () => this.checkpointService.updateOne({_id: 'sensor'}, {offset});
-
-      if (eventMessage.metadata && eventMessage.metadata.originSync) {
-        if (!eventMessage.data || eventMessage.data.nodeId === NODE_ID) {
-          this.logger.debug('Not implemented: Handle sync event of current node.');
-          callback().then();
-        } else {
-          const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
-          this.sensorProcessor.process(event).then(callback, callback);
-        }
-      } else {
-        const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
-        this.sensorProcessor.process(event).then(callback, callback);
-      }
-    };
-
-    this.subscribeToStreamFrom('$ce-sensor', 'sensor', onEvent);
-  }
-}
+export class SensorQueryModule {}

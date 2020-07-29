@@ -10,7 +10,9 @@ import { CheckpointSchema } from './models/checkpoint.model';
     providers: [
         CheckpointService,
     ],
-    exports: [CheckpointService],
+    exports: [
+        CheckpointService
+    ],
 })
 
 export class CheckpointModule {}
