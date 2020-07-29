@@ -1,5 +1,7 @@
-resources:
+bases:
 - ../../base
+
+resources:
 - storageclass.yaml
 - mongo/pvc.yaml
 
