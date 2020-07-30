@@ -1,6 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../users/user.interface';
-import { UsersService } from '../users/users.service';
+import { User } from '../user/user.interface';
+import { UserService } from '../user/user.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class AuthService {
 
     constructor(
         private jwtService: JwtService,
-        private usersService: UsersService,
+        private usersService: UserService,
     ) {
         if (process.env.JWT_ACCESS_EXPIRES_IN) {
             this.accessTokenExpiresIn = Number(process.env.JWT_ACCESS_EXPIRES_IN);

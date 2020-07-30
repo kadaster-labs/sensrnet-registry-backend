@@ -20,7 +20,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "uml": "tplant -C --input src/events/**/*.ts --output docs/images/events-uml.svg"
+    "uml": "tplant -C --input src/core/events/**/*.ts --output docs/images/events-uml.svg"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.13",

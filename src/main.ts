@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { DomainExceptionFilter } from './commands/owner/errors/domain-exception.filter';
+import { DomainExceptionFilter } from './core/errors/domain-exception.filter';
 
 async function bootstrap() {
   const port = process.env.PORT || 3000;
