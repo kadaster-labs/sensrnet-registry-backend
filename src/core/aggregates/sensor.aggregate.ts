@@ -3,8 +3,9 @@ import { SensorState, SensorStateImpl } from './sensor-state';
 import { LocationBody } from '../../command/controller/model/location.body';
 import { EventMessage } from '../../event-store/event-message';
 import { DatastreamBody } from '../../command/controller/model/datastream.body';
+import { SensorActiveException } from '../../command/handler/error/sensor-active-exception';
+import { SensorInActiveException } from '../../command/handler/error/sensor-inactive-exception';
 import { IsAlreadyOwnerException } from '../../command/handler/error/is-already-owner-exception';
-import { SensorActiveException, SensorInActiveException } from '../../command/handler/error/sensor-active-exception';
 import { DatastreamAdded, DatastreamDeleted, SensorActivated, SensorDeactivated, SensorDeleted,
   SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated } from '../events/sensor';
 

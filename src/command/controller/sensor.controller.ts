@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
 import { LocationBody } from './model/location.body';
 import { UpdateSensorBody } from './model/update-sensor.body';
@@ -35,9 +35,9 @@ export class SensorController {
   @ApiResponse({ status: 200, description: 'Sensor registered' })
   @ApiResponse({ status: 400, description: 'Sensor registration failed' })
   async registerOwner(@Body() sensorBody: RegisterSensorBody, @Request() req) {
-    const sensorId = uuidv4();
+    const sensorId = v4();
     for (const dataStream of sensorBody.dataStreams) {
-      dataStream.dataStreamId = uuidv4();
+      dataStream.dataStreamId = v4();
     }
 
     await this.commandBus.execute(new CreateSensorCommand(sensorId,
@@ -117,7 +117,7 @@ export class SensorController {
   @ApiResponse({ status: 200, description: 'Datastream added to sensor' })
   @ApiResponse({ status: 400, description: 'Datastream addition failed' })
   async addSensorDatastream(@Param() params: SensorIdParams, @Body() dataStreamBody: DatastreamBody) {
-    const dataStreamId = uuidv4();
+    const dataStreamId = v4();
     return await this.commandBus.execute(new CreateDatastreamCommand(params.sensorId, dataStreamId,
       dataStreamBody.name, dataStreamBody.reason, dataStreamBody.description, dataStreamBody.observedProperty,
       dataStreamBody.unitOfMeasurement, dataStreamBody.isPublic, dataStreamBody.isOpenData,
