@@ -127,13 +127,11 @@ export class SensorAggregate extends Aggregate {
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onSensorActivated(eventMessage: EventMessage) {
-    const event: SensorActivated = eventMessage.data as SensorActivated;
+  private onSensorActivated() {
     this.state.active = true;
   }
 
-  private onSensorDeactivated(eventMessage: EventMessage) {
-    const event: SensorDeactivated = eventMessage.data as SensorDeactivated;
+  private onSensorDeactivated() {
     this.state.active = false;
   }
 

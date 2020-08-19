@@ -14,14 +14,14 @@ export class UserService {
     }
 
     async updateOne(username: string, updateFields: any) {
+        const deleteFunction = (hashableField) => () => delete updateFields[hashableField];
+        const updateFunction = (hashableField) => (hash) => updateFields[hashableField] = hash;
+        const hashFunction = (hashableField) => (resolve, reject) => hashField(updateFields[hashableField], resolve, reject);
+
         for (const hashableField of hashableFields) {
             if (updateFields[hashableField]) {
-                const promise = new Promise((resolve, reject) => {
-                    hashField(updateFields[hashableField], resolve, reject);
-                });
-                await promise.then((hash) => {
-                    updateFields[hashableField] = hash;
-                }, () => delete updateFields[hashableField]);
+                const promise = new Promise(hashFunction(hashableField));
+                await promise.then(updateFunction(hashableField), deleteFunction(hashableField));
             }
         }
 
