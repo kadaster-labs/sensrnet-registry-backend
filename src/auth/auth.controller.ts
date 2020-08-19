@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
@@ -5,7 +6,6 @@ import { AuthenticateBody } from './models/auth-body';
 import { RefreshJwtStrategy } from './refresh-jwt.strategy';
 import { RefreshJwtAuthGuard } from './refresh-jwt-auth.guard';
 import { Controller, Req, Res, Post, UseGuards, Body, UnauthorizedException } from '@nestjs/common';
-import { Response } from 'express';
 
 @ApiTags('Authentication')
 @Controller()

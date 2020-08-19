@@ -1,14 +1,15 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
+import { Roles } from '../../core/guards/roles.decorator';
+import { RolesGuard } from '../../core/guards/roles.guard';
 import { UpdateOwnerBody } from './model/update-owner.body';
-import { UpdateOwnerCommand } from '../model/update-owner.command';
-import { DeleteOwnerCommand } from '../model/delete-owner.command';
-import { NoRightsException } from '../handler/error/no-rights-exception';
 import { DeleteOwnerParams } from './model/delete-owner.params';
 import { RegisterOwnerBody } from './model/register-owner.body';
-import { RegisterOwnerCommand } from '../model/register-owner.command';
-import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
+import { UpdateOwnerCommand } from '../model/update-owner.command';
+import { DeleteOwnerCommand } from '../model/delete-owner.command';
 import { RegisterUserCommand } from '../model/register-user.command';
+import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
+import { RegisterOwnerCommand } from '../model/register-owner.command';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UseFilters, Controller, Post, Body, Put, Delete, UseGuards, Request, Param } from '@nestjs/common';
@@ -26,7 +27,7 @@ export class OwnerController {
   @ApiResponse({ status: 200, description: 'Owner registered' })
   @ApiResponse({ status: 400, description: 'Owner registration failed' })
   async createOwner(@Body() ownerBody: RegisterOwnerBody) {
-    const ownerId = uuidv4();
+    const ownerId = v4();
 
     await this.commandBus.execute(new RegisterUserCommand(ownerBody.email, ownerId, ownerBody.password));
     await this.commandBus.execute(new RegisterOwnerCommand(ownerId, NODE_ID, ownerBody.organisationName,
@@ -60,16 +61,13 @@ export class OwnerController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  @UseGuards(AccessJwtAuthGuard)
+  @Roles('admin')
   @UseFilters(new DomainExceptionFilter())
+  @UseGuards(AccessJwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Remove owner' })
   @ApiResponse({ status: 200, description: 'Owner removed' })
   @ApiResponse({ status: 400, description: 'Owner removal failed' })
   async removeOwnerById(@Request() req, @Param() param: DeleteOwnerParams) {
-    if (req.user.role === 'admin') {
-      return await this.commandBus.execute(new DeleteOwnerCommand(param.id));
-    } else {
-      throw new NoRightsException(req.user);
-    }
+    return await this.commandBus.execute(new DeleteOwnerCommand(param.id));
   }
 }
