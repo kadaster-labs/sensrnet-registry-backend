@@ -35,11 +35,11 @@ UserSchema.pre<User>('save', function(next) {
 
     const fields = [];
     const promises = [];
-    const hashFunction = (userField) => (resolve, reject) => hashField(userField, resolve, reject);
+    const hashFunction = (hashableField) => (resolve, reject) => hashField(user[hashableField], resolve, reject);
     for (const hashableField of hashableFields) {
         if (user.isModified(hashableField)) {
             fields.push(hashableField);
-            promises.push(new Promise(hashFunction(user[hashableField])));
+            promises.push(new Promise(hashFunction(hashableField)));
         }
     }
 
