@@ -1,7 +1,7 @@
-import { SensorRepository } from '../../core/repositories/sensor.repository';
-import { UpdateSensorLocationCommand } from '../model/update-sensor-location.command';
 import { UnknowSensorException } from './error/unknow-sensor-exception';
+import { SensorRepository } from '../../core/repositories/sensor.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
+import { UpdateSensorLocationCommand } from '../model/update-sensor-location.command';
 
 @CommandHandler(UpdateSensorLocationCommand)
 export class UpdateSensorLocationCommandHandler implements ICommandHandler<UpdateSensorLocationCommand> {

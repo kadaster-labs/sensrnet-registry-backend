@@ -1,7 +1,7 @@
 import { Aggregate } from '../../event-store/aggregate';
 import { SensorState, SensorStateImpl } from './sensor-state';
-import { LocationBody } from '../../command/controller/model/location.body';
 import { EventMessage } from '../../event-store/event-message';
+import { LocationBody } from '../../command/controller/model/location.body';
 import { DatastreamBody } from '../../command/controller/model/datastream.body';
 import { SensorActiveException } from '../../command/handler/error/sensor-active-exception';
 import { SensorInActiveException } from '../../command/handler/error/sensor-inactive-exception';

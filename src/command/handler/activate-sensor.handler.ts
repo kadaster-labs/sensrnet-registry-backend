@@ -1,6 +1,6 @@
+import { UnknowSensorException } from './error/unknow-sensor-exception';
 import { ActivateSensorCommand } from '../model/activate-sensor.command';
 import { SensorRepository } from '../../core/repositories/sensor.repository';
-import { UnknowSensorException } from './error/unknow-sensor-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(ActivateSensorCommand)
