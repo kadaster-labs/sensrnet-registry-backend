@@ -54,6 +54,9 @@ import {SensorController} from './controller/sensor.controller';
         ShareSensorOwnershipCommandHandler,
         TransferSensorOwnershipCommandHandler,
     ],
+    exports: [
+        OwnerRepository,
+    ],
 })
 
 export class CommandModule implements OnModuleInit {

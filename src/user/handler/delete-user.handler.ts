@@ -1,9 +1,9 @@
 import { Model } from 'mongoose';
+import { User } from '../user.interface';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './user.interface';
-import { DeleteUserCommand } from '../command/model/delete-user.command';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
-import { DeleteFailedException } from '../command/handler/error/delete-failed-exception';
+import { DeleteUserCommand } from '../command/delete-user.command';
+import { DeleteFailedException } from '../../command/handler/error/delete-failed-exception';
 
 @CommandHandler(DeleteUserCommand)
 export class DeleteUserCommandHandler implements ICommandHandler<DeleteUserCommand> {

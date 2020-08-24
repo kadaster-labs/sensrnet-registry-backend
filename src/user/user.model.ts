@@ -5,11 +5,11 @@ import { User } from './user.interface';
 export const UserSchema = new Schema({
     _id: { type: String, required: true },
     role: { type: String, required: false },
-    ownerId: { type: String, required: true },
+    ownerId: { type: String, required: false },
     password: { type: String, required: true },
     refreshToken: { type: String, required: false },
 }, {
-  autoCreate: true,
+    autoCreate: true,
 });
 
 export const hashableFields = ['password', 'refreshToken'];

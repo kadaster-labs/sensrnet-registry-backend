@@ -1,9 +1,9 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './user.interface';
-import { RegisterUserCommand } from '../command/model/register-user.command';
+import { User } from '../user.interface';
+import { RegisterUserCommand } from '../command/register-user.command';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
-import { UserAlreadyExistsException } from '../command/handler/error/user-already-exists-exception';
+import { UserAlreadyExistsException } from '../../command/handler/error/user-already-exists-exception';
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserCommandHandler implements ICommandHandler<RegisterUserCommand> {
