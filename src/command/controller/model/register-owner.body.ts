@@ -49,19 +49,19 @@ export class RegisterOwnerBody {
   readonly contactPhone: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     type: String,
-    required: true,
+    required: false,
     description: 'The (unique) email of the owner user.',
   })
   readonly email: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     type: String,
-    required: true,
+    required: false,
     description: 'The password of the owner user.',
   })
   readonly password: string;

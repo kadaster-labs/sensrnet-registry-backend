@@ -15,7 +15,9 @@ import { UseFilters, Controller, Delete, UseGuards, Request, Param, Post, Body, 
 @ApiTags('User')
 @Controller('User')
 export class UserController {
-    constructor(private readonly commandBus: CommandBus) {}
+    constructor(
+        private readonly commandBus: CommandBus,
+    ) {}
 
     @Post()
     @UseFilters(new DomainExceptionFilter())

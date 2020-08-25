@@ -29,7 +29,10 @@ export class OwnerController {
   async createOwner(@Body() ownerBody: RegisterOwnerBody) {
     const ownerId = v4();
 
-    await this.commandBus.execute(new RegisterUserCommand(ownerBody.email, ownerId, ownerBody.password));
+    if (ownerBody.email && ownerBody.password) {
+      await this.commandBus.execute(new RegisterUserCommand(ownerBody.email, ownerId, ownerBody.password));
+    }
+
     await this.commandBus.execute(new RegisterOwnerCommand(ownerId, NODE_ID, ownerBody.organisationName,
         ownerBody.website, ownerBody.name, ownerBody.contactEmail, ownerBody.contactPhone));
 
