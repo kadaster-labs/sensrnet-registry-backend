@@ -1,24 +1,24 @@
 import { v4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
 import { LocationBody } from './model/location.body';
+import { DatastreamBody } from './model/datastream.body';
 import { UpdateSensorBody } from './model/update-sensor.body';
+import { ShareOwnershipBody } from './model/share-ownership.body';
+import { RegisterSensorBody } from './model/register-sensor.body';
 import { CreateSensorCommand } from '../model/create-sensor.command';
 import { UpdateSensorCommand } from '../model/update-sensor.command';
 import { DeleteSensorCommand } from '../model/delete-sensor.command';
-import { DatastreamBody } from './model/datastream.body';
-import { RegisterSensorBody } from './model/register-sensor.body';
-import { ActivateSensorCommand } from '../model/activate-sensor.command';
 import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
-import { DeactivateSensorCommand } from '../model/deactivate-sensor.command';
-import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
-import { ShareOwnershipBody } from './model/share-ownership.body';
+import { SensorIdParams, DataStreamIdParams } from './model/id.params';
+import { TransferOwnershipBody } from './model/transfer-ownership.body';
+import { ActivateSensorCommand } from '../model/activate-sensor.command';
 import { CreateDatastreamCommand } from '../model/create-datastream.command';
 import { DeleteDatastreamCommand } from '../model/delete-datastream.command';
-import { TransferOwnershipBody } from './model/transfer-ownership.body';
-import { SensorIdParams, DataStreamIdParams } from './model/id.params';
+import { DeactivateSensorCommand } from '../model/deactivate-sensor.command';
+import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
+import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ShareSensorOwnershipCommand } from '../model/share-sensor-ownership.command';
 import { UpdateSensorLocationCommand } from '../model/update-sensor-location.command';
-import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { TransferSensorOwnershipCommand } from '../model/transfer-sensor-ownership.command';
 import { Controller, Param, Post, Put, Body, Delete, UseFilters, Request, UseGuards } from '@nestjs/common';
 
@@ -34,7 +34,7 @@ export class SensorController {
   @ApiOperation({ summary: 'Register sensor' })
   @ApiResponse({ status: 200, description: 'Sensor registered' })
   @ApiResponse({ status: 400, description: 'Sensor registration failed' })
-  async registerOwner(@Body() sensorBody: RegisterSensorBody, @Request() req) {
+  async registerSensor(@Body() sensorBody: RegisterSensorBody, @Request() req) {
     const sensorId = v4();
     for (const dataStream of sensorBody.dataStreams) {
       dataStream.dataStreamId = v4();
@@ -55,11 +55,12 @@ export class SensorController {
   @ApiOperation({ summary: 'Update sensor details' })
   @ApiResponse({ status: 200, description: 'Sensor updated' })
   @ApiResponse({ status: 400, description: 'Sensor update failed' })
-  async updateSensorDetails(@Param() params: SensorIdParams, @Body() sensorBody: UpdateSensorBody) {
+  async updateSensorDetails(@Param() params: SensorIdParams, @Body() sensorBody: UpdateSensorBody,
+                            @Request() req) {
     return await this.commandBus.execute(new UpdateSensorCommand(params.sensorId,
-      sensorBody.name, sensorBody.aim, sensorBody.description,
-      sensorBody.manufacturer, sensorBody.observationArea, sensorBody.documentationUrl,
-      sensorBody.theme, sensorBody.typeName, sensorBody.typeDetails));
+        req.user.ownerId, sensorBody.name, sensorBody.aim, sensorBody.description,
+        sensorBody.manufacturer, sensorBody.observationArea, sensorBody.documentationUrl,
+        sensorBody.theme, sensorBody.typeName, sensorBody.typeDetails));
   }
 
   @Put(':sensorId/transfer')
@@ -142,5 +143,4 @@ export class SensorController {
   async removeOwner(@Param() params: SensorIdParams) {
     return await this.commandBus.execute(new DeleteSensorCommand(params.sensorId));
   }
-
 }

@@ -1,4 +1,5 @@
 import { validateOwner } from './util/owner.utils';
+import { NoOwnerException } from './error/no-owner-exception';
 import { CreateSensorCommand } from '../model/create-sensor.command';
 import { SensorAggregate } from '../../core/aggregates/sensor.aggregate';
 import { SensorRepository } from '../../core/repositories/sensor.repository';
@@ -17,6 +18,10 @@ export class CreateSensorCommandHandler implements ICommandHandler<CreateSensorC
   async execute(command: CreateSensorCommand): Promise<void> {
     let aggregate: SensorAggregate;
     aggregate = await this.sensorRepository.get(command.sensorId);
+
+    if (!command.ownerId) {
+      throw new NoOwnerException();
+    }
 
     if (!!aggregate) {
       throw new SensorAlreadyExistsException(command.sensorId);

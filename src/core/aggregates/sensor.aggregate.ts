@@ -3,6 +3,7 @@ import { SensorState, SensorStateImpl } from './sensor-state';
 import { EventMessage } from '../../event-store/event-message';
 import { LocationBody } from '../../command/controller/model/location.body';
 import { DatastreamBody } from '../../command/controller/model/datastream.body';
+import { NotAnOwnerException } from '../../command/handler/error/not-an-owner-exception';
 import { SensorActiveException } from '../../command/handler/error/sensor-active-exception';
 import { SensorInActiveException } from '../../command/handler/error/sensor-inactive-exception';
 import { IsAlreadyOwnerException } from '../../command/handler/error/is-already-owner-exception';
@@ -43,9 +44,13 @@ export class SensorAggregate extends Aggregate {
     this.simpleApply(new DatastreamDeleted(this.aggregateId, dataStreamId));
   }
 
-  update(name: string, aim: string, description: string, manufacturer: string,
+  update(ownerId: string, name: string, aim: string, description: string, manufacturer: string,
          observationArea: object, documentationUrl: string, theme: string[],
          typeName: string, typeDetails: object) {
+    if (!this.state.ownerIds.includes(ownerId)) {
+      throw new NotAnOwnerException(ownerId, this.aggregateId);
+    }
+
     this.simpleApply(new SensorUpdated(this.aggregateId, name, aim, description, manufacturer,
         observationArea, documentationUrl, theme, typeName, typeDetails));
   }

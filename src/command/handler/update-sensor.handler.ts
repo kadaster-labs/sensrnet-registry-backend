@@ -1,6 +1,6 @@
 import { UpdateSensorCommand } from '../model/update-sensor.command';
-import { SensorRepository } from '../../core/repositories/sensor.repository';
 import { UnknowSensorException } from './error/unknow-sensor-exception';
+import { SensorRepository } from '../../core/repositories/sensor.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(UpdateSensorCommand)
@@ -18,9 +18,9 @@ export class UpdateSensorCommandHandler implements ICommandHandler<UpdateSensorC
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.update(command.name, command.aim, command.description, command.manufacturer,
-      command.observationArea, command.documentationUrl, command.theme,
-      command.typeName, command.typeDetails);
+    aggregate.update(command.ownerId, command.name, command.aim, command.description,
+        command.manufacturer, command.observationArea, command.documentationUrl, command.theme,
+        command.typeName, command.typeDetails);
     aggregate.commit();
   }
 }
