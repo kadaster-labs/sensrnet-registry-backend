@@ -19,7 +19,7 @@ export class ActivateSensorCommandHandler implements ICommandHandler<ActivateSen
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
 
-    aggregate.activate();
+    aggregate.activate(command.ownerId);
     aggregate.commit();
   }
 }

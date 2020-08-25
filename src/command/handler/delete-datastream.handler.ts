@@ -1,6 +1,6 @@
+import { UnknowSensorException } from './error/unknow-sensor-exception';
 import { DeleteDatastreamCommand } from '../model/delete-datastream.command';
 import { SensorRepository } from '../../core/repositories/sensor.repository';
-import { UnknowSensorException } from './error/unknow-sensor-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(DeleteDatastreamCommand)
@@ -18,7 +18,7 @@ export class DeleteDataStreamCommandHandler implements ICommandHandler<DeleteDat
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.deleteDataStream(command.dataStreamId);
+    aggregate.deleteDataStream(command.ownerId, command.dataStreamId);
     aggregate.commit();
   }
 }

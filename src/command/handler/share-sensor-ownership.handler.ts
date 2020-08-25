@@ -20,12 +20,12 @@ export class ShareSensorOwnershipCommandHandler implements ICommandHandler<Share
       throw new UnknowSensorException(command.sensorId);
     }
 
-    for (const ownerId of command.ownerIds) {
+    for (const ownerId of command.newOwnerIds) {
       await validateOwner(this.ownerRepository, ownerId);
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.shareOwnership(command.ownerIds);
+    aggregate.shareOwnership(command.ownerId, command.newOwnerIds);
     aggregate.commit();
   }
 }

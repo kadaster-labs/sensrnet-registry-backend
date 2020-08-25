@@ -18,7 +18,7 @@ export class DeactivateSensorCommandHandler implements ICommandHandler<Deactivat
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.deactivate();
+    aggregate.deactivate(command.ownerId);
     aggregate.commit();
   }
 }

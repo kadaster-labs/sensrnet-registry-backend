@@ -1,9 +1,9 @@
 import { validateOwner } from './util/owner.utils';
-import { SensorRepository } from '../../core/repositories/sensor.repository';
 import { UnknowSensorException } from './error/unknow-sensor-exception';
 import { OwnerRepository } from '../../core/repositories/owner.repository';
-import { TransferSensorOwnershipCommand } from '../model/transfer-sensor-ownership.command';
+import { SensorRepository } from '../../core/repositories/sensor.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
+import { TransferSensorOwnershipCommand } from '../model/transfer-sensor-ownership.command';
 
 @CommandHandler(TransferSensorOwnershipCommand)
 export class TransferSensorOwnershipCommandHandler implements ICommandHandler<TransferSensorOwnershipCommand> {

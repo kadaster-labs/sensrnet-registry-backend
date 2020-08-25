@@ -19,7 +19,7 @@ export class DeleteSensorCommandHandler
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.delete();
+    aggregate.delete(command.ownerId);
     aggregate.commit();
   }
 }
