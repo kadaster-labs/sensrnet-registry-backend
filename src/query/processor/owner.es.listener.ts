@@ -1,6 +1,7 @@
 import { OwnerProcessor } from './owner.processor';
 import { plainToClass } from 'class-transformer';
 import { ownerEventType } from '../../core/events/owner';
+import { NODE_ID } from '../../core/events/sensor/sensor.event';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CheckpointService } from '../service/checkpoint/checkpoint.service';
 import { NoSubscriptionException } from '../handler/errors/no-subscription-exception';
@@ -48,12 +49,27 @@ export class OwnerEsListener implements OnModuleInit {
                 const offset = eventMessage.positionEventNumber;
                 const callback = () => this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
 
-                const event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessage.data);
-                try {
-                    await this.ownerProcessor.process(event);
-                    await callback();
-                } catch {
-                    await callback();
+                if (eventMessage.metadata && eventMessage.metadata.originSync) {
+                    if (!eventMessage.data || eventMessage.data.nodeId === NODE_ID) {
+                        this.logger.debug('Not implemented: Handle sync event of current node.');
+                        await callback();
+                    } else {
+                        const event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessage.data);
+                        try {
+                            await this.ownerProcessor.process(event);
+                            await callback();
+                        } catch {
+                            await callback();
+                        }
+                    }
+                } else {
+                    const event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessage.data);
+                    try {
+                        await this.ownerProcessor.process(event);
+                        await callback();
+                    } catch {
+                        await callback();
+                    }
                 }
             };
 

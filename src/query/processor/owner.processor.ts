@@ -14,8 +14,7 @@ export class OwnerProcessor {
       private readonly ownerGateway: OwnerGateway,
       private readonly eventStore: EventStorePublisher,
       @InjectModel('Owner') private ownerModel: Model<Owner>,
-  ) {
-  }
+  ) {}
 
   protected logger: Logger = new Logger(this.constructor.name);
 
