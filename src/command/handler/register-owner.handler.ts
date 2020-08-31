@@ -21,8 +21,7 @@ export class RegisterOwnerCommandHandler implements ICommandHandler<RegisterOwne
       const ownerAggregate = new OwnerAggregate(command.ownerId);
       aggregate = this.publisher.mergeObjectContext(ownerAggregate);
 
-      aggregate.register(command.nodeId, command.organisationName, command.website, command.name,
-        command.contactEmail, command.contactPhone);
+      aggregate.register(command.organisationName, command.website, command.name, command.contactEmail, command.contactPhone);
       aggregate.commit();
     }
   }

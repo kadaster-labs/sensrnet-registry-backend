@@ -10,10 +10,10 @@ export class OwnerAggregate extends Aggregate {
     super();
   }
 
-  register(nodeId: string, organisationName: string, website: string, name: string,
+  register(organisationName: string, website: string, name: string,
            contactEmail: string, contactPhone: string) {
-    this.simpleApply(new OwnerRegistered(this.aggregateId, nodeId, organisationName, website,
-        name, contactEmail, contactPhone));
+    this.simpleApply(new OwnerRegistered(this.aggregateId, organisationName, website, name,
+        contactEmail, contactPhone));
   }
 
   update(organisationName: string, website: string, contactName: string, contactEmail: string,

@@ -5,7 +5,7 @@ export const OwnerSchema = new Schema({
     nodeId: { type: String, required: true },
     organisationName: { type: String, required: false },
     website: { type: String, required: false },
-    name: { type: String, required: true },
+    name: { type: String, required: false },
     contactEmail: { type: String, required: true },
     contactPhone: { type: String, required: false },
 }, {

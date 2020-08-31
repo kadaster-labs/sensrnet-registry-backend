@@ -1,7 +1,7 @@
-import { SensorProcessor } from './sensor.processor';
 import { plainToClass } from 'class-transformer';
+import { NODE_ID } from '../../event-store/event';
+import { SensorProcessor } from './sensor.processor';
 import { sensorEventType } from '../../core/events/sensor';
-import { NODE_ID } from '../../core/events/sensor/sensor.event';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CheckpointService } from '../service/checkpoint/checkpoint.service';
 import { NoSubscriptionException } from '../handler/errors/no-subscription-exception';

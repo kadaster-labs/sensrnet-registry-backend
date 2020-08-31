@@ -14,8 +14,6 @@ import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UseFilters, Controller, Post, Body, Put, Delete, UseGuards, Request, Param } from '@nestjs/common';
 
-const NODE_ID = process.env.NODE_ID || '1';
-
 @ApiTags('Owner')
 @Controller('Owner')
 export class OwnerController {
@@ -33,7 +31,7 @@ export class OwnerController {
       await this.commandBus.execute(new RegisterUserCommand(ownerBody.email, ownerId, ownerBody.password));
     }
 
-    await this.commandBus.execute(new RegisterOwnerCommand(ownerId, NODE_ID, ownerBody.organisationName,
+    await this.commandBus.execute(new RegisterOwnerCommand(ownerId, ownerBody.organisationName,
         ownerBody.website, ownerBody.name, ownerBody.contactEmail, ownerBody.contactPhone));
 
     return {ownerId};

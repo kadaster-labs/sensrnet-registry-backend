@@ -1,11 +1,11 @@
-import { OwnerProcessor } from './owner.processor';
 import { plainToClass } from 'class-transformer';
+import { NODE_ID } from '../../event-store/event';
+import { OwnerProcessor } from './owner.processor';
 import { ownerEventType } from '../../core/events/owner';
-import { NODE_ID } from '../../core/events/sensor/sensor.event';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CheckpointService } from '../service/checkpoint/checkpoint.service';
-import { NoSubscriptionException } from '../handler/errors/no-subscription-exception';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
+import { NoSubscriptionException } from '../handler/errors/no-subscription-exception';
 import { SubscriptionExistsException } from '../handler/errors/subscription-exists-exception';
 
 @Injectable()
