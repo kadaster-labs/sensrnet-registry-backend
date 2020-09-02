@@ -2,8 +2,8 @@ import { validateOwner } from './util/owner.utils';
 import { NoOwnerException } from './error/no-owner-exception';
 import { CreateSensorCommand } from '../model/create-sensor.command';
 import { SensorAggregate } from '../../core/aggregates/sensor.aggregate';
-import { SensorRepository } from '../../core/repositories/sensor.repository';
 import { OwnerRepository } from '../../core/repositories/owner.repository';
+import { SensorRepository } from '../../core/repositories/sensor.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 import { SensorAlreadyExistsException } from './error/sensor-already-exists-exception';
 
