@@ -17,9 +17,18 @@ import { RefreshJwtStrategy } from './refresh-jwt.strategy';
             secret: jwtConstants.secret,
         }),
     ],
-    controllers: [AuthController],
-    providers: [AuthService, LocalStrategy, RefreshJwtStrategy, AccessJwtStrategy],
-    exports: [AuthService],
+    controllers: [
+        AuthController,
+    ],
+    providers: [
+        AuthService,
+        LocalStrategy,
+        AccessJwtStrategy,
+        RefreshJwtStrategy,
+    ],
+    exports: [
+        AuthService,
+    ],
 })
 
 export class AuthModule {}

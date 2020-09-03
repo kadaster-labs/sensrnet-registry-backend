@@ -13,10 +13,10 @@ export class CreateSensorCommand implements ICommand {
     public readonly description: string,
     public readonly manufacturer: string,
     public readonly active: boolean,
-    public readonly observationArea: object,
+    public readonly observationArea: Record<string, any>,
     public readonly documentationUrl: string,
     public readonly theme: string[],
     public readonly typeName: string,
-    public readonly typeDetails: object,
+    public readonly typeDetails: Record<string, any>,
     ) {}
 }

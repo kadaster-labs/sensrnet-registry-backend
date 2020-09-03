@@ -12,18 +12,18 @@ export class SensorRegistered extends SensorEvent {
   readonly description: string;
   readonly manufacturer: string;
   readonly active: boolean;
-  readonly observationArea: object;
+  readonly observationArea: Record<string, any>;
   readonly documentationUrl: string;
   readonly theme: string[];
   readonly typeName: string;
-  readonly typeDetails: object;
+  readonly typeDetails: Record<string, any>;
 
   constructor(sensorId: string, ownerId: string,
               name: string, longitude: number, latitude: number, height: number,
               baseObjectId: string, aim: string, description: string,
-              manufacturer: string, active: boolean, observationArea: object,
+              manufacturer: string, active: boolean, observationArea: Record<string, any>,
               documentationUrl: string, theme: string[], typeName: string,
-              typeDetails: object) {
+              typeDetails: Record<string, any>) {
     super(sensorId);
     this.ownerId = ownerId;
     this.name = name;

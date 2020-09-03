@@ -6,7 +6,6 @@ import { DatastreamBody } from './datastream.body';
 import { IsString, IsNotEmpty, IsBoolean, IsObject, IsArray, IsUrl, ValidateNested, IsOptional } from 'class-validator';
 
 export class RegisterSensorBody {
-
   @IsString()
   @IsOptional()
   @ApiProperty({
@@ -79,7 +78,7 @@ export class RegisterSensorBody {
     required: false,
     description: 'GeoJSON of a drawn area (https://openlayers.org/en/latest/examples/draw-freehand.html?q=freehand).',
   })
-  readonly observationArea: object;
+  readonly observationArea: Record<string, any>;
 
   @IsUrl()
   @IsOptional()
@@ -116,5 +115,5 @@ export class RegisterSensorBody {
     required: false,
     description: 'Type-specific characteristics of the sensor.',
   })
-  readonly typeDetails: object;
+  readonly typeDetails: Record<string, any>;
 }

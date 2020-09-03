@@ -3,7 +3,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNumber, IsNotEmpty, IsOptional, Min, Max } from 'class-validator';
 
 export class LocationBody {
-
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty({

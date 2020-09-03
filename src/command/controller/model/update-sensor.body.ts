@@ -3,7 +3,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUrl, IsObject, IsOptional, IsArray } from 'class-validator';
 
 export class UpdateSensorBody {
-
   @IsString()
   @IsOptional()
   @ApiProperty({
@@ -47,7 +46,7 @@ export class UpdateSensorBody {
     required: false,
     description: 'GeoJSON of a drawn area (https://openlayers.org/en/latest/examples/draw-freehand.html?q=freehand).',
   })
-  readonly observationArea: object;
+  readonly observationArea: Record<string, any>;
 
   @IsUrl()
   @IsOptional()
@@ -85,5 +84,5 @@ export class UpdateSensorBody {
     required: false,
     description: 'Type-specific characteristics of the sensor.',
   })
-  readonly typeDetails: object;
+  readonly typeDetails: Record<string, any>;
 }

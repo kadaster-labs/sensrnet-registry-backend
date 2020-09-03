@@ -13,7 +13,7 @@ export class AccessJwtStrategy extends PassportStrategy(Strategy, 'access') {
         });
     }
 
-    async validate(payload: any) {
+    async validate(payload: Record<string, any>): Promise<Record<string, any>> {
         if (payload.type !== 'access') {
             throw new UnauthorizedException();
         }

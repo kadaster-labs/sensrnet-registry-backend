@@ -11,18 +11,18 @@ export class OwnerAggregate extends Aggregate {
   }
 
   register(organisationName: string, website: string, name: string,
-           contactEmail: string, contactPhone: string) {
+           contactEmail: string, contactPhone: string): void {
     this.simpleApply(new OwnerRegistered(this.aggregateId, organisationName, website, name,
         contactEmail, contactPhone));
   }
 
   update(organisationName: string, website: string, contactName: string, contactEmail: string,
-         contactPhone: string) {
+         contactPhone: string): void {
     this.simpleApply(new OwnerUpdated(this.aggregateId, organisationName, website, contactName,
         contactEmail, contactPhone));
   }
 
-  delete() {
+  delete(): void {
     this.simpleApply(new OwnerDeleted(this.aggregateId));
   }
 

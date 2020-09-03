@@ -17,7 +17,7 @@ export class SensorAggregate extends Aggregate {
     super();
   }
 
-  validateOwner(ownerId: string) {
+  validateOwner(ownerId: string): void {
     if (!this.state.ownerIds.includes(ownerId)) {
       throw new NotAnOwnerException(ownerId, this.aggregateId);
     }
@@ -25,8 +25,8 @@ export class SensorAggregate extends Aggregate {
 
   register(ownerId: string, name: string, location: LocationBody,
            dataStreams: DatastreamBody[], aim: string, description: string, manufacturer: string,
-           active: boolean, observationArea: object, documentationUrl: string, theme: string[],
-           typeName: string, typeDetails: object) {
+           active: boolean, observationArea: Record<string, any>, documentationUrl: string, theme: string[],
+           typeName: string, typeDetails: Record<string, any>): void {
     this.simpleApply(new SensorRegistered(this.aggregateId, ownerId, name, location.longitude, location.latitude,
         location.height, location.baseObjectId, aim, description, manufacturer, active, observationArea, documentationUrl,
         theme, typeName, typeDetails));
@@ -41,26 +41,26 @@ export class SensorAggregate extends Aggregate {
 
   addDatastream(ownerId: string, dataStreamId: string, name: string, reason: string, description: string, observedProperty: string,
                 unitOfMeasurement: string, isPublic: boolean, isOpenData: boolean, isReusable: boolean, documentationUrl: string,
-                dataLink: string, dataFrequency: number, dataQuality: number) {
+                dataLink: string, dataFrequency: number, dataQuality: number): void {
     this.validateOwner(ownerId);
     this.simpleApply(new DatastreamAdded(this.aggregateId, dataStreamId, name, reason, description, observedProperty,
         unitOfMeasurement, isPublic, isOpenData, isReusable, documentationUrl, dataLink, dataFrequency, dataQuality));
   }
 
-  deleteDataStream(ownerId: string, dataStreamId: string) {
+  deleteDataStream(ownerId: string, dataStreamId: string): void {
     this.validateOwner(ownerId);
     this.simpleApply(new DatastreamDeleted(this.aggregateId, dataStreamId));
   }
 
   update(ownerId: string, name: string, aim: string, description: string, manufacturer: string,
-         observationArea: object, documentationUrl: string, theme: string[],
-         typeName: string, typeDetails: object) {
+         observationArea: Record<string, any>, documentationUrl: string, theme: string[],
+         typeName: string, typeDetails: Record<string, any>): void {
     this.validateOwner(ownerId);
     this.simpleApply(new SensorUpdated(this.aggregateId, name, aim, description, manufacturer,
         observationArea, documentationUrl, theme, typeName, typeDetails));
   }
 
-  transferOwnership(oldOwnerId: string, newOwnerId: string) {
+  transferOwnership(oldOwnerId: string, newOwnerId: string): void {
     this.validateOwner(oldOwnerId);
     if (this.state.ownerIds.includes(newOwnerId)) {
       throw new IsAlreadyOwnerException(newOwnerId);
@@ -69,7 +69,7 @@ export class SensorAggregate extends Aggregate {
     this.simpleApply(new SensorOwnershipTransferred(this.aggregateId, oldOwnerId, newOwnerId));
   }
 
-  shareOwnership(ownerId: string, newOwnerIds: string[]) {
+  shareOwnership(ownerId: string, newOwnerIds: string[]): void {
     this.validateOwner(ownerId);
     for (const newOwnerId of newOwnerIds) {
       if (this.state.ownerIds.includes(newOwnerId)) {
@@ -80,13 +80,13 @@ export class SensorAggregate extends Aggregate {
     this.simpleApply(new SensorOwnershipShared(this.aggregateId, newOwnerIds));
   }
 
-  relocate(ownerId: string, longitude: number, latitude: number, height: number, baseObjectId: string) {
+  relocate(ownerId: string, longitude: number, latitude: number, height: number, baseObjectId: string): void {
     this.validateOwner(ownerId);
 
     this.simpleApply(new SensorRelocated(this.aggregateId, longitude, latitude, height, baseObjectId));
   }
 
-  activate(ownerId: string) {
+  activate(ownerId: string): void {
     this.validateOwner(ownerId);
     if (this.state.active) {
       throw new SensorActiveException(this.state.id);
@@ -95,7 +95,7 @@ export class SensorAggregate extends Aggregate {
     this.simpleApply(new SensorActivated(this.aggregateId));
   }
 
-  deactivate(ownerId: string) {
+  deactivate(ownerId: string): void {
     this.validateOwner(ownerId);
     if (!this.state.active) {
       throw new SensorInActiveException(this.state.id);
@@ -104,7 +104,7 @@ export class SensorAggregate extends Aggregate {
     this.simpleApply(new SensorDeactivated(this.aggregateId));
   }
 
-  delete(ownerId: string) {
+  delete(ownerId: string): void {
     this.validateOwner(ownerId);
     this.simpleApply(new SensorDeleted(this.aggregateId));
   }

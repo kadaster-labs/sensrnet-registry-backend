@@ -65,7 +65,7 @@ export class CommandModule implements OnModuleInit {
         private readonly eventStore: EventStorePublisher,
     ) {}
 
-    onModuleInit() {
+    onModuleInit(): void {
         this.eventBus.publisher = this.eventStore;
     }
 }

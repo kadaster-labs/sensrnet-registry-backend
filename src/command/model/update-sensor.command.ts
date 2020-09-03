@@ -8,10 +8,10 @@ export class UpdateSensorCommand implements ICommand {
     public readonly aim: string,
     public readonly description: string,
     public readonly manufacturer: string,
-    public readonly observationArea: object,
+    public readonly observationArea: Record<string, any>,
     public readonly documentationUrl: string,
     public readonly theme: string[],
     public readonly typeName: string,
-    public readonly typeDetails: object,
+    public readonly typeDetails: Record<string, any>,
     ) {}
 }

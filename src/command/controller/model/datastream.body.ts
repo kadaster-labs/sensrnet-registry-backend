@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsBoolean, IsUrl, IsNumber, IsUUID, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class DatastreamBody {
-
     @IsUUID(4)
     @IsOptional()
     dataStreamId: string;

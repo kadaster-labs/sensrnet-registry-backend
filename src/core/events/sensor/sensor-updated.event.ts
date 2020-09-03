@@ -6,14 +6,15 @@ export class SensorUpdated extends SensorEvent {
   readonly aim: string;
   readonly description: string;
   readonly manufacturer: string;
-  readonly observationArea: object;
+  readonly observationArea: Record<string, any>;
   readonly documentationUrl: string;
   readonly theme: string[];
   readonly typeName: string;
-  readonly typeDetails: object;
+  readonly typeDetails: Record<string, any>;
 
   constructor(sensorId: string, name: string, aim: string, description: string, manufacturer: string,
-              observationArea: object, documentationUrl: string, theme: string[], typeName: string, typeDetails: object) {
+              observationArea: Record<string, any>, documentationUrl: string, theme: string[], typeName: string,
+              typeDetails: Record<string, any>) {
     super(sensorId);
     this.name = name;
     this.aim = aim;
@@ -25,5 +26,4 @@ export class SensorUpdated extends SensorEvent {
     this.typeName = typeName;
     this.typeDetails = typeDetails;
   }
-
 }

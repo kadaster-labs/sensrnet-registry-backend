@@ -1,4 +1,5 @@
 import { v4 } from 'uuid';
+import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
 import { Roles } from '../../core/guards/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
@@ -12,7 +13,7 @@ import { RegisterOwnerCommand } from '../model/register-owner.command';
 import { RegisterUserCommand } from '../../user/command/register-user.command';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UseFilters, Controller, Post, Body, Put, Delete, UseGuards, Request, Param } from '@nestjs/common';
+import { UseFilters, Controller, Post, Body, Put, Delete, UseGuards, Req, Param } from '@nestjs/common';
 
 @ApiTags('Owner')
 @Controller('Owner')
@@ -24,7 +25,7 @@ export class OwnerController {
   @ApiOperation({ summary: 'Owner registered' })
   @ApiResponse({ status: 200, description: 'Owner registered' })
   @ApiResponse({ status: 400, description: 'Owner registration failed' })
-  async createOwner(@Body() ownerBody: RegisterOwnerBody) {
+  async createOwner(@Body() ownerBody: RegisterOwnerBody): Promise<Record<string, any>> {
     const ownerId = v4();
 
     if (ownerBody.email && ownerBody.password) {
@@ -44,8 +45,9 @@ export class OwnerController {
   @ApiOperation({ summary: 'Update owner' })
   @ApiResponse({ status: 200, description: 'Owner updated' })
   @ApiResponse({ status: 400, description: 'Owner update failed' })
-  async updateOwner(@Body() ownerBody: UpdateOwnerBody, @Request() req) {
-    return await this.commandBus.execute(new UpdateOwnerCommand(req.user.ownerId, ownerBody.organisationName,
+  async updateOwner(@Body() ownerBody: UpdateOwnerBody, @Req() req: Request): Promise<any> {
+    const user = req.user as Record<string, any>;
+    return await this.commandBus.execute(new UpdateOwnerCommand(user.ownerId, ownerBody.organisationName,
         ownerBody.website, ownerBody.name, ownerBody.contactEmail, ownerBody.contactPhone));
   }
 
@@ -56,8 +58,9 @@ export class OwnerController {
   @ApiOperation({ summary: 'Remove owner' })
   @ApiResponse({ status: 200, description: 'Owner removed' })
   @ApiResponse({ status: 400, description: 'Owner removal failed' })
-  async removeOwner(@Request() req) {
-    return await this.commandBus.execute(new DeleteOwnerCommand(req.user.ownerId));
+  async removeOwner(@Req() req: Request): Promise<any> {
+    const user = req.user as Record<string, any>;
+    return await this.commandBus.execute(new DeleteOwnerCommand(user.ownerId));
   }
 
   @Delete(':id')
@@ -68,7 +71,7 @@ export class OwnerController {
   @ApiOperation({ summary: 'Remove owner' })
   @ApiResponse({ status: 200, description: 'Owner removed' })
   @ApiResponse({ status: 400, description: 'Owner removal failed' })
-  async removeOwnerById(@Request() req, @Param() param: DeleteOwnerParams) {
+  async removeOwnerById(@Req() req: Request, @Param() param: DeleteOwnerParams): Promise<any> {
     return await this.commandBus.execute(new DeleteOwnerCommand(param.id));
   }
 }
