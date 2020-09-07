@@ -2,6 +2,9 @@ import { EventStore } from './event-store';
 import { isValidEvent } from './event-utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { IEvent, IEventPublisher } from '@nestjs/cqrs';
+import { MappedEventAppearedCallback } from 'geteventstore-promise';
+import { EventStoreCatchUpSubscription, LiveProcessingStartedCallback,
+  SubscriptionDroppedCallback, DeleteResult } from 'node-eventstore-client';
 
 @Injectable()
 export class EventStorePublisher implements IEventPublisher {
@@ -11,7 +14,7 @@ export class EventStorePublisher implements IEventPublisher {
     this.eventStore.connect();
   }
 
-  async publish<T extends IEvent>(event: T) {
+  async publish<T extends IEvent>(event: T): Promise<void> {
     if (isValidEvent(event)) {
       await this.eventStore.createEvent(event);
     } else {
@@ -19,11 +22,14 @@ export class EventStorePublisher implements IEventPublisher {
     }
   }
 
-  subscribeToStreamFrom(streamName, fromEventNumber, onEvent, onLiveProcessingStarted, onDropped) {
-    return this.eventStore.subscribeToStreamFrom(streamName, fromEventNumber, onEvent, onLiveProcessingStarted, onDropped);
+  subscribeToStreamFrom(streamName: string, fromEventNumber: number,
+                        onEventAppeared: MappedEventAppearedCallback<EventStoreCatchUpSubscription>,
+                        onLiveProcessingStarted: LiveProcessingStartedCallback,
+                        onDropped: SubscriptionDroppedCallback<EventStoreCatchUpSubscription>): Promise<EventStoreCatchUpSubscription> {
+    return this.eventStore.subscribeToStreamFrom(streamName, fromEventNumber, onEventAppeared, onLiveProcessingStarted, onDropped);
   }
 
-  async deleteStream(streamName: string, hardDelete?: boolean) {
+  async deleteStream(streamName: string, hardDelete?: boolean): Promise<DeleteResult> {
     return await this.eventStore.deleteStream(streamName, hardDelete);
   }
 }

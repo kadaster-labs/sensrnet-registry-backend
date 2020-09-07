@@ -11,7 +11,7 @@ export class RetrieveSensorQueryHandler implements IQueryHandler<RetrieveSensorQ
         @InjectModel('Sensor') private sensorModel: Model<ISensor>,
     ) {}
 
-    async execute(query: RetrieveSensorQuery) {
+    async execute(query: RetrieveSensorQuery): Promise<any> {
         return this.sensorModel.find({_id: query.id});
     }
 }

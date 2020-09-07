@@ -5,7 +5,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 export class RolesGuard implements CanActivate {
     constructor(private reflector: Reflector) {}
 
-    matchRoles(requiredRoles, user): boolean {
+    matchRoles(requiredRoles: string[], user: Record<string, any>): boolean {
         return requiredRoles.includes(user.role);
     }
 

@@ -11,7 +11,7 @@ export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensor
         @InjectModel('Sensor') private sensorModel: Model<ISensor>,
     ) {}
 
-    async execute(retrieveSensorsQuery: RetrieveSensorsQuery) {
+    async execute(retrieveSensorsQuery: RetrieveSensorsQuery): Promise<any> {
         let kwargs = {};
         if (retrieveSensorsQuery.bottomLeftLongitude && retrieveSensorsQuery.bottomLeftLatitude &&
             retrieveSensorsQuery.upperRightLongitude && retrieveSensorsQuery.upperRightLatitude) {

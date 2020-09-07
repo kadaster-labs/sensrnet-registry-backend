@@ -22,8 +22,8 @@ export class OwnerEsController {
   @ApiOperation({ summary: 'Open subscription' })
   @ApiResponse({ status: 200, description: 'Subscription opened' })
   @ApiResponse({ status: 400, description: 'Failed to open subscription' })
-  async openEventStoreSubscription() {
-    return await this.eventStoreListener.openSubscription();
+  async openEventStoreSubscription(): Promise<void> {
+    await this.eventStoreListener.openSubscription();
   }
 
   @Roles('admin')
@@ -31,7 +31,7 @@ export class OwnerEsController {
   @ApiOperation({ summary: 'Close subscription' })
   @ApiResponse({ status: 200, description: 'Subscription closed' })
   @ApiResponse({ status: 400, description: 'Failed to close subscription' })
-  async closeEventStoreSubscription() {
+  closeEventStoreSubscription(): void {
     this.eventStoreListener.closeSubscription();
   }
 
@@ -40,7 +40,7 @@ export class OwnerEsController {
   @ApiOperation({ summary: 'Retrieve checkpoint offset' })
   @ApiResponse({ status: 200, description: 'Checkpoint offset retrieved' })
   @ApiResponse({ status: 400, description: 'Failed to retrieve Checkpoint offset' })
-  async retrieveEventStoreOffset() {
+  async retrieveEventStoreOffset(): Promise<number> {
     return this.eventStoreListener.getOffset();
   }
 
@@ -49,7 +49,7 @@ export class OwnerEsController {
   @ApiOperation({ summary: 'Set checkpoint offset' })
   @ApiResponse({ status: 200, description: 'Checkpoint offset set' })
   @ApiResponse({ status: 400, description: 'Failed to set Checkpoint offset' })
-  async setEventStoreOffset(@Body() body: OffsetBody) {
-    return await this.eventStoreListener.setOffset(body.offset);
+  async setEventStoreOffset(@Body() body: OffsetBody): Promise<void> {
+    await this.eventStoreListener.setOffset(body.offset);
   }
 }

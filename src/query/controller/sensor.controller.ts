@@ -22,7 +22,7 @@ export class SensorController {
   @ApiOperation({ summary: 'Retrieve Sensor' })
   @ApiResponse({ status: 200, description: 'Sensor retrieved' })
   @ApiResponse({ status: 400, description: 'Sensor retrieval failed' })
-  async retrieveSensor(@Param() sensorIdParams: SensorIdParams) {
+  async retrieveSensor(@Param() sensorIdParams: SensorIdParams): Promise<any> {
     return await this.queryBus.execute(new RetrieveSensorQuery(sensorIdParams.sensorId));
   }
 
@@ -30,7 +30,7 @@ export class SensorController {
   @ApiOperation({ summary: 'Retrieve Sensors' })
   @ApiResponse({ status: 200, description: 'Sensors retrieved' })
   @ApiResponse({ status: 400, description: 'Sensors retrieval failed' })
-  async retrieveSensors(@Query() sensorParams: RetrieveSensorsParams) {
+  async retrieveSensors(@Query() sensorParams: RetrieveSensorsParams): Promise<any> {
     return await this.queryBus.execute(new RetrieveSensorsQuery(sensorParams.bottomLeftLongitude,
         sensorParams.bottomLeftLatitude, sensorParams.upperRightLongitude, sensorParams.upperRightLatitude));
   }

@@ -1,6 +1,6 @@
 import { UpdateOwnerCommand } from '../model/update-owner.command';
-import { OwnerRepository } from '../../core/repositories/owner.repository';
 import { UnknowOwnerException } from './error/unknow-owner-exception';
+import { OwnerRepository } from '../../core/repositories/owner.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(UpdateOwnerCommand)

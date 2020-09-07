@@ -26,17 +26,18 @@ import { RetrieveOwnerQueryHandler } from './handler/retrieve-owner.handler';
         CqrsModule,
         CheckpointModule,
         EventStoreModule,
+        MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
         MongooseModule.forFeature([{name: 'Owner', schema: OwnerSchema}]),
         MongooseModule.forFeature([{name: 'Sensor', schema: SensorSchema}]),
-        MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
     ],
     controllers: [
         OwnerController,
-        OwnerEsController,
         SensorController,
+        OwnerEsController,
         SensorESController,
     ],
     providers: [
+        UserService,
         OwnerGateway,
         SensorGateway,
         EventPublisher,
@@ -47,7 +48,6 @@ import { RetrieveOwnerQueryHandler } from './handler/retrieve-owner.handler';
         RetrieveOwnerQueryHandler,
         RetrieveSensorQueryHandler,
         RetrieveSensorsQueryHandler,
-        UserService,
     ],
 })
 

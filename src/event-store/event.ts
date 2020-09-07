@@ -8,7 +8,7 @@ export abstract class Event {
   public readonly aggregateId: string;
   public readonly nodeId: string = NODE_ID;
 
-  constructor(aggregateId: string) {
+  protected constructor(aggregateId: string) {
     this.aggregateId = aggregateId;
   }
 

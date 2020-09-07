@@ -46,7 +46,7 @@ export class OwnerController {
   @ApiResponse({ status: 200, description: 'Owner updated' })
   @ApiResponse({ status: 400, description: 'Owner update failed' })
   async updateOwner(@Body() ownerBody: UpdateOwnerBody, @Req() req: Request): Promise<any> {
-    const user = req.user as Record<string, any>;
+    const user: Record<string, any> = req.user;
     return await this.commandBus.execute(new UpdateOwnerCommand(user.ownerId, ownerBody.organisationName,
         ownerBody.website, ownerBody.name, ownerBody.contactEmail, ownerBody.contactPhone));
   }
@@ -59,7 +59,7 @@ export class OwnerController {
   @ApiResponse({ status: 200, description: 'Owner removed' })
   @ApiResponse({ status: 400, description: 'Owner removal failed' })
   async removeOwner(@Req() req: Request): Promise<any> {
-    const user = req.user as Record<string, any>;
+    const user: Record<string, any> = req.user;
     return await this.commandBus.execute(new DeleteOwnerCommand(user.ownerId));
   }
 

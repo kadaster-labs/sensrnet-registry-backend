@@ -14,7 +14,9 @@ export const UserSchema = new Schema({
 
 export const hashableFields = ['password', 'refreshToken'];
 
-export const hashField = (field, resolve, reject) => {
+export const hashField = (field: string,
+                          resolve: (data: string) => void,
+                          reject: (error: any) => void): void => {
     bcrypt.genSalt(10, (err, salt) => {
         if (err) {
             reject(err);
@@ -31,13 +33,11 @@ export const hashField = (field, resolve, reject) => {
 };
 
 UserSchema.pre<User>('save', function(next) {
-    const user = this;
-
     const fields = [];
     const promises = [];
-    const hashFunction = (hashableField) => (resolve, reject) => hashField(user[hashableField], resolve, reject);
+    const hashFunction = (hashableField) => (resolve, reject) => hashField(this[hashableField], resolve, reject);
     for (const hashableField of hashableFields) {
-        if (user.isModified(hashableField)) {
+        if (this.isModified(hashableField)) {
             fields.push(hashableField);
             promises.push(new Promise(hashFunction(hashableField)));
         }
@@ -45,7 +45,7 @@ UserSchema.pre<User>('save', function(next) {
 
     Promise.all(promises).then((data) => {
         for (let i = 0; i < data.length; i++) {
-            user[fields[i]] = data[i];
+            this[fields[i]] = data[i];
         }
         return next();
     }, (err) => {
@@ -54,23 +54,21 @@ UserSchema.pre<User>('save', function(next) {
 });
 
 UserSchema.methods.checkPassword = function(attempt, callback) {
-    const user = this;
-
-    bcrypt.compare(attempt, user.password, (err, isMatch) => {
+    bcrypt.compare(attempt, this.password, (err, isMatch) => {
         if (err) {
             return callback(err);
+        } else {
+            return callback(null, isMatch);
         }
-        callback(null, isMatch);
     });
 };
 
 UserSchema.methods.checkRefreshToken = function(attempt, callback) {
-    const user = this;
-
-    bcrypt.compare(attempt, user.refreshToken, (err, isMatch) => {
+    bcrypt.compare(attempt, this.refreshToken, (err, isMatch) => {
         if (err) {
             return callback(err);
+        } else {
+            return callback(null, isMatch);
         }
-        callback(null, isMatch);
     });
 };

@@ -1,6 +1,6 @@
 import { DeleteSensorCommand } from '../model/delete-sensor.command';
-import { SensorRepository } from '../../core/repositories/sensor.repository';
 import { UnknowSensorException } from './error/unknow-sensor-exception';
+import { SensorRepository } from '../../core/repositories/sensor.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(DeleteSensorCommand)

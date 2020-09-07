@@ -11,7 +11,7 @@ import { CheckpointSchema } from './model/checkpoint.model';
         CheckpointService,
     ],
     exports: [
-        CheckpointService
+        CheckpointService,
     ],
 })
 

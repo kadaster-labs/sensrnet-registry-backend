@@ -4,7 +4,7 @@ import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 
 @Catch(DomainException)
 export class DomainExceptionFilter implements ExceptionFilter {
-  catch(exception: DomainException, host: ArgumentsHost) {
+  catch(exception: DomainException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 

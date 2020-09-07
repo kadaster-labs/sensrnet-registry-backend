@@ -17,7 +17,7 @@ export class OwnerGateway implements OnGatewayConnection {
         this.logger.log(`Client connected: ${client.id}`);
     }
 
-    emit(event: string, ...args: any[]) {
+    emit(event: string, ...args: any[]): void {
         this.server.emit(event, ...args);
     }
 

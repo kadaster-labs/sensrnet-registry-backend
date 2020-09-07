@@ -15,11 +15,11 @@ export interface ISensor extends Document {
     description?: string;
     manufacturer?: string;
     active: boolean;
-    observationArea?: object;
+    observationArea?: Record<string, any>;
     documentationUrl?: string;
     theme?: Types.Array<string>;
     typeName: Types.Array<string>;
-    typeDetails?: Types.Array<object>;
+    typeDetails?: Record<string, any>;
 }
 
 export const SensorSchema = new Schema({
@@ -41,7 +41,7 @@ export const SensorSchema = new Schema({
     documentationUrl: { type: String, required: false },
     theme: { type: [String], required: false },
     typeName: { type: [String], required: true },
-    typeDetails: { type: [Object], required: false },
+    typeDetails: { type: Object, required: false },
 });
 
 SensorSchema.index({ location: '2dsphere' });

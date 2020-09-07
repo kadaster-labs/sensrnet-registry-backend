@@ -1,49 +1,26 @@
+import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { NODE_ID } from '../../event-store/event';
 import { OwnerProcessor } from './owner.processor';
 import { ownerEventType } from '../../core/events/owner';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { AbstractEsListener } from './abstract.es.listener';
+import { OwnerEvent } from '../../core/events/owner/owner.event';
 import { CheckpointService } from '../service/checkpoint/checkpoint.service';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import { NoSubscriptionException } from '../handler/errors/no-subscription-exception';
 import { SubscriptionExistsException } from '../handler/errors/subscription-exists-exception';
 
 @Injectable()
-export class OwnerEsListener implements OnModuleInit {
-
-    private subscription;
-    private checkpointId: string = 'backend-owner-es';
-
-    protected logger: Logger = new Logger(this.constructor.name);
+export class OwnerEsListener extends AbstractEsListener {
 
     constructor(
+        eventStore: EventStorePublisher,
+        checkpointService: CheckpointService,
         private readonly ownerProcessor: OwnerProcessor,
-        private readonly eventStore: EventStorePublisher,
-        private readonly checkpointService: CheckpointService,
-    ) {}
-
-    getSubscription() {
-        return this.subscription;
+    ) {
+        super('backend-owner-es', eventStore, checkpointService);
     }
 
-    setSubscription(subscription) {
-        this.subscription = subscription;
-    }
-
-    subscriptionExists() {
-        return !!this.getSubscription();
-    }
-
-    closeSubscription() {
-        if (this.subscription) {
-            this.subscription.stop();
-            this.subscription = null;
-        } else {
-            throw new NoSubscriptionException();
-        }
-    }
-
-    async openSubscription() {
+    async openSubscription(): Promise<void> {
         if (!this.subscriptionExists()) {
             const onEvent = async (_, eventMessage) => {
                 const offset = eventMessage.positionEventNumber;
@@ -54,7 +31,8 @@ export class OwnerEsListener implements OnModuleInit {
                         this.logger.debug('Not implemented: Handle sync event of current node.');
                         await callback();
                     } else {
-                        const event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessage.data);
+                        const event: OwnerEvent = plainToClass(ownerEventType.getType(eventMessage.eventType),
+                            eventMessage.data as OwnerEvent);
                         try {
                             await this.ownerProcessor.process(event);
                             await callback();
@@ -63,7 +41,8 @@ export class OwnerEsListener implements OnModuleInit {
                         }
                     }
                 } else {
-                    const event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessage.data);
+                    const event: OwnerEvent = plainToClass(ownerEventType.getType(eventMessage.eventType),
+                        eventMessage.data as OwnerEvent);
                     try {
                         await this.ownerProcessor.process(event);
                         await callback();
@@ -73,57 +52,9 @@ export class OwnerEsListener implements OnModuleInit {
                 }
             };
 
-            await this.subscribeToStreamFrom('$ce-owner', this.checkpointId, onEvent);
+            await this.subscribeToStreamFrom('$ce-owner', onEvent);
         } else {
             throw new SubscriptionExistsException();
         }
-    }
-
-    async getOffset() {
-        const checkpoint = await this.checkpointService.findOne({_id: this.checkpointId});
-        return checkpoint ? checkpoint.offset : -1;
-    }
-
-    async setOffset(offset) {
-        if (!this.subscriptionExists()) {
-            await this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
-        } else {
-            throw new SubscriptionExistsException();
-        }
-    }
-
-    async subscribeToStreamFrom(streamName, checkpointId, onEvent) {
-        const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
-
-        const exitCallback = () => {
-            this.logger.error(`Failed to connect to EventStore. Exiting.`);
-            process.exit(0);
-        };
-
-        const droppedCallback = (_, reason) => {
-            if (reason !== 'userInitiated') {
-                exitCallback();
-            }
-        };
-
-        const timeout = setTimeout(exitCallback, timeoutMs);
-        try {
-            const offset = await this.getOffset();
-            this.logger.log(`Subscribing to ES stream ${streamName} from offset ${offset}.`);
-
-            try {
-                const s = await this.eventStore.subscribeToStreamFrom(streamName, offset, onEvent, null, droppedCallback);
-                clearTimeout(timeout);
-                this.setSubscription(s);
-            } catch {
-                this.logger.error(`Failed to subscribe to stream ${streamName}.`);
-            }
-        } catch (e) {
-            this.logger.error(`Failed to determine offset of stream ${streamName}.`);
-        }
-    }
-
-    async onModuleInit() {
-        await this.openSubscription();
     }
 }

@@ -11,7 +11,7 @@ export class RetrieveOwnerQueryHandler implements IQueryHandler<RetrieveOwnersQu
         @InjectModel('Owner') private ownerModel: Model<Owner>,
     ) {}
 
-    async execute(query: RetrieveOwnersQuery) {
+    async execute(query: RetrieveOwnersQuery): Promise<any> {
         return this.ownerModel.find({_id: query.id});
     }
 }

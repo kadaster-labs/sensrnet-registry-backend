@@ -1,4 +1,5 @@
 import { v4 } from 'uuid';
+import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
 import { LocationBody } from './model/location.body';
 import { DatastreamBody } from './model/datastream.body';
@@ -21,7 +22,7 @@ import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagg
 import { ShareSensorOwnershipCommand } from '../model/share-sensor-ownership.command';
 import { UpdateSensorLocationCommand } from '../model/update-sensor-location.command';
 import { TransferSensorOwnershipCommand } from '../model/transfer-sensor-ownership.command';
-import { Controller, Param, Post, Put, Body, Delete, UseFilters, Request, UseGuards } from '@nestjs/common';
+import { Controller, Param, Post, Put, Body, Delete, UseFilters, Req, UseGuards } from '@nestjs/common';
 
 @ApiBearerAuth()
 @UseGuards(AccessJwtAuthGuard)
@@ -35,14 +36,15 @@ export class SensorController {
   @ApiOperation({ summary: 'Register sensor' })
   @ApiResponse({ status: 200, description: 'Sensor registered' })
   @ApiResponse({ status: 400, description: 'Sensor registration failed' })
-  async registerSensor(@Body() sensorBody: RegisterSensorBody, @Request() req) {
+  async registerSensor(@Body() sensorBody: RegisterSensorBody, @Req() req: Request): Promise<Record<string, any>> {
     const sensorId = v4();
     for (const dataStream of sensorBody.dataStreams) {
       dataStream.dataStreamId = v4();
     }
 
+    const user: Record<string, any> = req.user;
     await this.commandBus.execute(new CreateSensorCommand(sensorId,
-        req.user.ownerId, sensorBody.name, sensorBody.location,
+        user.ownerId, sensorBody.name, sensorBody.location,
         sensorBody.dataStreams, sensorBody.aim, sensorBody.description,
         sensorBody.manufacturer, sensorBody.active, sensorBody.observationArea,
         sensorBody.documentationUrl, sensorBody.theme, sensorBody.typeName,
@@ -57,9 +59,10 @@ export class SensorController {
   @ApiResponse({ status: 200, description: 'Sensor updated' })
   @ApiResponse({ status: 400, description: 'Sensor update failed' })
   async updateSensorDetails(@Param() params: SensorIdParams, @Body() sensorBody: UpdateSensorBody,
-                            @Request() req) {
+                            @Req() req: Request): Promise<any> {
+    const user: Record<string, any> = req.user;
     return await this.commandBus.execute(new UpdateSensorCommand(params.sensorId,
-        req.user.ownerId, sensorBody.name, sensorBody.aim, sensorBody.description,
+        user.ownerId, sensorBody.name, sensorBody.aim, sensorBody.description,
         sensorBody.manufacturer, sensorBody.observationArea, sensorBody.documentationUrl,
         sensorBody.theme, sensorBody.typeName, sensorBody.typeDetails));
   }
@@ -70,9 +73,10 @@ export class SensorController {
   @ApiResponse({ status: 200, description: 'Sensor ownership transferred' })
   @ApiResponse({ status: 400, description: 'Sensor ownership transfer failed' })
   async transferSensorOwnership(@Param() params: SensorIdParams, @Body() transferOwnershipBody: TransferOwnershipBody,
-                                @Request() req) {
+                                @Req() req: Request): Promise<any> {
+    const user: Record<string, any> = req.user;
     return await this.commandBus.execute(new TransferSensorOwnershipCommand(params.sensorId,
-        req.user.ownerId, transferOwnershipBody.newOwnerId));
+        user.ownerId, transferOwnershipBody.newOwnerId));
   }
 
   @Put(':sensorId/share')
@@ -81,9 +85,10 @@ export class SensorController {
   @ApiResponse({ status: 200, description: 'Sensor ownership shared' })
   @ApiResponse({ status: 400, description: 'Sensor ownership sharing failed' })
   async shareSensorOwnership(@Param() params: SensorIdParams, @Body() shareOwnershipBody: ShareOwnershipBody,
-                             @Request() req) {
+                             @Req() req: Request): Promise<any> {
+    const user: Record<string, any> = req.user;
     const uniqueOwnerIds = shareOwnershipBody.ownerIds ? [...new Set(shareOwnershipBody.ownerIds)] : undefined;
-    return await this.commandBus.execute(new ShareSensorOwnershipCommand(params.sensorId, req.user.ownerId,
+    return await this.commandBus.execute(new ShareSensorOwnershipCommand(params.sensorId, user.ownerId,
         uniqueOwnerIds));
   }
 
@@ -93,9 +98,10 @@ export class SensorController {
   @ApiResponse({ status: 200, description: 'Sensor location updated' })
   @ApiResponse({ status: 400, description: 'Sensor location update failed' })
   async relocateSensor(@Param() params: SensorIdParams, @Body() locationBody: LocationBody,
-                       @Request() req) {
+                       @Req() req: Request): Promise<any> {
+    const user: Record<string, any> = req.user;
     return await this.commandBus.execute(new UpdateSensorLocationCommand(params.sensorId,
-        req.user.ownerId, locationBody.longitude, locationBody.latitude, locationBody.height,
+        user.ownerId, locationBody.longitude, locationBody.latitude, locationBody.height,
         locationBody.baseObjectId));
   }
 
@@ -104,8 +110,9 @@ export class SensorController {
   @ApiOperation({ summary: 'Activate sensor' })
   @ApiResponse({ status: 200, description: 'Sensor activated' })
   @ApiResponse({ status: 400, description: 'Sensor activation failed' })
-  async activateSensor(@Param() params: SensorIdParams, @Request() req) {
-    return await this.commandBus.execute(new ActivateSensorCommand(params.sensorId, req.user.ownerId));
+  async activateSensor(@Param() params: SensorIdParams, @Req() req: Request): Promise<any> {
+    const user: Record<string, any> = req.user;
+    return await this.commandBus.execute(new ActivateSensorCommand(params.sensorId, user.ownerId));
   }
 
   @Put(':sensorId/deactivate')
@@ -113,8 +120,9 @@ export class SensorController {
   @ApiOperation({ summary: 'Deactivate sensor' })
   @ApiResponse({ status: 200, description: 'Sensor deactivated' })
   @ApiResponse({ status: 400, description: 'Sensor deactivation failed' })
-  async deactivateSensor(@Param() params: SensorIdParams, @Request() req) {
-    return await this.commandBus.execute(new DeactivateSensorCommand(params.sensorId, req.user.ownerId));
+  async deactivateSensor(@Param() params: SensorIdParams, @Req() req: Request): Promise<any> {
+    const user: Record<string, any> = req.user;
+    return await this.commandBus.execute(new DeactivateSensorCommand(params.sensorId, user.ownerId));
   }
 
   @Post(':sensorId/create/datastream')
@@ -123,9 +131,10 @@ export class SensorController {
   @ApiResponse({ status: 200, description: 'Datastream added to sensor' })
   @ApiResponse({ status: 400, description: 'Datastream addition failed' })
   async addSensorDatastream(@Param() params: SensorIdParams, @Body() dataStreamBody: DatastreamBody,
-                            @Request() req) {
+                            @Req() req: Request): Promise<any> {
     const dataStreamId = v4();
-    return await this.commandBus.execute(new CreateDatastreamCommand(params.sensorId, req.user.ownerId,
+    const user: Record<string, any> = req.user;
+    return await this.commandBus.execute(new CreateDatastreamCommand(params.sensorId, user.ownerId,
         dataStreamId, dataStreamBody.name, dataStreamBody.reason, dataStreamBody.description,
         dataStreamBody.observedProperty, dataStreamBody.unitOfMeasurement, dataStreamBody.isPublic,
         dataStreamBody.isOpenData, dataStreamBody.isReusable, dataStreamBody.documentationUrl,
@@ -137,8 +146,9 @@ export class SensorController {
   @ApiOperation({ summary: 'Remove sensor dataStream' })
   @ApiResponse({ status: 200, description: 'Datastream removed from sensor' })
   @ApiResponse({ status: 400, description: 'Datastream removal failed' })
-  async removeSensorDatastream(@Param() params: DataStreamIdParams, @Request() req) {
-    return await this.commandBus.execute(new DeleteDatastreamCommand(params.sensorId, req.user.ownerId,
+  async removeSensorDatastream(@Param() params: DataStreamIdParams, @Req() req: Request): Promise<any> {
+    const user: Record<string, any> = req.user;
+    return await this.commandBus.execute(new DeleteDatastreamCommand(params.sensorId, user.ownerId,
         params.dataStreamId));
   }
 
@@ -147,7 +157,8 @@ export class SensorController {
   @ApiOperation({ summary: 'Remove sensor' })
   @ApiResponse({ status: 200, description: 'Sensor removed' })
   @ApiResponse({ status: 400, description: 'Sensor removal failed' })
-  async removeSensor(@Param() params: SensorIdParams, @Request() req) {
-    return await this.commandBus.execute(new DeleteSensorCommand(params.sensorId, req.user.ownerId));
+  async removeSensor(@Param() params: SensorIdParams, @Req() req: Request): Promise<any> {
+    const user: Record<string, any> = req.user;
+    return await this.commandBus.execute(new DeleteSensorCommand(params.sensorId, user.ownerId));
   }
 }

@@ -13,7 +13,7 @@ export class UserService {
         return await this.userModel.findOne({_id: username}).exec();
     }
 
-    async updateOne(username: string, updateFields: any) {
+    async updateOne(username: string, updateFields: Record<string, any>): Promise<any> {
         const deleteFunction = (hashableField) => () => delete updateFields[hashableField];
         const updateFunction = (hashableField) => (hash) => updateFields[hashableField] = hash;
         const hashFunction = (hashableField) => (resolve, reject) => hashField(updateFields[hashableField], resolve, reject);

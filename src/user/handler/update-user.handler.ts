@@ -13,7 +13,10 @@ export class UpdateUserCommandHandler implements ICommandHandler<UpdateUserComma
   ) {}
 
   async execute(command: UpdateUserCommand): Promise<void> {
-    await validateOwner(this.ownerRepository, command.ownerId);
+    if (command.ownerId) {
+      await validateOwner(this.ownerRepository, command.ownerId);
+    }
+
     await this.usersService.updateOne(command.userId, {ownerId: command.ownerId, password: command.password});
   }
 }

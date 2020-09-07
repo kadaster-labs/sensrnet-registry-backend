@@ -4,7 +4,7 @@ export abstract class OwnerEvent extends Event {
 
   readonly ownerId: string;
 
-  constructor(ownerId: string) {
+  protected constructor(ownerId: string) {
     super(ownerId);
     this.ownerId = ownerId;
   }

@@ -8,11 +8,11 @@ export class CheckpointService {
 
     constructor(@InjectModel('Checkpoint') private checkpointModel: Model<Checkpoint>) {}
 
-    async findOne(conditions: any): Promise<Checkpoint | undefined> {
+    async findOne(conditions: Record<string, any>): Promise<Checkpoint | undefined> {
         return await this.checkpointModel.findOne(conditions).exec();
     }
 
-    async updateOne(conditions: any, update: any) {
+    async updateOne(conditions: Record<string, any>, update: Record<string, any>): Promise<any> {
         const options = { upsert: true };
         return await this.checkpointModel.updateOne(conditions, update, options).exec();
     }

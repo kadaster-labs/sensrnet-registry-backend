@@ -13,10 +13,10 @@ const database = process.env.MONGO_DATABASE || 'sensrnet';
 @Module({
     imports: [
         AuthModule,
-        CheckpointModule,
         UserModule,
         QueryModule,
         CommandModule,
+        CheckpointModule,
         MongooseModule.forRoot(`mongodb://${host}:${port}/${database}`),
     ],
 })

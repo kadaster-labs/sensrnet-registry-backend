@@ -1,10 +1,11 @@
 import { Model } from 'mongoose';
-import { Owner } from '../data/owner.interface';
 import { InjectModel } from '@nestjs/mongoose';
-import { OwnerGateway } from '../gateway/owner.gateway';
+import { Owner } from '../data/owner.interface';
 import { Injectable, Logger } from '@nestjs/common';
-import { OwnerDeleted, OwnerRegistered, OwnerUpdated } from '../../core/events/owner';
+import { OwnerGateway } from '../gateway/owner.gateway';
+import { OwnerEvent } from '../../core/events/owner/owner.event';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
+import { OwnerDeleted, OwnerRegistered, OwnerUpdated } from '../../core/events/owner';
 
 @Injectable()
 export class OwnerProcessor {
@@ -18,7 +19,7 @@ export class OwnerProcessor {
 
   protected logger: Logger = new Logger(this.constructor.name);
 
-  async process(event): Promise<void> {
+  async process(event: OwnerEvent): Promise<void> {
     let result;
     if (event instanceof OwnerRegistered) {
       await this.processCreated(event);

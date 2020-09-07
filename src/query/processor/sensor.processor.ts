@@ -1,8 +1,9 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ISensor } from '../data/sensor.model';
-import { SensorGateway } from '../gateway/sensor.gateway';
 import { Injectable, Logger } from '@nestjs/common';
+import { SensorGateway } from '../gateway/sensor.gateway';
+import { SensorEvent } from '../../core/events/sensor/sensor.event';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { DatastreamAdded, DatastreamDeleted, SensorActivated, SensorDeactivated, SensorDeleted,
   SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated } from '../../core/events/sensor';
@@ -45,7 +46,7 @@ export class SensorProcessor {
 
   protected logger: Logger = new Logger(this.constructor.name);
 
-  async process(event): Promise<void> {
+  async process(event: SensorEvent): Promise<void> {
     let result: ISensor;
     if (event instanceof SensorRegistered) {
       result = await this.processCreated(event);
@@ -121,7 +122,7 @@ export class SensorProcessor {
     let sensor: ISensor;
     try {
       sensor = await new this.sensorModel(sensorData).save();
-    } catch (_) {
+    } catch {
       this.errorCallback(event);
     }
 
