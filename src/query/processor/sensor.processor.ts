@@ -76,8 +76,7 @@ export class SensorProcessor {
   }
 
   async processCreated(event: SensorRegistered): Promise<ISensor> {
-    let sensorData = {};
-    sensorData = {
+    const sensorData = {
       _id: event.sensorId,
       nodeId: event.nodeId,
       location: {
@@ -86,38 +85,17 @@ export class SensorProcessor {
       },
       active: event.active,
       typeName: event.typeName,
+      ownerIds: event.ownerId ? [event.ownerId] : undefined,
+      baseObjectId: event.baseObjectId,
+      name: event.name,
+      aim: event.aim,
+      description: event.description,
+      manufacturer: event.manufacturer,
+      observationArea: event.observationArea,
+      documentationUrl: event.documentationUrl,
+      theme: event.theme,
+      typeDetails: event.typeDetails,
     };
-
-    if (event.ownerId) {
-      sensorData = {...sensorData, ownerIds: [event.ownerId]};
-    }
-    if (event.baseObjectId) {
-      sensorData = {...sensorData, baseObjectId: event.baseObjectId};
-    }
-    if (event.name) {
-      sensorData = {...sensorData, name: event.name};
-    }
-    if (event.aim) {
-      sensorData = {...sensorData, aim: event.aim};
-    }
-    if (event.description) {
-      sensorData = {...sensorData, description: event.description};
-    }
-    if (event.manufacturer) {
-      sensorData = {...sensorData, manufacturer: event.manufacturer};
-    }
-    if (event.observationArea) {
-      sensorData = {...sensorData, observationArea: event.observationArea};
-    }
-    if (event.documentationUrl) {
-      sensorData = {...sensorData, documentationUrl: event.documentationUrl};
-    }
-    if (event.theme) {
-      sensorData = {...sensorData, theme: event.theme};
-    }
-    if (event.typeDetails) {
-      sensorData = {...sensorData, typeDetails: event.typeDetails};
-    }
 
     let sensor: ISensor;
     try {
