@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { Test } from '@nestjs/testing';
 import { QueryBus } from '@nestjs/cqrs';
 import { OwnerController } from './owner.controller';
@@ -25,7 +26,7 @@ describe('OwnerController', () => {
             const result = [{_id: 1, name: 'John'}];
             jest.spyOn(queryBus, 'execute').mockImplementation(async () => result);
 
-            const req = {user: {ownerId: 1}};
+            const req: Request = {user: {ownerId: 1}} as any;
             expect(await ownerController.retrieveOwner(req)).toBe(result);
         });
     });
