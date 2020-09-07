@@ -1,3 +1,5 @@
+import { v4 } from 'uuid';
+
 export const jwtConstants = {
-    secret: process.env.JWT_SECRET || 'kjdsad-sdasahf983209+768gd',
+    secret: process.env.JWT_SECRET || v4(),
 };

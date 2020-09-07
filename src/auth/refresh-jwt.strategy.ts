@@ -8,15 +8,13 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'refresh') {
     constructor() {
         super({
-            jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => {
-                return request?.cookies?.Authentication;
-            }]),
             ignoreExpiration: false,
             secretOrKey: jwtConstants.secret,
+            jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => request?.cookies?.Authentication]),
         });
     }
 
-    async validate(payload: any) {
+    async validate(payload: Record<string, any>): Promise<Record<string, any>> {
         if (payload.type !== 'refresh') {
             throw new UnauthorizedException();
         }

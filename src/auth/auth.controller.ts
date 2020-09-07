@@ -1,11 +1,11 @@
 import { ApiTags } from '@nestjs/swagger';
+import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthenticateBody } from './models/auth-body';
 import { RefreshJwtStrategy } from './refresh-jwt.strategy';
 import { RefreshJwtAuthGuard } from './refresh-jwt-auth.guard';
 import { Controller, Req, Res, Post, UseGuards, Body, UnauthorizedException } from '@nestjs/common';
-import { Response } from 'express';
 
 @ApiTags('Authentication')
 @Controller()
@@ -17,7 +17,7 @@ export class AuthController {
 
     @UseGuards(LocalAuthGuard)
     @Post('auth/login')
-    async login(@Body() body: AuthenticateBody, @Req() req, @Res() res: Response) {
+    async login(@Body() body: AuthenticateBody, @Req() req: Request, @Res() res: Response): Promise<Response> {
         const {
             access_token,
             refresh_token,
@@ -36,7 +36,7 @@ export class AuthController {
     }
 
     @Post('auth/logout')
-    async logout(@Req() req, @Res() res: Response) {
+    async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
         res.cookie('Authentication', '', {
           httpOnly: true,
           maxAge: 0,
@@ -49,7 +49,7 @@ export class AuthController {
 
     @UseGuards(new RefreshJwtAuthGuard(RefreshJwtStrategy))
     @Post('auth/refresh')
-    async refresh(@Req() req) {
+    async refresh(@Req() req: Request): Promise<Record<string, any>> {
         if (req.cookies && req.cookies.Authentication) {
             const {
                 access_token,

@@ -1,6 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../users/user.interface';
-import { UsersService } from '../users/users.service';
+import { UserService } from '../user/user.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
@@ -10,7 +9,7 @@ export class AuthService {
 
     constructor(
         private jwtService: JwtService,
-        private usersService: UsersService,
+        private usersService: UserService,
     ) {
         if (process.env.JWT_ACCESS_EXPIRES_IN) {
             this.accessTokenExpiresIn = Number(process.env.JWT_ACCESS_EXPIRES_IN);
@@ -59,7 +58,7 @@ export class AuthService {
         return userDetails;
     }
 
-    async refresh(reqUser, refreshToken) {
+    async refresh(reqUser: Record<string, any>, refreshToken: string): Promise<Record<string, any>> {
         const user = await this.usersService.findOne(reqUser.userId);
 
         let refreshTokenMatches;
@@ -99,7 +98,7 @@ export class AuthService {
         }
     }
 
-    async login(user: User) {
+    async login(user: Record<string, any>): Promise<Record<string, any>> {
         const refreshPayload = { sub: user._id, role: user.role, type: 'refresh' };
         const refreshToken = this.jwtService.sign(refreshPayload, { expiresIn: this.refreshTokenExpiresIn });
         await this.usersService.updateOne(user._id, {refreshToken});
