@@ -17,7 +17,7 @@ describe('Owners (e2e)', () => {
   it(`/GET Owner`, () => {
     return request(app.getHttpServer())
         .get('Owner')
-        .expect(200);
+        .expect(404);
   });
 
   afterAll(async () => {
