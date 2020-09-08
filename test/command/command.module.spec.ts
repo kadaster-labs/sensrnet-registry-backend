@@ -1,12 +1,13 @@
-import { v4 } from 'uuid';
 import { Test } from '@nestjs/testing';
+import { Logger } from '@nestjs/common';
 import { EventStore } from '../../src/event-store/event-store';
 import { UpdateOwnerCommand } from '../../src/command/model/update-owner.command';
 import { DeleteOwnerCommand } from '../../src/command/model/delete-owner.command';
-import { ExistingOwnerEventStoreMock } from './existing-owner.mock';
+import { ExistingEventStoreMock } from './existing.mock';
 import { OwnerAggregate } from '../../src/core/aggregates/owner.aggregate';
+import { SensorAggregate } from '../../src/core/aggregates/sensor.aggregate';
 import { RegisterOwnerCommand } from '../../src/command/model/register-owner.command';
-import { NonExistingOwnerEventStoreMock } from './nonexisting-owner.mock';
+import { NonExistingEventStoreMock } from './nonexisting.mock';
 import { OwnerRepository } from '../../src/core/repositories/owner.repository';
 import { SensorRepository } from '../../src/core/repositories/sensor.repository';
 import { EventStorePublisher } from '../../src/event-store/event-store.publisher';
@@ -25,6 +26,8 @@ import { UpdateSensorLocationCommandHandler } from '../../src/command/handler/up
 import { ShareSensorOwnershipCommandHandler } from '../../src/command/handler/share-sensor-ownership.handler';
 import { TransferSensorOwnershipCommandHandler } from '../../src/command/handler/transfer-sensor-ownership.handler';
 
+const logger: Logger = new Logger();
+
 describe('Commands (integration)', () => {
     const getModuleRef = async (EventStoreProvider) => {
         return await Test.createTestingModule({
@@ -35,6 +38,7 @@ describe('Commands (integration)', () => {
                 EventBus,
                 EventPublisher,
                 OwnerAggregate,
+                SensorAggregate,
                 OwnerRepository,
                 SensorRepository,
                 EventStoreProvider,
@@ -58,9 +62,8 @@ describe('Commands (integration)', () => {
         }).compile();
     };
 
-    const getCommandPipeline = async (eventStoreProvider) => {
+    const getOwnerCommandPipeline = async (eventStoreProvider) => {
         const moduleRef = await getModuleRef(eventStoreProvider);
-
         const commandBus: CommandBus = moduleRef.get(CommandBus);
         const eventPublisher: EventPublisher = moduleRef.get(EventPublisher);
         const ownerAggregate: OwnerAggregate = moduleRef.get(OwnerAggregate);
@@ -70,58 +73,115 @@ describe('Commands (integration)', () => {
         return { commandBus, eventPublisher, ownerAggregate, ownerRepository };
     };
 
-    it(`Should register an owner`, async () => {
-        const eventStoreProvider = {
-            provide: EventStore,
-            useClass: NonExistingOwnerEventStoreMock,
-        };
-        const { commandBus, eventPublisher, ownerAggregate, ownerRepository } = await getCommandPipeline(eventStoreProvider);
+    const registerOwner = async (eventStoreProvider) => {
+        const { commandBus, eventPublisher, ownerAggregate, ownerRepository } = await getOwnerCommandPipeline(eventStoreProvider);
 
         const commandHandler = new RegisterOwnerCommandHandler(eventPublisher, ownerRepository);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RegisterOwnerCommand) => commandHandler.execute(c));
         const registerFn = jest.spyOn(ownerAggregate, 'register');
 
-        const ownerId = v4();
-        await commandBus.execute(new RegisterOwnerCommand(ownerId, 'test-org',
-            'www.test-org.nl', 'test-name', 'test-owner@test-org.com',
-            'test-phone'));
+        try {
+            await commandBus.execute(new RegisterOwnerCommand('test-id', 'test-org',
+                'www.test-org.nl', 'test-name', 'test-owner@test-org.com',
+                'test-phone'));
+        } catch {
+            logger.log('Failed to register.');
+        }
 
-        expect(registerFn).toBeCalled();
-    });
+        return registerFn;
+    };
 
-    it(`Should update an owner`, async () => {
-        const eventStoreProvider = {
-            provide: EventStore,
-            useClass: ExistingOwnerEventStoreMock,
-        };
-        const { commandBus, eventPublisher, ownerAggregate, ownerRepository } = await getCommandPipeline(eventStoreProvider);
+    const updateOwner = async (eventStoreProvider) => {
+        const { commandBus, eventPublisher, ownerAggregate, ownerRepository } = await getOwnerCommandPipeline(eventStoreProvider);
 
         const commandHandler = new UpdateOwnerCommandHandler(eventPublisher, ownerRepository);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: UpdateOwnerCommand) => commandHandler.execute(c));
         const updateFn = jest.spyOn(ownerAggregate, 'update');
 
-        const ownerId = v4();
-        await commandBus.execute(new UpdateOwnerCommand(ownerId, 'test-org',
-            'www.test-org.nl', 'test-name', 'test-owner@test-org.com',
-            'test-phone'));
+        try {
+            await commandBus.execute(new UpdateOwnerCommand('test-id', 'test-org',
+                'www.test-org.nl', 'test-name', 'test-owner@test-org.com',
+                'test-phone'));
+        } catch {
+            logger.log('Failed to update.');
+        }
 
-        expect(updateFn).toBeCalled();
-    });
+        return updateFn;
+    };
 
-    it(`Should delete an owner`, async () => {
-        const eventStoreProvider = {
-            provide: EventStore,
-            useClass: ExistingOwnerEventStoreMock,
-        };
-        const { commandBus, eventPublisher, ownerAggregate, ownerRepository } = await getCommandPipeline(eventStoreProvider);
+    const deleteOwner = async (eventStoreProvider) => {
+        const { commandBus, eventPublisher, ownerAggregate, ownerRepository } = await getOwnerCommandPipeline(eventStoreProvider);
 
         const commandHandler = new DeleteOwnerCommandHandler(eventPublisher, ownerRepository);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: DeleteOwnerCommand) => commandHandler.execute(c));
-        const updateFn = jest.spyOn(ownerAggregate, 'delete');
+        const deleteFn = jest.spyOn(ownerAggregate, 'delete');
 
-        const ownerId = v4();
-        await commandBus.execute(new DeleteOwnerCommand(ownerId));
+        try {
+            await commandBus.execute(new DeleteOwnerCommand('test-id'));
+        } catch {
+            logger.log('Failed to delete owner');
+        }
 
+        return deleteFn;
+    };
+
+    it(`Should register owner`, async () => {
+        const eventStoreProvider = {
+            provide: EventStore,
+            useClass: NonExistingEventStoreMock,
+        };
+
+        const registerFn = await registerOwner(eventStoreProvider);
+        expect(registerFn).toBeCalled();
+    });
+
+    it(`Should not register owner`, async () => {
+        const eventStoreProvider = {
+            provide: EventStore,
+            useClass: ExistingEventStoreMock,
+        };
+
+        const registerFn = await registerOwner(eventStoreProvider);
+        expect(registerFn).not.toHaveBeenCalled();
+    });
+
+    it(`Should update owner`, async () => {
+        const eventStoreProvider = {
+            provide: EventStore,
+            useClass: ExistingEventStoreMock,
+        };
+
+        const updateFn = await updateOwner(eventStoreProvider);
         expect(updateFn).toBeCalled();
+    });
+
+    it(`Should not update owner`, async () => {
+        const eventStoreProvider = {
+            provide: EventStore,
+            useClass: NonExistingEventStoreMock,
+        };
+
+        const updateFn = await updateOwner(eventStoreProvider);
+        expect(updateFn).not.toBeCalled();
+    });
+
+    it(`Should delete owner`, async () => {
+        const eventStoreProvider = {
+            provide: EventStore,
+            useClass: ExistingEventStoreMock,
+        };
+
+        const deleteFn = await deleteOwner(eventStoreProvider);
+        expect(deleteFn).toBeCalled();
+    });
+
+    it(`Should not delete owner`, async () => {
+        const eventStoreProvider = {
+            provide: EventStore,
+            useClass: NonExistingEventStoreMock,
+        };
+
+        const deleteFn = await deleteOwner(eventStoreProvider);
+        expect(deleteFn).not.toBeCalled();
     });
 });
