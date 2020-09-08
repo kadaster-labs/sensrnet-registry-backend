@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { CommandBus } from '@nestjs/cqrs';
 import { plainToClass } from 'class-transformer';
-import { OwnerController } from './owner.controller';
-import { RegisterOwnerBody } from './model/register-owner.body';
+import { OwnerController } from '../../../src/command/controller/owner.controller';
+import { RegisterOwnerBody } from '../../../src/command/controller/model/register-owner.body';
 
 describe('OwnerController', () => {
   let commandBus: CommandBus;

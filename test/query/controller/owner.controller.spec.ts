@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { Test } from '@nestjs/testing';
 import { QueryBus } from '@nestjs/cqrs';
-import { OwnerController } from './owner.controller';
+import { OwnerController } from '../../../src/query/controller/owner.controller';
 
 describe('OwnerController', () => {
     let queryBus: QueryBus;

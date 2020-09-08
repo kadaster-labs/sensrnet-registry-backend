@@ -3,8 +3,10 @@ import { Test } from '@nestjs/testing';
 import { EventStore } from '../../src/event-store/event-store';
 import { UpdateOwnerCommand } from '../../src/command/model/update-owner.command';
 import { DeleteOwnerCommand } from '../../src/command/model/delete-owner.command';
+import { ExistingOwnerEventStoreMock } from './existing-owner.mock';
 import { OwnerAggregate } from '../../src/core/aggregates/owner.aggregate';
 import { RegisterOwnerCommand } from '../../src/command/model/register-owner.command';
+import { NonExistingOwnerEventStoreMock } from './nonexisting-owner.mock';
 import { OwnerRepository } from '../../src/core/repositories/owner.repository';
 import { SensorRepository } from '../../src/core/repositories/sensor.repository';
 import { EventStorePublisher } from '../../src/event-store/event-store.publisher';
@@ -22,17 +24,6 @@ import { DeleteDataStreamCommandHandler } from '../../src/command/handler/delete
 import { UpdateSensorLocationCommandHandler } from '../../src/command/handler/update-sensor-location.handler';
 import { ShareSensorOwnershipCommandHandler } from '../../src/command/handler/share-sensor-ownership.handler';
 import { TransferSensorOwnershipCommandHandler } from '../../src/command/handler/transfer-sensor-ownership.handler';
-
-class ExistingOwnerEventStoreMock {
-    connect = () => void 0;
-    exists = () => true;
-    getEvents = () => [];
-}
-
-class NonExistingOwnerEventStoreMock {
-    connect = () => void 0;
-    exists = () => false;
-}
 
 describe('Commands (integration)', () => {
     const getModuleRef = async (EventStoreProvider) => {
