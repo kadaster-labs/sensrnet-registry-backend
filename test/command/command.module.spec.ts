@@ -37,7 +37,7 @@ function NonExistingEventStoreMock() {
     this.connect = (): void => void 0;
 }
 
-describe('Commands (integration)', () => {
+describe('Command (integration)', () => {
     const getModuleRef = async (EventStoreProvider) => {
         return await Test.createTestingModule({
             imports: [

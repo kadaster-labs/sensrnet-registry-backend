@@ -8,6 +8,9 @@ const testOwners = [
     {
         _id: 'test-id',
         name: 'test-owner',
+    }, {
+        _id: 'test-id-2',
+        name: 'test-owner-2',
     },
 ];
 
@@ -37,15 +40,15 @@ describe('OwnerController', () => {
         it('should return an array of owners', async () => {
             const req: Request = {user: {ownerId: 'test-id'}} as any;
             const filteredOwners = await ownerController.retrieveOwner(req);
-            expect(filteredOwners.toString()).toBe(testOwners.toString());
+            expect(filteredOwners).toHaveLength(1);
         });
     });
 
     describe('retrieveOwner', () => {
-        it('should not return an array of owners', async () => {
+        it('should not return an empty array', async () => {
             const req: Request = {user: {ownerId: 'wrong-test-id'}} as any;
             const filteredOwners = await ownerController.retrieveOwner(req);
-            expect(filteredOwners.toString()).not.toBe(testOwners.toString());
+            expect(filteredOwners).toHaveLength(0);
         });
     });
 });

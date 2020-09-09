@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { Logger } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { OwnerGateway } from '../../src/query/gateway/owner.gateway';
 import { CommandBus, CqrsModule, EventPublisher } from '@nestjs/cqrs';
@@ -16,13 +15,21 @@ import { RetrieveSensorQueryHandler } from '../../src/query/handler/sensor.handl
 import { RetrieveSensorsQueryHandler } from '../../src/query/handler/sensors.handler';
 import { RetrieveOwnerQueryHandler } from '../../src/query/handler/retrieve-owner.handler';
 
-const logger: Logger = new Logger();
+const testObjects = [
+    {
+        _id: 'test-id',
+        name: 'test-object',
+    }, {
+        _id: 'test-id-2',
+        name: 'test-object-2',
+    },
+];
 
 const mockRepository = {
-    find: () => [],
+    find: (values) => Object.keys(values).length ? testObjects.filter((owner) => owner._id === values._id) : testObjects,
 };
 
-describe('Queries (integration)', () => {
+describe('Query (integration)', () => {
     let moduleRef;
 
     beforeAll(async () => {
@@ -60,14 +67,14 @@ describe('Queries (integration)', () => {
         const ownerQueryHandler: RetrieveOwnerQueryHandler = moduleRef.get(RetrieveOwnerQueryHandler);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RetrieveOwnersQuery) => ownerQueryHandler.execute(c));
 
-        let result;
+        let owners;
         try {
-            result = await commandBus.execute(new RetrieveOwnersQuery('test-id'));
+            owners = await commandBus.execute(new RetrieveOwnersQuery('test-id'));
         } catch {
-            logger.log('Failed to query.');
+            owners = [];
         }
 
-        expect(result).toBeDefined();
+        expect(owners).toHaveLength(1);
     });
 
     it(`Should retrieve a sensor`, async () => {
@@ -75,14 +82,14 @@ describe('Queries (integration)', () => {
         const sensorQueryHandler: RetrieveSensorQueryHandler = moduleRef.get(RetrieveSensorQueryHandler);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RetrieveSensorQuery) => sensorQueryHandler.execute(c));
 
-        let result;
+        let sensors;
         try {
-            result = await commandBus.execute(new RetrieveSensorQuery('test-id'));
+            sensors = await commandBus.execute(new RetrieveSensorQuery('test-id'));
         } catch {
-            logger.log('Failed to query.');
+            sensors = [];
         }
 
-        expect(result).toBeDefined();
+        expect(sensors).toHaveLength(1);
     });
 
     it(`Should retrieve sensors`, async () => {
@@ -90,13 +97,13 @@ describe('Queries (integration)', () => {
         const sensorsQueryHandler: RetrieveSensorsQueryHandler = moduleRef.get(RetrieveSensorsQueryHandler);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RetrieveSensorsQuery) => sensorsQueryHandler.execute(c));
 
-        let result;
+        let sensors;
         try {
-            result = await commandBus.execute(new RetrieveSensorsQuery());
+            sensors = await commandBus.execute(new RetrieveSensorsQuery());
         } catch {
-            logger.log('Failed to query.');
+            sensors = [];
         }
 
-        expect(result).toBeDefined();
+        expect(sensors).toHaveLength(2);
     });
 });
