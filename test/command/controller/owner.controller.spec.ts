@@ -4,11 +4,21 @@ import { plainToClass } from 'class-transformer';
 import { OwnerController } from '../../../src/command/controller/owner.controller';
 import { RegisterOwnerBody } from '../../../src/command/controller/model/register-owner.body';
 
+const testOwner = {
+  name: 'test-org',
+  email: 'test-email',
+  password: 'test-pass',
+  website: 'test-website',
+  contactEmail: 'test-email',
+  contactPhone: 'test-phone',
+  organisationName: 'test-org',
+};
+
 describe('OwnerController', () => {
   let commandBus: CommandBus;
   let ownerController: OwnerController;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [
         OwnerController,
@@ -23,19 +33,9 @@ describe('OwnerController', () => {
   });
 
   describe('createOwner', () => {
-    it('should create an Owner with given arguments', async () => {
-      const plainOwner = {
-        organisationName: 'org',
-        website: 'www.website.com',
-        name: 'owner',
-        contactEmail: 'www.owner.com',
-        contactPhone: '0600000000',
-        email: 'owner@email.com',
-        password: 'password',
-      };
-
-      jest.spyOn(commandBus, 'execute').mockImplementation(async () => plainOwner);
-      const registerOwnerBody: RegisterOwnerBody = plainToClass(RegisterOwnerBody, plainOwner as RegisterOwnerBody);
+    it('should create an Owner', async () => {
+      jest.spyOn(commandBus, 'execute').mockImplementation(async () => true);
+      const registerOwnerBody: RegisterOwnerBody = plainToClass(RegisterOwnerBody, testOwner as RegisterOwnerBody);
 
       const { ownerId } = await ownerController.createOwner(registerOwnerBody);
       expect(ownerId).toBeTruthy();

@@ -1,13 +1,12 @@
 import { Test } from '@nestjs/testing';
 import { Logger } from '@nestjs/common';
 import { EventStore } from '../../src/event-store/event-store';
-import { UpdateOwnerCommand } from '../../src/command/model/update-owner.command';
-import { DeleteOwnerCommand } from '../../src/command/model/delete-owner.command';
-import { ExistingEventStoreMock } from './existing.mock';
 import { OwnerAggregate } from '../../src/core/aggregates/owner.aggregate';
 import { SensorAggregate } from '../../src/core/aggregates/sensor.aggregate';
+import { CommandBus, CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
+import { UpdateOwnerCommand } from '../../src/command/model/update-owner.command';
+import { DeleteOwnerCommand } from '../../src/command/model/delete-owner.command';
 import { RegisterOwnerCommand } from '../../src/command/model/register-owner.command';
-import { NonExistingEventStoreMock } from './nonexisting.mock';
 import { OwnerRepository } from '../../src/core/repositories/owner.repository';
 import { SensorRepository } from '../../src/core/repositories/sensor.repository';
 import { EventStorePublisher } from '../../src/event-store/event-store.publisher';
@@ -17,7 +16,6 @@ import { CreateSensorCommandHandler } from '../../src/command/handler/create-sen
 import { UpdateSensorCommandHandler } from '../../src/command/handler/update-sensor.handler';
 import { DeleteSensorCommandHandler } from '../../src/command/handler/delete-sensor.handler';
 import { RegisterOwnerCommandHandler } from '../../src/command/handler/register-owner.handler';
-import { CommandBus, CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
 import { ActivateSensorCommandHandler } from '../../src/command/handler/activate-sensor.handler';
 import { DeactivateSensorCommandHandler } from '../../src/command/handler/deactivate-sensor.handler';
 import { CreateDatastreamCommandHandler } from '../../src/command/handler/create-datastream.handler';
@@ -27,6 +25,17 @@ import { ShareSensorOwnershipCommandHandler } from '../../src/command/handler/sh
 import { TransferSensorOwnershipCommandHandler } from '../../src/command/handler/transfer-sensor-ownership.handler';
 
 const logger: Logger = new Logger();
+
+function ExistingEventStoreMock() {
+    this.exists = async () => true;
+    this.getEvents = () => [];
+    this.connect = (): void => void 0;
+}
+
+function NonExistingEventStoreMock() {
+    this.exists = async () => false;
+    this.connect = (): void => void 0;
+}
 
 describe('Commands (integration)', () => {
     const getModuleRef = async (EventStoreProvider) => {
@@ -78,12 +87,11 @@ describe('Commands (integration)', () => {
 
         const commandHandler = new RegisterOwnerCommandHandler(eventPublisher, ownerRepository);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RegisterOwnerCommand) => commandHandler.execute(c));
-        const registerFn = jest.spyOn(ownerAggregate, 'register');
+        const registerFn = jest.spyOn(ownerAggregate, 'onOwnerRegistered');
 
         try {
             await commandBus.execute(new RegisterOwnerCommand('test-id', 'test-org',
-                'www.test-org.nl', 'test-name', 'test-owner@test-org.com',
-                'test-phone'));
+                'test-site', 'test-name', 'test-mail', 'test-phone'));
         } catch {
             logger.log('Failed to register.');
         }
@@ -96,12 +104,11 @@ describe('Commands (integration)', () => {
 
         const commandHandler = new UpdateOwnerCommandHandler(eventPublisher, ownerRepository);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: UpdateOwnerCommand) => commandHandler.execute(c));
-        const updateFn = jest.spyOn(ownerAggregate, 'update');
+        const updateFn = jest.spyOn(ownerAggregate, 'onOwnerUpdated');
 
         try {
             await commandBus.execute(new UpdateOwnerCommand('test-id', 'test-org',
-                'www.test-org.nl', 'test-name', 'test-owner@test-org.com',
-                'test-phone'));
+                'test-site', 'test-name', 'test-mail', 'test-phone'));
         } catch {
             logger.log('Failed to update.');
         }
@@ -114,7 +121,7 @@ describe('Commands (integration)', () => {
 
         const commandHandler = new DeleteOwnerCommandHandler(eventPublisher, ownerRepository);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: DeleteOwnerCommand) => commandHandler.execute(c));
-        const deleteFn = jest.spyOn(ownerAggregate, 'delete');
+        const deleteFn = jest.spyOn(ownerAggregate, 'onOwnerDeleted');
 
         try {
             await commandBus.execute(new DeleteOwnerCommand('test-id'));

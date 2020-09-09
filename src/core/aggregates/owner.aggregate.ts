@@ -26,18 +26,18 @@ export class OwnerAggregate extends Aggregate {
     this.simpleApply(new OwnerDeleted(this.aggregateId));
   }
 
-  private onOwnerRegistered(eventMessage: EventMessage) {
+  onOwnerRegistered(eventMessage: EventMessage): void {
     const event: OwnerRegistered = eventMessage.data as OwnerRegistered;
     this.state = new OwnerStateImpl(this.aggregateId);
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onOwnerUpdated(eventMessage: EventMessage) {
+  onOwnerUpdated(eventMessage: EventMessage): void {
     const event: OwnerUpdated = eventMessage.data as OwnerUpdated;
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onOwnerDeleted(eventMessage: EventMessage) {
+  onOwnerDeleted(eventMessage: EventMessage): void {
     const event: OwnerDeleted = eventMessage.data as OwnerDeleted;
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }

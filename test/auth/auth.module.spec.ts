@@ -95,6 +95,7 @@ describe('Authentication (integration)', () => {
             logger.log('Failed to refresh.');
         }
 
+        expect(result).toBeTruthy();
         expect(result.access_token).toBeDefined();
     });
 
@@ -106,6 +107,6 @@ describe('Authentication (integration)', () => {
             logger.log('Failed to refresh.');
         }
 
-        expect(result).not.toBeDefined();
+        expect(result).not.toBeTruthy();
     });
 });
