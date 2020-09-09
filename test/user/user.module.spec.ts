@@ -21,7 +21,6 @@ const testUserTwo = {
 const testObjects = [testUserOne, testUserTwo];
 
 const mockUserRepository = {
-    find: (values) => Object.keys(values).length ? testObjects.filter((owner) => owner._id === values._id) : testObjects,
     findOne: (values) => {
         let result;
         if (Object.keys(values).length) {
@@ -35,7 +34,12 @@ const mockUserRepository = {
 
         return result;
     },
-    updateOne: async () => void 0,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    updateOne: async (values, _) => {
+        if (!testObjects.map((obj) => obj._id).includes(values._id)) {
+            throw new Error('User does not exist.');
+        }
+    },
 };
 
 const mockOwnerRepository = {
@@ -87,11 +91,36 @@ describe('User (integration)', () => {
     it(`Should update user`, async () => {
         let success;
         try {
-            await userService.updateOne('wrong-test-id', {name: 'test-new-name'});
+            await userService.updateOne(testUserOne._id, {name: 'test-new-name'});
             success = true;
         } catch {
             success = false;
         }
         expect(success).toBeTruthy();
+    });
+
+    it(`Should not update user`, async () => {
+        let success;
+        try {
+            await userService.updateOne('wrong-test-id', {name: 'test-new-name'});
+            success = true;
+        } catch {
+            success = false;
+        }
+        expect(success).not.toBeTruthy();
+    });
+
+    it(`Should check hash`, async () => {
+        let hashedPassword = null;
+
+        const newPass = 'test-pass';
+        jest.spyOn(mockUserRepository, 'updateOne').mockImplementation(async (_, values) => {
+            hashedPassword = values.password;
+        });
+
+        await userService.updateOne(testUserOne._id, {password: newPass});
+
+        expect(hashedPassword).toBeTruthy();
+        expect(hashedPassword).not.toBe(newPass);
     });
 });
