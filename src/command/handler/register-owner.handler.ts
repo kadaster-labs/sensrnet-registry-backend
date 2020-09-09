@@ -3,7 +3,6 @@ import { OwnerAggregate } from '../../core/aggregates/owner.aggregate';
 import { OwnerRepository } from '../../core/repositories/owner.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 import { OwnerAlreadyExistsException } from './error/owner-already-exists-exception';
-import { Logger } from '@nestjs/common';
 
 @CommandHandler(RegisterOwnerCommand)
 export class RegisterOwnerCommandHandler implements ICommandHandler<RegisterOwnerCommand> {
