@@ -3,12 +3,15 @@ import { Logger } from '@nestjs/common';
 import { EventStore } from '../../src/event-store/event-store';
 import { OwnerAggregate } from '../../src/core/aggregates/owner.aggregate';
 import { SensorAggregate } from '../../src/core/aggregates/sensor.aggregate';
-import { CommandBus, CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
 import { OwnerRepository } from '../../src/core/repositories/owner.repository';
+import { LocationBody } from '../../src/command/controller/model/location.body';
+import { CommandBus, CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
 import { SensorRepository } from '../../src/core/repositories/sensor.repository';
 import { EventStorePublisher } from '../../src/event-store/event-store.publisher';
 import { UpdateOwnerCommand } from '../../src/command/model/update-owner.command';
 import { DeleteOwnerCommand } from '../../src/command/model/delete-owner.command';
+import { CreateSensorCommand } from '../../src/command/model/create-sensor.command';
+import { UpdateSensorCommand } from '../../src/command/model/update-sensor.command';
 import { RegisterOwnerCommand } from '../../src/command/model/register-owner.command';
 import { UpdateOwnerCommandHandler } from '../../src/command/handler/update-owner.handler';
 import { DeleteOwnerCommandHandler } from '../../src/command/handler/delete-owner.handler';
@@ -20,12 +23,11 @@ import { ActivateSensorCommandHandler } from '../../src/command/handler/activate
 import { DeactivateSensorCommandHandler } from '../../src/command/handler/deactivate-sensor.handler';
 import { CreateDatastreamCommandHandler } from '../../src/command/handler/create-datastream.handler';
 import { DeleteDataStreamCommandHandler } from '../../src/command/handler/delete-datastream.handler';
+import { ShareSensorOwnershipCommand } from '../../src/command/model/share-sensor-ownership.command';
+import { TransferSensorOwnershipCommand } from '../../src/command/model/transfer-sensor-ownership.command';
 import { UpdateSensorLocationCommandHandler } from '../../src/command/handler/update-sensor-location.handler';
 import { ShareSensorOwnershipCommandHandler } from '../../src/command/handler/share-sensor-ownership.handler';
 import { TransferSensorOwnershipCommandHandler } from '../../src/command/handler/transfer-sensor-ownership.handler';
-import { CreateSensorCommand } from '../../src/command/model/create-sensor.command';
-import { LocationBody } from '../../src/command/controller/model/location.body';
-import { UpdateSensorCommand } from '../../src/command/model/update-sensor.command';
 
 const logger: Logger = new Logger();
 
@@ -261,6 +263,13 @@ describe('Command (integration)', () => {
         expect(registerFn).not.toBeCalled();
     });
 
+    const register = (sensorAggregate) => {
+        sensorAggregate.register('test-id', 'test-name',
+            {latitude: 0, longitude: 0} as LocationBody, [], 'test-aim', 'test-description',
+            'test-manufacturer', true, undefined, 'test-url', undefined,
+            'test-type', undefined);
+    };
+
     const updateSensor = async (eventStoreProvider, isRegistered) => {
         const {
             commandBus,
@@ -274,10 +283,7 @@ describe('Command (integration)', () => {
         const updateFn = jest.spyOn(sensorAggregate, 'onSensorUpdated');
 
         if (isRegistered) {
-            sensorAggregate.register('test-id', 'test-name',
-                {latitude: 0, longitude: 0} as LocationBody, [], 'test-aim', 'test-description',
-                'test-manufacturer', true, undefined, 'test-url', undefined,
-                'test-type', undefined);
+            register(sensorAggregate);
         }
 
         try {
@@ -311,6 +317,104 @@ describe('Command (integration)', () => {
 
         const updateFn = await updateSensor(eventStoreProvider, sensorExists);
         expect(updateFn).not.toBeCalled();
+    });
+
+    const transferSensor = async (eventStoreProvider, isRegistered) => {
+        const {
+            commandBus,
+            eventPublisher,
+            sensorAggregate,
+            ownerRepository,
+            sensorRepository,
+        } = await getOwnerCommandPipeline(eventStoreProvider);
+
+        const commandHandler = new TransferSensorOwnershipCommandHandler(eventPublisher, ownerRepository, sensorRepository);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: TransferSensorOwnershipCommand) => commandHandler.execute(c));
+        const transferFn = jest.spyOn(sensorAggregate, 'onSensorOwnershipTransferred');
+
+        if (isRegistered) {
+            register(sensorAggregate);
+        }
+
+        try {
+            await commandBus.execute(new TransferSensorOwnershipCommand('test-id', 'test-id',
+                'new-test-id'));
+        } catch {
+            logger.log('Failed to transfer.');
+        }
+
+        return transferFn;
+    };
+
+    it(`Should transfer sensor ownership`, async () => {
+        const sensorExists = true;
+        const eventStoreProvider = {
+            provide: EventStore,
+            useClass: getEsMock(true, sensorExists),
+        };
+
+        const transferFn = await transferSensor(eventStoreProvider, sensorExists);
+        expect(transferFn).toBeCalled();
+    });
+
+    it(`Should not transfer sensor ownership`, async () => {
+        const sensorExists = true;
+        const eventStoreProvider = {
+            provide: EventStore,
+            useClass: getEsMock(false, sensorExists),
+        };
+
+        const transferFn = await transferSensor(eventStoreProvider, sensorExists);
+        expect(transferFn).not.toBeCalled();
+    });
+
+    const shareSensor = async (eventStoreProvider, isRegistered) => {
+        const {
+            commandBus,
+            eventPublisher,
+            sensorAggregate,
+            ownerRepository,
+            sensorRepository,
+        } = await getOwnerCommandPipeline(eventStoreProvider);
+
+        const commandHandler = new ShareSensorOwnershipCommandHandler(eventPublisher, ownerRepository, sensorRepository);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: ShareSensorOwnershipCommand) => commandHandler.execute(c));
+        const shareFn = jest.spyOn(sensorAggregate, 'onSensorOwnershipShared');
+
+        if (isRegistered) {
+            register(sensorAggregate);
+        }
+
+        try {
+            await commandBus.execute(new ShareSensorOwnershipCommand('test-id', 'test-id',
+                ['new-test-id']));
+        } catch {
+            logger.log('Failed to share.');
+        }
+
+        return shareFn;
+    };
+
+    it(`Should share sensor ownership`, async () => {
+        const sensorExists = true;
+        const eventStoreProvider = {
+            provide: EventStore,
+            useClass: getEsMock(true, sensorExists),
+        };
+
+        const shareFn = await shareSensor(eventStoreProvider, sensorExists);
+        expect(shareFn).toBeCalled();
+    });
+
+    it(`Should not sensor ownership`, async () => {
+        const sensorExists = false;
+        const eventStoreProvider = {
+            provide: EventStore,
+            useClass: getEsMock(true, sensorExists),
+        };
+
+        const shareFn = await shareSensor(eventStoreProvider, sensorExists);
+        expect(shareFn).not.toBeCalled();
     });
 
 });
