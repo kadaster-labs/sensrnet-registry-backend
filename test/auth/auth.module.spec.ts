@@ -73,7 +73,7 @@ describe('Authentication (integration)', () => {
             logger.log('Failed to validate.');
         }
 
-        expect(result).toBeTruthy();
+        expect(result).toBeDefined();
     });
 
     it(`Should not validate user`, async () => {
@@ -84,7 +84,7 @@ describe('Authentication (integration)', () => {
             logger.log('Failed to validate.');
         }
 
-        expect(result).not.toBeTruthy();
+        expect(result).toBeNull();
     });
 
     it(`Should refresh user`, async () => {
@@ -107,6 +107,6 @@ describe('Authentication (integration)', () => {
             logger.log('Failed to refresh.');
         }
 
-        expect(result).not.toBeTruthy();
+        expect(result).not.toBeNull();
     });
 });

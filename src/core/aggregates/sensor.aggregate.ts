@@ -109,52 +109,52 @@ export class SensorAggregate extends Aggregate {
     this.simpleApply(new SensorDeleted(this.aggregateId));
   }
 
-  private onSensorRegistered(eventMessage: EventMessage) {
+  onSensorRegistered(eventMessage: EventMessage): void {
     const event: SensorRegistered = eventMessage.data as SensorRegistered;
     const ownerIds = [event.ownerId];
     this.state = new SensorStateImpl(this.aggregateId, event.active, ownerIds);
   }
 
-  private onDatastreamAdded(eventMessage: EventMessage) {
+  onDatastreamAdded(eventMessage: EventMessage): void {
     const event: DatastreamAdded = eventMessage.data as DatastreamAdded;
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onDatastreamDeleted(eventMessage: EventMessage) {
+  onDatastreamDeleted(eventMessage: EventMessage): void {
     const event: DatastreamDeleted = eventMessage.data as DatastreamDeleted;
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onSensorUpdated(eventMessage: EventMessage) {
+  onSensorUpdated(eventMessage: EventMessage): void {
     const event: SensorUpdated = eventMessage.data as SensorUpdated;
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onSensorOwnershipTransferred(eventMessage: EventMessage) {
+  onSensorOwnershipTransferred(eventMessage: EventMessage): void {
     const event: SensorOwnershipTransferred = eventMessage.data as SensorOwnershipTransferred;
     this.state.ownerIds = this.state.ownerIds.filter((ownerId) => ownerId !== event.oldOwnerId);
     this.state.ownerIds.push(event.newOwnerId);
   }
 
-  private onSensorOwnershipShared(eventMessage: EventMessage) {
+  onSensorOwnershipShared(eventMessage: EventMessage): void {
     const event: SensorOwnershipShared = eventMessage.data as SensorOwnershipShared;
     this.state.ownerIds = this.state.ownerIds.concat(event.ownerIds);
   }
 
-  private onSensorRelocated(eventMessage: EventMessage) {
+  onSensorRelocated(eventMessage: EventMessage): void {
     const event: SensorRelocated = eventMessage.data as SensorRelocated;
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  private onSensorActivated() {
+  onSensorActivated(): void {
     this.state.active = true;
   }
 
-  private onSensorDeactivated() {
+  onSensorDeactivated(): void {
     this.state.active = false;
   }
 
-  private onSensorDeleted(eventMessage: EventMessage) {
+  onSensorDeleted(eventMessage: EventMessage): void {
     const event: SensorDeleted = eventMessage.data as SensorDeleted;
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
