@@ -2,13 +2,13 @@ import { Test } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
 import { Logger } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { jwtConstants } from '../../src/auth/constants';
-import { UserService } from '../../src/user/user.service';
-import { AuthService } from '../../src/auth/auth.service';
-import { LocalStrategy } from '../../src/auth/local.strategy';
-import { AuthController } from '../../src/auth/auth.controller';
-import { AccessJwtStrategy } from '../../src/auth/access-jwt.strategy';
-import { RefreshJwtStrategy } from '../../src/auth/refresh-jwt.strategy';
+import { jwtConstants } from './constants';
+import { UserService } from '../user/user.service';
+import { AuthService } from './auth.service';
+import { LocalStrategy } from './local.strategy';
+import { AuthController } from './auth.controller';
+import { AccessJwtStrategy } from './access-jwt.strategy';
+import { RefreshJwtStrategy } from './refresh-jwt.strategy';
 
 const logger: Logger = new Logger();
 

@@ -1,12 +1,12 @@
 import { Test } from '@nestjs/testing';
 import { CqrsModule } from '@nestjs/cqrs';
 import { getModelToken } from '@nestjs/mongoose';
-import { UserService } from '../../src/user/user.service';
-import { UserController } from '../../src/user/user.controller';
-import { OwnerRepository } from '../../src/core/repositories/owner.repository';
-import { DeleteUserCommandHandler } from '../../src/user/handler/delete-user.handler';
-import { UpdateUserCommandHandler } from '../../src/user/handler/update-user.handler';
-import { RegisterUserCommandHandler } from '../../src/user/handler/register-user.handler';
+import { UserService } from './user.service';
+import { UserController } from './user.controller';
+import { OwnerRepository } from '../core/repositories/owner.repository';
+import { DeleteUserCommandHandler } from './handler/delete-user.handler';
+import { UpdateUserCommandHandler } from './handler/update-user.handler';
+import { RegisterUserCommandHandler } from './handler/register-user.handler';
 
 const testUserOne = {
     _id: 'test-id',

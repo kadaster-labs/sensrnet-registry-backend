@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { QueryBus } from '@nestjs/cqrs';
-import { RetrieveSensorQuery } from '../../../src/query/model/sensor.query';
-import { SensorIdParams } from '../../../src/query/controller/model/id-params';
-import { SensorController } from '../../../src/query/controller/sensor.controller';
-import { RetrieveSensorsParams } from '../../../src/query/controller/model/retrieve-sensors-params';
+import { RetrieveSensorQuery } from '../model/sensor.query';
+import { SensorIdParams } from './model/id-params';
+import { SensorController } from './sensor.controller';
+import { RetrieveSensorsParams } from './model/retrieve-sensors-params';
 
 const testSensors = [
     {

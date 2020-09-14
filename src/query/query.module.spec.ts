@@ -1,19 +1,19 @@
 import { Test } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
-import { OwnerGateway } from '../../src/query/gateway/owner.gateway';
+import { OwnerGateway } from './gateway/owner.gateway';
 import { CommandBus, CqrsModule, EventPublisher } from '@nestjs/cqrs';
-import { SensorGateway } from '../../src/query/gateway/sensor.gateway';
-import { RetrieveSensorQuery } from '../../src/query/model/sensor.query';
-import { RetrieveSensorsQuery } from '../../src/query/model/sensors.query';
-import { OwnerProcessor } from '../../src/query/processor/owner.processor';
-import { EventStoreModule } from '../../src/event-store/event-store.module';
-import { SensorProcessor } from '../../src/query/processor/sensor.processor';
-import { OwnerController } from '../../src/query/controller/owner.controller';
-import { SensorController } from '../../src/query/controller/sensor.controller';
-import { RetrieveOwnersQuery } from '../../src/query/model/retrieve-owner.query';
-import { RetrieveSensorQueryHandler } from '../../src/query/handler/sensor.handler';
-import { RetrieveSensorsQueryHandler } from '../../src/query/handler/sensors.handler';
-import { RetrieveOwnerQueryHandler } from '../../src/query/handler/retrieve-owner.handler';
+import { SensorGateway } from './gateway/sensor.gateway';
+import { RetrieveSensorQuery } from './model/sensor.query';
+import { RetrieveSensorsQuery } from './model/sensors.query';
+import { OwnerProcessor } from './processor/owner.processor';
+import { EventStoreModule } from '../event-store/event-store.module';
+import { SensorProcessor } from './processor/sensor.processor';
+import { OwnerController } from './controller/owner.controller';
+import { SensorController } from './controller/sensor.controller';
+import { RetrieveOwnersQuery } from './model/retrieve-owner.query';
+import { RetrieveSensorQueryHandler } from './handler/sensor.handler';
+import { RetrieveSensorsQueryHandler } from './handler/sensors.handler';
+import { RetrieveOwnerQueryHandler } from './handler/retrieve-owner.handler';
 
 const testObjects = [
     {

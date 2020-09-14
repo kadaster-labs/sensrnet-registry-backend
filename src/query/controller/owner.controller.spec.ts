@@ -1,8 +1,8 @@
 import { Request } from 'express';
 import { Test } from '@nestjs/testing';
 import { QueryBus } from '@nestjs/cqrs';
-import { OwnerController } from '../../../src/query/controller/owner.controller';
-import { RetrieveOwnersQuery } from '../../../src/query/model/retrieve-owner.query';
+import { OwnerController } from './owner.controller';
+import { RetrieveOwnersQuery } from '../model/retrieve-owner.query';
 
 const testOwners = [
     {
