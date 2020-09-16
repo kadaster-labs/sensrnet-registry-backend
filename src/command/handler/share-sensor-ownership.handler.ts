@@ -9,8 +9,8 @@ import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 export class ShareSensorOwnershipCommandHandler implements ICommandHandler<ShareSensorOwnershipCommand> {
   constructor(
     private readonly publisher: EventPublisher,
-    private readonly sensorRepository: SensorRepository,
     private readonly ownerRepository: OwnerRepository,
+    private readonly sensorRepository: SensorRepository,
   ) {}
 
   async execute(command: ShareSensorOwnershipCommand): Promise<void> {

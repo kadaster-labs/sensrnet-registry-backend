@@ -21,7 +21,7 @@ describe('AppController (e2e)', () => {
         .get('/Sensor')
         .expect(401);
   });
-  
+
   // Without login credentials, we expect a status 401
   it(`/GET Owner`, () => {
     return request(app.getHttpServer())
