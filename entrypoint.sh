@@ -2,7 +2,7 @@
 set -e
 
 if [ "$1" = "run" ]; then
-  exec npm run start:prod
+  exec node ./dist/main.js
 else
   exec "$@"
 fi
