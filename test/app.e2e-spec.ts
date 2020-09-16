@@ -1,23 +1,32 @@
-import * as request from 'supertest';
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
+import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { AppModule } from './../src/app.module';
 
-describe('Owners (e2e)', () => {
+describe('AppController (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
+    const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    app = moduleRef.createNestApplication();
+    app = moduleFixture.createNestApplication();
+    await app.init();
   });
 
-  xit(`/GET Owner`, () => {
+  // Without login credentials, we expect a status 401
+  it(`/GET Sensor`, () => {
     return request(app.getHttpServer())
-        .get('Owner')
-        .expect(200);
+        .get('/Sensor')
+        .expect(401);
+  });
+
+  // Without login credentials, we expect a status 401
+  it(`/GET Owner`, () => {
+    return request(app.getHttpServer())
+        .get('/Owner')
+        .expect(401);
   });
 
   afterAll(async () => {
