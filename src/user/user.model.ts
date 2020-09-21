@@ -17,8 +17,6 @@ export const hashableFields = ['password', 'refreshToken'];
 export const hashField = (field: string,
                           resolve: (data: string) => void,
                           reject: (error: any) => void): void => {
-    console.log('YOlo');
-    console.log('slwkjeflwejf');
     bcrypt.genSalt(10, (err, salt) => {
         if (err) {
             reject(err);
