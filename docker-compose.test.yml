@@ -1,10 +1,5 @@
 version: '3.7'
 
-networks:
-  backend:
-    name: backend
-    driver: bridge
-
 services:
   eventstore:
     image: eventstore/eventstore:release-5.0.8
@@ -16,8 +11,6 @@ services:
       - EVENTSTORE_MEM_DB=true
       - EVENTSTORE_RUN_PROJECTIONS=All
       - EVENTSTORE_START_STANDARD_PROJECTIONS=true
-    networks:
-      - backend
     command:
       --dev --enable-external-tcp --ext-ip=0.0.0.0 --int-ip=0.0.0.0 --disable-external-tcp-tls
 
@@ -25,8 +18,6 @@ services:
     image: mongo
     ports:
       - 27017:27017
-    networks:
-      - backend
 
   registry-backend:
     build:
@@ -50,5 +41,3 @@ services:
       - JWT_REFRESH_EXPIRES_IN=604800
     links:
       - eventstore
-    networks:
-      - backend
