@@ -8,6 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { AccessJwtStrategy } from './access-jwt.strategy';
 import { RefreshJwtStrategy } from './refresh-jwt.strategy';
+import { AnonymousStrategy } from './anonymous.strategy';
 
 @Module({
     imports: [
@@ -25,6 +26,7 @@ import { RefreshJwtStrategy } from './refresh-jwt.strategy';
         LocalStrategy,
         AccessJwtStrategy,
         RefreshJwtStrategy,
+        AnonymousStrategy,
     ],
     exports: [
         AuthService,

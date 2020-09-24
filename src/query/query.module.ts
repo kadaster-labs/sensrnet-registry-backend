@@ -20,10 +20,12 @@ import { SensorESController } from './controller/sensor.es.controller';
 import { RetrieveSensorsQueryHandler } from './handler/sensors.handler';
 import { CheckpointModule } from './service/checkpoint/checkpoint.module';
 import { RetrieveOwnerQueryHandler } from './handler/retrieve-owner.handler';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
     imports: [
         CqrsModule,
+        AuthModule,
         CheckpointModule,
         EventStoreModule,
         MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),

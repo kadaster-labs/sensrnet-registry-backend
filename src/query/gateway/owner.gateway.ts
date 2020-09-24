@@ -13,7 +13,7 @@ export class OwnerGateway implements OnGatewayConnection {
 
     private logger: Logger = new Logger('OwnerGateway');
 
-    handleConnection(@ConnectedSocket() client: Socket, ...args: any[]): void {
+    handleConnection(@ConnectedSocket() client: Socket): void {
         this.logger.log(`Client connected: ${client.id}`);
     }
 
@@ -22,10 +22,7 @@ export class OwnerGateway implements OnGatewayConnection {
     }
 
     @SubscribeMessage('create')
-    handleEvent(
-        @MessageBody() data: string,
-        @ConnectedSocket() client: Socket,
-    ): string {
+    handleEvent(@MessageBody() data: string, @ConnectedSocket() client: Socket): string {
         // create the command
         return data;
     }
