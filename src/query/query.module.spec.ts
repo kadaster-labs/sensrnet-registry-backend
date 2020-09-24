@@ -1,17 +1,18 @@
 import { Test } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
+import { AuthService } from '../auth/auth.service';
 import { OwnerGateway } from './gateway/owner.gateway';
-import { CommandBus, CqrsModule, EventPublisher } from '@nestjs/cqrs';
 import { SensorGateway } from './gateway/sensor.gateway';
 import { RetrieveSensorQuery } from './model/sensor.query';
 import { RetrieveSensorsQuery } from './model/sensors.query';
 import { OwnerProcessor } from './processor/owner.processor';
-import { EventStoreModule } from '../event-store/event-store.module';
 import { SensorProcessor } from './processor/sensor.processor';
 import { OwnerController } from './controller/owner.controller';
 import { SensorController } from './controller/sensor.controller';
 import { RetrieveOwnersQuery } from './model/retrieve-owner.query';
+import { EventStoreModule } from '../event-store/event-store.module';
 import { RetrieveSensorQueryHandler } from './handler/sensor.handler';
+import { CommandBus, CqrsModule, EventPublisher } from '@nestjs/cqrs';
 import { RetrieveSensorsQueryHandler } from './handler/sensors.handler';
 import { RetrieveOwnerQueryHandler } from './handler/retrieve-owner.handler';
 
@@ -27,6 +28,10 @@ const testObjects = [
 
 const mockRepository = {
     find: (values) => Object.keys(values).length ? testObjects.filter((owner) => owner._id === values._id) : testObjects,
+};
+
+const mockAuthService = {
+    verifyToken: async () => true,
 };
 
 describe('Query (integration)', () => {
@@ -52,6 +57,9 @@ describe('Query (integration)', () => {
                 RetrieveSensorQueryHandler,
                 RetrieveSensorsQueryHandler,
                 {
+                    provide: AuthService,
+                    useValue: mockAuthService,
+                }, {
                     provide: getModelToken('Owner'),
                     useValue: mockRepository,
                 }, {

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { UserSchema } from '../user/user.model';
+import { AuthModule } from '../auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SensorSchema } from './data/sensor.model';
 import { UserService } from '../user/user.service';
@@ -20,7 +21,6 @@ import { SensorESController } from './controller/sensor.es.controller';
 import { RetrieveSensorsQueryHandler } from './handler/sensors.handler';
 import { CheckpointModule } from './service/checkpoint/checkpoint.module';
 import { RetrieveOwnerQueryHandler } from './handler/retrieve-owner.handler';
-import { AuthModule } from '../auth/auth.module';
 
 @Module({
     imports: [
