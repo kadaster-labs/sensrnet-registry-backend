@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
-import { QueryBus } from '@nestjs/cqrs';
 import { Socket, Server } from 'socket.io';
-import { RetrieveSensorsQuery } from '../model/sensors.query';
+import { jwtConstants } from '../../auth/constants';
+import { AuthService } from '../../auth/auth.service';
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket } from '@nestjs/websockets';
 
 @WebSocketGateway({
@@ -15,15 +15,26 @@ export class SensorGateway implements OnGatewayConnection {
     private logger: Logger = new Logger('SensorGateway');
 
     constructor(
-        private readonly queryBus: QueryBus,
+        private authService: AuthService,
     ) {}
 
-    async handleConnection(@ConnectedSocket() client: Socket, ...args: any[]): Promise<void> {
+    async handleConnection(@ConnectedSocket() client: Socket): Promise<void> {
         this.logger.log(`Client connected: ${client.id}`);
-        client.emit('Sensors', await this.queryBus.execute(new RetrieveSensorsQuery()));
+
+        if (jwtConstants.enabled) {
+            const authHeader: string = client.handshake.headers.authorization;
+            const authToken = authHeader && authHeader.length > 7 ? authHeader.substring(7, authHeader.length) : '';
+
+            try {
+                await this.authService.verifyToken(authToken);
+            } catch {
+                client.disconnect(true);
+                this.logger.log('Failed to authenticate websocket client.');
+            }
+        }
     }
 
-    emit(event: string, ...args: any[]) {
+    emit(event: string, ...args: any[]): void {
         this.server.emit(event, ...args);
     }
 }

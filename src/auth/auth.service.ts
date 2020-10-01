@@ -24,6 +24,10 @@ export class AuthService {
         }
     }
 
+    public async verifyToken(token: string): Promise<any> {
+        return this.jwtService.verifyAsync(token);
+    }
+
     async validateUser(username: string, pass: string): Promise<any> {
         const user = await this.usersService.findOne(username);
 
