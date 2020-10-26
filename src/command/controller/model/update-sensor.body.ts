@@ -1,6 +1,6 @@
 import { Theme } from './theme.body';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUrl, IsObject, IsOptional, IsArray } from 'class-validator';
+import { IsString, IsUrl, IsObject, IsOptional, IsArray, ValidateIf } from 'class-validator';
 
 export class UpdateSensorBody {
   @IsString()
@@ -48,6 +48,7 @@ export class UpdateSensorBody {
   })
   readonly observationArea: Record<string, any>;
 
+  @ValidateIf(e => e.documentationUrl !== '')
   @IsUrl()
   @IsOptional()
   @ApiProperty({

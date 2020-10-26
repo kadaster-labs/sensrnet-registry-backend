@@ -1,7 +1,8 @@
 import { Model } from 'mongoose';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ISensor } from '../data/sensor.model';
-import { Injectable, Logger } from '@nestjs/common';
+import { AbstractProcessor } from './abstract.processor';
 import { SensorGateway } from '../gateway/sensor.gateway';
 import { SensorEvent } from '../../core/events/sensor/sensor.event';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
@@ -11,42 +12,27 @@ import {
 } from '../../core/events/sensor';
 
 @Injectable()
-export class SensorProcessor {
+export class SensorProcessor extends AbstractProcessor {
   /* This processor processes sensor events. Events like soft-delete are not handled because they do not need to be processed. */
 
   constructor(
+      eventStore: EventStorePublisher,
       private readonly sensorGateway: SensorGateway,
-      private readonly eventStore: EventStorePublisher,
       @InjectModel('Sensor') private sensorModel: Model<ISensor>,
   ) {
-  }
-
-  private errorCallback(error: any): void {
-    if (error) {
-      this.logError(error);
-    }
-  }
-
-  private logError(event) {
-    this.logger.error(`Error while updating projection for ${event.eventType}.`);
+    super(eventStore);
   }
 
   private async updateSensorById(sensorId, sensorData, event) {
     let sensor: ISensor;
     try {
-      sensor = await this.sensorModel.findByIdAndUpdate(
-          sensorId,
-          sensorData,
-          {new: true},
-          ).exec();
+      sensor = await this.sensorModel.findByIdAndUpdate(sensorId, sensorData, {new: true});
     } catch {
       this.errorCallback(event);
     }
 
     return sensor;
   }
-
-  protected logger: Logger = new Logger(this.constructor.name);
 
   async process(event: SensorEvent): Promise<void> {
     let result: ISensor;
@@ -114,31 +100,31 @@ export class SensorProcessor {
   async processUpdated(event: SensorUpdated): Promise<ISensor> {
     let sensorData = {};
 
-    if (event.typeName) {
+    if (AbstractProcessor.isDefined(event.typeName)) {
       sensorData = {...sensorData, typeName: event.typeName};
     }
-    if (event.name) {
+    if (AbstractProcessor.isDefined(event.name)) {
       sensorData = {...sensorData, name: event.name};
     }
-    if (event.aim) {
+    if (AbstractProcessor.isDefined(event.aim)) {
       sensorData = {...sensorData, aim: event.aim};
     }
-    if (event.description) {
+    if (AbstractProcessor.isDefined(event.description)) {
       sensorData = {...sensorData, description: event.description};
     }
-    if (event.manufacturer) {
+    if (AbstractProcessor.isDefined(event.manufacturer)) {
       sensorData = {...sensorData, manufacturer: event.manufacturer};
     }
-    if (event.observationArea) {
+    if (AbstractProcessor.isDefined(event.observationArea)) {
       sensorData = {...sensorData, observationArea: event.observationArea};
     }
-    if (event.documentationUrl) {
+    if (AbstractProcessor.isDefined(event.documentationUrl)) {
       sensorData = {...sensorData, documentationUrl: event.documentationUrl};
     }
-    if (event.theme) {
+    if (AbstractProcessor.isDefined(event.theme)) {
       sensorData = {...sensorData, theme: event.theme};
     }
-    if (event.typeDetails) {
+    if (AbstractProcessor.isDefined(event.typeDetails)) {
       sensorData = {...sensorData, typeDetails: event.typeDetails};
     }
 
@@ -146,9 +132,7 @@ export class SensorProcessor {
   }
 
   async processDeleted(event: SensorDeleted): Promise<ISensor> {
-    const sensor: ISensor = await this.sensorModel.findByIdAndDelete(
-      event.sensorId,
-    ).exec();
+    const sensor: ISensor = await this.sensorModel.findByIdAndDelete(event.sensorId);
 
     const eventMessage = event.toEventMessage();
     await this.eventStore.deleteStream(eventMessage.streamId);
@@ -189,7 +173,6 @@ export class SensorProcessor {
       _id: event.sensorId,
       ownerIds: event.oldOwnerId,
     };
-
     const updateSensorData = {
       $set: {
         'ownerIds.$': event.newOwnerId,
@@ -198,11 +181,7 @@ export class SensorProcessor {
 
     let sensor: ISensor;
     try {
-      sensor = await this.sensorModel.findOneAndUpdate(
-        filterData,
-        updateSensorData,
-        {new: true},
-      ).exec();
+      sensor = await this.sensorModel.findOneAndUpdate(filterData, updateSensorData, {new: true});
     } catch {
       this.errorCallback(event);
     }
@@ -211,45 +190,46 @@ export class SensorProcessor {
   }
 
   async processDataStreamCreated(event: DatastreamAdded): Promise<ISensor> {
-    let dataStreamData = {};
+    let dataStreamData;
     dataStreamData = {
       dataStreamId: event.dataStreamId,
       name: event.name,
-      isPublic: event.isPublic,
-      isOpenData: event.isOpenData,
-      isReusable: event.isReusable,
+      isPublic: !!event.isPublic,
+      isOpenData: !!event.isOpenData,
+      isReusable: !!event.isReusable,
     };
 
-    if (event.reason) {
+    if (AbstractProcessor.isDefined(event.reason)) {
       dataStreamData = {...dataStreamData, reason: event.reason};
     }
-    if (event.description) {
+    if (AbstractProcessor.isDefined(event.description)) {
       dataStreamData = {...dataStreamData, description: event.description};
     }
-    if (event.observedProperty) {
+    if (AbstractProcessor.isDefined(event.observedProperty)) {
       dataStreamData = {...dataStreamData, observedProperty: event.observedProperty};
     }
-    if (event.unitOfMeasurement) {
+    if (AbstractProcessor.isDefined(event.unitOfMeasurement)) {
       dataStreamData = {...dataStreamData, unitOfMeasurement: event.unitOfMeasurement};
     }
-    if (event.documentationUrl) {
+    if (AbstractProcessor.isDefined(event.documentationUrl)) {
       dataStreamData = {...dataStreamData, documentationUrl: event.documentationUrl};
     }
-    if (event.dataLink) {
+    if (AbstractProcessor.isDefined(event.dataLink)) {
       dataStreamData = {...dataStreamData, dataLink: event.dataLink};
     }
-    if (event.dataFrequency) {
+    if (AbstractProcessor.isDefined(event.dataFrequency)) {
       dataStreamData = {...dataStreamData, dataFrequency: event.dataFrequency};
     }
-    if (event.dataQuality) {
+    if (AbstractProcessor.isDefined(event.dataQuality)) {
       dataStreamData = {...dataStreamData, dataQuality: event.dataQuality};
     }
 
     const filterKwargs = {
       '_id': event.sensorId,
-      'dataStreams.dataStreamId': { $ne: event.dataStreamId },
+      'dataStreams.dataStreamId': {
+        $ne: event.dataStreamId,
+      },
     };
-
     const sensorData = {
       $push: {
         dataStreams: dataStreamData,
@@ -258,11 +238,7 @@ export class SensorProcessor {
 
     let sensor: ISensor;
     try {
-      sensor = await this.sensorModel.findOneAndUpdate(
-        filterKwargs,
-        sensorData,
-        {new: true},
-      ).exec();
+      sensor = await this.sensorModel.findOneAndUpdate(filterKwargs, sensorData, {new: true});
     } catch {
       this.errorCallback(event);
     }
@@ -273,40 +249,40 @@ export class SensorProcessor {
   async processDataStreamUpdated(event: DatastreamUpdated): Promise<ISensor> {
     let dataStreamData = {};
 
-    if (event.name) {
+    if (AbstractProcessor.isDefined(event.name)) {
       dataStreamData = {...dataStreamData, 'dataStreams.$.name': event.name};
     }
-    if (event.reason) {
+    if (AbstractProcessor.isDefined(event.reason)) {
       dataStreamData = {...dataStreamData, 'dataStreams.$.reason': event.reason};
     }
-    if (event.description) {
+    if (AbstractProcessor.isDefined(event.description)) {
       dataStreamData = {...dataStreamData, 'dataStreams.$.description': event.description};
     }
-    if (event.observedProperty) {
+    if (AbstractProcessor.isDefined(event.observedProperty)) {
       dataStreamData = {...dataStreamData, 'dataStreams.$.observedProperty': event.observedProperty};
     }
-    if (event.unitOfMeasurement) {
+    if (AbstractProcessor.isDefined(event.unitOfMeasurement)) {
       dataStreamData = {...dataStreamData, 'dataStreams.$.unitOfMeasurement': event.unitOfMeasurement};
     }
-    if (typeof event.isPublic !== 'undefined' && event.isPublic !== null) {
+    if (AbstractProcessor.isDefined(event.isPublic)) {
       dataStreamData = {...dataStreamData, 'dataStreams.$.isPublic': event.isPublic};
     }
-    if (typeof event.isOpenData !== 'undefined' && event.isOpenData !== null) {
+    if (AbstractProcessor.isDefined(event.isOpenData)) {
       dataStreamData = {...dataStreamData, 'dataStreams.$.isOpenData': event.isOpenData};
     }
-    if (typeof event.isReusable !== 'undefined' && event.isReusable !== null) {
+    if (AbstractProcessor.isDefined(event.isReusable)) {
       dataStreamData = {...dataStreamData, 'dataStreams.$.isReusable': event.isReusable};
     }
-    if (event.documentationUrl) {
+    if (AbstractProcessor.isDefined(event.documentationUrl)) {
       dataStreamData = {...dataStreamData, 'dataStreams.$.documentationUrl': event.documentationUrl};
     }
-    if (event.dataLink) {
+    if (AbstractProcessor.isDefined(event.dataLink)) {
       dataStreamData = {...dataStreamData, 'dataStreams.$.dataLink': event.dataLink};
     }
-    if (event.dataFrequency) {
+    if (AbstractProcessor.isDefined(event.dataFrequency)) {
       dataStreamData = {...dataStreamData, 'dataStreams.$.dataFrequency': event.dataFrequency};
     }
-    if (event.dataQuality) {
+    if (AbstractProcessor.isDefined(event.dataQuality)) {
       dataStreamData = {...dataStreamData, 'dataStreams.$.dataQuality': event.dataQuality};
     }
 
@@ -349,7 +325,7 @@ export class SensorProcessor {
       },
     };
 
-    if (event.baseObjectId) {
+    if (AbstractProcessor.isDefined(event.baseObjectId)) {
       sensorData = {...sensorData, baseObjectId: event.baseObjectId};
     }
 

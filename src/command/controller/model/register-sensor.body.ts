@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { LocationBody } from './location.body';
 import { Theme } from './theme.body';
 import { DatastreamBody } from './datastream.body';
-import { IsString, IsNotEmpty, IsBoolean, IsObject, IsArray, IsUrl, ValidateNested, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsBoolean, IsObject, IsArray, IsUrl, ValidateNested, IsOptional, ValidateIf } from 'class-validator';
 
 export class RegisterSensorBody {
   @IsString()
@@ -80,6 +80,7 @@ export class RegisterSensorBody {
   })
   readonly observationArea: Record<string, any>;
 
+  @ValidateIf(e => e.documentationUrl !== '')
   @IsUrl()
   @IsOptional()
   @ApiProperty({

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsUrl, IsNumber, IsUUID, IsOptional } from 'class-validator';
+import { IsString, IsBoolean, IsUrl, IsNumber, IsUUID, IsOptional, ValidateIf } from 'class-validator';
 
 export class UpdateDatastreamBody {
     @IsUUID(4)
@@ -80,6 +80,7 @@ export class UpdateDatastreamBody {
     })
     readonly isReusable: boolean;
 
+    @ValidateIf(e => e.documentationUrl !== '')
     @IsUrl()
     @IsOptional()
     @ApiProperty({
@@ -89,6 +90,7 @@ export class UpdateDatastreamBody {
     })
     readonly documentationUrl: string;
 
+    @ValidateIf(e => e.dataLink !== '')
     @IsUrl()
     @IsOptional()
     @ApiProperty({

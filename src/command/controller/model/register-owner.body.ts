@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsUrl, ValidateIf } from 'class-validator';
 
 export class RegisterOwnerBody {
   @IsString()
@@ -11,6 +11,7 @@ export class RegisterOwnerBody {
   })
   readonly organisationName: string;
 
+  @ValidateIf(e => e.website !== '')
   @IsUrl()
   @IsOptional()
   @ApiProperty({

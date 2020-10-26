@@ -1,23 +1,24 @@
 import { Model } from 'mongoose';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Owner } from '../data/owner.interface';
-import { Injectable, Logger } from '@nestjs/common';
 import { OwnerGateway } from '../gateway/owner.gateway';
+import { AbstractProcessor } from './abstract.processor';
 import { OwnerEvent } from '../../core/events/owner/owner.event';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { OwnerDeleted, OwnerRegistered, OwnerUpdated } from '../../core/events/owner';
 
 @Injectable()
-export class OwnerProcessor {
+export class OwnerProcessor extends AbstractProcessor {
   /* This processor processes owner events. Events like soft-delete are not handled because they do not need to be processed. */
 
   constructor(
+      eventStore: EventStorePublisher,
       private readonly ownerGateway: OwnerGateway,
-      private readonly eventStore: EventStorePublisher,
       @InjectModel('Owner') private ownerModel: Model<Owner>,
-  ) {}
-
-  protected logger: Logger = new Logger(this.constructor.name);
+  ) {
+    super(eventStore);
+  }
 
   async process(event: OwnerEvent): Promise<void> {
     let result;
@@ -52,25 +53,25 @@ export class OwnerProcessor {
 
   async processUpdated(event: OwnerUpdated): Promise<void> {
     let ownerData = {};
-    if (event.organisationName) {
+    if (AbstractProcessor.isDefined(event.organisationName)) {
       ownerData = {...ownerData, organisationName: event.organisationName};
     }
-    if (event.website) {
+    if (AbstractProcessor.isDefined(event.website)) {
       ownerData = {...ownerData, website: event.website};
     }
-    if (event.contactName) {
+    if (AbstractProcessor.isDefined(event.contactName)) {
       ownerData = {...ownerData, name: event.contactName};
     }
-    if (event.contactEmail) {
+    if (AbstractProcessor.isDefined(event.contactEmail)) {
       ownerData = {...ownerData, contactEmail: event.contactEmail};
     }
-    if (event.contactPhone) {
+    if (AbstractProcessor.isDefined(event.contactPhone)) {
       ownerData = {...ownerData, contactPhone: event.contactPhone};
     }
 
     this.ownerModel.updateOne({_id: event.ownerId}, ownerData, (err) => {
       if (err) {
-        this.logger.error('Error while updating projection.');
+        this.logger.error('Error while updating owner projection.');
       }
     });
   }
@@ -78,12 +79,11 @@ export class OwnerProcessor {
   async processDeleted(event: OwnerDeleted): Promise<void> {
     this.ownerModel.deleteOne({_id: event.aggregateId}, (err) => {
       if (err) {
-        this.logger.error('Error while deleting projection.');
+        this.logger.error('Error while deleting owner projection.');
       }
     });
 
     const eventMessage = event.toEventMessage();
     await this.eventStore.deleteStream(eventMessage.streamId);
   }
-
 }
