@@ -5,8 +5,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SensorGateway } from '../gateway/sensor.gateway';
 import { SensorEvent } from '../../core/events/sensor/sensor.event';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import { DatastreamAdded, DatastreamDeleted, SensorActivated, SensorDeactivated, SensorDeleted,
-  SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated } from '../../core/events/sensor';
+import {
+  DatastreamAdded, DatastreamDeleted, DatastreamUpdated, SensorActivated, SensorDeactivated, SensorDeleted,
+  SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated,
+} from '../../core/events/sensor';
 
 @Injectable()
 export class SensorProcessor {
@@ -64,6 +66,8 @@ export class SensorProcessor {
       result = await this.processOwnershipTransferred(event);
     } else if (event instanceof DatastreamAdded) {
       result = await this.processDataStreamCreated(event);
+    } else if (event instanceof DatastreamUpdated) {
+      result = await this.processDataStreamUpdated(event);
     } else if (event instanceof DatastreamDeleted) {
       result = await this.processDataStreamDeleted(event);
     } else if (event instanceof SensorRelocated) {
@@ -259,6 +263,64 @@ export class SensorProcessor {
         sensorData,
         {new: true},
       ).exec();
+    } catch {
+      this.errorCallback(event);
+    }
+
+    return sensor;
+  }
+
+  async processDataStreamUpdated(event: DatastreamUpdated): Promise<ISensor> {
+    let dataStreamData = {};
+
+    if (event.name) {
+      dataStreamData = {...dataStreamData, 'dataStreams.$.name': event.name};
+    }
+    if (event.reason) {
+      dataStreamData = {...dataStreamData, 'dataStreams.$.reason': event.reason};
+    }
+    if (event.description) {
+      dataStreamData = {...dataStreamData, 'dataStreams.$.description': event.description};
+    }
+    if (event.observedProperty) {
+      dataStreamData = {...dataStreamData, 'dataStreams.$.observedProperty': event.observedProperty};
+    }
+    if (event.unitOfMeasurement) {
+      dataStreamData = {...dataStreamData, 'dataStreams.$.unitOfMeasurement': event.unitOfMeasurement};
+    }
+    if (typeof event.isPublic !== 'undefined' && event.isPublic !== null) {
+      dataStreamData = {...dataStreamData, 'dataStreams.$.isPublic': event.isPublic};
+    }
+    if (typeof event.isOpenData !== 'undefined' && event.isOpenData !== null) {
+      dataStreamData = {...dataStreamData, 'dataStreams.$.isOpenData': event.isOpenData};
+    }
+    if (typeof event.isReusable !== 'undefined' && event.isReusable !== null) {
+      dataStreamData = {...dataStreamData, 'dataStreams.$.isReusable': event.isReusable};
+    }
+    if (event.documentationUrl) {
+      dataStreamData = {...dataStreamData, 'dataStreams.$.documentationUrl': event.documentationUrl};
+    }
+    if (event.dataLink) {
+      dataStreamData = {...dataStreamData, 'dataStreams.$.dataLink': event.dataLink};
+    }
+    if (event.dataFrequency) {
+      dataStreamData = {...dataStreamData, 'dataStreams.$.dataFrequency': event.dataFrequency};
+    }
+    if (event.dataQuality) {
+      dataStreamData = {...dataStreamData, 'dataStreams.$.dataQuality': event.dataQuality};
+    }
+
+    const filterKwargs = {
+      '_id': event.sensorId,
+      'dataStreams.dataStreamId': event.dataStreamId,
+    };
+    const sensorData = {
+      $set: dataStreamData,
+    };
+
+    let sensor: ISensor;
+    try {
+      sensor = await this.sensorModel.findOneAndUpdate(filterKwargs, sensorData);
     } catch {
       this.errorCallback(event);
     }

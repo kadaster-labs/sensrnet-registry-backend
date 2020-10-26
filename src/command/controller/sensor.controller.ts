@@ -12,11 +12,13 @@ import { CreateSensorCommand } from '../model/create-sensor.command';
 import { UpdateSensorCommand } from '../model/update-sensor.command';
 import { DeleteSensorCommand } from '../model/delete-sensor.command';
 import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
+import { UpdateDatastreamBody } from './model/update-datastream.body';
 import { TransferOwnershipBody } from './model/transfer-ownership.body';
 import { ActivateSensorCommand } from '../model/activate-sensor.command';
 import { CreateDatastreamCommand } from '../model/create-datastream.command';
 import { DeleteDatastreamCommand } from '../model/delete-datastream.command';
 import { DeactivateSensorCommand } from '../model/deactivate-sensor.command';
+import { UpdateDatastreamCommand } from '../model/update-datastream.command';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ShareSensorOwnershipCommand } from '../model/share-sensor-ownership.command';
@@ -125,7 +127,7 @@ export class SensorController {
     return await this.commandBus.execute(new DeactivateSensorCommand(params.sensorId, user.ownerId));
   }
 
-  @Post(':sensorId/create/datastream')
+  @Post(':sensorId/datastream')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Add sensor dataStream' })
   @ApiResponse({ status: 200, description: 'Datastream added to sensor' })
@@ -141,7 +143,22 @@ export class SensorController {
         dataStreamBody.dataLink, dataStreamBody.dataFrequency, dataStreamBody.dataQuality));
   }
 
-  @Delete(':sensorId/delete/datastream/:dataStreamId')
+  @Put(':sensorId/datastream/:dataStreamId')
+  @UseFilters(new DomainExceptionFilter())
+  @ApiOperation({ summary: 'Update sensor dataStream' })
+  @ApiResponse({ status: 200, description: 'Datastream updated' })
+  @ApiResponse({ status: 400, description: 'Datastream update failed' })
+  async updateSensorDatastream(@Param() params: DataStreamIdParams, @Body() dataStreamBody: UpdateDatastreamBody,
+                               @Req() req: Request): Promise<any> {
+    const user: Record<string, any> = req.user;
+    return await this.commandBus.execute(new UpdateDatastreamCommand(params.sensorId, user.ownerId,
+        params.dataStreamId, dataStreamBody.name, dataStreamBody.reason, dataStreamBody.description,
+        dataStreamBody.observedProperty, dataStreamBody.unitOfMeasurement, dataStreamBody.isPublic,
+        dataStreamBody.isOpenData, dataStreamBody.isReusable, dataStreamBody.documentationUrl,
+        dataStreamBody.dataLink, dataStreamBody.dataFrequency, dataStreamBody.dataQuality));
+  }
+
+  @Delete(':sensorId/datastream/:dataStreamId')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Remove sensor dataStream' })
   @ApiResponse({ status: 200, description: 'Datastream removed from sensor' })
