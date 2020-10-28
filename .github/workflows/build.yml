@@ -10,10 +10,9 @@
 # - Github secrets: REGISTRY_USERNAME and REGISTRY_PASSWORD for ACR
 name: Release and build new version
 on:
-  # Trigger the workflow on push or pull request for the master branch
+  # Trigger the workflow on push or pull request for the default branch
   push:
-    branches:
-      - master
+    branches: [ $default-branch ]
 
 env:
   REGISTRY: sensrnetregistry.azurecr.io
