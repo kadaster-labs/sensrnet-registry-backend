@@ -2,7 +2,6 @@ import { v4 } from 'uuid';
 import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
 import { LocationBody } from './model/location.body';
-import { DatastreamBody } from './model/datastream.body';
 import { SensorIdParams } from './model/sensorid.params';
 import { UpdateSensorBody } from './model/update-sensor.body';
 import { DataStreamIdParams } from './model/datastreamid.params';
@@ -11,6 +10,7 @@ import { RegisterSensorBody } from './model/register-sensor.body';
 import { CreateSensorCommand } from '../model/create-sensor.command';
 import { UpdateSensorCommand } from '../model/update-sensor.command';
 import { DeleteSensorCommand } from '../model/delete-sensor.command';
+import { CreateDatastreamBody } from './model/create-datastream.body';
 import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
 import { UpdateDatastreamBody } from './model/update-datastream.body';
 import { TransferOwnershipBody } from './model/transfer-ownership.body';
@@ -132,7 +132,7 @@ export class SensorController {
   @ApiOperation({ summary: 'Add sensor dataStream' })
   @ApiResponse({ status: 200, description: 'Datastream added to sensor' })
   @ApiResponse({ status: 400, description: 'Datastream addition failed' })
-  async addSensorDatastream(@Param() params: SensorIdParams, @Body() dataStreamBody: DatastreamBody,
+  async addSensorDatastream(@Param() params: SensorIdParams, @Body() dataStreamBody: CreateDatastreamBody,
                             @Req() req: Request): Promise<any> {
     const dataStreamId = v4();
     const user: Record<string, any> = req.user;

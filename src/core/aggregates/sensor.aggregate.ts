@@ -2,9 +2,9 @@ import { Aggregate } from '../../event-store/aggregate';
 import { SensorState, SensorStateImpl } from './sensor-state';
 import { EventMessage } from '../../event-store/event-message';
 import { LocationBody } from '../../command/controller/model/location.body';
-import { DatastreamBody } from '../../command/controller/model/datastream.body';
 import { NotAnOwnerException } from '../../command/handler/error/not-an-owner-exception';
 import { SensorActiveException } from '../../command/handler/error/sensor-active-exception';
+import { CreateDatastreamBody } from '../../command/controller/model/create-datastream.body';
 import { SensorInActiveException } from '../../command/handler/error/sensor-inactive-exception';
 import { IsAlreadyOwnerException } from '../../command/handler/error/is-already-owner-exception';
 import { DatastreamAdded, DatastreamUpdated, DatastreamDeleted, SensorActivated, SensorDeactivated, SensorDeleted,
@@ -24,7 +24,7 @@ export class SensorAggregate extends Aggregate {
   }
 
   register(ownerId: string, name: string, location: LocationBody,
-           dataStreams: DatastreamBody[], aim: string, description: string, manufacturer: string,
+           dataStreams: CreateDatastreamBody[], aim: string, description: string, manufacturer: string,
            active: boolean, observationArea: Record<string, any>, documentationUrl: string, theme: string[],
            typeName: string, typeDetails: Record<string, any>): void {
     this.simpleApply(new SensorRegistered(this.aggregateId, ownerId, name, location.longitude, location.latitude,

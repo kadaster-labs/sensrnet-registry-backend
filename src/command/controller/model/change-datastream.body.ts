@@ -1,18 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsUrl, IsNumber, IsUUID, IsNotEmpty, IsOptional, ValidateIf } from 'class-validator';
+import { IsString, IsBoolean, IsUrl, IsNumber, IsUUID, IsOptional, ValidateIf } from 'class-validator';
 
-export class DatastreamBody {
+export abstract class ChangeDatastreamBody {
     @IsUUID(4)
     @IsOptional()
     dataStreamId: string;
-
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({
-        type: String,
-        description: 'DataStream name.',
-    })
-    readonly name: string;
 
     @IsString()
     @IsOptional()

@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ChangeDatastreamBody } from './change-datastream.body';
-import { IsString, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateDatastreamBody extends ChangeDatastreamBody {
+export class CreateDatastreamBody extends ChangeDatastreamBody {
     @IsString()
-    @IsOptional()
+    @IsNotEmpty()
     @ApiProperty({
         type: String,
         description: 'DataStream name.',
