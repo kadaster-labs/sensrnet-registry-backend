@@ -28,6 +28,18 @@ const testObjects = [
 
 const mockRepository = {
     find: (values) => Object.keys(values).length ? testObjects.filter((owner) => owner._id === values._id) : testObjects,
+    findOne: (values) => {
+        let objects;
+        if (Object.keys(values).length) {
+            const filteredObjects = testObjects.filter((owner) => owner._id === values._id);
+            if (filteredObjects.length) {
+                objects = filteredObjects[0];
+            }
+        } else {
+            objects = testObjects;
+        }
+        return objects;
+    },
 };
 
 const mockAuthService = {
@@ -93,11 +105,9 @@ describe('Query (integration)', () => {
         let sensors;
         try {
             sensors = await commandBus.execute(new RetrieveSensorQuery('test-id'));
-        } catch {
-            sensors = [];
+        } finally {
+            expect(sensors).toBeDefined();
         }
-
-        expect(sensors).toBeDefined();
     });
 
     it(`Should retrieve sensors`, async () => {

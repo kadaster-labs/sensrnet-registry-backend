@@ -1,6 +1,7 @@
 export * from './sensor-activated.event';
 export * from './sensor-registered.event';
 export * from './sensor-datastreamadded.event';
+export * from './sensor-datastreamupdated.event';
 export * from './sensor-datastreamdeleted.event';
 export * from './sensor-deactivated.event';
 export * from './sensor-deleted.event';

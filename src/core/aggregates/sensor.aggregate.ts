@@ -2,12 +2,12 @@ import { Aggregate } from '../../event-store/aggregate';
 import { SensorState, SensorStateImpl } from './sensor-state';
 import { EventMessage } from '../../event-store/event-message';
 import { LocationBody } from '../../command/controller/model/location.body';
-import { DatastreamBody } from '../../command/controller/model/datastream.body';
 import { NotAnOwnerException } from '../../command/handler/error/not-an-owner-exception';
 import { SensorActiveException } from '../../command/handler/error/sensor-active-exception';
+import { CreateDatastreamBody } from '../../command/controller/model/create-datastream.body';
 import { SensorInActiveException } from '../../command/handler/error/sensor-inactive-exception';
 import { IsAlreadyOwnerException } from '../../command/handler/error/is-already-owner-exception';
-import { DatastreamAdded, DatastreamDeleted, SensorActivated, SensorDeactivated, SensorDeleted,
+import { DatastreamAdded, DatastreamUpdated, DatastreamDeleted, SensorActivated, SensorDeactivated, SensorDeleted,
   SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated } from '../events/sensor';
 
 export class SensorAggregate extends Aggregate {
@@ -24,7 +24,7 @@ export class SensorAggregate extends Aggregate {
   }
 
   register(ownerId: string, name: string, location: LocationBody,
-           dataStreams: DatastreamBody[], aim: string, description: string, manufacturer: string,
+           dataStreams: CreateDatastreamBody[], aim: string, description: string, manufacturer: string,
            active: boolean, observationArea: Record<string, any>, documentationUrl: string, theme: string[],
            typeName: string, typeDetails: Record<string, any>): void {
     this.simpleApply(new SensorRegistered(this.aggregateId, ownerId, name, location.longitude, location.latitude,
@@ -44,6 +44,14 @@ export class SensorAggregate extends Aggregate {
                 dataLink: string, dataFrequency: number, dataQuality: number): void {
     this.validateOwner(ownerId);
     this.simpleApply(new DatastreamAdded(this.aggregateId, dataStreamId, name, reason, description, observedProperty,
+        unitOfMeasurement, isPublic, isOpenData, isReusable, documentationUrl, dataLink, dataFrequency, dataQuality));
+  }
+
+  updateDataStream(ownerId: string, dataStreamId: string, name: string, reason: string, description: string, observedProperty: string,
+                   unitOfMeasurement: string, isPublic: boolean, isOpenData: boolean, isReusable: boolean, documentationUrl: string,
+                   dataLink: string, dataFrequency: number, dataQuality: number): void {
+    this.validateOwner(ownerId);
+    this.simpleApply(new DatastreamUpdated(this.aggregateId, dataStreamId, name, reason, description, observedProperty,
         unitOfMeasurement, isPublic, isOpenData, isReusable, documentationUrl, dataLink, dataFrequency, dataQuality));
   }
 

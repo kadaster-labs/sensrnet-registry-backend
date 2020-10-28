@@ -15,6 +15,7 @@ import { UpdateSensorCommandHandler } from './handler/update-sensor.handler';
 import { DeleteSensorCommandHandler } from './handler/delete-sensor.handler';
 import { RegisterOwnerCommandHandler } from './handler/register-owner.handler';
 import { ActivateSensorCommandHandler } from './handler/activate-sensor.handler';
+import { UpdateDataStreamCommandHandler } from './handler/update-datastream.handler';
 import { DeactivateSensorCommandHandler } from './handler/deactivate-sensor.handler';
 import { CreateDatastreamCommandHandler } from './handler/create-datastream.handler';
 import { DeleteDataStreamCommandHandler } from './handler/delete-datastream.handler';
@@ -50,6 +51,7 @@ import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor
         DeactivateSensorCommandHandler,
         CreateDatastreamCommandHandler,
         DeleteDataStreamCommandHandler,
+        UpdateDataStreamCommandHandler,
         UpdateSensorLocationCommandHandler,
         ShareSensorOwnershipCommandHandler,
         TransferSensorOwnershipCommandHandler,

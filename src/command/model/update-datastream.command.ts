@@ -1,3 +1,3 @@
 import { ChangeDatastreamCommand } from './change-datastream.command';
 
-export class CreateDatastreamCommand extends ChangeDatastreamCommand {}
+export class UpdateDatastreamCommand extends ChangeDatastreamCommand {}
