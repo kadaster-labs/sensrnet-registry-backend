@@ -1,16 +1,19 @@
-apiVersion: extensions/v1beta1
-kind: Ingress
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
 metadata:
-  name: registry-backend-ingress
   annotations:
     kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/preserve-host: "true"
-    traefik.backend.loadbalancer.stickiness: "true"
+  name: registry-backend-ingress
 spec:
-  rules:
-  - http:
-      paths:
-      - backend:
-          serviceName: registry-backend
-          servicePort: 80
-        path: /api/
+  entryPoints:
+  - http
+  routes:
+  - kind: Rule
+    match: PathPrefix(`/api/`)
+    services:
+    - kind: Service
+      name: registry-backend
+      port: 80
+      sticky:
+        cookie:
+          httpOnly: true
