@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, Min, Max } from 'class-validator';
+import { IsNumber, IsOptional, Min, Max, IsString } from 'class-validator';
 
 export class RetrieveSensorsParams {
 
@@ -51,4 +51,14 @@ export class RetrieveSensorsParams {
   @Max(90, { message: 'Latitude should be less than or equal to 90' })
   @Type(() => Number)
   readonly upperRightLatitude: number;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    type: String,
+    required: false,
+    description: 'A sensor ownerId.',
+  })
+  @Type(() => String)
+  readonly ownerId: string;
 }

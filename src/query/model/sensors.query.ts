@@ -6,5 +6,6 @@ export class RetrieveSensorsQuery implements IQuery {
         public readonly bottomLeftLatitude?: number,
         public readonly upperRightLongitude?: number,
         public readonly upperRightLatitude?: number,
+        public readonly ownerId?: string,
     ) {}
 }

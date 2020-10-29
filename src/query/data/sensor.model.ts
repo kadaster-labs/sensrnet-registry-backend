@@ -45,4 +45,6 @@ export const SensorSchema = new Schema({
 });
 
 SensorSchema.index({ location: '2dsphere' });
+SensorSchema.index({ ownerIds: 1 });
+
 export const Sensor = model<ISensor, Model<ISensor>>('Sensor', SensorSchema);
