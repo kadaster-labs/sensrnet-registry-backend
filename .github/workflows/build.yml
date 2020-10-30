@@ -1,18 +1,15 @@
 # This GitHub Action performs the following steps:
 # - Updating the NPM version
+# - Updating package.json in repo
 # - Building new Docker image
 # - Pushing image to registry
-# - Updating package.json in repo
 #
 # Prerequisites
 # - AKS cluster w/ attached ACR
 # - Managed identity for cluster access
 # - Github secrets: REGISTRY_USERNAME and REGISTRY_PASSWORD for ACR
 name: Release and build new version
-on:
-  # Trigger the workflow on push or pull request for the default branch
-  push:
-    branches: [ $default-branch ]
+on: workflow_dispatch
 
 env:
   REGISTRY: sensrnetregistry.azurecr.io
@@ -20,30 +17,7 @@ env:
   IMAGE: registry-backend
 
 jobs:
-  trigger:
-    runs-on: ubuntu-latest
-    outputs:
-      release-commit: ${{ steps.check-build.outputs.is-release-commit }}
-    steps:
-      - name: Check if this commit was a release commit
-        env:
-          commits: ${{ toJson(github.event.commits) }}
-        id: check-build
-        run: |
-          NUM_COMMITS=$(echo $commits | jq '. | length' )
-          RELEASE_COMMIT=${{ startsWith(github.event.commits[0].message, 'Release v') }}
-
-          if [ $NUM_COMMITS -eq 1 -a $RELEASE_COMMIT = true ]; then
-            echo "this is a release commit"
-            echo "::set-output name=is-release-commit::true"
-          else
-            echo "this is NOT a release commit"
-            echo "::set-output name=is-release-commit::false"
-          fi
-
   build-and-push:
-    needs: trigger
-    if: needs.trigger.outputs.release-commit == 'false'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.bump-version.outputs.version }}
