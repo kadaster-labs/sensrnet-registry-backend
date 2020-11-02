@@ -1,5 +1,7 @@
-resources:
+bases:
 - ../../base
+
+resources:
 - eventstore/storageclass.yaml
 - mongo/pvc.yaml
 

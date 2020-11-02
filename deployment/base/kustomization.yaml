@@ -5,6 +5,8 @@ namespace: sensrnet-backend
 
 resources:
   - namespace.yaml
+
+bases:
   - registry-backend
   - eventstore
   - mongo
