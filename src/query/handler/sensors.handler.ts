@@ -6,15 +6,41 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
 @QueryHandler(RetrieveSensorsQuery)
 export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensorsQuery> {
+    private showSensorsDistance = 75 * 1000; // 75 km.
 
     constructor(
         @InjectModel('Sensor') private sensorModel: Model<ISensor>,
     ) {}
 
+    getPointDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+        if ((lat1 === lat2) && (lon1 === lon2)) {
+            return 0;
+        } else {
+            const radLat1 = Math.PI * lat1 / 180;
+            const radLat2 = Math.PI * lat2 / 180;
+            const theta = lon1 - lon2;
+            const radTheta = Math.PI * theta / 180;
+
+            let dist = Math.sin(radLat1) * Math.sin(radLat2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.cos(radTheta);
+            if (dist > 1) {
+                dist = 1;
+            }
+            dist = Math.acos(dist);
+            dist = dist * 180 / Math.PI;
+            dist = dist * 60 * 1.1515;
+            dist = dist * 1609.344;
+
+            return dist;
+        }
+    }
+
     async execute(retrieveSensorsQuery: RetrieveSensorsQuery): Promise<any> {
         let sensorFilter = {};
         if (retrieveSensorsQuery.bottomLeftLongitude && retrieveSensorsQuery.bottomLeftLatitude &&
             retrieveSensorsQuery.upperRightLongitude && retrieveSensorsQuery.upperRightLatitude) {
+            const pointDistance = this.getPointDistance(retrieveSensorsQuery.bottomLeftLatitude, retrieveSensorsQuery.bottomLeftLongitude,
+                retrieveSensorsQuery.upperRightLatitude, retrieveSensorsQuery.upperRightLongitude);
+
             sensorFilter = {
                 ...sensorFilter,
                 location: {
@@ -26,13 +52,24 @@ export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensor
                     },
                 },
             };
-        }
-        if (retrieveSensorsQuery.ownerId) {
+
+            if (pointDistance > this.showSensorsDistance) {
+                if (retrieveSensorsQuery.requestOwnerId) {
+                    sensorFilter = {
+                        ...sensorFilter,
+                        ownerIds: retrieveSensorsQuery.requestOwnerId,
+                    };
+                } else {
+                    sensorFilter = undefined;
+                }
+            }
+        } else if (retrieveSensorsQuery.ownerId) {
             sensorFilter = {
                 ...sensorFilter,
                 ownerIds: retrieveSensorsQuery.ownerId,
             };
         }
-        return this.sensorModel.find(sensorFilter);
+
+        return sensorFilter ? this.sensorModel.find(sensorFilter) : [];
     }
 }

@@ -30,6 +30,7 @@ import { AnonymousStrategy } from './anonymous.strategy';
     ],
     exports: [
         AuthService,
+        AccessJwtStrategy,
     ],
 })
 

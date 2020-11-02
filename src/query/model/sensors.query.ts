@@ -2,6 +2,7 @@ import { IQuery } from '@nestjs/cqrs';
 
 export class RetrieveSensorsQuery implements IQuery {
     constructor(
+        public readonly requestOwnerId?: string,
         public readonly bottomLeftLongitude?: number,
         public readonly bottomLeftLatitude?: number,
         public readonly upperRightLongitude?: number,
