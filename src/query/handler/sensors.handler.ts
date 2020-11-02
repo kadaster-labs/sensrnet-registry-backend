@@ -12,10 +12,11 @@ export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensor
     ) {}
 
     async execute(retrieveSensorsQuery: RetrieveSensorsQuery): Promise<any> {
-        let kwargs = {};
+        let sensorFilter = {};
         if (retrieveSensorsQuery.bottomLeftLongitude && retrieveSensorsQuery.bottomLeftLatitude &&
             retrieveSensorsQuery.upperRightLongitude && retrieveSensorsQuery.upperRightLatitude) {
-            kwargs = {
+            sensorFilter = {
+                ...sensorFilter,
                 location: {
                     $geoWithin: {
                         $box: [
@@ -26,6 +27,12 @@ export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensor
                 },
             };
         }
-        return this.sensorModel.find(kwargs);
+        if (retrieveSensorsQuery.ownerId) {
+            sensorFilter = {
+                ...sensorFilter,
+                ownerIds: retrieveSensorsQuery.ownerId,
+            };
+        }
+        return this.sensorModel.find(sensorFilter);
     }
 }

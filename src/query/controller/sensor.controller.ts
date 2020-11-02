@@ -36,6 +36,7 @@ export class SensorController {
   @ApiResponse({ status: 400, description: 'Sensors retrieval failed' })
   async retrieveSensors(@Query() sensorParams: RetrieveSensorsParams): Promise<any> {
     return await this.queryBus.execute(new RetrieveSensorsQuery(sensorParams.bottomLeftLongitude,
-        sensorParams.bottomLeftLatitude, sensorParams.upperRightLongitude, sensorParams.upperRightLatitude));
+        sensorParams.bottomLeftLatitude, sensorParams.upperRightLongitude, sensorParams.upperRightLatitude,
+        sensorParams.ownerId));
   }
 }
