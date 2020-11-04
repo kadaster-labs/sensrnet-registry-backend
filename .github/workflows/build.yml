@@ -1,0 +1,79 @@
+# This GitHub Action performs the following steps:
+# - Updating the NPM version
+# - Updating package.json in repo
+# - Building new Docker image
+# - Pushing image to registry
+#
+# Prerequisites
+# - AKS cluster w/ attached ACR
+# - Managed identity for cluster access
+# - Github secrets: REGISTRY_USERNAME and REGISTRY_PASSWORD for ACR
+name: Release and build new version
+on: workflow_dispatch
+
+env:
+  REGISTRY: sensrnetregistry.azurecr.io
+  USERNAME: sensrnet
+  IMAGE: registry-backend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump-version.outputs.version }}
+    steps:
+    # Check out the code
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12
+
+    # Bump the version, https://github.com/marketplace/actions/setup-node-js-environment
+    - name: Bump npm version
+      id: bump-version
+      run: |
+        npm version patch --no-git-tag-version
+        VERSION=$(node -pe "require('./package.json').version")
+        echo "$VERSION" > VERSION
+        echo "::set-output name=version::${VERSION}"
+
+    # This step uses Azure's azure-container-registry-login
+    # https://github.com/marketplace/actions/azure-container-registry-login
+    - uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.REGISTRY }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+
+    - name: Build Docker images
+      env:
+        VERSION: ${{ steps.bump-version.outputs.version }}
+      run: |
+        docker build . -t $REGISTRY/$USERNAME/$IMAGE:$VERSION
+        docker tag $REGISTRY/$USERNAME/$IMAGE:$VERSION $REGISTRY/$USERNAME/$IMAGE:latest
+
+    - name: Push Docker images to ACR
+      env:
+        VERSION: ${{ steps.bump-version.outputs.version }}
+      run: |
+        docker push $REGISTRY/$USERNAME/$IMAGE:latest
+        docker push $REGISTRY/$USERNAME/$IMAGE:$VERSION
+
+    # https://github.com/marketplace/actions/add-commit
+    - name: Add and commit changes
+      uses: EndBug/add-and-commit@v4
+      env:
+        GITHUB_TOKEN: ${{ secrets.AUTH_TOKEN }} # Use administrator personal access token for pushing to protected branch
+      with:
+        message: 'Release v${{ steps.bump-version.outputs.version }}'
+
+    # https://github.com/marketplace/actions/create-a-release
+    - name: Create Github release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.AUTH_TOKEN }}
+      with:
+        tag_name: ${{ steps.bump-version.outputs.version }}
+        release_name: Release v${{ steps.bump-version.outputs.version }}
