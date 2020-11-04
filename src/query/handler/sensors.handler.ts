@@ -6,6 +6,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
 @QueryHandler(RetrieveSensorsQuery)
 export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensorsQuery> {
+    private maxSensors = 10000;
     private showSensorsDistance = 75 * 1000; // 75 km.
 
     constructor(
@@ -70,6 +71,6 @@ export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensor
             };
         }
 
-        return sensorFilter ? this.sensorModel.find(sensorFilter) : [];
+        return sensorFilter ? this.sensorModel.find(sensorFilter).limit(this.maxSensors) : [];
     }
 }
