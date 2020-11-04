@@ -39,6 +39,7 @@ export class SensorController {
     const user: Record<string, any> = req.user;
     const requestOwnerId = user ? user.ownerId : undefined;
     return await this.queryBus.execute(new RetrieveSensorsQuery(requestOwnerId, sensorParams.bottomLeftLongitude,
-        sensorParams.bottomLeftLatitude, sensorParams.upperRightLongitude, sensorParams.upperRightLatitude, sensorParams.ownerId));
+        sensorParams.bottomLeftLatitude, sensorParams.upperRightLongitude, sensorParams.upperRightLatitude,
+        sensorParams.pageIndex, sensorParams.ownerId));
   }
 }
