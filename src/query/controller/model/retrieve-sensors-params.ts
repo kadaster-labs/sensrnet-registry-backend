@@ -52,6 +52,16 @@ export class RetrieveSensorsParams {
   @Type(() => Number)
   readonly upperRightLatitude: number;
 
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({
+    type: Number,
+    required: false,
+    description: 'Page index.',
+  })
+  @Type(() => Number)
+  readonly pageIndex: number;
+
   @IsString()
   @IsOptional()
   @ApiProperty({

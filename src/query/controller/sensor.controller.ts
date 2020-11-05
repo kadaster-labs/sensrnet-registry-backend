@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { QueryBus } from '@nestjs/cqrs';
 import { SensorIdParams } from './model/id-params';
 import { jwtConstants } from '../../auth/constants';
@@ -8,7 +9,7 @@ import { RetrieveSensorsParams } from './model/retrieve-sensors-params';
 import { AccessAnonymousAuthGuard } from '../../auth/access-anonymous-auth.guard';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { Controller, Get, Param, Query, UseGuards, UseFilters } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, UseFilters, Req } from '@nestjs/common';
 
 @ApiTags('Sensor')
 @Controller('Sensor')
@@ -34,9 +35,11 @@ export class SensorController {
   @ApiOperation({ summary: 'Retrieve Sensors' })
   @ApiResponse({ status: 200, description: 'Sensors retrieved' })
   @ApiResponse({ status: 400, description: 'Sensors retrieval failed' })
-  async retrieveSensors(@Query() sensorParams: RetrieveSensorsParams): Promise<any> {
-    return await this.queryBus.execute(new RetrieveSensorsQuery(sensorParams.bottomLeftLongitude,
+  async retrieveSensors(@Req() req: Request, @Query() sensorParams: RetrieveSensorsParams): Promise<any> {
+    const user: Record<string, any> = req.user;
+    const requestOwnerId = user ? user.ownerId : undefined;
+    return await this.queryBus.execute(new RetrieveSensorsQuery(requestOwnerId, sensorParams.bottomLeftLongitude,
         sensorParams.bottomLeftLatitude, sensorParams.upperRightLongitude, sensorParams.upperRightLatitude,
-        sensorParams.ownerId));
+        sensorParams.pageIndex, sensorParams.ownerId));
   }
 }

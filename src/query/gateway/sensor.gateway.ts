@@ -3,6 +3,8 @@ import { Socket, Server } from 'socket.io';
 import { jwtConstants } from '../../auth/constants';
 import { AuthService } from '../../auth/auth.service';
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket } from '@nestjs/websockets';
+import { AccessJwtStrategy } from '../../auth/access-jwt.strategy';
+import { ISensor } from '../data/sensor.model';
 
 @WebSocketGateway({
     namespace: 'sensor',
@@ -16,6 +18,7 @@ export class SensorGateway implements OnGatewayConnection {
 
     constructor(
         private authService: AuthService,
+        private accessJwtStrategy: AccessJwtStrategy,
     ) {}
 
     async handleConnection(@ConnectedSocket() client: Socket): Promise<void> {
@@ -26,7 +29,10 @@ export class SensorGateway implements OnGatewayConnection {
             const authToken = authHeader && authHeader.length > 7 ? authHeader.substring(7, authHeader.length) : '';
 
             try {
-                await this.authService.verifyToken(authToken);
+                const decodedToken = await this.authService.verifyToken(authToken);
+                const userInfo = await this.accessJwtStrategy.validate(decodedToken);
+
+                client.join(userInfo.ownerId);
             } catch {
                 client.disconnect(true);
                 this.logger.log('Failed to authenticate websocket client.');
@@ -34,7 +40,9 @@ export class SensorGateway implements OnGatewayConnection {
         }
     }
 
-    emit(event: string, ...args: any[]): void {
-        this.server.emit(event, ...args);
+    emit(event: string, updatedSensor: ISensor): void {
+        for (const ownerId of updatedSensor.ownerIds) {
+            this.server.to(ownerId).emit(event, updatedSensor);
+        }
     }
 }
