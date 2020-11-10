@@ -13,13 +13,12 @@ export class DeleteSensorCommandHandler
 
   async execute(command: DeleteSensorCommand): Promise<void> {
     const sensorAggregate = await this.repository.get(command.sensorId);
-
     if (!sensorAggregate) {
       throw new UnknowSensorException(command.sensorId);
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.delete(command.ownerId);
+    aggregate.delete(command.organizationId);
     aggregate.commit();
   }
 }

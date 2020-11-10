@@ -1,8 +1,8 @@
 import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
 import { ISensor } from '../data/sensor.model';
-import { RetrieveSensorsQuery } from '../model/sensors.query';
+import { InjectModel } from '@nestjs/mongoose';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { RetrieveSensorsQuery } from '../model/sensors.query';
 
 @QueryHandler(RetrieveSensorsQuery)
 export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensorsQuery> {
@@ -10,7 +10,7 @@ export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensor
     private showSensorsDistance = 75 * 1000; // 75 km.
 
     constructor(
-        @InjectModel('Sensor') private sensorModel: Model<ISensor>,
+        @InjectModel('Sensor') private model: Model<ISensor>,
     ) {}
 
     getPointDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -55,24 +55,24 @@ export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensor
             };
 
             if (pointDistance > this.showSensorsDistance) {
-                if (retrieveSensorsQuery.requestOwnerId) {
+                if (retrieveSensorsQuery.requestOrganizationId) {
                     sensorFilter = {
                         ...sensorFilter,
-                        ownerIds: retrieveSensorsQuery.requestOwnerId,
+                        organizationIds: retrieveSensorsQuery.requestOrganizationId,
                     };
                 } else {
                     sensorFilter = undefined;
                 }
             }
-        } else if (retrieveSensorsQuery.ownerId) {
+        } else if (retrieveSensorsQuery.organizationId) {
             sensorFilter = {
                 ...sensorFilter,
-                ownerIds: retrieveSensorsQuery.ownerId,
+                organizationIds: retrieveSensorsQuery.organizationId,
             };
         }
 
         const start = retrieveSensorsQuery.pageIndex ? retrieveSensorsQuery.pageIndex * this.pageSize : 0;
         const stop = start + this.pageSize;
-        return sensorFilter ? this.sensorModel.find(sensorFilter).skip(start).limit(stop) : [];
+        return sensorFilter ? this.model.find(sensorFilter, {}, { skip: start, limit: stop }) : [];
     }
 }

@@ -14,7 +14,7 @@ import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagg
 import { UseFilters, Controller, Delete, UseGuards, Req, Param, Post, Body, Put } from '@nestjs/common';
 
 @ApiTags('User')
-@Controller('User')
+@Controller('user')
 export class UserController {
     constructor(
         private readonly commandBus: CommandBus,
@@ -26,7 +26,7 @@ export class UserController {
     @ApiResponse({ status: 200, description: 'User registered' })
     @ApiResponse({ status: 400, description: 'User registration failed' })
     async createUser(@Body() userBody: RegisterUserBody): Promise<void> {
-        await this.commandBus.execute(new RegisterUserCommand(userBody.email, undefined, userBody.password));
+        await this.commandBus.execute(new RegisterUserCommand(userBody.email, userBody.password));
     }
 
     @Put()
@@ -36,9 +36,9 @@ export class UserController {
     @ApiOperation({ summary: 'Update user' })
     @ApiResponse({ status: 200, description: 'User updated' })
     @ApiResponse({ status: 400, description: 'User update failed' })
-    async updateUser(@Body() userBody: UpdateUserBody, @Req() req: Request): Promise<any> {
+    async updateUser(@Req() req: Request, @Body() userBody: UpdateUserBody): Promise<any> {
         const user: Record<string, any> = req.user;
-        return await this.commandBus.execute(new UpdateUserCommand(user.userId, userBody.ownerId, userBody.password));
+        return await this.commandBus.execute(new UpdateUserCommand(user.userId, userBody.organization, userBody.password));
     }
 
     @Delete()

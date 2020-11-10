@@ -1,39 +1,39 @@
 import { Test } from '@nestjs/testing';
 import { Logger } from '@nestjs/common';
 import { EventStore } from '../event-store/event-store';
-import { OwnerAggregate } from '../core/aggregates/owner.aggregate';
-import { SensorAggregate } from '../core/aggregates/sensor.aggregate';
-import { OwnerRepository } from '../core/repositories/owner.repository';
 import { LocationBody } from './controller/model/location.body';
-import { CommandBus, CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
-import { SensorRepository } from '../core/repositories/sensor.repository';
-import { EventStorePublisher } from '../event-store/event-store.publisher';
-import { UpdateOwnerCommand } from './model/update-owner.command';
-import { DeleteOwnerCommand } from './model/delete-owner.command';
 import { CreateSensorCommand } from './model/create-sensor.command';
 import { UpdateSensorCommand } from './model/update-sensor.command';
-import { RegisterOwnerCommand } from './model/register-owner.command';
-import { UpdateOwnerCommandHandler } from './handler/update-owner.handler';
-import { DeleteOwnerCommandHandler } from './handler/delete-owner.handler';
+import { SensorAggregate } from '../core/aggregates/sensor.aggregate';
+import { SensorRepository } from '../core/repositories/sensor.repository';
+import { EventStorePublisher } from '../event-store/event-store.publisher';
 import { CreateSensorCommandHandler } from './handler/create-sensor.handler';
 import { UpdateSensorCommandHandler } from './handler/update-sensor.handler';
 import { DeleteSensorCommandHandler } from './handler/delete-sensor.handler';
-import { RegisterOwnerCommandHandler } from './handler/register-owner.handler';
+import { CommandBus, CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
+import { UpdateOrganizationCommand } from './model/update-organization.command';
+import { DeleteOrganizationCommand } from './model/delete-organization.command';
+import { OrganizationAggregate } from '../core/aggregates/organizationAggregate';
 import { ActivateSensorCommandHandler } from './handler/activate-sensor.handler';
+import { RegisterOrganizationCommand } from './model/register-organization.command';
 import { DeactivateSensorCommandHandler } from './handler/deactivate-sensor.handler';
 import { CreateDatastreamCommandHandler } from './handler/create-datastream.handler';
 import { DeleteDataStreamCommandHandler } from './handler/delete-datastream.handler';
 import { ShareSensorOwnershipCommand } from './model/share-sensor-ownership.command';
+import { UpdateOrganizationCommandHandler } from './handler/update-organization.handler';
+import { DeleteOrganizationCommandHandler } from './handler/delete-organization.handler';
 import { TransferSensorOwnershipCommand } from './model/transfer-sensor-ownership.command';
+import { RegisterOrganizationCommandHandler } from './handler/register-organization.handler';
+import { OrganizationRepository } from '../core/repositories/organization-repository.service';
 import { UpdateSensorLocationCommandHandler } from './handler/update-sensor-location.handler';
 import { ShareSensorOwnershipCommandHandler } from './handler/share-sensor-ownership.handler';
 import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor-ownership.handler';
 
 const logger: Logger = new Logger();
 
-const getEsMock = (ownerExist, sensorExist) => {
+const getEsMock = (organizationExist, sensorExist) => {
     return function ExistingEventStoreMock() {
-        this.exists = async (aggId) => aggId.split('-')[0] === 'owner' ? ownerExist : sensorExist;
+        this.exists = async (aggId) => aggId.split('-')[0] === 'organization' ? organizationExist : sensorExist;
         this.getEvents = () => [];
         this.connect = (): void => void 0;
     };
@@ -44,19 +44,18 @@ describe('Command (integration)', () => {
         return await Test.createTestingModule({
             imports: [
                 CqrsModule,
-            ],
-            providers: [
+            ], providers: [
                 EventBus,
                 EventPublisher,
-                OwnerAggregate,
+                OrganizationAggregate,
                 SensorAggregate,
-                OwnerRepository,
+                OrganizationRepository,
                 SensorRepository,
                 EventStorePublisher,
-                // owner
-                UpdateOwnerCommandHandler,
-                DeleteOwnerCommandHandler,
-                RegisterOwnerCommandHandler,
+                // organization
+                UpdateOrganizationCommandHandler,
+                DeleteOrganizationCommandHandler,
+                RegisterOrganizationCommandHandler,
                 // sensor
                 CreateSensorCommandHandler,
                 UpdateSensorCommandHandler,
@@ -74,127 +73,130 @@ describe('Command (integration)', () => {
         }).compile();
     };
 
-    const getOwnerCommandPipeline = async (eventStoreProvider) => {
+    const getOrganizationCommandPipeline = async (eventStoreProvider) => {
         const moduleRef = await getModuleRef(eventStoreProvider);
         const commandBus: CommandBus = moduleRef.get(CommandBus);
         const eventPublisher: EventPublisher = moduleRef.get(EventPublisher);
-        const ownerAggregate: OwnerAggregate = moduleRef.get(OwnerAggregate);
+        const organizationAggregate: OrganizationAggregate = moduleRef.get(OrganizationAggregate);
         const sensorAggregate: SensorAggregate = moduleRef.get(SensorAggregate);
-        const ownerRepository: OwnerRepository = moduleRef.get(OwnerRepository);
+        const organizationRepository: OrganizationRepository = moduleRef.get(OrganizationRepository);
         const sensorRepository: SensorRepository = moduleRef.get(SensorRepository);
-        const mergeObjectImpl = (a) => a instanceof OwnerAggregate ? ownerAggregate : sensorAggregate;
+        const mergeObjectImpl = (a) => a instanceof OrganizationAggregate ? organizationAggregate : sensorAggregate;
         jest.spyOn(eventPublisher, 'mergeObjectContext').mockImplementation(mergeObjectImpl);
 
-        return { commandBus, eventPublisher, ownerAggregate, sensorAggregate, ownerRepository, sensorRepository };
+        return { commandBus, eventPublisher, organizationAggregate, sensorAggregate, organizationRepository, sensorRepository };
     };
 
-    const registerOwner = async (eventStoreProvider) => {
-        const { commandBus, eventPublisher, ownerAggregate, ownerRepository } = await getOwnerCommandPipeline(eventStoreProvider);
+    const registerOrganization = async (eventStoreProvider) => {
+        const { commandBus, eventPublisher,
+            organizationAggregate, organizationRepository } = await getOrganizationCommandPipeline(eventStoreProvider);
 
-        const commandHandler = new RegisterOwnerCommandHandler(eventPublisher, ownerRepository);
-        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RegisterOwnerCommand) => commandHandler.execute(c));
-        const registerFn = jest.spyOn(ownerAggregate, 'onOwnerRegistered');
+        const commandHandler = new RegisterOrganizationCommandHandler(eventPublisher, organizationRepository);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RegisterOrganizationCommand) => commandHandler.execute(c));
+        const registerFn = jest.spyOn(organizationAggregate, 'onOrganizationRegistered');
 
         try {
-            await commandBus.execute(new RegisterOwnerCommand('test-id', 'test-org',
-                'test-site', 'test-name', 'test-mail', 'test-phone'));
+            await commandBus.execute(new RegisterOrganizationCommand('test-id', 'test-site',
+                'test-name', 'test-mail', 'test-phone'));
         } catch {
-            logger.log('Failed to register.');
+            logger.log('Failed to register organization.');
         }
 
         return registerFn;
     };
 
-    it(`Should register owner`, async () => {
+    it(`Should register organization`, async () => {
         const eventStoreProvider = {
             provide: EventStore,
             useClass: getEsMock(false, false),
         };
 
-        const registerFn = await registerOwner(eventStoreProvider);
+        const registerFn = await registerOrganization(eventStoreProvider);
         expect(registerFn).toBeCalled();
     });
 
-    it(`Should not register owner`, async () => {
+    it(`Should not register organization`, async () => {
         const eventStoreProvider = {
             provide: EventStore,
             useClass: getEsMock(true, true),
         };
 
-        const registerFn = await registerOwner(eventStoreProvider);
+        const registerFn = await registerOrganization(eventStoreProvider);
         expect(registerFn).not.toHaveBeenCalled();
     });
 
-    const updateOwner = async (eventStoreProvider) => {
-        const { commandBus, eventPublisher, ownerAggregate, ownerRepository } = await getOwnerCommandPipeline(eventStoreProvider);
+    const updateOrganization = async (eventStoreProvider) => {
+        const { commandBus, eventPublisher,
+            organizationAggregate, organizationRepository } = await getOrganizationCommandPipeline(eventStoreProvider);
 
-        const commandHandler = new UpdateOwnerCommandHandler(eventPublisher, ownerRepository);
-        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: UpdateOwnerCommand) => commandHandler.execute(c));
-        const updateFn = jest.spyOn(ownerAggregate, 'onOwnerUpdated');
+        const commandHandler = new UpdateOrganizationCommandHandler(eventPublisher, organizationRepository);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: UpdateOrganizationCommand) => commandHandler.execute(c));
+        const updateFn = jest.spyOn(organizationAggregate, 'onOrganizationUpdated');
 
         try {
-            await commandBus.execute(new UpdateOwnerCommand('test-id', 'test-org',
-                'test-site', 'test-name', 'test-mail', 'test-phone'));
+            await commandBus.execute(new UpdateOrganizationCommand('test-id', 'test-site',
+                'test-name', 'test-mail', 'test-phone'));
         } catch {
-            logger.log('Failed to update.');
+            logger.log('Failed to update organization.');
         }
 
         return updateFn;
     };
 
-    it(`Should update owner`, async () => {
+    it(`Should update organization`, async () => {
         const eventStoreProvider = {
             provide: EventStore,
             useClass: getEsMock(true, true),
         };
 
-        const updateFn = await updateOwner(eventStoreProvider);
+        const updateFn = await updateOrganization(eventStoreProvider);
         expect(updateFn).toBeCalled();
     });
 
-    it(`Should not update owner`, async () => {
+    it(`Should not update organization`, async () => {
         const eventStoreProvider = {
             provide: EventStore,
             useClass: getEsMock(false, false),
         };
 
-        const updateFn = await updateOwner(eventStoreProvider);
+        const updateFn = await updateOrganization(eventStoreProvider);
         expect(updateFn).not.toBeCalled();
     });
 
-    const deleteOwner = async (eventStoreProvider) => {
-        const { commandBus, eventPublisher, ownerAggregate, ownerRepository } = await getOwnerCommandPipeline(eventStoreProvider);
+    const deleteOrganization = async (eventStoreProvider) => {
+        const { commandBus, eventPublisher,
+            organizationAggregate, organizationRepository } = await getOrganizationCommandPipeline(eventStoreProvider);
 
-        const commandHandler = new DeleteOwnerCommandHandler(eventPublisher, ownerRepository);
-        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: DeleteOwnerCommand) => commandHandler.execute(c));
-        const deleteFn = jest.spyOn(ownerAggregate, 'onOwnerDeleted');
+        const commandHandler = new DeleteOrganizationCommandHandler(eventPublisher, organizationRepository);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: DeleteOrganizationCommand) => commandHandler.execute(c));
+        const deleteFn = jest.spyOn(organizationAggregate, 'onOrganizationDeleted');
 
         try {
-            await commandBus.execute(new DeleteOwnerCommand('test-id'));
+            await commandBus.execute(new DeleteOrganizationCommand('test-id'));
         } catch {
-            logger.log('Failed to delete owner');
+            logger.log('Failed to delete organization');
         }
 
         return deleteFn;
     };
 
-    it(`Should delete owner`, async () => {
+    it(`Should delete organization`, async () => {
         const eventStoreProvider = {
             provide: EventStore,
             useClass: getEsMock(true, true),
         };
 
-        const deleteFn = await deleteOwner(eventStoreProvider);
+        const deleteFn = await deleteOrganization(eventStoreProvider);
         expect(deleteFn).toBeCalled();
     });
 
-    it(`Should not delete owner`, async () => {
+    it(`Should not delete organization`, async () => {
         const eventStoreProvider = {
             provide: EventStore,
             useClass: getEsMock(false, false),
         };
 
-        const deleteFn = await deleteOwner(eventStoreProvider);
+        const deleteFn = await deleteOrganization(eventStoreProvider);
         expect(deleteFn).not.toBeCalled();
     });
 
@@ -203,11 +205,11 @@ describe('Command (integration)', () => {
             commandBus,
             eventPublisher,
             sensorAggregate,
-            ownerRepository,
             sensorRepository,
-        } = await getOwnerCommandPipeline(eventStoreProvider);
+            organizationRepository,
+        } = await getOrganizationCommandPipeline(eventStoreProvider);
 
-        const commandHandler = new CreateSensorCommandHandler(eventPublisher, ownerRepository, sensorRepository);
+        const commandHandler = new CreateSensorCommandHandler(eventPublisher, sensorRepository, organizationRepository);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: CreateSensorCommand) => commandHandler.execute(c));
         const registerFn = jest.spyOn(sensorAggregate, 'onSensorRegistered');
 
@@ -215,9 +217,9 @@ describe('Command (integration)', () => {
             await commandBus.execute(new CreateSensorCommand('test-id', 'test-id', 'test-name',
                 {latitude: 0, longitude: 0} as LocationBody, [], 'test-aim', 'test-description',
                 'test-manufacturer', true, undefined, 'test-url', undefined,
-                'test-type', undefined));
+                'test-category', 'test-type', undefined));
         } catch {
-            logger.log('Failed to register.');
+            logger.log('Failed to register sensor.');
         }
 
         return registerFn;
@@ -276,7 +278,7 @@ describe('Command (integration)', () => {
             eventPublisher,
             sensorAggregate,
             sensorRepository,
-        } = await getOwnerCommandPipeline(eventStoreProvider);
+        } = await getOrganizationCommandPipeline(eventStoreProvider);
 
         const commandHandler = new UpdateSensorCommandHandler(eventPublisher, sensorRepository);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: UpdateSensorCommand) => commandHandler.execute(c));
@@ -289,7 +291,7 @@ describe('Command (integration)', () => {
         try {
             await commandBus.execute(new UpdateSensorCommand('test-id', 'test-id', 'test-name',
                 'test-aim', 'test-description', 'test-manufacturer', undefined,
-                'test-url', undefined, 'test-type', undefined));
+                'test-url', undefined, 'test-category', 'test-type', undefined));
         } catch {
             logger.log('Failed to update.');
         }
@@ -324,11 +326,11 @@ describe('Command (integration)', () => {
             commandBus,
             eventPublisher,
             sensorAggregate,
-            ownerRepository,
             sensorRepository,
-        } = await getOwnerCommandPipeline(eventStoreProvider);
+            organizationRepository,
+        } = await getOrganizationCommandPipeline(eventStoreProvider);
 
-        const commandHandler = new TransferSensorOwnershipCommandHandler(eventPublisher, ownerRepository, sensorRepository);
+        const commandHandler = new TransferSensorOwnershipCommandHandler(eventPublisher, sensorRepository, organizationRepository);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: TransferSensorOwnershipCommand) => commandHandler.execute(c));
         const transferFn = jest.spyOn(sensorAggregate, 'onSensorOwnershipTransferred');
 
@@ -373,11 +375,11 @@ describe('Command (integration)', () => {
             commandBus,
             eventPublisher,
             sensorAggregate,
-            ownerRepository,
             sensorRepository,
-        } = await getOwnerCommandPipeline(eventStoreProvider);
+            organizationRepository,
+        } = await getOrganizationCommandPipeline(eventStoreProvider);
 
-        const commandHandler = new ShareSensorOwnershipCommandHandler(eventPublisher, ownerRepository, sensorRepository);
+        const commandHandler = new ShareSensorOwnershipCommandHandler(eventPublisher, sensorRepository, organizationRepository);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: ShareSensorOwnershipCommand) => commandHandler.execute(c));
         const shareFn = jest.spyOn(sensorAggregate, 'onSensorOwnershipShared');
 
@@ -386,10 +388,9 @@ describe('Command (integration)', () => {
         }
 
         try {
-            await commandBus.execute(new ShareSensorOwnershipCommand('test-id', 'test-id',
-                ['new-test-id']));
+            await commandBus.execute(new ShareSensorOwnershipCommand('test-id', 'test-id', 'new-test-id'));
         } catch {
-            logger.log('Failed to share.');
+            logger.log('Failed to share ownership.');
         }
 
         return shareFn;
@@ -406,7 +407,7 @@ describe('Command (integration)', () => {
         expect(shareFn).toBeCalled();
     });
 
-    it(`Should not sensor ownership`, async () => {
+    it(`Should not share sensor ownership`, async () => {
         const sensorExists = false;
         const eventStoreProvider = {
             provide: EventStore,
@@ -416,5 +417,4 @@ describe('Command (integration)', () => {
         const shareFn = await shareSensor(eventStoreProvider, sensorExists);
         expect(shareFn).not.toBeCalled();
     });
-
 });

@@ -41,7 +41,7 @@ export class AuthService {
                         const userObject = {
                             _id: user._id,
                             role: user.role,
-                            ownerId: user.ownerId,
+                            organizationId: user.organizationId,
                         };
                         resolve(userObject);
                     } else {
@@ -91,7 +91,7 @@ export class AuthService {
         }
 
         if (refreshTokenMatches) {
-            const accessPayload = { sub: user.ownerId, userId: user._id, role: user.role, type: 'access' };
+            const accessPayload = { sub: user.organizationId, userId: user._id, role: user.role, type: 'access' };
             const accessToken = this.jwtService.sign(accessPayload, { expiresIn: this.accessTokenExpiresIn });
             return {
                 access_token: accessToken,
@@ -105,9 +105,9 @@ export class AuthService {
     async login(user: Record<string, any>): Promise<Record<string, any>> {
         const refreshPayload = { sub: user._id, role: user.role, type: 'refresh' };
         const refreshToken = this.jwtService.sign(refreshPayload, { expiresIn: this.refreshTokenExpiresIn });
-        await this.usersService.updateOne(user._id, {refreshToken});
+        await this.usersService.updateOne(user._id, { refreshToken });
 
-        const accessPayload = { sub: user.ownerId, userId: user._id, role: user.role, type: 'access' };
+        const accessPayload = { sub: user.organizationId, userId: user._id, role: user.role, type: 'access' };
         const accessToken = this.jwtService.sign(accessPayload, { expiresIn: this.accessTokenExpiresIn });
 
         return {

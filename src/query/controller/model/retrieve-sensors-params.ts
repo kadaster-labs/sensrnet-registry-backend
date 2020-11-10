@@ -3,7 +3,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, Min, Max, IsString } from 'class-validator';
 
 export class RetrieveSensorsParams {
-
   @IsNumber()
   @IsOptional()
   @ApiProperty({
@@ -67,8 +66,8 @@ export class RetrieveSensorsParams {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'A sensor ownerId.',
+    description: 'A sensor organizationId.',
   })
   @Type(() => String)
-  readonly ownerId: string;
+  readonly organizationId: string;
 }

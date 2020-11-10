@@ -1,6 +1,7 @@
 import { Theme } from './theme.body';
+import { Category } from './category.body';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUrl, IsObject, IsOptional, IsArray, ValidateIf } from 'class-validator';
+import { IsString, IsUrl, IsObject, IsOptional, IsArray, ValidateIf, IsNotEmpty } from 'class-validator';
 
 export class UpdateSensorBody {
   @IsString()
@@ -8,7 +9,7 @@ export class UpdateSensorBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The name of the sensor.',
+    description: 'The sensor name.',
   })
   readonly name: string;
 
@@ -17,7 +18,7 @@ export class UpdateSensorBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The goal of the sensor.',
+    description: 'The sensor goal.',
   })
   readonly aim: string;
 
@@ -68,6 +69,15 @@ export class UpdateSensorBody {
       description: 'The sensor theme.',
   })
   readonly theme: string[];
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
+    enum: Category,
+    description: 'The sensor category.',
+  })
+  readonly category: string;
 
   @IsString()
   @IsOptional()

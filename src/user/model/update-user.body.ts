@@ -2,20 +2,19 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional } from 'class-validator';
 
 export class UpdateUserBody {
-
     @IsUUID(4)
     @IsOptional()
     @ApiProperty({
         type: String,
-        description: 'The ownerId of the user.',
+        description: 'The id of the organization to join.',
     })
-    readonly ownerId: string;
+    readonly organization: string;
 
     @IsString()
     @IsOptional()
     @ApiProperty({
         type: String,
-        description: 'The password of the user.',
+        description: 'The user password.',
     })
     readonly password: string;
 }

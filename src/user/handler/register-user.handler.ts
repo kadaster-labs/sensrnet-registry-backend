@@ -7,7 +7,6 @@ import { UserAlreadyExistsException } from '../../command/handler/error/user-alr
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserCommandHandler implements ICommandHandler<RegisterUserCommand> {
-
   constructor(
       @InjectModel('User') private userModel: Model<User>,
   ) {}
@@ -16,7 +15,6 @@ export class RegisterUserCommandHandler implements ICommandHandler<RegisterUserC
     const userInstance = new this.userModel({
       role: 'user',
       _id: command.email,
-      ownerId: command.ownerId,
       password: command.password,
     });
 
@@ -30,7 +28,7 @@ export class RegisterUserCommandHandler implements ICommandHandler<RegisterUserC
 
     let user = null;
     await savePromise.then(() => {
-      user = {id: userInstance._id};
+      user = { id: userInstance._id };
     }, () => {
       throw new UserAlreadyExistsException(command.email);
     });

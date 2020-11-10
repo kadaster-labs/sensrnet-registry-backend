@@ -1,7 +1,8 @@
+import { Theme } from './theme.body';
 import { Type } from 'class-transformer';
+import { Category } from './category.body';
 import { ApiProperty } from '@nestjs/swagger';
 import { LocationBody } from './location.body';
-import { Theme } from './theme.body';
 import { CreateDatastreamBody } from './create-datastream.body';
 import { IsString, IsNotEmpty, IsBoolean, IsObject, IsArray, IsUrl, ValidateNested, IsOptional, ValidateIf } from 'class-validator';
 
@@ -39,7 +40,7 @@ export class RegisterSensorBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The goal of the sensor.',
+    description: 'The sensor goal.',
   })
   readonly aim: string;
 
@@ -48,7 +49,7 @@ export class RegisterSensorBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'A description of the sensor.',
+    description: 'A sensor description.',
   })
   readonly description: string;
 
@@ -57,7 +58,7 @@ export class RegisterSensorBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The name of the sensor manufacturer.',
+    description: 'Name of the sensor manufacturer.',
   })
   readonly manufacturer: string;
 
@@ -100,6 +101,15 @@ export class RegisterSensorBody {
       description: 'The sensor theme.',
   })
   readonly theme: string[];
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
+    enum: Category,
+    description: 'The sensor category.',
+  })
+  readonly category: string;
 
   @IsString()
   @IsNotEmpty()

@@ -6,7 +6,7 @@ export class SensorIdParams {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    description: 'The sensorId of the sensor.',
+    description: 'The id of the sensor.',
   })
   readonly sensorId: string;
 }

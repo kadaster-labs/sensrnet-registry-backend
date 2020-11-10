@@ -3,7 +3,7 @@ import { ICommand } from '@nestjs/cqrs';
 export class ChangeDatastreamCommand implements ICommand {
   constructor(
     public readonly sensorId: string,
-    public readonly ownerId: string,
+    public readonly organizationId: string,
     public readonly dataStreamId: string,
     public readonly name: string,
     public readonly reason: string,

@@ -13,89 +13,88 @@ import { DatastreamAdded, DatastreamUpdated, DatastreamDeleted, SensorActivated,
 export class SensorAggregate extends Aggregate {
   state!: SensorState;
 
-  constructor(private readonly aggregateId: string) {
+  constructor(
+      private readonly aggregateId: string,
+      ) {
     super();
   }
 
-  validateOwner(ownerId: string): void {
-    if (!this.state.ownerIds.includes(ownerId)) {
-      throw new NotAnOwnerException(ownerId, this.aggregateId);
+  validateOrganization(organizationId: string): void {
+    if (!this.state.organizationIds.includes(organizationId)) {
+      throw new NotAnOwnerException(organizationId, this.aggregateId);
     }
   }
 
-  register(ownerId: string, name: string, location: LocationBody,
+  register(organizationId: string, name: string, location: LocationBody,
            dataStreams: CreateDatastreamBody[], aim: string, description: string, manufacturer: string,
            active: boolean, observationArea: Record<string, any>, documentationUrl: string, theme: string[],
-           typeName: string, typeDetails: Record<string, any>): void {
-    this.simpleApply(new SensorRegistered(this.aggregateId, ownerId, name, location.longitude, location.latitude,
+           category: string, typeName: string, typeDetails: Record<string, any>): void {
+    this.simpleApply(new SensorRegistered(this.aggregateId, organizationId, name, location.longitude, location.latitude,
         location.height, location.baseObjectId, aim, description, manufacturer, active, observationArea, documentationUrl,
-        theme, typeName, typeDetails));
+        theme, category, typeName, typeDetails));
 
     for (const dataStream of dataStreams) {
-      this.addDatastream(ownerId, dataStream.dataStreamId, dataStream.name, dataStream.reason, dataStream.description,
+      this.addDatastream(organizationId, dataStream.dataStreamId, dataStream.name, dataStream.reason, dataStream.description,
           dataStream.observedProperty, dataStream.unitOfMeasurement, dataStream.isPublic, dataStream.isOpenData,
           dataStream.isReusable, dataStream.documentationUrl, dataStream.dataLink, dataStream.dataFrequency,
           dataStream.dataQuality);
     }
   }
 
-  addDatastream(ownerId: string, dataStreamId: string, name: string, reason: string, description: string, observedProperty: string,
+  addDatastream(organizationId: string, dataStreamId: string, name: string, reason: string, description: string, observedProperty: string,
                 unitOfMeasurement: string, isPublic: boolean, isOpenData: boolean, isReusable: boolean, documentationUrl: string,
                 dataLink: string, dataFrequency: number, dataQuality: number): void {
-    this.validateOwner(ownerId);
+    this.validateOrganization(organizationId);
     this.simpleApply(new DatastreamAdded(this.aggregateId, dataStreamId, name, reason, description, observedProperty,
         unitOfMeasurement, isPublic, isOpenData, isReusable, documentationUrl, dataLink, dataFrequency, dataQuality));
   }
 
-  updateDataStream(ownerId: string, dataStreamId: string, name: string, reason: string, description: string, observedProperty: string,
+  updateDataStream(organizationId: string, dataStreamId: string, name: string, reason: string, description: string, observedProperty: string,
                    unitOfMeasurement: string, isPublic: boolean, isOpenData: boolean, isReusable: boolean, documentationUrl: string,
                    dataLink: string, dataFrequency: number, dataQuality: number): void {
-    this.validateOwner(ownerId);
+    this.validateOrganization(organizationId);
     this.simpleApply(new DatastreamUpdated(this.aggregateId, dataStreamId, name, reason, description, observedProperty,
         unitOfMeasurement, isPublic, isOpenData, isReusable, documentationUrl, dataLink, dataFrequency, dataQuality));
   }
 
-  deleteDataStream(ownerId: string, dataStreamId: string): void {
-    this.validateOwner(ownerId);
+  deleteDataStream(organizationId: string, dataStreamId: string): void {
+    this.validateOrganization(organizationId);
     this.simpleApply(new DatastreamDeleted(this.aggregateId, dataStreamId));
   }
 
-  update(ownerId: string, name: string, aim: string, description: string, manufacturer: string,
+  update(organizationId: string, name: string, aim: string, description: string, manufacturer: string,
          observationArea: Record<string, any>, documentationUrl: string, theme: string[],
-         typeName: string, typeDetails: Record<string, any>): void {
-    this.validateOwner(ownerId);
+         category: string, typeName: string, typeDetails: Record<string, any>): void {
+    this.validateOrganization(organizationId);
     this.simpleApply(new SensorUpdated(this.aggregateId, name, aim, description, manufacturer,
-        observationArea, documentationUrl, theme, typeName, typeDetails));
+        observationArea, documentationUrl, theme, category, typeName, typeDetails));
   }
 
-  transferOwnership(oldOwnerId: string, newOwnerId: string): void {
-    this.validateOwner(oldOwnerId);
-    if (this.state.ownerIds.includes(newOwnerId)) {
-      throw new IsAlreadyOwnerException(newOwnerId);
+  transferOwnership(oldOrganizationId: string, newOrganizationId: string): void {
+    this.validateOrganization(oldOrganizationId);
+    if (this.state.organizationIds.includes(newOrganizationId)) {
+      throw new IsAlreadyOwnerException(newOrganizationId);
     }
 
-    this.simpleApply(new SensorOwnershipTransferred(this.aggregateId, oldOwnerId, newOwnerId));
+    this.simpleApply(new SensorOwnershipTransferred(this.aggregateId, oldOrganizationId, newOrganizationId));
   }
 
-  shareOwnership(ownerId: string, newOwnerIds: string[]): void {
-    this.validateOwner(ownerId);
-    for (const newOwnerId of newOwnerIds) {
-      if (this.state.ownerIds.includes(newOwnerId)) {
-        throw new IsAlreadyOwnerException(newOwnerId);
-      }
+  shareOwnership(organizationId: string, newOrganizationId: string): void {
+    this.validateOrganization(organizationId);
+    if (this.state.organizationIds.includes(newOrganizationId)) {
+      throw new IsAlreadyOwnerException(newOrganizationId);
     }
 
-    this.simpleApply(new SensorOwnershipShared(this.aggregateId, newOwnerIds));
+    this.simpleApply(new SensorOwnershipShared(this.aggregateId, newOrganizationId));
   }
 
-  relocate(ownerId: string, longitude: number, latitude: number, height: number, baseObjectId: string): void {
-    this.validateOwner(ownerId);
-
+  relocate(organizationId: string, longitude: number, latitude: number, height: number, baseObjectId: string): void {
+    this.validateOrganization(organizationId);
     this.simpleApply(new SensorRelocated(this.aggregateId, longitude, latitude, height, baseObjectId));
   }
 
-  activate(ownerId: string): void {
-    this.validateOwner(ownerId);
+  activate(organizationId: string): void {
+    this.validateOrganization(organizationId);
     if (this.state.active) {
       throw new SensorActiveException(this.state.id);
     }
@@ -103,8 +102,8 @@ export class SensorAggregate extends Aggregate {
     this.simpleApply(new SensorActivated(this.aggregateId));
   }
 
-  deactivate(ownerId: string): void {
-    this.validateOwner(ownerId);
+  deactivate(organizationId: string): void {
+    this.validateOrganization(organizationId);
     if (!this.state.active) {
       throw new SensorInActiveException(this.state.id);
     }
@@ -112,14 +111,14 @@ export class SensorAggregate extends Aggregate {
     this.simpleApply(new SensorDeactivated(this.aggregateId));
   }
 
-  delete(ownerId: string): void {
-    this.validateOwner(ownerId);
+  delete(organizationId: string): void {
+    this.validateOrganization(organizationId);
     this.simpleApply(new SensorDeleted(this.aggregateId));
   }
 
   onSensorRegistered(eventMessage: EventMessage): void {
     const event: SensorRegistered = eventMessage.data as SensorRegistered;
-    const ownerIds = [event.ownerId];
+    const ownerIds = [event.organizationId];
     this.state = new SensorStateImpl(this.aggregateId, event.active, ownerIds);
   }
 
@@ -140,13 +139,13 @@ export class SensorAggregate extends Aggregate {
 
   onSensorOwnershipTransferred(eventMessage: EventMessage): void {
     const event: SensorOwnershipTransferred = eventMessage.data as SensorOwnershipTransferred;
-    this.state.ownerIds = this.state.ownerIds.filter((ownerId) => ownerId !== event.oldOwnerId);
-    this.state.ownerIds.push(event.newOwnerId);
+    this.state.organizationIds = this.state.organizationIds.filter((organizationId) => organizationId !== event.oldOrganizationId);
+    this.state.organizationIds.push(event.newOrganizationId);
   }
 
   onSensorOwnershipShared(eventMessage: EventMessage): void {
     const event: SensorOwnershipShared = eventMessage.data as SensorOwnershipShared;
-    this.state.ownerIds = this.state.ownerIds.concat(event.ownerIds);
+    this.state.organizationIds.push(event.organizationId);
   }
 
   onSensorRelocated(eventMessage: EventMessage): void {

@@ -4,23 +4,25 @@ import { AuthModule } from '../auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SensorSchema } from './data/sensor.model';
 import { UserService } from '../user/user.service';
-import { OwnerGateway } from './gateway/owner.gateway';
 import { SensorGateway } from './gateway/sensor.gateway';
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
-import { OwnerSchema } from './controller/model/owner.model';
-import { OwnerProcessor } from './processor/owner.processor';
 import { SensorProcessor } from './processor/sensor.processor';
-import { OwnerController } from './controller/owner.controller';
-import { OwnerEsListener } from './processor/owner.es.listener';
 import { SensorEsListener } from './processor/sensor.es.listener';
 import { SensorController } from './controller/sensor.controller';
-import { OwnerEsController } from './controller/owner.es.controller';
 import { EventStoreModule } from '../event-store/event-store.module';
+import { OrganizationGateway } from './gateway/organization.gateway';
 import { RetrieveSensorQueryHandler } from './handler/sensor.handler';
 import { SensorESController } from './controller/sensor.es.controller';
 import { RetrieveSensorsQueryHandler } from './handler/sensors.handler';
 import { CheckpointModule } from './service/checkpoint/checkpoint.module';
-import { RetrieveOwnerQueryHandler } from './handler/retrieve-owner.handler';
+import { OrganizationSchema } from './controller/model/organization.model';
+import { OrganizationProcessor } from './processor/organization.processor';
+import { OrganizationController } from './controller/organization.controller';
+import { OrganizationEsController } from './controller/organization.es.controller';
+import { OrganizationEsListener } from './processor/organization-es-listener.service';
+import { RetrieveOrganizationQueryHandler } from './handler/retrieve-organization.handler';
+import { RetrieveOrganizationsQueryHandler } from './handler/retrieve-organizations.handler';
+import { OrganizationsController } from './controller/organizations.controller';
 
 @Module({
     imports: [
@@ -29,27 +31,27 @@ import { RetrieveOwnerQueryHandler } from './handler/retrieve-owner.handler';
         CheckpointModule,
         EventStoreModule,
         MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
-        MongooseModule.forFeature([{name: 'Owner', schema: OwnerSchema}]),
         MongooseModule.forFeature([{name: 'Sensor', schema: SensorSchema}]),
-    ],
-    controllers: [
-        OwnerController,
+        MongooseModule.forFeature([{name: 'Organization', schema: OrganizationSchema}]),
+    ], controllers: [
         SensorController,
-        OwnerEsController,
         SensorESController,
-    ],
-    providers: [
+        OrganizationController,
+        OrganizationsController,
+        OrganizationEsController,
+    ], providers: [
         UserService,
-        OwnerGateway,
         SensorGateway,
         EventPublisher,
-        OwnerProcessor,
-        OwnerEsListener,
         SensorProcessor,
         SensorEsListener,
-        RetrieveOwnerQueryHandler,
+        OrganizationGateway,
+        OrganizationProcessor,
+        OrganizationEsListener,
         RetrieveSensorQueryHandler,
         RetrieveSensorsQueryHandler,
+        RetrieveOrganizationQueryHandler,
+        RetrieveOrganizationsQueryHandler,
     ],
 })
 

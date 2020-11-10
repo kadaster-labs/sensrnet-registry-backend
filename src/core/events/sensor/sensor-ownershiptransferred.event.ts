@@ -1,13 +1,12 @@
-import {SensorEvent} from './sensor.event';
+import { SensorEvent } from './sensor.event';
 
 export class SensorOwnershipTransferred extends SensorEvent {
+  public readonly oldOrganizationId: string;
+  public readonly newOrganizationId: string;
 
-  public readonly oldOwnerId: string;
-  public readonly newOwnerId: string;
-
-  constructor(sensorId: string, oldOwnerId: string, newOwnerId: string) {
+  constructor(sensorId: string, oldOrganizationId: string, newOrganizationId: string) {
     super(sensorId);
-    this.oldOwnerId = oldOwnerId;
-    this.newOwnerId = newOwnerId;
+    this.oldOrganizationId = oldOrganizationId;
+    this.newOrganizationId = newOrganizationId;
   }
 }

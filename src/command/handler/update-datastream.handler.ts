@@ -12,13 +12,12 @@ export class UpdateDataStreamCommandHandler implements ICommandHandler<UpdateDat
 
   async execute(command: UpdateDatastreamCommand): Promise<void> {
     const sensorAggregate = await this.repository.get(command.sensorId);
-
     if (!sensorAggregate) {
       throw new UnknowSensorException(command.sensorId);
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.updateDataStream(command.ownerId, command.dataStreamId, command.name, command.reason, command.description,
+    aggregate.updateDataStream(command.organizationId, command.dataStreamId, command.name, command.reason, command.description,
         command.observedProperty, command.unitOfMeasurement, command.isPublic, command.isOpenData, command.isReusable,
         command.documentationUrl, command.dataLink, command.dataFrequency, command.dataQuality);
     aggregate.commit();

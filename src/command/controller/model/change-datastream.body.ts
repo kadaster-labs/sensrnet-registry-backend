@@ -78,7 +78,7 @@ export abstract class ChangeDatastreamBody {
     @ApiProperty({
         type: String,
         required: false,
-        description: 'A link to sensor documentation.',
+        description: 'A link to the datastream documentation.',
     })
     readonly documentationUrl: string;
 

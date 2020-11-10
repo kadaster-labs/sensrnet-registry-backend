@@ -3,13 +3,13 @@ import { model, Schema, Document, Types, Model } from 'mongoose';
 export interface ISensor extends Document {
     _id: string;
     nodeId: string;
-    ownerIds?: Types.Array<string>;
+    organizationIds?: Types.Array<string>;
     name?: string;
     location: {
         type: 'Point',
         coordinates: Types.Array<number>,
     };
-    baseObjectId: string;
+    baseObjectId?: string;
     dataStreams?: Types.Array<any>;
     aim?: string;
     description?: string;
@@ -18,20 +18,21 @@ export interface ISensor extends Document {
     observationArea?: Record<string, any>;
     documentationUrl?: string;
     theme?: Types.Array<string>;
-    typeName: Types.Array<string>;
+    category: string;
+    typeName: string;
     typeDetails?: Record<string, any>;
 }
 
 export const SensorSchema = new Schema({
     _id: { type: String, required: true },
     nodeId: { type: String, required: true },
-    ownerIds: { type: [String], required: false },
+    organizationIds: { type: [String], required: false },
     name: { type: String, required: false },
     location: {
         type: { type: String, enum: ['Point'], required: true },
         coordinates: { type: [Number], required: true },
     },
-    baseObjectId: { type: String, required: true },
+    baseObjectId: { type: String, required: false },
     dataStreams: { type: [], required: false },
     aim: { type: String, required: false },
     description: { type: String, required: false },
@@ -40,11 +41,12 @@ export const SensorSchema = new Schema({
     observationArea: { type: Object, required: false },
     documentationUrl: { type: String, required: false },
     theme: { type: [String], required: false },
-    typeName: { type: [String], required: true },
+    category: { type: String, required: true },
+    typeName: { type: String, required: true },
     typeDetails: { type: Object, required: false },
 });
 
 SensorSchema.index({ location: '2dsphere' });
-SensorSchema.index({ ownerIds: 1 });
+SensorSchema.index({ organizationIds: 1 });
 
 export const Sensor = model<ISensor, Model<ISensor>>('Sensor', SensorSchema);

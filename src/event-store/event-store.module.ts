@@ -8,8 +8,7 @@ import { EventStoreConfiguration } from './event-store.configuration';
     EventStore,
     EventStorePublisher,
     EventStoreConfiguration,
-  ],
-  exports: [
+  ], exports: [
     EventStore,
     EventStorePublisher,
   ],

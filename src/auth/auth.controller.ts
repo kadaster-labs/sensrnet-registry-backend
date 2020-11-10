@@ -8,15 +8,14 @@ import { RefreshJwtAuthGuard } from './refresh-jwt-auth.guard';
 import { Controller, Req, Res, Post, UseGuards, Body, UnauthorizedException } from '@nestjs/common';
 
 @ApiTags('Authentication')
-@Controller()
+@Controller('auth')
 export class AuthController {
-
     constructor(
         private authService: AuthService,
     ) {}
 
     @UseGuards(LocalAuthGuard)
-    @Post('auth/login')
+    @Post('login')
     async login(@Body() body: AuthenticateBody, @Req() req: Request, @Res() res: Response): Promise<Response> {
         const {
             access_token,
@@ -35,7 +34,7 @@ export class AuthController {
         return res.send({ access_token, expires_in: access_token_expires_in });
     }
 
-    @Post('auth/logout')
+    @Post('logout')
     async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
         res.cookie('Authentication', '', {
           httpOnly: true,
@@ -48,7 +47,7 @@ export class AuthController {
     }
 
     @UseGuards(new RefreshJwtAuthGuard(RefreshJwtStrategy))
-    @Post('auth/refresh')
+    @Post('refresh')
     async refresh(@Req() req: Request): Promise<Record<string, any>> {
         if (req.cookies && req.cookies.Authentication) {
             const {

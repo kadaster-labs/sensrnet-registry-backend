@@ -1,20 +1,19 @@
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
+import { ISensor } from '../data/sensor.model';
 import { jwtConstants } from '../../auth/constants';
 import { AuthService } from '../../auth/auth.service';
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket } from '@nestjs/websockets';
 import { AccessJwtStrategy } from '../../auth/access-jwt.strategy';
-import { ISensor } from '../data/sensor.model';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket } from '@nestjs/websockets';
 
 @WebSocketGateway({
     namespace: 'sensor',
     path: '/api/socket.io',
 })
 export class SensorGateway implements OnGatewayConnection {
-    @WebSocketServer()
-    server: Server;
+    @WebSocketServer() server: Server;
 
-    private logger: Logger = new Logger('SensorGateway');
+    private logger: Logger = new Logger(this.constructor.name);
 
     constructor(
         private authService: AuthService,
@@ -22,7 +21,7 @@ export class SensorGateway implements OnGatewayConnection {
     ) {}
 
     async handleConnection(@ConnectedSocket() client: Socket): Promise<void> {
-        this.logger.log(`Client connected: ${client.id}`);
+        this.logger.log(`Client connected: ${client.id}.`);
 
         if (jwtConstants.enabled) {
             const authHeader: string = client.handshake.headers.authorization;
@@ -32,7 +31,7 @@ export class SensorGateway implements OnGatewayConnection {
                 const decodedToken = await this.authService.verifyToken(authToken);
                 const userInfo = await this.accessJwtStrategy.validate(decodedToken);
 
-                client.join(userInfo.ownerId);
+                client.join(userInfo.organizationId);
             } catch {
                 client.disconnect(true);
                 this.logger.log('Failed to authenticate websocket client.');
@@ -41,8 +40,8 @@ export class SensorGateway implements OnGatewayConnection {
     }
 
     emit(event: string, updatedSensor: ISensor): void {
-        for (const ownerId of updatedSensor.ownerIds) {
-            this.server.to(ownerId).emit(event, updatedSensor);
+        for (const organizationId of updatedSensor.organizationIds) {
+            this.server.to(organizationId).emit(event, updatedSensor);
         }
     }
 }
