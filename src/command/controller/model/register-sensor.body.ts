@@ -1,18 +1,18 @@
-import { Theme } from './theme.body';
 import { Type } from 'class-transformer';
 import { Category } from './category.body';
 import { ApiProperty } from '@nestjs/swagger';
 import { LocationBody } from './location.body';
+import { ChangeSensorBody } from './change-sensor.body';
 import { CreateDatastreamBody } from './create-datastream.body';
-import { IsString, IsNotEmpty, IsBoolean, IsObject, IsArray, IsUrl, ValidateNested, IsOptional, ValidateIf } from 'class-validator';
+import { IsString, IsNotEmpty, IsBoolean, IsObject, IsArray, ValidateNested, IsOptional } from 'class-validator';
 
-export class RegisterSensorBody {
+export class RegisterSensorBody extends ChangeSensorBody {
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   @ApiProperty({
     type: String,
-    required: false,
-    description: 'The name of the sensor.',
+    required: true,
+    description: 'The sensor name.',
   })
   readonly name: string;
 
@@ -35,33 +35,6 @@ export class RegisterSensorBody {
   @ValidateNested({ each: true })
   readonly dataStreams: CreateDatastreamBody[];
 
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    type: String,
-    required: false,
-    description: 'The sensor goal.',
-  })
-  readonly aim: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    type: String,
-    required: false,
-    description: 'A sensor description.',
-  })
-  readonly description: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    type: String,
-    required: false,
-    description: 'Name of the sensor manufacturer.',
-  })
-  readonly manufacturer: string;
-
   @IsBoolean()
   @IsOptional()
   @ApiProperty({
@@ -72,41 +45,12 @@ export class RegisterSensorBody {
   })
   readonly active: boolean;
 
-  @IsObject()
-  @IsOptional()
-  @ApiProperty({
-    type: Object,
-    required: false,
-    description: 'GeoJSON of a drawn area (https://openlayers.org/en/latest/examples/draw-freehand.html?q=freehand).',
-  })
-  readonly observationArea: Record<string, any>;
-
-  @ValidateIf(e => e.documentationUrl !== '')
-  @IsUrl()
-  @IsOptional()
-  @ApiProperty({
-      type: String,
-      required: false,
-      description: 'A link to sensor documentation.',
-  })
-  readonly documentationUrl: string;
-
-  @IsArray()
-  @IsOptional()
-  @ApiProperty({
-      type: String,
-      isArray: true,
-      required: false,
-      enum: Theme,
-      description: 'The sensor theme.',
-  })
-  readonly theme: string[];
-
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     type: String,
     enum: Category,
+    required: true,
     description: 'The sensor category.',
   })
   readonly category: string;
@@ -115,16 +59,8 @@ export class RegisterSensorBody {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
+    required: true,
     description: 'The type of sensor.',
   })
   readonly typeName: string;
-
-  @IsObject()
-  @IsOptional()
-  @ApiProperty({
-    type: Object,
-    required: false,
-    description: 'Type-specific characteristics of the sensor.',
-  })
-  readonly typeDetails: Record<string, any>;
 }

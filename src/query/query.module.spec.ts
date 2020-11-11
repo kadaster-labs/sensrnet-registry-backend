@@ -95,14 +95,14 @@ describe('Query (integration)', () => {
         const ownerQueryHandler: RetrieveOrganizationQueryHandler = moduleRef.get(RetrieveOrganizationQueryHandler);
         jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RetrieveOrganizationQuery) => ownerQueryHandler.execute(c));
 
-        let owners;
+        let organizations;
         try {
-            owners = await commandBus.execute(new RetrieveOrganizationQuery('test-id'));
+            organizations = await commandBus.execute(new RetrieveOrganizationQuery('test-id'));
         } catch {
-            owners = [];
+            organizations = null;
         }
 
-        expect(owners).toHaveLength(1);
+        expect(organizations).toBeDefined();
     });
 
     it(`Should retrieve a sensor`, async () => {

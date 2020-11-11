@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional, IsUrl, ValidateIf } from 'class-validator';
+import { IsNotEmpty, IsUrl, ValidateIf } from 'class-validator';
+import { ChangeOrganizationBody } from './change-organization.body';
 
-export class RegisterOrganizationBody {
+export class RegisterOrganizationBody extends ChangeOrganizationBody {
   @ValidateIf(e => e.website !== '')
   @IsUrl()
   @IsNotEmpty()
@@ -11,31 +12,4 @@ export class RegisterOrganizationBody {
     description: 'The organization website.',
   })
   readonly website: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    type: String,
-    required: false,
-    description: 'Name of the contact person.',
-  })
-  readonly contactName: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    type: String,
-    required: false,
-    description: 'Email of the contact person.',
-  })
-  readonly contactEmail: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    type: String,
-    required: false,
-    description: 'Phone number of the contact person.',
-  })
-  readonly contactPhone: string;
 }
