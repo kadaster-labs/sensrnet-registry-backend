@@ -4,7 +4,7 @@ import { ISensor } from '../data/sensor.model';
 import { jwtConstants } from '../../auth/constants';
 import { AuthService } from '../../auth/auth.service';
 import { AccessJwtStrategy } from '../../auth/access-jwt.strategy';
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket } from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage, MessageBody } from '@nestjs/websockets';
 
 @WebSocketGateway({
     namespace: 'sensor',
@@ -20,6 +20,13 @@ export class SensorGateway implements OnGatewayConnection {
         private accessJwtStrategy: AccessJwtStrategy,
     ) {}
 
+    setupRoom(client: Socket, organizationId?: string): void {
+        client.leaveAll();
+        if (organizationId) {
+            client.join(organizationId);
+        }
+    }
+
     async handleConnection(@ConnectedSocket() client: Socket): Promise<void> {
         this.logger.log(`Client connected: ${client.id}.`);
 
@@ -31,7 +38,7 @@ export class SensorGateway implements OnGatewayConnection {
                 const decodedToken = await this.authService.verifyToken(authToken);
                 const userInfo = await this.accessJwtStrategy.validate(decodedToken);
 
-                client.join(userInfo.organizationId);
+                this.setupRoom(client, userInfo.organizationId);
             } catch {
                 client.disconnect(true);
                 this.logger.log('Failed to authenticate websocket client.');
@@ -40,8 +47,13 @@ export class SensorGateway implements OnGatewayConnection {
     }
 
     emit(event: string, updatedSensor: ISensor): void {
-        for (const organizationId of updatedSensor.organizationIds) {
-            this.server.to(organizationId).emit(event, updatedSensor);
+        for (const organization of updatedSensor.organizations) {
+            this.server.to(organization.id).emit(event, updatedSensor);
         }
+    }
+
+    @SubscribeMessage('OrganizationUpdated')
+    handleEvent(@ConnectedSocket() client: Socket, @MessageBody() data: Record<string, string>): void {
+        this.setupRoom(client, data.organizationId);
     }
 }

@@ -58,7 +58,7 @@ export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensor
                 if (retrieveSensorsQuery.requestOrganizationId) {
                     sensorFilter = {
                         ...sensorFilter,
-                        organizationIds: retrieveSensorsQuery.requestOrganizationId,
+                        'organizations.id': retrieveSensorsQuery.requestOrganizationId,
                     };
                 } else {
                     sensorFilter = undefined;
@@ -67,7 +67,7 @@ export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensor
         } else if (retrieveSensorsQuery.organizationId) {
             sensorFilter = {
                 ...sensorFilter,
-                organizationIds: retrieveSensorsQuery.organizationId,
+                'organizations.id': retrieveSensorsQuery.organizationId,
             };
         }
 

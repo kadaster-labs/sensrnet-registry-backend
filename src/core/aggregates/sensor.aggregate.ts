@@ -118,8 +118,8 @@ export class SensorAggregate extends Aggregate {
 
   onSensorRegistered(eventMessage: EventMessage): void {
     const event: SensorRegistered = eventMessage.data as SensorRegistered;
-    const ownerIds = [event.organizationId];
-    this.state = new SensorStateImpl(this.aggregateId, event.active, ownerIds);
+    const organizationIds = [event.organizationId];
+    this.state = new SensorStateImpl(this.aggregateId, event.active, organizationIds);
   }
 
   onDatastreamAdded(eventMessage: EventMessage): void {

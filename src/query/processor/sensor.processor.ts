@@ -74,7 +74,7 @@ export class SensorProcessor extends AbstractProcessor {
         coordinates: [event.longitude, event.latitude, event.height],
       },
       active: event.active,
-      organizationIds: event.organizationId ? [event.organizationId] : undefined,
+      organizations: event.organizationId ? [{id: event.organizationId, role: 'owner'}] : [],
       baseObjectId: event.baseObjectId,
       name: event.name,
       aim: event.aim,
@@ -163,7 +163,7 @@ export class SensorProcessor extends AbstractProcessor {
   async processOwnershipShared(event: SensorOwnershipShared): Promise<ISensor> {
     const updateSensorData = {
       $addToSet: {
-        organizationIds: event.organizationId,
+        organizations: [{id: event.organizationId, role: 'owner'}],
       },
     };
 
@@ -172,12 +172,12 @@ export class SensorProcessor extends AbstractProcessor {
 
   async processOwnershipTransferred(event: SensorOwnershipTransferred): Promise<ISensor> {
     const filterData = {
-      _id: event.sensorId,
-      organizationIds: event.oldOrganizationId,
+      '_id': event.sensorId,
+      'organizations.id': event.oldOrganizationId,
     };
     const updateSensorData = {
       $set: {
-        'ownerIds.$': event.newOrganizationId,
+        'organizations.$.id': event.newOrganizationId,
       },
     };
 

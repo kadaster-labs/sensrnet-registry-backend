@@ -3,7 +3,7 @@ import { model, Schema, Document, Types, Model } from 'mongoose';
 export interface ISensor extends Document {
     _id: string;
     nodeId: string;
-    organizationIds?: Types.Array<string>;
+    organizations?: Types.Array<Record<string, string>>;
     name?: string;
     location: {
         type: 'Point',
@@ -26,7 +26,7 @@ export interface ISensor extends Document {
 export const SensorSchema = new Schema({
     _id: { type: String, required: true },
     nodeId: { type: String, required: true },
-    organizationIds: { type: [String], required: false },
+    organizations: { type: [], required: true },
     name: { type: String, required: false },
     location: {
         type: { type: String, enum: ['Point'], required: true },
@@ -47,6 +47,6 @@ export const SensorSchema = new Schema({
 });
 
 SensorSchema.index({ location: '2dsphere' });
-SensorSchema.index({ organizationIds: 1 });
+SensorSchema.index({ 'organizations.id': 1 });
 
 export const Sensor = model<ISensor, Model<ISensor>>('Sensor', SensorSchema);

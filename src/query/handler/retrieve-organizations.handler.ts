@@ -6,11 +6,22 @@ import { RetrieveOrganizationsQuery } from '../model/retrieve-organizations.quer
 
 @QueryHandler(RetrieveOrganizationsQuery)
 export class RetrieveOrganizationsQueryHandler implements IQueryHandler<RetrieveOrganizationsQuery> {
+    private limit = 50;
+
     constructor(
         @InjectModel('Organization') private model: Model<Organization>,
     ) {}
 
     async execute(query: RetrieveOrganizationsQuery): Promise<any> {
-        return this.model.find();
+        let fields = {};
+        if (query.website) {
+            fields = {
+                website: {
+                    $regex: `^${query.website}`,
+                }, ...fields,
+            };
+        }
+
+        return this.model.find(fields, {}, {limit: this.limit});
     }
 }
