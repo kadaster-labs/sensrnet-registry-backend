@@ -1,25 +1,43 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: mongo
   name: mongo
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      app: mongo
-  strategy: {}
   template:
-    metadata:
-      labels:
-        app: mongo
     spec:
       containers:
-      - image: mongo
-        name: mongo
+      - name: mongo
+        image: mongo:4.4.1
         ports:
-        - containerPort: 27017
-        resources: {}
-      restartPolicy: Always
-status: {}
+        - name: mongo
+          containerPort: 27017
+        livenessProbe:
+          exec:
+            command:
+              - mongo
+              - --eval
+              - "db.adminCommand('ping')"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 6
+        readinessProbe:
+          exec:
+            command:
+              - mongo
+              - --eval
+              - "db.adminCommand('ping')"
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 6
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"

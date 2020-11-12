@@ -3,15 +3,9 @@ kind: StatefulSet
 metadata:
   name: eventstore-cluster
 spec:
-  selector:
-    matchLabels:
-      app: eventstore-cluster 
   serviceName: eventstore-cluster
   replicas: 1 # Needs to be the same as EVENTSTORE_CLUSTER_SIZE
   template:
-    metadata:
-      labels:
-        app: eventstore-cluster 
     spec:
       containers:
       - name: eventstore
@@ -40,24 +34,31 @@ spec:
             fieldRef:
               fieldPath: status.podIP
         ports: 
-        - containerPort: 2113
-          name: eventstore-web
-        - containerPort: 1113
-          name: eventstore-tcp
-        - containerPort: 2112
-          name: gossip
+        - name: eventstore-web
+          containerPort: 2113
+        - name: eventstore-tcp
+          containerPort: 1113
+        - name: gossip
+          containerPort: 2112
         volumeMounts:
         - name: eventstore-cluster-data
           mountPath: /var/lib/eventstore
+        resources:
+          limits:
+            cpu: 100m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
         livenessProbe:
           httpGet:
             path: /
-            port: 2113
+            port: eventstore-web
           initialDelaySeconds: 30
           periodSeconds: 15
         readinessProbe:
           httpGet:
             path: /
-            port: 2113
+            port: eventstore-web
           initialDelaySeconds: 5
           periodSeconds: 5

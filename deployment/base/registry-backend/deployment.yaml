@@ -1,26 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: registry-backend
   name: registry-backend
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      app: registry-backend
-  strategy: {}
   template:
-    metadata:
-      labels:
-        app: registry-backend
     spec:
       containers:
-      - env:
+      - name: registry-backend
+        image: sensrnetregistry.azurecr.io/sensrnet/registry-backend:latest
+        env:
         - name: EVENT_STORE_HOST
           value: eventstore-cluster
         - name: EVENT_STORE_PORT
-          value: "1113"
+          value: eventstore-tcp
         - name: JWT_SECRET
           value: example-secret-key
         - name: JWT_ACCESS_EXPIRES_IN
@@ -32,21 +25,34 @@ spec:
         - name: MONGO_HOST
           value: mongo
         - name: MONGO_PORT
-          value: "27017"
+          value: mongo
         - name: NODE_ID
           value: node_1
-        - name: PORT
-          value: "3000"
-        image: sensrnetregistry.azurecr.io/sensrnet/registry-backend:latest
-        name: registry-backend
         ports:
-        - containerPort: 3000
-        resources: {}
+        - name: http
+          containerPort: 3000
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "256Mi"
+          limits:
+            cpu: "1"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
       initContainers:
         - name: check-mongo-ready
-          image: mongo
+          image: mongo:4.4.1
           command: ['sh', '-c', 
             'until mongo --host mongo:27017 --eval "printjson(db.serverStatus())"; 
             do echo waiting for mongo; sleep 10; done;']
-      restartPolicy: Always
-status: {}
