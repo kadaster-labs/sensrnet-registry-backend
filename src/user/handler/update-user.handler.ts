@@ -3,11 +3,9 @@ import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 import { UpdateUserCommand } from '../command/update-user.command';
 import { validateOrganization } from '../../command/handler/util/organization.utils';
 import { OrganizationRepository } from '../../core/repositories/organization-repository.service';
-import { Logger } from '@nestjs/common';
 
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserCommandHandler implements ICommandHandler<UpdateUserCommand> {
-  private logger = new Logger();
 
   constructor(
       private readonly usersService: UserService,

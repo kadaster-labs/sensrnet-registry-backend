@@ -18,20 +18,18 @@ export class AuthController {
     @Post('login')
     async login(@Body() body: AuthenticateBody, @Req() req: Request, @Res() res: Response): Promise<Response> {
         const {
-            access_token,
-            refresh_token,
-            access_token_expires_in,
-            refresh_token_expires_in,
+            accessToken,
+            refreshToken,
         } = await this.authService.login(req.user);
 
-        res.cookie('Authentication', refresh_token, {
+        res.cookie('Authentication', refreshToken, {
           httpOnly: true,
-          maxAge: refresh_token_expires_in,
+          maxAge: this.authService.refreshTokenExpiresIn,
           path: '/api/auth/refresh',
           sameSite: 'strict',
         });
 
-        return res.send({ access_token, expires_in: access_token_expires_in });
+        return res.send({ accessToken });
     }
 
     @Post('logout')
@@ -48,14 +46,9 @@ export class AuthController {
 
     @UseGuards(new RefreshJwtAuthGuard(RefreshJwtStrategy))
     @Post('refresh')
-    async refresh(@Req() req: Request): Promise<Record<string, any>> {
+    async refresh(@Req() req: Request): Promise<Record<string, string>> {
         if (req.cookies && req.cookies.Authentication) {
-            const {
-                access_token,
-                access_token_expires_in,
-            } = await this.authService.refresh(req.user, req.cookies.Authentication);
-
-            return { access_token, expires_in: access_token_expires_in };
+            return await this.authService.refresh(req.user, req.cookies.Authentication);
         } else {
             throw new UnauthorizedException();
         }

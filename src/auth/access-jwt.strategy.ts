@@ -17,6 +17,6 @@ export class AccessJwtStrategy extends PassportStrategy(Strategy, 'access') {
         if (payload.type !== 'access') {
             throw new UnauthorizedException();
         }
-        return { organizationId: payload.sub, userId: payload.userId, role: payload.role };
+        return { userId: payload.sub, organizationId: payload.organizationId, role: payload.role };
     }
 }

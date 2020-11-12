@@ -4,8 +4,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
-    private readonly accessTokenExpiresIn: number;
-    private readonly refreshTokenExpiresIn: number;
+    public readonly accessTokenExpiresIn: number;
+    public readonly refreshTokenExpiresIn: number;
 
     constructor(
         private jwtService: JwtService,
@@ -62,7 +62,7 @@ export class AuthService {
         return userDetails;
     }
 
-    async refresh(reqUser: Record<string, any>, refreshToken: string): Promise<Record<string, any>> {
+    async refresh(reqUser: Record<string, any>, refreshToken: string): Promise<Record<string, string>> {
         const user = await this.usersService.findOne(reqUser.userId);
 
         let refreshTokenMatches;
@@ -91,12 +91,9 @@ export class AuthService {
         }
 
         if (refreshTokenMatches) {
-            const accessPayload = { sub: user.organizationId, userId: user._id, role: user.role, type: 'access' };
-            const accessToken = this.jwtService.sign(accessPayload, { expiresIn: this.accessTokenExpiresIn });
-            return {
-                access_token: accessToken,
-                access_token_expires_in: this.accessTokenExpiresIn,
-            };
+            const accessPayload = { sub: user._id, organizationId: user.organizationId, role: user.role, type: 'access' };
+            const accessToken = this.jwtService.sign(accessPayload, {expiresIn: this.accessTokenExpiresIn});
+            return { accessToken };
         } else {
             throw new UnauthorizedException();
         }
@@ -107,12 +104,9 @@ export class AuthService {
         const refreshToken = this.jwtService.sign(refreshPayload, { expiresIn: this.refreshTokenExpiresIn });
         await this.usersService.updateOne(user._id, { refreshToken });
 
-        const accessPayload = { sub: user.organizationId, userId: user._id, role: user.role, type: 'access' };
+        const accessPayload = { sub: user._id, organizationId: user.organizationId, role: user.role, type: 'access' };
         const accessToken = this.jwtService.sign(accessPayload, { expiresIn: this.accessTokenExpiresIn });
 
-        return {
-            access_token: accessToken, access_token_expires_in: this.accessTokenExpiresIn,
-            refresh_token: refreshToken, refresh_token_expires_in: this.refreshTokenExpiresIn,
-        };
+        return { accessToken, refreshToken };
     }
 }
