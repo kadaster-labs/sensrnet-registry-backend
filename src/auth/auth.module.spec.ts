@@ -94,7 +94,7 @@ describe('Authentication (integration)', () => {
         }
 
         expect(result).toBeDefined();
-        expect(result.access_token).toBeDefined();
+        expect(result.accessToken).toBeDefined();
     });
 
     it(`Should not refresh user`, async () => {
