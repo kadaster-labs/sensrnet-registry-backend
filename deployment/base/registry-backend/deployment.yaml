@@ -15,7 +15,10 @@ spec:
         - name: EVENT_STORE_PORT
           value: eventstore-tcp
         - name: JWT_SECRET
-          value: example-secret-key
+          valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: jwt-secret
         - name: JWT_ACCESS_EXPIRES_IN
           value: "86400"
         - name: JWT_REFRESH_EXPIRES_IN
