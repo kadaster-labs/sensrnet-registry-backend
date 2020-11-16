@@ -7,7 +7,7 @@ export class OrganizationsParams {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'Website to filter.',
+    description: 'Filter to apply to name.',
   })
-  readonly website: string;
+  readonly name: string;
 }

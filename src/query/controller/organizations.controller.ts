@@ -17,6 +17,6 @@ export class OrganizationsController {
   @ApiResponse({ status: 200, description: 'Organizations retrieved' })
   @ApiResponse({ status: 400, description: 'Organizations retrieval failed' })
   async retrieveOrganizations(@Query() organizationsParams: OrganizationsParams): Promise<any> {
-    return await this.queryBus.execute(new RetrieveOrganizationsQuery(organizationsParams.website));
+    return await this.queryBus.execute(new RetrieveOrganizationsQuery(organizationsParams.name));
   }
 }

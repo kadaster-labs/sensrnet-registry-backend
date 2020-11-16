@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID, IsOptional } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 
 export class UpdateUserBody {
-    @IsUUID(4)
+    @IsString()
     @IsOptional()
     @ApiProperty({
         type: String,

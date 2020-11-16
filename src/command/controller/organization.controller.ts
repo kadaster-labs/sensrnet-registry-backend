@@ -25,7 +25,7 @@ export class OrganizationController {
   @ApiResponse({ status: 200, description: 'Organization registered' })
   @ApiResponse({ status: 400, description: 'Organization registration failed' })
   async registerOrganization(@Body() registerOrganizationBody: RegisterOrganizationBody): Promise<Record<string, any>> {
-    const organizationId = v4();
+    const organizationId = registerOrganizationBody.name;
 
     await this.commandBus.execute(new RegisterOrganizationCommand(organizationId, registerOrganizationBody.website,
         registerOrganizationBody.contactName, registerOrganizationBody.contactEmail, registerOrganizationBody.contactPhone));

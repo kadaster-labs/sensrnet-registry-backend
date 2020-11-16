@@ -33,7 +33,7 @@ export class OrganizationEsListener extends AbstractEsListener {
                         const event: OrganizationEvent = plainToClass(organizationEventType.getType(eventMessage.eventType),
                             eventMessage.data as OrganizationEvent);
                         try {
-                            await this.organizationProcessor.process(event);
+                            await this.organizationProcessor.process(event, true);
                             await callback();
                         } catch {
                             await callback();
@@ -43,7 +43,7 @@ export class OrganizationEsListener extends AbstractEsListener {
                     const event: OrganizationEvent = plainToClass(organizationEventType.getType(eventMessage.eventType),
                         eventMessage.data as OrganizationEvent);
                     try {
-                        await this.organizationProcessor.process(event);
+                        await this.organizationProcessor.process(event, false);
                         await callback();
                     } catch {
                         await callback();

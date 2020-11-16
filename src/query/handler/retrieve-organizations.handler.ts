@@ -14,10 +14,13 @@ export class RetrieveOrganizationsQueryHandler implements IQueryHandler<Retrieve
 
     async execute(query: RetrieveOrganizationsQuery): Promise<any> {
         let fields = {};
-        if (query.website) {
+        fields = {
+            originSync: false, ...fields,
+        };
+        if (query.name) {
             fields = {
-                website: {
-                    $regex: `^${query.website}`,
+                _id: {
+                    $regex: `^${query.name}`,
                 }, ...fields,
             };
         }

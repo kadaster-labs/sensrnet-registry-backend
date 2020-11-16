@@ -1,7 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, ValidateIf, IsUrl } from 'class-validator';
 
 export class ChangeOrganizationBody {
+    @ValidateIf(e => e.website !== '')
+    @IsUrl()
+    @IsOptional()
+    @ApiProperty({
+        type: String,
+        required: false,
+        description: 'The organization website.',
+    })
+    readonly website: string;
+
     @IsString()
     @IsOptional()
     @ApiProperty({

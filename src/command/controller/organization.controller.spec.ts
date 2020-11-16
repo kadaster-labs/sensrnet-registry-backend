@@ -5,6 +5,7 @@ import { OrganizationController } from './organization.controller';
 import { RegisterOrganizationBody } from './model/register-organization.body';
 
 const testOrganization = {
+  name: 'test-org',
   website: 'test-website',
   contactName: 'test-name',
   contactEmail: 'test-email',

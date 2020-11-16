@@ -20,10 +20,10 @@ export class OrganizationProcessor extends AbstractProcessor {
     super(eventStore);
   }
 
-  async process(event: OrganizationEvent): Promise<void> {
+  async process(event: OrganizationEvent, originSync: boolean): Promise<void> {
     let result;
     if (event instanceof OrganizationRegistered) {
-      await this.processCreated(event);
+      await this.processCreated(event, originSync);
       result = event;
     } else if (event instanceof OrganizationUpdated) {
       await this.processUpdated(event);
@@ -38,10 +38,11 @@ export class OrganizationProcessor extends AbstractProcessor {
     }
   }
 
-  async processCreated(event: OrganizationRegistered): Promise<void> {
+  async processCreated(event: OrganizationRegistered, originSync: boolean): Promise<void> {
     const organizationInstance = new this.model({
       _id: event.aggregateId,
       website: event.website,
+      originSync: !!originSync,
       contactName: event.contactName,
       contactEmail: event.contactEmail,
       contactPhone: event.contactPhone,

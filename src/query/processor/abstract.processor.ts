@@ -24,5 +24,5 @@ export abstract class AbstractProcessor {
         this.logger.error(`Error while updating projection for ${event.aggregateId}.`);
     }
 
-    abstract process(event: Event): Promise<void>;
+    abstract process(event: Event, originSync: boolean): Promise<void>;
 }
