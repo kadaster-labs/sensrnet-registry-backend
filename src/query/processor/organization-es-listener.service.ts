@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { NODE_ID } from '../../event-store/event';
 import { OrganizationProcessor } from './organization.processor';
 import { organizationEventType } from '../../core/events/organization';
 import { AbstractEsListener } from './abstract.es.listener';
@@ -25,29 +24,14 @@ export class OrganizationEsListener extends AbstractEsListener {
                 const offset = eventMessage.positionEventNumber;
                 const callback = () => this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
 
-                if (eventMessage.metadata && eventMessage.metadata.originSync) {
-                    if (!eventMessage.data || eventMessage.data.nodeId === NODE_ID) {
-                        this.logger.debug('Not implemented: Handle sync event of current node.');
-                        await callback();
-                    } else {
-                        const event: OrganizationEvent = plainToClass(organizationEventType.getType(eventMessage.eventType),
-                            eventMessage.data as OrganizationEvent);
-                        try {
-                            await this.organizationProcessor.process(event, true);
-                            await callback();
-                        } catch {
-                            await callback();
-                        }
-                    }
-                } else {
-                    const event: OrganizationEvent = plainToClass(organizationEventType.getType(eventMessage.eventType),
-                        eventMessage.data as OrganizationEvent);
-                    try {
-                        await this.organizationProcessor.process(event, false);
-                        await callback();
-                    } catch {
-                        await callback();
-                    }
+                const originSync = eventMessage.metadata && eventMessage.metadata.originSync;
+                const event: OrganizationEvent = plainToClass(organizationEventType.getType(eventMessage.eventType),
+                    eventMessage.data as OrganizationEvent);
+                try {
+                    await this.organizationProcessor.process(event, originSync);
+                    await callback();
+                } catch {
+                    await callback();
                 }
             };
 

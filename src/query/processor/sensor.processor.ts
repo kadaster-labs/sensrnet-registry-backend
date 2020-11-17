@@ -68,7 +68,6 @@ export class SensorProcessor extends AbstractProcessor {
   async processRegistered(event: SensorRegistered): Promise<ISensor> {
     const sensorData = {
       _id: event.sensorId,
-      nodeId: event.nodeId,
       location: {
         type: 'Point',
         coordinates: [event.longitude, event.latitude, event.height],

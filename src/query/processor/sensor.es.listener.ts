@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { NODE_ID } from '../../event-store/event';
 import { SensorProcessor } from './sensor.processor';
 import { sensorEventType } from '../../core/events/sensor';
 import { AbstractEsListener } from './abstract.es.listener';
@@ -26,29 +25,13 @@ export class SensorEsListener  extends AbstractEsListener {
                 const offset = eventMessage.positionEventNumber;
                 const callback = () => this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
 
-                if (eventMessage.metadata && eventMessage.metadata.originSync) {
-                    if (!eventMessage.data || eventMessage.data.nodeId === NODE_ID) {
-                        this.logger.debug('Not implemented: Handle sync event of current node.');
-                        await callback();
-                    } else {
-                        const event: SensorEvent = plainToClass(sensorEventType.getType(eventMessage.eventType),
-                            eventMessage.data as SensorEvent);
-                        try {
-                            await this.sensorProcessor.process(event);
-                            await callback();
-                        } catch {
-                            await callback();
-                        }
-                    }
-                } else {
-                    const event: SensorEvent = plainToClass(sensorEventType.getType(eventMessage.eventType),
-                        eventMessage.data as SensorEvent);
-                    try {
-                        await this.sensorProcessor.process(event);
-                        await callback();
-                    } catch {
-                        await callback();
-                    }
+                const event: SensorEvent = plainToClass(sensorEventType.getType(eventMessage.eventType),
+                    eventMessage.data as SensorEvent);
+                try {
+                    await this.sensorProcessor.process(event);
+                    await callback();
+                } catch {
+                    await callback();
                 }
             };
 

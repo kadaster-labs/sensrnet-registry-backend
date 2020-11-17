@@ -33,8 +33,6 @@ spec:
           value: mongo
         - name: MONGO_PORT
           value: "27017"
-        - name: NODE_ID
-          value: node_1
         - name: PORT
           value: "3000"
         image: sensrnetregistry.azurecr.io/sensrnet/registry-backend:latest
@@ -45,8 +43,8 @@ spec:
       initContainers:
         - name: check-mongo-ready
           image: mongo
-          command: ['sh', '-c', 
-            'until mongo --host mongo:27017 --eval "printjson(db.serverStatus())"; 
+          command: ['sh', '-c',
+            'until mongo --host mongo:27017 --eval "printjson(db.serverStatus())";
             do echo waiting for mongo; sleep 10; done;']
       restartPolicy: Always
 status: {}
