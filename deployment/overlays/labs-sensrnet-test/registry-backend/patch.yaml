@@ -7,3 +7,6 @@ spec:
     spec:
       containers:
       - name: registry-backend
+        env:
+        - name: NODE_ID
+          value: node_test-aks
