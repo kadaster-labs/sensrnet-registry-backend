@@ -19,7 +19,7 @@ import { OrganizationSchema } from './controller/model/organization.model';
 import { OrganizationProcessor } from './processor/organization.processor';
 import { OrganizationController } from './controller/organization.controller';
 import { OrganizationEsController } from './controller/organization.es.controller';
-import { OrganizationEsListener } from './processor/organization-es-listener.service';
+import { OrganizationEsListener } from './processor/organization-es-listener';
 import { RetrieveOrganizationQueryHandler } from './handler/retrieve-organization.handler';
 import { RetrieveOrganizationsQueryHandler } from './handler/retrieve-organizations.handler';
 import { OrganizationsController } from './controller/organizations.controller';

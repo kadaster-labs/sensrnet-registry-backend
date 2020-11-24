@@ -4,7 +4,7 @@ import { AbstractEsController } from './abstract.es.controller';
 import { Controller, UseGuards, UseFilters } from '@nestjs/common';
 import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
-import { OrganizationEsListener } from '../processor/organization-es-listener.service';
+import { OrganizationEsListener } from '../processor/organization-es-listener';
 
 @ApiBearerAuth()
 @ApiTags('Organization ES')
