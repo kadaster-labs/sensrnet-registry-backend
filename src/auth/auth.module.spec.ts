@@ -1,11 +1,11 @@
 import { Test } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
 import { Logger } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 import { jwtConstants } from './constants';
-import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './local.strategy';
+import { PassportModule } from '@nestjs/passport';
+import { UserService } from '../user/user.service';
 import { AuthController } from './auth.controller';
 import { AccessJwtStrategy } from './access-jwt.strategy';
 import { RefreshJwtStrategy } from './refresh-jwt.strategy';
@@ -16,7 +16,7 @@ const testUser = {
     _id: 'test-id',
     role: 'test-role',
     password: 'test-pass',
-    ownerId: 'test-owner',
+    organizationId: 'test-id',
     refreshToken: 'test-refresh',
 };
 
@@ -46,11 +46,9 @@ describe('Authentication (integration)', () => {
                 JwtModule.register({
                     secret: jwtConstants.secret,
                 }),
-            ],
-            controllers: [
+            ], controllers: [
                 AuthController,
-            ],
-            providers: [
+            ], providers: [
                 AuthService,
                 LocalStrategy,
                 AccessJwtStrategy,
@@ -66,25 +64,25 @@ describe('Authentication (integration)', () => {
     });
 
     it(`Should validate user`, async () => {
-        let result;
+        let user;
         try {
-            result = await authService.validateUser(testUser._id, testUser.password);
+            user = await authService.validateUser(testUser._id, testUser.password);
         } catch {
             logger.log('Failed to validate.');
         }
 
-        expect(result).toBeDefined();
+        expect(user).toBeDefined();
     });
 
     it(`Should not validate user`, async () => {
-        let result;
+        let user;
         try {
-            result = await authService.validateUser(testUser._id, 'wrong-pass');
+            user = await authService.validateUser(testUser._id, 'wrong-pass');
         } catch {
             logger.log('Failed to validate.');
         }
 
-        expect(result).toBeNull();
+        expect(user).toBeNull();
     });
 
     it(`Should refresh user`, async () => {
@@ -95,8 +93,8 @@ describe('Authentication (integration)', () => {
             logger.log('Failed to refresh.');
         }
 
-        expect(result).toBeTruthy();
-        expect(result.access_token).toBeDefined();
+        expect(result).toBeDefined();
+        expect(result.accessToken).toBeDefined();
     });
 
     it(`Should not refresh user`, async () => {
@@ -107,6 +105,6 @@ describe('Authentication (integration)', () => {
             logger.log('Failed to refresh.');
         }
 
-        expect(result).not.toBeNull();
+        expect(result).toBeUndefined();
     });
 });

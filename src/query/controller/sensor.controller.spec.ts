@@ -23,8 +23,7 @@ describe('SensorController', () => {
         const moduleRef = await Test.createTestingModule({
             controllers: [
                 SensorController,
-            ],
-            providers: [
+            ], providers: [
                 QueryBus,
             ],
         }).compile();
@@ -36,7 +35,7 @@ describe('SensorController', () => {
     describe('retrieveSensor', () => {
         it('should return an array of sensors', async () => {
             jest.spyOn(queryBus, 'execute').mockImplementation(async (query: RetrieveSensorQuery) => {
-                return testSensors.filter((owner) => owner._id === query.id);
+                return testSensors.filter((sensor) => sensor._id === query.id);
             });
 
             const req = {sensorId: 'test-id'} as SensorIdParams;
@@ -47,7 +46,7 @@ describe('SensorController', () => {
             jest.spyOn(queryBus, 'execute').mockImplementation(async () => testSensors);
 
             const req = {} as RetrieveSensorsParams;
-            expect(await sensorController.retrieveSensors(req)).toHaveLength(2);
+            expect(await sensorController.retrieveSensors({} as any, req)).toHaveLength(2);
         });
     });
 });

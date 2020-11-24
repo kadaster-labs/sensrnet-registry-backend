@@ -3,7 +3,6 @@ import { Event } from '../../event-store/event';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 
 export abstract class AbstractProcessor {
-
     protected logger: Logger = new Logger(this.constructor.name);
 
     protected constructor(
@@ -25,5 +24,5 @@ export abstract class AbstractProcessor {
         this.logger.error(`Error while updating projection for ${event.aggregateId}.`);
     }
 
-    abstract process(event: Event): Promise<void>;
+    abstract process(event: Event, originSync: boolean): Promise<void>;
 }

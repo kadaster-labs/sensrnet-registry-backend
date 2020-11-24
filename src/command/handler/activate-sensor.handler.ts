@@ -12,14 +12,12 @@ export class ActivateSensorCommandHandler implements ICommandHandler<ActivateSen
 
   async execute(command: ActivateSensorCommand): Promise<void> {
     const sensorAggregate = await this.repository.get(command.sensorId);
-
     if (!sensorAggregate) {
       throw new UnknowSensorException(command.sensorId);
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-
-    aggregate.activate(command.ownerId);
+    aggregate.activate(command.organizationId);
     aggregate.commit();
   }
 }

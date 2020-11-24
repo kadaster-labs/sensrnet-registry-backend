@@ -1,7 +1,6 @@
-import {SensorEvent} from './sensor.event';
+import { SensorEvent } from './sensor.event';
 
 export class SensorRelocated extends SensorEvent {
-
   readonly longitude: number;
   readonly latitude: number;
   readonly height: number;

@@ -4,7 +4,6 @@ import { AggregateRoot } from '@nestjs/cqrs';
 import { isValidEvent } from './event-utils';
 
 export abstract class Aggregate extends AggregateRoot {
-
   protected logger: Logger = new Logger(this.constructor.name);
 
   simpleApply(event: Event): void {

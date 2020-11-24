@@ -12,13 +12,12 @@ export class DeactivateSensorCommandHandler implements ICommandHandler<Deactivat
 
   async execute(command: DeactivateSensorCommand): Promise<void> {
     const sensorAggregate = await this.repository.get(command.sensorId);
-
     if (!sensorAggregate) {
       throw new UnknowSensorException(command.sensorId);
     }
 
     const aggregate = this.publisher.mergeObjectContext(sensorAggregate);
-    aggregate.deactivate(command.ownerId);
+    aggregate.deactivate(command.organizationId);
     aggregate.commit();
   }
 }

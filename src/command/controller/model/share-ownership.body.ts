@@ -5,9 +5,8 @@ export class ShareOwnershipBody {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    isArray: true,
-    description: 'The ownerId(s) of the new co-owner(s).',
+    description: 'The id of the new organization.',
   })
-  @IsUUID(4, {each: true})
-  readonly ownerIds: string[];
+  @IsUUID(4)
+  readonly organizationId: string;
 }

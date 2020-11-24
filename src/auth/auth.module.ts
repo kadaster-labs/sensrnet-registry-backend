@@ -1,14 +1,14 @@
-import { JwtModule } from '@nestjs/jwt';
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
 import { LocalStrategy } from './local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
+import { AnonymousStrategy } from './anonymous.strategy';
 import { AccessJwtStrategy } from './access-jwt.strategy';
 import { RefreshJwtStrategy } from './refresh-jwt.strategy';
-import { AnonymousStrategy } from './anonymous.strategy';
 
 @Module({
     imports: [
@@ -17,18 +17,15 @@ import { AnonymousStrategy } from './anonymous.strategy';
         JwtModule.register({
             secret: jwtConstants.secret,
         }),
-    ],
-    controllers: [
+    ], controllers: [
         AuthController,
-    ],
-    providers: [
+    ], providers: [
         AuthService,
         LocalStrategy,
         AccessJwtStrategy,
         RefreshJwtStrategy,
         AnonymousStrategy,
-    ],
-    exports: [
+    ], exports: [
         AuthService,
         AccessJwtStrategy,
     ],

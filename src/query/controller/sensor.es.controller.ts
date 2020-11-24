@@ -7,8 +7,8 @@ import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 
 @ApiBearerAuth()
-@ApiTags('SensorES')
-@Controller('SensorES')
+@ApiTags('Sensor ES')
+@Controller('sensor-es')
 @UseFilters(new DomainExceptionFilter())
 @UseGuards(AccessJwtAuthGuard, RolesGuard)
 export class SensorESController extends AbstractEsController {

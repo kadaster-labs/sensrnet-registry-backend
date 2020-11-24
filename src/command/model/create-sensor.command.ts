@@ -5,7 +5,7 @@ import { CreateDatastreamBody } from '../controller/model/create-datastream.body
 export class CreateSensorCommand implements ICommand {
   constructor(
     public readonly sensorId: string,
-    public readonly ownerId: string,
+    public readonly organizationId: string,
     public readonly name: string,
     public readonly location: LocationBody,
     public readonly dataStreams: CreateDatastreamBody[],
@@ -16,6 +16,7 @@ export class CreateSensorCommand implements ICommand {
     public readonly observationArea: Record<string, any>,
     public readonly documentationUrl: string,
     public readonly theme: string[],
+    public readonly category: string,
     public readonly typeName: string,
     public readonly typeDetails: Record<string, any>,
     ) {}

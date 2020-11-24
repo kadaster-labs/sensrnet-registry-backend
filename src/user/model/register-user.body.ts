@@ -2,13 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty } from 'class-validator';
 
 export class RegisterUserBody {
-
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
         type: String,
         required: true,
-        description: 'The (unique) email of the user.',
+        description: 'The user email.',
     })
     readonly email: string;
 
@@ -17,7 +16,7 @@ export class RegisterUserBody {
     @ApiProperty({
         type: String,
         required: true,
-        description: 'The password of the user.',
+        description: 'The user password.',
     })
     readonly password: string;
 }

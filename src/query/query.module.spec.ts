@@ -1,20 +1,21 @@
 import { Test } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { AuthService } from '../auth/auth.service';
-import { OwnerGateway } from './gateway/owner.gateway';
+import { OrganizationGateway } from './gateway/organization.gateway';
 import { SensorGateway } from './gateway/sensor.gateway';
 import { RetrieveSensorQuery } from './model/sensor.query';
 import { RetrieveSensorsQuery } from './model/sensors.query';
-import { OwnerProcessor } from './processor/owner.processor';
+import { OrganizationProcessor } from './processor/organization.processor';
 import { SensorProcessor } from './processor/sensor.processor';
-import { OwnerController } from './controller/owner.controller';
+import { OrganizationController } from './controller/organization.controller';
 import { SensorController } from './controller/sensor.controller';
-import { RetrieveOwnersQuery } from './model/retrieve-owner.query';
+import { RetrieveOrganizationQuery } from './model/retrieve-organization.query';
 import { EventStoreModule } from '../event-store/event-store.module';
 import { RetrieveSensorQueryHandler } from './handler/sensor.handler';
 import { CommandBus, CqrsModule, EventPublisher } from '@nestjs/cqrs';
 import { RetrieveSensorsQueryHandler } from './handler/sensors.handler';
-import { RetrieveOwnerQueryHandler } from './handler/retrieve-owner.handler';
+import { RetrieveOrganizationQueryHandler } from './handler/retrieve-organization.handler';
+import { AccessJwtStrategy } from '../auth/access-jwt.strategy';
 
 const testObjects = [
     {
@@ -46,6 +47,12 @@ const mockAuthService = {
     verifyToken: async () => true,
 };
 
+const mockAccessJwtStrategy = {
+    validate: async () => {
+        return { organizationId: 'my-organization' };
+    },
+};
+
 describe('Query (integration)', () => {
     let moduleRef;
 
@@ -54,47 +61,48 @@ describe('Query (integration)', () => {
             imports: [
                 CqrsModule,
                 EventStoreModule,
-            ],
-            controllers: [
-                OwnerController,
+            ], controllers: [
+                OrganizationController,
                 SensorController,
-            ],
-            providers: [
-                OwnerGateway,
+            ], providers: [
+                OrganizationGateway,
                 SensorGateway,
                 EventPublisher,
-                OwnerProcessor,
+                OrganizationProcessor,
                 SensorProcessor,
-                RetrieveOwnerQueryHandler,
+                RetrieveOrganizationQueryHandler,
                 RetrieveSensorQueryHandler,
                 RetrieveSensorsQueryHandler,
                 {
                     provide: AuthService,
                     useValue: mockAuthService,
                 }, {
-                    provide: getModelToken('Owner'),
-                    useValue: mockRepository,
+                    provide: AccessJwtStrategy,
+                    useValue: mockAccessJwtStrategy,
                 }, {
                     provide: getModelToken('Sensor'),
+                    useValue: mockRepository,
+                }, {
+                    provide: getModelToken('Organization'),
                     useValue: mockRepository,
                 },
             ],
         }).compile();
     });
 
-    it(`Should retrieve an owner`, async () => {
+    it(`Should retrieve an organization`, async () => {
         const commandBus: CommandBus = moduleRef.get(CommandBus);
-        const ownerQueryHandler: RetrieveOwnerQueryHandler = moduleRef.get(RetrieveOwnerQueryHandler);
-        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RetrieveOwnersQuery) => ownerQueryHandler.execute(c));
+        const ownerQueryHandler: RetrieveOrganizationQueryHandler = moduleRef.get(RetrieveOrganizationQueryHandler);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RetrieveOrganizationQuery) => ownerQueryHandler.execute(c));
 
-        let owners;
+        let organizations;
         try {
-            owners = await commandBus.execute(new RetrieveOwnersQuery('test-id'));
+            organizations = await commandBus.execute(new RetrieveOrganizationQuery('test-id'));
         } catch {
-            owners = [];
+            organizations = null;
         }
 
-        expect(owners).toHaveLength(1);
+        expect(organizations).toBeDefined();
     });
 
     it(`Should retrieve a sensor`, async () => {

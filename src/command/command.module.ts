@@ -1,48 +1,46 @@
 import { UserSchema } from '../user/user.model';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Module, OnModuleInit } from '@nestjs/common';
-import { OwnerController } from './controller/owner.controller';
 import { SensorController } from './controller/sensor.controller';
 import { CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
 import { EventStoreModule } from '../event-store/event-store.module';
-import { OwnerRepository } from '../core/repositories/owner.repository';
 import { SensorRepository } from '../core/repositories/sensor.repository';
-import { UpdateOwnerCommandHandler } from './handler/update-owner.handler';
-import { DeleteOwnerCommandHandler } from './handler/delete-owner.handler';
 import { EventStorePublisher } from '../event-store/event-store.publisher';
 import { CreateSensorCommandHandler } from './handler/create-sensor.handler';
 import { UpdateSensorCommandHandler } from './handler/update-sensor.handler';
 import { DeleteSensorCommandHandler } from './handler/delete-sensor.handler';
-import { RegisterOwnerCommandHandler } from './handler/register-owner.handler';
+import { OrganizationController } from './controller/organization.controller';
 import { ActivateSensorCommandHandler } from './handler/activate-sensor.handler';
 import { UpdateDataStreamCommandHandler } from './handler/update-datastream.handler';
 import { DeactivateSensorCommandHandler } from './handler/deactivate-sensor.handler';
 import { CreateDatastreamCommandHandler } from './handler/create-datastream.handler';
 import { DeleteDataStreamCommandHandler } from './handler/delete-datastream.handler';
+import { UpdateOrganizationCommandHandler } from './handler/update-organization.handler';
+import { DeleteOrganizationCommandHandler } from './handler/delete-organization.handler';
+import { RegisterOrganizationCommandHandler } from './handler/register-organization.handler';
+import { OrganizationRepository } from '../core/repositories/organization-repository.service';
 import { UpdateSensorLocationCommandHandler } from './handler/update-sensor-location.handler';
 import { ShareSensorOwnershipCommandHandler } from './handler/share-sensor-ownership.handler';
 import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor-ownership.handler';
 
 @Module({
     controllers: [
-        OwnerController,
+        OrganizationController,
         SensorController,
-    ],
-    imports: [
+    ], imports: [
         CqrsModule,
         EventStoreModule,
         MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
-    ],
-    providers: [
+    ], providers: [
         EventBus,
         EventPublisher,
-        OwnerRepository,
+        OrganizationRepository,
         SensorRepository,
         EventStorePublisher,
         // owner
-        UpdateOwnerCommandHandler,
-        DeleteOwnerCommandHandler,
-        RegisterOwnerCommandHandler,
+        UpdateOrganizationCommandHandler,
+        DeleteOrganizationCommandHandler,
+        RegisterOrganizationCommandHandler,
         // sensor
         CreateSensorCommandHandler,
         UpdateSensorCommandHandler,
@@ -55,9 +53,8 @@ import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor
         UpdateSensorLocationCommandHandler,
         ShareSensorOwnershipCommandHandler,
         TransferSensorOwnershipCommandHandler,
-    ],
-    exports: [
-        OwnerRepository,
+    ], exports: [
+        OrganizationRepository,
     ],
 })
 
