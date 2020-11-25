@@ -1,11 +1,7 @@
-import { v4 } from 'uuid';
 import { EventMessage } from './event-message';
-
-export const NODE_ID = process.env.NODE_ID || v4();
 
 export abstract class Event {
   public readonly aggregateId: string;
-  public readonly nodeId: string = NODE_ID;
 
   protected constructor(aggregateId: string) {
     this.aggregateId = aggregateId;

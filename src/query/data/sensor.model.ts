@@ -2,7 +2,6 @@ import { model, Schema, Document, Types, Model } from 'mongoose';
 
 export interface ISensor extends Document {
     _id: string;
-    nodeId: string;
     organizations?: Types.Array<Record<string, string>>;
     name?: string;
     location: {
@@ -25,7 +24,6 @@ export interface ISensor extends Document {
 
 export const SensorSchema = new Schema({
     _id: { type: String, required: true },
-    nodeId: { type: String, required: true },
     organizations: { type: [], required: true },
     name: { type: String, required: false },
     location: {
