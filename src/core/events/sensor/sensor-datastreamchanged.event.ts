@@ -1,7 +1,6 @@
 import { SensorEvent } from './sensor.event';
 
 export abstract class DatastreamChanged extends SensorEvent {
-
   public readonly dataStreamId: string;
   public readonly name: string;
   public readonly reason: string;

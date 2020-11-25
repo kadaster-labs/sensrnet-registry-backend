@@ -6,7 +6,7 @@ export class TransferOwnershipBody {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    description: 'The ownerId of the new owner.',
+    description: 'The id of the new organization.',
   })
-  readonly newOwnerId: string;
+  readonly newOrganizationId: string;
 }

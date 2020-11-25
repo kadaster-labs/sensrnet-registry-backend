@@ -29,8 +29,6 @@ spec:
           value: mongo
         - name: MONGO_PORT
           value: mongo
-        - name: NODE_ID
-          value: node_1
         ports:
         - name: http
           containerPort: 3000
@@ -56,6 +54,6 @@ spec:
       initContainers:
         - name: check-mongo-ready
           image: mongo:4.4.1
-          command: ['sh', '-c', 
-            'until mongo --host mongo:27017 --eval "printjson(db.serverStatus())"; 
+          command: ['sh', '-c',
+            'until mongo --host mongo:27017 --eval "printjson(db.serverStatus())";
             do echo waiting for mongo; sleep 10; done;']

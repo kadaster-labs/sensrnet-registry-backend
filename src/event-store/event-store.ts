@@ -9,8 +9,9 @@ import { EventStoreCatchUpSubscription, LiveProcessingStartedCallback,
 export class EventStore {
   private client!: TCPClient;
 
-  constructor(private configuration: EventStoreConfiguration) {
-  }
+  constructor(
+      private configuration: EventStoreConfiguration,
+      ) {}
 
   connect(): void {
     this.client = new TCPClient(this.configuration.config);

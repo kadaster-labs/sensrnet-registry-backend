@@ -8,8 +8,5 @@ spec:
       containers:
       - image: sensrnet-registry-backend_registry-backend:latest
         name: registry-backend
-        env:
-        - name: NODE_ID
-          value: node_local
         imagePullPolicy: Never
         resources: {}

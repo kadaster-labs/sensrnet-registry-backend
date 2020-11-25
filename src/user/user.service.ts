@@ -6,14 +6,15 @@ import { hashField, hashableFields } from './user.model';
 
 @Injectable()
 export class UserService {
+    constructor(
+        @InjectModel('User') private userModel: Model<User>,
+        ) {}
 
-    constructor(@InjectModel('User') private userModel: Model<User>) {}
-
-    async findOne(username: string): Promise<User | undefined> {
-        return this.userModel.findOne({_id: username});
+    async findOne(email: string): Promise<User | undefined> {
+        return this.userModel.findOne({_id: email});
     }
 
-    async updateOne(username: string, updateFields: Record<string, any>): Promise<any> {
+    async updateOne(email: string, updateFields: Record<string, any>): Promise<any> {
         const deleteFunction = (hashableField) => () => delete updateFields[hashableField];
         const updateFunction = (hashableField) => (hash) => updateFields[hashableField] = hash;
         const hashFunction = (hashableField) => (resolve, reject) => hashField(updateFields[hashableField], resolve, reject);
@@ -25,6 +26,6 @@ export class UserService {
             }
         }
 
-        return this.userModel.updateOne({_id: username}, updateFields);
+        return this.userModel.updateOne({_id: email}, updateFields);
     }
 }

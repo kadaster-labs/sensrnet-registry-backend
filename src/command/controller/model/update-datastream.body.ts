@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ChangeDatastreamBody } from './change-datastream.body';
 import { IsString, IsOptional } from 'class-validator';
+import { ChangeDatastreamBody } from './change-datastream.body';
 
 export class UpdateDatastreamBody extends ChangeDatastreamBody {
     @IsString()

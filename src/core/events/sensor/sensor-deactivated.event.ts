@@ -1,4 +1,4 @@
-import {SensorEvent} from './sensor.event';
+import { SensorEvent } from './sensor.event';
 
 export class SensorDeactivated extends SensorEvent {
   constructor(sensorId: string) {

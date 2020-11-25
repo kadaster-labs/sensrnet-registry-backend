@@ -1,4 +1,4 @@
-import {Logger} from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { DatastreamAdded, DatastreamUpdated, DatastreamDeleted, SensorActivated, SensorDeactivated, SensorDeleted, SensorOwnershipShared,
   SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated } from './index';
 

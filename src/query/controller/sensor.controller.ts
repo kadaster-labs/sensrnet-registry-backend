@@ -12,7 +12,7 @@ import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagg
 import { Controller, Get, Param, Query, UseGuards, UseFilters, Req } from '@nestjs/common';
 
 @ApiTags('Sensor')
-@Controller('Sensor')
+@Controller('sensor')
 @UseFilters(new DomainExceptionFilter())
 export class SensorController {
   constructor(
@@ -37,9 +37,9 @@ export class SensorController {
   @ApiResponse({ status: 400, description: 'Sensors retrieval failed' })
   async retrieveSensors(@Req() req: Request, @Query() sensorParams: RetrieveSensorsParams): Promise<any> {
     const user: Record<string, any> = req.user;
-    const requestOwnerId = user ? user.ownerId : undefined;
-    return await this.queryBus.execute(new RetrieveSensorsQuery(requestOwnerId, sensorParams.bottomLeftLongitude,
+    const requestOrganizationId = user ? user.organizationId : undefined;
+    return await this.queryBus.execute(new RetrieveSensorsQuery(requestOrganizationId, sensorParams.bottomLeftLongitude,
         sensorParams.bottomLeftLatitude, sensorParams.upperRightLongitude, sensorParams.upperRightLatitude,
-        sensorParams.pageIndex, sensorParams.ownerId));
+        sensorParams.pageIndex, sensorParams.organizationId));
   }
 }

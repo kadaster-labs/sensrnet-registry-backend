@@ -37,7 +37,7 @@ export class SensorProcessor extends AbstractProcessor {
   async process(event: SensorEvent): Promise<void> {
     let result: ISensor;
     if (event instanceof SensorRegistered) {
-      result = await this.processCreated(event);
+      result = await this.processRegistered(event);
     } else if (event instanceof SensorUpdated) {
       result = await this.processUpdated(event);
     } else if (event instanceof SensorDeleted) {
@@ -65,17 +65,15 @@ export class SensorProcessor extends AbstractProcessor {
     }
   }
 
-  async processCreated(event: SensorRegistered): Promise<ISensor> {
+  async processRegistered(event: SensorRegistered): Promise<ISensor> {
     const sensorData = {
       _id: event.sensorId,
-      nodeId: event.nodeId,
       location: {
         type: 'Point',
         coordinates: [event.longitude, event.latitude, event.height],
       },
       active: event.active,
-      typeName: event.typeName,
-      ownerIds: event.ownerId ? [event.ownerId] : undefined,
+      organizations: event.organizationId ? [{id: event.organizationId, role: 'owner'}] : [],
       baseObjectId: event.baseObjectId,
       name: event.name,
       aim: event.aim,
@@ -84,6 +82,8 @@ export class SensorProcessor extends AbstractProcessor {
       observationArea: event.observationArea,
       documentationUrl: event.documentationUrl,
       theme: event.theme,
+      category: event.category,
+      typeName: event.typeName,
       typeDetails: event.typeDetails,
     };
 
@@ -100,9 +100,6 @@ export class SensorProcessor extends AbstractProcessor {
   async processUpdated(event: SensorUpdated): Promise<ISensor> {
     let sensorData = {};
 
-    if (AbstractProcessor.isDefined(event.typeName)) {
-      sensorData = {...sensorData, typeName: event.typeName};
-    }
     if (AbstractProcessor.isDefined(event.name)) {
       sensorData = {...sensorData, name: event.name};
     }
@@ -123,6 +120,12 @@ export class SensorProcessor extends AbstractProcessor {
     }
     if (AbstractProcessor.isDefined(event.theme)) {
       sensorData = {...sensorData, theme: event.theme};
+    }
+    if (AbstractProcessor.isDefined(event.category)) {
+      sensorData = {...sensorData, category: event.category};
+    }
+    if (AbstractProcessor.isDefined(event.typeName)) {
+      sensorData = {...sensorData, typeName: event.typeName};
     }
     if (AbstractProcessor.isDefined(event.typeDetails)) {
       sensorData = {...sensorData, typeDetails: event.typeDetails};
@@ -159,9 +162,7 @@ export class SensorProcessor extends AbstractProcessor {
   async processOwnershipShared(event: SensorOwnershipShared): Promise<ISensor> {
     const updateSensorData = {
       $addToSet: {
-        ownerIds: {
-          $each: event.ownerIds,
-        },
+        organizations: [{id: event.organizationId, role: 'owner'}],
       },
     };
 
@@ -170,12 +171,12 @@ export class SensorProcessor extends AbstractProcessor {
 
   async processOwnershipTransferred(event: SensorOwnershipTransferred): Promise<ISensor> {
     const filterData = {
-      _id: event.sensorId,
-      ownerIds: event.oldOwnerId,
+      '_id': event.sensorId,
+      'organizations.id': event.oldOrganizationId,
     };
     const updateSensorData = {
       $set: {
-        'ownerIds.$': event.newOwnerId,
+        'organizations.$.id': event.newOrganizationId,
       },
     };
 

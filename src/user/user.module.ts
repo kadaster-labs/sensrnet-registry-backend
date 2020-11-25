@@ -14,18 +14,15 @@ import { RegisterUserCommandHandler } from './handler/register-user.handler';
         CqrsModule,
         CommandModule,
         MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
-    ],
-    controllers: [
+    ], controllers: [
         UserController,
-    ],
-    providers: [
+    ], providers: [
         UserService,
         // user
         DeleteUserCommandHandler,
         UpdateUserCommandHandler,
         RegisterUserCommandHandler,
-    ],
-    exports: [
+    ], exports: [
         UserService,
     ],
 })

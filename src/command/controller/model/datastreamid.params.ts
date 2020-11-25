@@ -6,7 +6,7 @@ export class DataStreamIdParams {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    description: 'The sensorId of the sensor.',
+    description: 'The id of the sensor.',
   })
   readonly sensorId: string;
 
@@ -14,7 +14,7 @@ export class DataStreamIdParams {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    description: 'The datastreamId of the datastream.',
+    description: 'The id of the datastream.',
   })
   readonly dataStreamId: string;
 }
