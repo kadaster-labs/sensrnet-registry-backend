@@ -1,10 +1,13 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: sensrnet-backend
+namespace: registry-backend
 
 resources:
   - namespace.yaml
+
+commonLabels:
+  app.kubernetes.io/name: sensrnet
 
 bases:
   - registry-backend

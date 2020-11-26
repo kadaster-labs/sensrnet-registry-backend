@@ -18,4 +18,4 @@ spec:
       storageClassName: "managed-premium-retain"
       resources:
         requests:
-          storage: 5Gi
+          storage: 20Gi

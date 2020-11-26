@@ -1,14 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    app: registry-backend
   name: registry-backend
 spec:
   ports:
   - port: 80
-    targetPort: 3000
-  selector:
-    app: registry-backend
-status:
-  loadBalancer: {}
+    targetPort: http

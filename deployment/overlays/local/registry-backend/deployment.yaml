@@ -6,7 +6,7 @@ spec:
   template:
     spec:
       containers:
-      - image: sensrnetregistry.azurecr.io/sensrnet/registry-backend:latest
+      - image: sensrnet-registry-backend_registry-backend:latest
         name: registry-backend
         imagePullPolicy: Never
         resources: {}
