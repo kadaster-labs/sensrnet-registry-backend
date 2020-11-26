@@ -1,5 +1,14 @@
 # SensrNet Backend Application
 
+<p>
+    <a href="https://github.com/kadaster-labs/sensrnet-registry-backend/actions?query=workflow%3A%22Node.js+CI%22" alt="Build status">
+        <img src="https://github.com/kadaster-labs/sensrnet-registry-backend/workflows/Node.js%20CI/badge.svg" />
+    </a>
+    <a href="https://sonarcloud.io/dashboard?id=kadaster-labs_sensrnet-registry-backend" alt="Quality Gate">
+        <img src="https://sonarcloud.io/api/project_badges/measure?project=kadaster-labs_sensrnet-registry-backend&metric=alert_status" />
+    </a>
+</p>
+
 This is the backend for the SensrNet application. It features a NodeJS backend, and makes use of Eventstore and MongoDB.
 
 ## Getting Started
@@ -26,7 +35,7 @@ Modules:
 
 - command > all command side code
 - events > event definitions
-- query > 
+- query >
   - query processor to update the database projection
   - query controllers and query features
 
