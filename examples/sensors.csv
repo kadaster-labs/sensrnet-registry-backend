@@ -1,0 +1,5 @@
+Category	Type	Name	Active	Description	Latitude	Longitude	Height
+Sensor	MotionSensor	My Motionsensor	true	Motionsensor description	51.65384346788852	4.10959510093004	0
+Beacon	NavigationBeacon	My NavigationBeacon	false	Navigationbeacon description	52.07187335676014	6.118777258041949	0
+Camera	SecurityCamera	My SecurityCamera	false	Securitycamera description	52.60241503182167	4.969127561874421	0
+Sensor	RadarDetector	My RadarDetector	true	Radardetector description	53.0193988259473	6.162063418024197	0
