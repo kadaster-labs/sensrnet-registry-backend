@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
       - name: registry-backend
-        image: sensrnetregistry.azurecr.io/sensrnet/registry-backend:latest
+        image: sensrnetnl/registry-backend:latest
         env:
         - name: EVENT_STORE_HOST
           value: eventstore-cluster
