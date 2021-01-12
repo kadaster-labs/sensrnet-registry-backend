@@ -13,7 +13,7 @@ export class DeleteUserCommandHandler implements ICommandHandler<DeleteUserComma
   ) {}
 
   async execute(command: DeleteUserCommand): Promise<void> {
-    this.userModel.deleteOne({_id: command.email}, (err) => {
+    this.userModel.deleteOne({_id: command.email}, {}, (err) => {
       if (err) {
         throw new DeleteFailedException(command.email);
       }

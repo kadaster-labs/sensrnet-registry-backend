@@ -65,7 +65,7 @@ export class OrganizationProcessor extends AbstractProcessor {
       organizationData = {contactPhone: event.contactPhone, ...organizationData};
     }
 
-    this.model.updateOne({_id: event.aggregateId}, organizationData, (err) => {
+    this.model.updateOne({_id: event.aggregateId}, organizationData, {}, (err) => {
       if (err) {
         this.logger.error('Error while updating owner projection.');
       }
@@ -73,7 +73,7 @@ export class OrganizationProcessor extends AbstractProcessor {
   }
 
   async processDeleted(event: OrganizationDeleted): Promise<void> {
-    this.model.deleteOne({_id: event.aggregateId}, (err) => {
+    this.model.deleteOne({_id: event.aggregateId}, {}, (err) => {
       if (err) {
         this.logger.error('Error while deleting owner projection.');
       }

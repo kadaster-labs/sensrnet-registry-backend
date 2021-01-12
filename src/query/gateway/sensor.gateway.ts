@@ -1,10 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-import { ISensor } from '../data/sensor.model';
 import { jwtConstants } from '../../auth/constants';
 import { AuthService } from '../../auth/auth.service';
 import { AccessJwtStrategy } from '../../auth/access-jwt.strategy';
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage, MessageBody } from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage,
+    MessageBody } from '@nestjs/websockets';
 
 @WebSocketGateway({
     namespace: 'sensor',
@@ -46,7 +46,7 @@ export class SensorGateway implements OnGatewayConnection {
         }
     }
 
-    emit(event: string, updatedSensor: ISensor): void {
+    emit(event: string, updatedSensor: Record<string, any>): void {
         for (const organization of updatedSensor.organizations) {
             this.server.to(organization.id).emit(event, updatedSensor);
         }
