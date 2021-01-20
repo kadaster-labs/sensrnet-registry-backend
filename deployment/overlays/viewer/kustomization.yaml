@@ -13,3 +13,4 @@ patchesStrategicMerge:
 - eventstore/patch.yaml
 - mongo/patch.yaml
 - mongo/pvc.yaml
+- registry-backend/deployment.yaml
