@@ -215,7 +215,7 @@ describe('Command (integration)', () => {
 
         try {
             await commandBus.execute(new CreateSensorCommand('test-id', 'test-id', 'test-name',
-                {latitude: 0, longitude: 0} as LocationBody, [], 'test-aim', 'test-description',
+                [0, 0, 0], 'test-base-id',  [], 'test-aim', 'test-description',
                 'test-manufacturer', true, undefined, 'test-url', undefined,
                 'test-category', 'test-type', undefined));
         } catch {

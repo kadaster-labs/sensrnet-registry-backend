@@ -1,7 +1,6 @@
 import { Aggregate } from '../../event-store/aggregate';
 import { SensorState, SensorStateImpl } from './sensor-state';
 import { EventMessage } from '../../event-store/event-message';
-import { LocationBody } from '../../command/controller/model/location.body';
 import { NotAnOwnerException } from '../../command/handler/error/not-an-owner-exception';
 import { SensorActiveException } from '../../command/handler/error/sensor-active-exception';
 import { CreateDatastreamBody } from '../../command/controller/model/create-datastream.body';
@@ -25,12 +24,12 @@ export class SensorAggregate extends Aggregate {
     }
   }
 
-  register(organizationId: string, name: string, location: LocationBody,
+  register(organizationId: string, name: string, location: number[], baseObjectId: string,
            dataStreams: CreateDatastreamBody[], aim: string, description: string, manufacturer: string,
            active: boolean, observationArea: Record<string, any>, documentationUrl: string, theme: string[],
            category: string, typeName: string, typeDetails: Record<string, any>): void {
-    this.simpleApply(new SensorRegistered(this.aggregateId, organizationId, name, location.longitude, location.latitude,
-        location.height, location.baseObjectId, aim, description, manufacturer, active, observationArea, documentationUrl,
+    this.simpleApply(new SensorRegistered(this.aggregateId, organizationId, name, location[0], location[1],
+        location[2], baseObjectId, aim, description, manufacturer, active, observationArea, documentationUrl,
         theme, category, typeName, typeDetails));
 
     for (const dataStream of dataStreams) {
@@ -88,9 +87,9 @@ export class SensorAggregate extends Aggregate {
     this.simpleApply(new SensorOwnershipShared(this.aggregateId, newOrganizationId));
   }
 
-  relocate(organizationId: string, longitude: number, latitude: number, height: number, baseObjectId: string): void {
+  relocate(organizationId: string, location: number[], baseObjectId: string): void {
     this.validateOrganization(organizationId);
-    this.simpleApply(new SensorRelocated(this.aggregateId, longitude, latitude, height, baseObjectId));
+    this.simpleApply(new SensorRelocated(this.aggregateId, location[0], location[1], location[2], baseObjectId));
   }
 
   activate(organizationId: string): void {

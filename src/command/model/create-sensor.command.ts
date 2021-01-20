@@ -1,5 +1,4 @@
 import { ICommand } from '@nestjs/cqrs';
-import { LocationBody } from '../controller/model/location.body';
 import { CreateDatastreamBody } from '../controller/model/create-datastream.body';
 
 export class CreateSensorCommand implements ICommand {
@@ -7,7 +6,8 @@ export class CreateSensorCommand implements ICommand {
     public readonly sensorId: string,
     public readonly organizationId: string,
     public readonly name: string,
-    public readonly location: LocationBody,
+    public readonly location: number[],
+    public readonly baseObjectId: string,
     public readonly dataStreams: CreateDatastreamBody[],
     public readonly aim: string,
     public readonly description: string,

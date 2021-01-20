@@ -30,11 +30,10 @@ export class CreateSensorCommandHandler implements ICommandHandler<CreateSensorC
       const sensorAggregate = new SensorAggregate(command.sensorId);
       aggregate = this.publisher.mergeObjectContext(sensorAggregate);
 
-      aggregate.register(command.organizationId,
-        command.name, command.location, command.dataStreams,
-        command.aim, command.description, command.manufacturer,
-        command.active, command.observationArea, command.documentationUrl,
-        command.theme, command.category, command.typeName, command.typeDetails);
+      aggregate.register(command.organizationId, command.name, command.location, command.baseObjectId,
+          command.dataStreams, command.aim, command.description, command.manufacturer, command.active,
+          command.observationArea, command.documentationUrl, command.theme, command.category, command.typeName,
+          command.typeDetails);
       aggregate.commit();
     }
   }
