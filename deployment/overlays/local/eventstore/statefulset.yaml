@@ -3,10 +3,14 @@ kind: StatefulSet
 metadata:
   name: eventstore-cluster
 spec:
+  replicas: 1 # Needs to be the same as EVENTSTORE_CLUSTER_SIZE
   template:
     spec:
       containers:
       - name: eventstore
+        env:
+        - name: EVENTSTORE_CLUSTER_SIZE #Needs to match spec.replicas
+          value: "1"
         volumeMounts:
         - name: local-vol
           mountPath: /var/lib/eventstore
