@@ -1,7 +1,6 @@
 import { v4 } from 'uuid';
 import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
-import { LocationBody } from './model/location.body';
 import { SensorIdParams } from './model/sensorid.params';
 import { UpdateSensorBody } from './model/update-sensor.body';
 import { DataStreamIdParams } from './model/datastreamid.params';
@@ -101,7 +100,7 @@ export class SensorController {
                        @Body() locationBody: UpdateLocationBody): Promise<any> {
     const user: Record<string, any> = req.user;
     return await this.commandBus.execute(new UpdateSensorLocationCommand(params.sensorId, user.organizationId,
-        [locationBody.location[0], locationBody.location[1], locationBody.location[2]], locationBody.baseObjectId));
+        locationBody.location, locationBody.baseObjectId));
   }
 
   @Put(':sensorId/activate')

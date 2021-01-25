@@ -1,7 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { Logger } from '@nestjs/common';
 import { EventStore } from '../event-store/event-store';
-import { LocationBody } from './controller/model/location.body';
 import { CreateSensorCommand } from './model/create-sensor.command';
 import { UpdateSensorCommand } from './model/update-sensor.command';
 import { SensorAggregate } from '../core/aggregates/sensor.aggregate';
@@ -266,10 +265,8 @@ describe('Command (integration)', () => {
     });
 
     const register = (sensorAggregate) => {
-        sensorAggregate.register('test-id', 'test-name',
-            {latitude: 0, longitude: 0} as LocationBody, [], 'test-aim', 'test-description',
-            'test-manufacturer', true, undefined, 'test-url', undefined,
-            'test-type', undefined);
+        sensorAggregate.register('test-id', 'test-name', [0, 0, 0], [], 'test-aim', 'test-description',
+            'test-manufacturer', true, undefined, 'test-url', undefined, 'test-type', undefined);
     };
 
     const updateSensor = async (eventStoreProvider, isRegistered) => {
