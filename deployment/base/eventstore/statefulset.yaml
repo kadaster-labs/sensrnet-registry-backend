@@ -4,7 +4,7 @@ metadata:
   name: eventstore-cluster
 spec:
   serviceName: eventstore-cluster
-  replicas: 1 # Needs to be the same as EVENTSTORE_CLUSTER_SIZE
+  replicas: 3 # Needs to be the same as EVENTSTORE_CLUSTER_SIZE
   template:
     spec:
       containers:
@@ -12,7 +12,7 @@ spec:
         image: eventstore/eventstore:release-5.0.8
         env:
         - name: EVENTSTORE_CLUSTER_SIZE #Needs to match spec.replicas
-          value: "1"
+          value: "3"
         - name: EVENTSTORE_DISCOVER_VIA_DNS
           value: "true"
         - name: EVENTSTORE_CLUSTER_DNS #Should match service name
@@ -62,3 +62,13 @@ spec:
             port: eventstore-web
           initialDelaySeconds: 5
           periodSeconds: 5
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/component
+                operator: In
+                values:
+                - eventstore
+            topologyKey: "kubernetes.io/hostname"

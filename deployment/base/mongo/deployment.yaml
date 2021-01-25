@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: mongo
 spec:
-  replicas: 1
+  replicas: 3
   template:
     spec:
       containers:
@@ -41,3 +41,13 @@ spec:
           requests:
             cpu: "100m"
             memory: "128Mi"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: name
+                operator: In
+                values:
+                - mongo
+            topologyKey: "kubernetes.io/hostname"
