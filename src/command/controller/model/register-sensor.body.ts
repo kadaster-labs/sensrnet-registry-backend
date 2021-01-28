@@ -3,8 +3,9 @@ import { Category } from './category.body';
 import { ApiProperty } from '@nestjs/swagger';
 import { ChangeSensorBody } from './change-sensor.body';
 import { CreateDatastreamBody } from './create-datastream.body';
+import { LongitudeLatitudeValidator } from '../validation/location';
 import { IsString, IsNotEmpty, IsBoolean, IsArray, ValidateNested, ArrayMinSize, ArrayMaxSize,
-  IsOptional } from 'class-validator';
+  IsOptional, IsNumber, Validate } from 'class-validator';
 
 export class RegisterSensorBody extends ChangeSensorBody {
   @IsString()
@@ -20,10 +21,12 @@ export class RegisterSensorBody extends ChangeSensorBody {
   @IsNotEmpty()
   @ArrayMinSize(3)
   @ArrayMaxSize(3)
+  @IsNumber({}, {each: true})
   @ApiProperty({
     type: Number,
     isArray: true,
   })
+  @Validate(LongitudeLatitudeValidator)
   @Type(() => Number)
   readonly location: number[];
 

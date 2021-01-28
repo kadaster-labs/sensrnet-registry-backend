@@ -1,4 +1,3 @@
-import { v4 } from 'uuid';
 import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
 import { Roles } from '../../core/guards/roles.decorator';
