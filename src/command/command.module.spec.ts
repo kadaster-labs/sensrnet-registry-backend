@@ -12,7 +12,7 @@ import { DeleteSensorCommandHandler } from './handler/delete-sensor.handler';
 import { CommandBus, CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
 import { UpdateOrganizationCommand } from './model/update-organization.command';
 import { DeleteOrganizationCommand } from './model/delete-organization.command';
-import { OrganizationAggregate } from '../core/aggregates/organizationAggregate';
+import { OrganizationAggregate } from '../core/aggregates/organization.aggregate';
 import { ActivateSensorCommandHandler } from './handler/activate-sensor.handler';
 import { RegisterOrganizationCommand } from './model/register-organization.command';
 import { DeactivateSensorCommandHandler } from './handler/deactivate-sensor.handler';

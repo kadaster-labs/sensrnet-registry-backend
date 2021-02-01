@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
 import { SensorProcessor } from './sensor.processor';
 import { sensorEventType } from '../../core/events/sensor';
 import { AbstractEsListener } from './abstract.es.listener';
-import { SensorEvent } from '../../core/events/sensor/sensor.event';
 import { CheckpointService } from '../service/checkpoint/checkpoint.service';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { SubscriptionExistsException } from '../handler/errors/subscription-exists-exception';
+import { SensorEvent } from '../../core/events/sensor/sensor.event';
 
 @Injectable()
-export class SensorEsListener  extends AbstractEsListener {
+export class SensorEsListener extends AbstractEsListener {
 
     constructor(
         eventStore: EventStorePublisher,
@@ -25,8 +24,7 @@ export class SensorEsListener  extends AbstractEsListener {
                 const offset = eventMessage.positionEventNumber;
                 const callback = () => this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
 
-                const event: SensorEvent = plainToClass(sensorEventType.getType(eventMessage.eventType),
-                    eventMessage.data as SensorEvent);
+                const event = sensorEventType.getEvent(eventMessage) as SensorEvent;
                 try {
                     await this.sensorProcessor.process(event);
                     await callback();

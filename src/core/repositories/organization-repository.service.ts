@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventStore } from '../../event-store/event-store';
-import { OrganizationAggregate } from '../aggregates/organizationAggregate';
+import { OrganizationAggregate } from '../aggregates/organization.aggregate';
 
 @Injectable()
 export class OrganizationRepository {

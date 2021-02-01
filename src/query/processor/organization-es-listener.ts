@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
+import { AbstractEsListener } from './abstract.es.listener';
 import { OrganizationProcessor } from './organization.processor';
 import { organizationEventType } from '../../core/events/organization';
-import { AbstractEsListener } from './abstract.es.listener';
-import { OrganizationEvent } from '../../core/events/organization/organizationEvent';
 import { CheckpointService } from '../service/checkpoint/checkpoint.service';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { SubscriptionExistsException } from '../handler/errors/subscription-exists-exception';
+import { OrganizationEvent } from '../../core/events/organization/organization.event';
 
 @Injectable()
 export class OrganizationEsListener extends AbstractEsListener {
@@ -25,8 +24,7 @@ export class OrganizationEsListener extends AbstractEsListener {
                 const callback = () => this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
 
                 const originSync = eventMessage.metadata && eventMessage.metadata.originSync;
-                const event: OrganizationEvent = plainToClass(organizationEventType.getType(eventMessage.eventType),
-                    eventMessage.data as OrganizationEvent);
+                const event = organizationEventType.getEvent(eventMessage) as OrganizationEvent;
                 try {
                     await this.organizationProcessor.process(event, originSync);
                     await callback();

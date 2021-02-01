@@ -19,7 +19,7 @@ export class RegisterSensorBody extends ChangeSensorBody {
 
   @IsArray()
   @IsNotEmpty()
-  @ArrayMinSize(3)
+  @ArrayMinSize(2)
   @ArrayMaxSize(3)
   @IsNumber({}, {each: true})
   @ApiProperty({

@@ -5,7 +5,7 @@ import { AbstractProcessor } from './abstract.processor';
 import { Organization } from '../data/organization.interface';
 import { OrganizationGateway } from '../gateway/organization.gateway';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import { OrganizationEvent } from '../../core/events/organization/organizationEvent';
+import { OrganizationEvent } from '../../core/events/organization/organization.event';
 import { OrganizationDeleted, OrganizationRegistered, OrganizationUpdated } from '../../core/events/organization';
 
 @Injectable()
