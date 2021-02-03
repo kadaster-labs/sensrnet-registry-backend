@@ -5,5 +5,5 @@ import { DatastreamDeleted as V1 } from './1.0.0/sensor-datastreamdeleted.event'
 export { DatastreamDeleted } from './1.0.0/sensor-datastreamdeleted.event';
 
 export function getDatastreamDeletedEvent(eventMessage: EventMessage): V1 {
-    return plainToClass(V1, eventMessage.data);
+    return !eventMessage.metadata.version || eventMessage.metadata.version === V1.version ? plainToClass(V1, eventMessage.data) : null;
 }

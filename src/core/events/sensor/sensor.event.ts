@@ -6,6 +6,7 @@ export abstract class SensorEvent extends Event {
 
   protected constructor(sensorId: string, version: string) {
     super(sensorId, version);
+
     this.sensorId = sensorId;
   }
 

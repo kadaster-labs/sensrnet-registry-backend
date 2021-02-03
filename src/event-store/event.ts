@@ -1,6 +1,7 @@
 import { EventMessage } from './event-message';
 
 export abstract class Event {
+
   public readonly version: string;
   public readonly aggregateId: string;
 

@@ -17,7 +17,7 @@ export abstract class AbstractEventType {
     return event;
   }
 
-  public add(eventClass: Record<string, any>, upcastFn: (eventMessage) => Event): void {
+  public add(eventClass: Record<string, any>, upcastFn: (eventMessage) => Event | null): void {
     this.supportedTypes[eventClass.name] = upcastFn;
   }
 }

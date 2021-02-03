@@ -15,5 +15,4 @@ export class SensorRelocated extends SensorEvent {
     this.height = height;
     this.baseObjectId = baseObjectId;
   }
-
 }

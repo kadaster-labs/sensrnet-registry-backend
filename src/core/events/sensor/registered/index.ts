@@ -14,7 +14,9 @@ export function getSensorRegisteredEvent(eventMessage: EventMessage): V2 {
             metadata: {...eventMessage.metadata, version: V2.version},
         };
         return getSensorRegisteredEvent(upcastedEventMessage) ;
-    } else {
+    } else if (eventMessage.metadata.version === V2.version) {
         return plainToClass(V2, eventMessage.data);
+    } else {
+        return null;
     }
 }

@@ -1,7 +1,7 @@
 import { validateOrganization } from './util/organization.utils';
 import { CreateSensorCommand } from '../model/create-sensor.command';
 import { SensorAggregate } from '../../core/aggregates/sensor.aggregate';
-import { OrganizationRepository } from '../../core/repositories/organization-repository.service';
+import { OrganizationRepository } from '../../core/repositories/organization.repository';
 import { NoOrganizationException } from './error/no-organization-exception';
 import { SensorRepository } from '../../core/repositories/sensor.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';

@@ -23,7 +23,7 @@ import { UpdateOrganizationCommandHandler } from './handler/update-organization.
 import { DeleteOrganizationCommandHandler } from './handler/delete-organization.handler';
 import { TransferSensorOwnershipCommand } from './model/transfer-sensor-ownership.command';
 import { RegisterOrganizationCommandHandler } from './handler/register-organization.handler';
-import { OrganizationRepository } from '../core/repositories/organization-repository.service';
+import { OrganizationRepository } from '../core/repositories/organization.repository';
 import { UpdateSensorLocationCommandHandler } from './handler/update-sensor-location.handler';
 import { ShareSensorOwnershipCommandHandler } from './handler/share-sensor-ownership.handler';
 import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor-ownership.handler';

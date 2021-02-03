@@ -2,7 +2,7 @@ import { UserService } from '../user.service';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 import { UpdateUserCommand } from '../command/update-user.command';
 import { validateOrganization } from '../../command/handler/util/organization.utils';
-import { OrganizationRepository } from '../../core/repositories/organization-repository.service';
+import { OrganizationRepository } from '../../core/repositories/organization.repository';
 
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserCommandHandler implements ICommandHandler<UpdateUserCommand> {

@@ -1,7 +1,7 @@
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 import { UpdateOrganizationCommand } from '../model/update-organization.command';
 import { UnknowOrganizationException } from './error/unknow-organization-exception';
-import { OrganizationRepository } from '../../core/repositories/organization-repository.service';
+import { OrganizationRepository } from '../../core/repositories/organization.repository';
 
 @CommandHandler(UpdateOrganizationCommand)
 export class UpdateOrganizationCommandHandler implements ICommandHandler<UpdateOrganizationCommand> {
