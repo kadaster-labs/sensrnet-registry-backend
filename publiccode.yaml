@@ -1,0 +1,119 @@
+publiccodeYmlVersion: "0.2"
+
+name: sensrnet-registry-backend
+applicationSuite: sensrnet-registry
+url: "https://github.com/kadaster-labs/sensrnet-backend"
+landingURL: "https://github.com/kadaster-labs/sensrnet-home"
+isBasedOn: "https://github.com/ConductionNL/Proto-component-commonground.git"
+softwareVersion: "0.1.0"
+releaseDate: "2021-02-04"
+
+inputTypes:
+    - application/json
+
+outputTypes:
+    - application/json
+    - application/geo+json
+    - text/html
+
+platforms:
+    - web
+    - haven
+
+categories:
+    - it-development
+
+usedBy:
+    - Gemeente Tilburg
+
+
+roadmap: "https://github.com/kadaster-labs/sensrnet-home/blob/master/docs/ProductVision.md"
+
+developmentStatus: development
+
+softwareType: "standalone/other"
+
+#intendedAudience:
+#  scope:
+#    - science-and-technology
+#  countries:
+#    - it
+#    - de
+#  unsupportedCountries:
+#    - us
+
+description:
+    en:
+        #    localisedName: Medusa
+        #    genericName: Text Editor
+        #    shortDescription: >
+        #          This description can have a maximum 150
+        #          characters long. We should not fill the
+        #          remaining space with "Lorem Ipsum". End
+        shortDescription: 'SensRNet, de software en community rondom het registreren van sensoren'
+        #
+        #    longDescription: >
+        #          Very long description of this software, also split
+        #          on multiple rows. You should note what the software
+        #          is and why one should need it.
+        longDescription: |
+              SensRNet is de software en de community om sensoren te registreren in
+              Nederland. SensRNet gaat uit van een netwerk van nodes waarin registratie
+              plaatsvindt. Deze nodes worden Registry Nodes genoemd. Elke node is
+              autonoom, staat dus op zichzelf en kan ook een eigen implementatie zijn om
+              lokaal sensoren te registreren. Middels een distributed ledger worden de
+              wijzigingen in de registratie in het netwerk gedeeld en kan daar op andere
+              nodes gebruik van worden gemaakt. Een node is aangewezen om publicatie van
+              (publieke) sensoren op de kaart te doen: de Publishing Node.
+
+        documentation: "https://github.com/kadaster-labs/sensrnet-home/blob/master/README.md"
+        apiDocumentation: "pc.zaakonline.nl"
+#
+#    features:
+#       - Very important feature
+#       - Will run without a problem
+#       - Has zero bugs
+#       - Solves all the problems of the world
+#    screenshots:
+#       - img/sshot1.jpg
+#       - img/sshot2.jpg
+#       - img/sshot3.jpg
+#    videos:
+#       - https://youtube.com/xxxxxxxx
+#    awards:
+#       - 1st Price Software of the year
+
+legal:
+    license: EUPL-1.2
+    mainCopyrightOwner: Kadaster
+    repoOwner: Kadaster
+    authorsFile: MAINTAINERS.md
+
+maintenance:
+    type: "internal"
+
+    contractors:
+        - name: "Kadaster"
+          email: "info@kadaster.nl"
+          website: "https://www.kadaster.nl"
+          until: "2022-01-01"
+
+    contacts:
+        - name: Marc van Andel
+          email: "marc.vanandel@kadaster.nl"
+          affiliation: "Kadaster"
+
+localisation:
+    localisationReady: yes
+    availableLanguages:
+        - en
+        - nl
+
+dependsOn:
+    open:
+        - name: Kubernetes
+          versionMin: "1.15.5-do.1"
+
+installations:
+    - type: helm
+      url: "https://raw.githubusercontent.com/kadaster-labs/sensrnet-helm-charts/tree/master/charts/registry-backend/"
