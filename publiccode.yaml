@@ -1,7 +1,7 @@
 publiccodeYmlVersion: "0.2"
 
 name: sensrnet-registry-backend
-applicationSuite: sensrnet-registry
+applicationSuite: sensrnet
 url: "https://github.com/kadaster-labs/sensrnet-backend"
 landingURL: "https://github.com/kadaster-labs/sensrnet-home"
 isBasedOn: "https://github.com/ConductionNL/Proto-component-commonground.git"
@@ -19,6 +19,7 @@ outputTypes:
 platforms:
     - web
     - haven
+    - commonground
 
 categories:
     - it-development
