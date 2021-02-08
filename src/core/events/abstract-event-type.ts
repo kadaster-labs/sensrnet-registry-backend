@@ -10,7 +10,6 @@ export abstract class AbstractEventType {
     const upcastFn = this.supportedTypes[eventTypeName.eventType];
 
     const event = upcastFn ? upcastFn(eventTypeName) : undefined;
-    // Logger.warn(event);
     if (!event) {
       Logger.warn(`Unsupported event received! eventType: ${eventTypeName.eventType}`);
     }
