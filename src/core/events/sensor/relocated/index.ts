@@ -1,9 +1,9 @@
 import { plainToClass } from 'class-transformer';
 import { EventMessage } from '../../../../event-store/event-message';
-import { SensorRelocated as V1 } from './1/sensor-relocated.event';
-import { SensorRelocated as V2 } from './2/sensor-relocated.event';
+import { SensorRelocated as V1 } from './sensor-relocated-v1.event';
+import { SensorRelocated as V2 } from './sensor-relocated-v2.event';
 
-export { SensorRelocated } from './2/sensor-relocated.event';
+export { SensorRelocated } from './sensor-relocated-v2.event';
 
 export function getSensorRelocatedEvent(eventMessage: EventMessage): V2 {
     if (!eventMessage.metadata.version || eventMessage.metadata.version === V1.version) {

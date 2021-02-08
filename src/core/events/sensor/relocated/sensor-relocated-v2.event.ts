@@ -1,4 +1,4 @@
-import { SensorEvent } from '../../sensor.event';
+import { SensorEvent } from '../sensor.event';
 
 export class SensorRelocated extends SensorEvent {
   static version = '2';

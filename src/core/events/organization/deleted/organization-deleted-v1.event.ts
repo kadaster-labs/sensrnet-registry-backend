@@ -1,4 +1,4 @@
-import { OrganizationEvent } from '../../organization.event';
+import { OrganizationEvent } from '../organization.event';
 
 export class OrganizationDeleted extends OrganizationEvent {
   static version = '1';
