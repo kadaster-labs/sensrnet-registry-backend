@@ -1,7 +1,7 @@
 import { SensorEvent } from '../../sensor.event';
 
 export class SensorOwnershipShared extends SensorEvent {
-  static version = '1.0.0';
+  static version = '1';
 
   public readonly organizationId: string;
 

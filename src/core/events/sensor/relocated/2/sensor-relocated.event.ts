@@ -1,7 +1,7 @@
 import { SensorEvent } from '../../sensor.event';
 
 export class SensorRelocated extends SensorEvent {
-  static version = '1.0.1';
+  static version = '2';
 
   readonly location: number[];
   readonly baseObjectId: string;

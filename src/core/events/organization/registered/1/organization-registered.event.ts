@@ -1,7 +1,7 @@
 import { OrganizationEvent } from '../../organization.event';
 
 export class OrganizationRegistered extends OrganizationEvent {
-  static version = '1.0.0';
+  static version = '1';
 
   public readonly website: string;
   public readonly contactName: string;
