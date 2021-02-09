@@ -3,7 +3,7 @@ import { UnknowSensorException } from './error/unknow-sensor-exception';
 import { SensorRepository } from '../../core/repositories/sensor.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 import { TransferSensorOwnershipCommand } from '../model/transfer-sensor-ownership.command';
-import { OrganizationRepository } from '../../core/repositories/organization-repository.service';
+import { OrganizationRepository } from '../../core/repositories/organization.repository';
 
 @CommandHandler(TransferSensorOwnershipCommand)
 export class TransferSensorOwnershipCommandHandler implements ICommandHandler<TransferSensorOwnershipCommand> {

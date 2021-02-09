@@ -1,7 +1,7 @@
 import { validateOrganization } from './util/organization.utils';
 import { CreateSensorCommand } from '../model/create-sensor.command';
 import { SensorAggregate } from '../../core/aggregates/sensor.aggregate';
-import { OrganizationRepository } from '../../core/repositories/organization-repository.service';
+import { OrganizationRepository } from '../../core/repositories/organization.repository';
 import { NoOrganizationException } from './error/no-organization-exception';
 import { SensorRepository } from '../../core/repositories/sensor.repository';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
@@ -30,11 +30,10 @@ export class CreateSensorCommandHandler implements ICommandHandler<CreateSensorC
       const sensorAggregate = new SensorAggregate(command.sensorId);
       aggregate = this.publisher.mergeObjectContext(sensorAggregate);
 
-      aggregate.register(command.organizationId,
-        command.name, command.location, command.dataStreams,
-        command.aim, command.description, command.manufacturer,
-        command.active, command.observationArea, command.documentationUrl,
-        command.theme, command.category, command.typeName, command.typeDetails);
+      aggregate.register(command.organizationId, command.name, command.location, command.baseObjectId,
+          command.dataStreams, command.aim, command.description, command.manufacturer, command.active,
+          command.observationArea, command.documentationUrl, command.theme, command.category, command.typeName,
+          command.typeDetails);
       aggregate.commit();
     }
   }

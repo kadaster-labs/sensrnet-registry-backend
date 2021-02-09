@@ -1,5 +1,5 @@
 import { NonExistingOrganizationException } from '../error/non-existing-organization-exception';
-import { OrganizationRepository } from '../../../core/repositories/organization-repository.service';
+import { OrganizationRepository } from '../../../core/repositories/organization.repository';
 
 export async function validateOrganization(organizationRepository: OrganizationRepository, organizationId: string): Promise<void> {
     if (!await organizationRepository.get(organizationId)) {

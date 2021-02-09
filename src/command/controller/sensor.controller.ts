@@ -1,12 +1,12 @@
 import { v4 } from 'uuid';
 import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
-import { LocationBody } from './model/location.body';
 import { SensorIdParams } from './model/sensorid.params';
 import { UpdateSensorBody } from './model/update-sensor.body';
 import { DataStreamIdParams } from './model/datastreamid.params';
 import { ShareOwnershipBody } from './model/share-ownership.body';
 import { RegisterSensorBody } from './model/register-sensor.body';
+import { UpdateLocationBody } from './model/update-location.body';
 import { CreateSensorCommand } from '../model/create-sensor.command';
 import { UpdateSensorCommand } from '../model/update-sensor.command';
 import { DeleteSensorCommand } from '../model/delete-sensor.command';
@@ -48,9 +48,9 @@ export class SensorController {
 
     const user: Record<string, any> = req.user;
     await this.commandBus.execute(new CreateSensorCommand(sensorId, user.organizationId, sensorBody.name, sensorBody.location,
-        sensorBody.dataStreams, sensorBody.aim, sensorBody.description, sensorBody.manufacturer, sensorBody.active,
-        sensorBody.observationArea, sensorBody.documentationUrl, sensorBody.theme, sensorBody.category, sensorBody.typeName,
-        sensorBody.typeDetails));
+        sensorBody.baseObjectId, sensorBody.dataStreams, sensorBody.aim, sensorBody.description, sensorBody.manufacturer,
+        sensorBody.active, sensorBody.observationArea, sensorBody.documentationUrl, sensorBody.theme, sensorBody.category,
+        sensorBody.typeName, sensorBody.typeDetails));
 
     return { sensorId };
   }
@@ -97,10 +97,10 @@ export class SensorController {
   @ApiResponse({ status: 200, description: 'Sensor location updated' })
   @ApiResponse({ status: 400, description: 'Sensor location update failed' })
   async relocateSensor(@Req() req: Request, @Param() params: SensorIdParams,
-                       @Body() locationBody: LocationBody): Promise<any> {
+                       @Body() locationBody: UpdateLocationBody): Promise<any> {
     const user: Record<string, any> = req.user;
     return await this.commandBus.execute(new UpdateSensorLocationCommand(params.sensorId, user.organizationId,
-        locationBody.longitude, locationBody.latitude, locationBody.height, locationBody.baseObjectId));
+        locationBody.location, locationBody.baseObjectId));
   }
 
   @Put(':sensorId/activate')

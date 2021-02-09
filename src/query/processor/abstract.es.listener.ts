@@ -1,10 +1,12 @@
 import { Logger, OnModuleInit } from '@nestjs/common';
-import { MappedEventAppearedCallback } from 'geteventstore-promise';
+import { AbstractProcessor } from './abstract.processor';
 import { EventStoreCatchUpSubscription } from 'node-eventstore-client';
 import { CheckpointService } from '../service/checkpoint/checkpoint.service';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { NoSubscriptionException } from '../handler/errors/no-subscription-exception';
 import { SubscriptionExistsException } from '../handler/errors/subscription-exists-exception';
+import { Event } from '../../event-store/event';
+import { Event as ESEvent } from 'geteventstore-promise';
 
 export abstract class AbstractEsListener implements OnModuleInit {
   private subscription: EventStoreCatchUpSubscription;
@@ -13,8 +15,10 @@ export abstract class AbstractEsListener implements OnModuleInit {
 
   protected constructor(
       protected checkpointId: string,
+      protected streamName: string,
       protected readonly eventStore: EventStorePublisher,
       protected readonly checkpointService: CheckpointService,
+      protected readonly processor: AbstractProcessor,
   ) {}
 
   getSubscription(): EventStoreCatchUpSubscription {
@@ -38,7 +42,13 @@ export abstract class AbstractEsListener implements OnModuleInit {
     }
   }
 
-  abstract openSubscription(): Promise<void>;
+  async openSubscription(): Promise<void> {
+    if (!this.subscriptionExists()) {
+      await this.subscribeToStreamFromLastOffset(this.streamName);
+    } else {
+      throw new SubscriptionExistsException();
+    }
+  }
 
   async getOffset(): Promise<number> {
     const checkpoint = await this.checkpointService.findOne({_id: this.checkpointId});
@@ -53,8 +63,9 @@ export abstract class AbstractEsListener implements OnModuleInit {
     }
   }
 
-  async subscribeToStreamFrom(streamName: string,
-                              onEvent: MappedEventAppearedCallback<EventStoreCatchUpSubscription>): Promise<void> {
+  abstract parseEvent(eventMessage: ESEvent): Event;
+
+  async subscribeToStreamFromLastOffset(streamName: string): Promise<void> {
     const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
 
     const exitCallback = () => {
@@ -71,6 +82,23 @@ export abstract class AbstractEsListener implements OnModuleInit {
     const timeout = setTimeout(exitCallback, timeoutMs);
     try {
       const offset = await this.getOffset();
+      const onEvent = async (_, eventMessage) => {
+        if (eventMessage.positionEventNumber > offset) {
+          const callback = () => {
+            return this.checkpointService.updateOne({_id: this.checkpointId}, {offset: eventMessage.positionEventNumber});
+          };
+
+          const event = this.parseEvent(eventMessage);
+          const originSync = eventMessage.metadata && eventMessage.metadata.originSync;
+          try {
+            await this.processor.process(event, originSync);
+            await callback();
+          } catch {
+            await callback();
+          }
+        }
+      };
+
       this.logger.log(`Subscribing to ES stream ${streamName} from offset ${offset}.`);
 
       try {

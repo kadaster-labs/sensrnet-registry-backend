@@ -1,7 +1,7 @@
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { OrganizationAggregate } from '../../core/aggregates/organizationAggregate';
+import { OrganizationAggregate } from '../../core/aggregates/organization.aggregate';
 import { RegisterOrganizationCommand } from '../model/register-organization.command';
-import { OrganizationRepository } from '../../core/repositories/organization-repository.service';
+import { OrganizationRepository } from '../../core/repositories/organization.repository';
 import { OrganizationAlreadyExistsException } from './error/organization-already-exists-exception';
 
 @CommandHandler(RegisterOrganizationCommand)

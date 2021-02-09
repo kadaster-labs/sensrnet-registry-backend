@@ -1,4 +1,4 @@
-export * from './organization-registered.event';
-export * from './organization-updated.event';
-export * from './organization-deleted.event';
+export * from './registered';
+export * from './updated';
+export * from './deleted';
 export * from './organization-event-type';

@@ -1,6 +1,8 @@
-import { SensorEvent } from './sensor.event';
+import { SensorEvent } from '../sensor.event';
 
 export class SensorRegistered extends SensorEvent {
+  static version = '1';
+
   readonly organizationId: string;
   readonly name: string;
   readonly longitude: number;
@@ -24,7 +26,7 @@ export class SensorRegistered extends SensorEvent {
               manufacturer: string, active: boolean, observationArea: Record<string, any>,
               documentationUrl: string, theme: string[], category: string, typeName: string,
               typeDetails: Record<string, any>) {
-    super(sensorId);
+    super(sensorId, SensorRegistered.version);
     this.organizationId = organizationId;
     this.name = name;
     this.longitude = longitude;

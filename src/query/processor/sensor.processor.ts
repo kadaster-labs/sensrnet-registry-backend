@@ -8,7 +8,7 @@ import { SensorEvent } from '../../core/events/sensor/sensor.event';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import {
   DatastreamAdded, DatastreamDeleted, DatastreamUpdated, SensorActivated, SensorDeactivated, SensorDeleted,
-  SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated,
+  SensorOwnershipShared, SensorOwnershipTransferred, SensorRelocated, SensorUpdated, SensorRegistered,
 } from '../../core/events/sensor';
 
 @Injectable()
@@ -70,7 +70,7 @@ export class SensorProcessor extends AbstractProcessor {
       _id: event.sensorId,
       location: {
         type: 'Point',
-        coordinates: [event.longitude, event.latitude, event.height],
+        coordinates: event.location,
       },
       active: event.active,
       organizations: event.organizationId ? [{id: event.organizationId, role: 'owner'}] : [],
@@ -322,7 +322,7 @@ export class SensorProcessor extends AbstractProcessor {
     sensorData = {
       location: {
         type: 'Point',
-        coordinates: [event.longitude, event.latitude, event.height],
+        coordinates: event.location,
       },
     };
 

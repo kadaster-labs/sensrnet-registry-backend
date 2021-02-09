@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
+import { HealthCheckResult } from '@nestjs/terminus/dist/health-check/health-check-result.interface';
 
 @Controller('health')
 export class HealthController {
@@ -9,7 +10,7 @@ export class HealthController {
 
   @Get()
   @HealthCheck()
-  check() {
+  check(): Promise<HealthCheckResult> {
     return this.health.check([]);
   }
 }

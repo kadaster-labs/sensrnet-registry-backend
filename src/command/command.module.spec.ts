@@ -1,7 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { Logger } from '@nestjs/common';
 import { EventStore } from '../event-store/event-store';
-import { LocationBody } from './controller/model/location.body';
 import { CreateSensorCommand } from './model/create-sensor.command';
 import { UpdateSensorCommand } from './model/update-sensor.command';
 import { SensorAggregate } from '../core/aggregates/sensor.aggregate';
@@ -13,7 +12,7 @@ import { DeleteSensorCommandHandler } from './handler/delete-sensor.handler';
 import { CommandBus, CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
 import { UpdateOrganizationCommand } from './model/update-organization.command';
 import { DeleteOrganizationCommand } from './model/delete-organization.command';
-import { OrganizationAggregate } from '../core/aggregates/organizationAggregate';
+import { OrganizationAggregate } from '../core/aggregates/organization.aggregate';
 import { ActivateSensorCommandHandler } from './handler/activate-sensor.handler';
 import { RegisterOrganizationCommand } from './model/register-organization.command';
 import { DeactivateSensorCommandHandler } from './handler/deactivate-sensor.handler';
@@ -24,7 +23,7 @@ import { UpdateOrganizationCommandHandler } from './handler/update-organization.
 import { DeleteOrganizationCommandHandler } from './handler/delete-organization.handler';
 import { TransferSensorOwnershipCommand } from './model/transfer-sensor-ownership.command';
 import { RegisterOrganizationCommandHandler } from './handler/register-organization.handler';
-import { OrganizationRepository } from '../core/repositories/organization-repository.service';
+import { OrganizationRepository } from '../core/repositories/organization.repository';
 import { UpdateSensorLocationCommandHandler } from './handler/update-sensor-location.handler';
 import { ShareSensorOwnershipCommandHandler } from './handler/share-sensor-ownership.handler';
 import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor-ownership.handler';
@@ -215,7 +214,7 @@ describe('Command (integration)', () => {
 
         try {
             await commandBus.execute(new CreateSensorCommand('test-id', 'test-id', 'test-name',
-                {latitude: 0, longitude: 0} as LocationBody, [], 'test-aim', 'test-description',
+                [0, 0, 0], 'test-base-id',  [], 'test-aim', 'test-description',
                 'test-manufacturer', true, undefined, 'test-url', undefined,
                 'test-category', 'test-type', undefined));
         } catch {
@@ -266,10 +265,8 @@ describe('Command (integration)', () => {
     });
 
     const register = (sensorAggregate) => {
-        sensorAggregate.register('test-id', 'test-name',
-            {latitude: 0, longitude: 0} as LocationBody, [], 'test-aim', 'test-description',
-            'test-manufacturer', true, undefined, 'test-url', undefined,
-            'test-type', undefined);
+        sensorAggregate.register('test-id', 'test-name', [0, 0, 0], [], 'test-aim', 'test-description',
+            'test-manufacturer', true, undefined, 'test-url', undefined, 'test-type', undefined);
     };
 
     const updateSensor = async (eventStoreProvider, isRegistered) => {

@@ -1,6 +1,8 @@
 import { SensorEvent } from './sensor.event';
 
 export abstract class DatastreamChanged extends SensorEvent {
+  static version = '1';
+
   public readonly dataStreamId: string;
   public readonly name: string;
   public readonly reason: string;
@@ -19,7 +21,7 @@ export abstract class DatastreamChanged extends SensorEvent {
               observedProperty: string, unitOfMeasurement: string, isPublic: boolean, isOpenData: boolean,
               isReusable: boolean, documentationUrl: string, dataLink: string,
               dataFrequency: number, dataQuality: number) {
-    super(sensorId);
+    super(sensorId, DatastreamChanged.version);
     this.dataStreamId = dataStreamId;
     this.name = name;
     this.reason = reason;

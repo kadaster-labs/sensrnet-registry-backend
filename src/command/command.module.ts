@@ -18,7 +18,7 @@ import { DeleteDataStreamCommandHandler } from './handler/delete-datastream.hand
 import { UpdateOrganizationCommandHandler } from './handler/update-organization.handler';
 import { DeleteOrganizationCommandHandler } from './handler/delete-organization.handler';
 import { RegisterOrganizationCommandHandler } from './handler/register-organization.handler';
-import { OrganizationRepository } from '../core/repositories/organization-repository.service';
+import { OrganizationRepository } from '../core/repositories/organization.repository';
 import { UpdateSensorLocationCommandHandler } from './handler/update-sensor-location.handler';
 import { ShareSensorOwnershipCommandHandler } from './handler/share-sensor-ownership.handler';
 import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor-ownership.handler';

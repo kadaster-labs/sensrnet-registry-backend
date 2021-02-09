@@ -1,7 +1,9 @@
 import { Aggregate } from '../../event-store/aggregate';
 import { EventMessage } from '../../event-store/event-message';
 import { OrganizationState, OrganizationStateImpl } from './organization-state';
-import { OrganizationDeleted, OrganizationRegistered, OrganizationUpdated } from '../events/organization';
+import { OrganizationUpdated, getOrganizationUpdatedEvent } from '../events/organization/updated';
+import { OrganizationDeleted, getOrganizationDeletedEvent } from '../events/organization/deleted';
+import { OrganizationRegistered, getOrganizationRegisteredEvent } from '../events/organization/registered';
 
 export class OrganizationAggregate extends Aggregate {
   state!: OrganizationState;
@@ -25,18 +27,21 @@ export class OrganizationAggregate extends Aggregate {
   }
 
   onOrganizationRegistered(eventMessage: EventMessage): void {
-    const event: OrganizationRegistered = eventMessage.data as OrganizationRegistered;
+    const event: OrganizationRegistered = getOrganizationRegisteredEvent(eventMessage);
+
     this.state = new OrganizationStateImpl(this.aggregateId);
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
   onOrganizationUpdated(eventMessage: EventMessage): void {
-    const event: OrganizationUpdated = eventMessage.data as OrganizationUpdated;
+    const event: OrganizationUpdated = getOrganizationUpdatedEvent(eventMessage);
+
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
   onOrganizationDeleted(eventMessage: EventMessage): void {
-    const event: OrganizationDeleted = eventMessage.data as OrganizationDeleted;
+    const event: OrganizationDeleted = getOrganizationDeletedEvent(eventMessage);
+
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 }
