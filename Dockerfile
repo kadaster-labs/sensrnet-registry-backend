@@ -10,6 +10,9 @@ RUN npm ci
 COPY tsconfig*.json ./
 COPY src src
 
+COPY migrations ./migrations
+COPY migrate-mongo-config.js ./migrate-mongo-config.js
+
 RUN npm run build && \
     npm prune --production
 
@@ -23,6 +26,9 @@ WORKDIR /home/node/app
 
 COPY --chown=node:node --from=builder /app/node_modules ./node_modules
 COPY --chown=node:node --from=builder /app/dist ./dist
+
+COPY --chown=node:node --from=builder /app/migrations ./migrations
+COPY --chown=node:node --from=builder /app/migrate-mongo-config.js ./migrate-mongo-config.js
 
 COPY --chown=node:node VERSION .
 COPY --chown=node:node entrypoint.sh entrypoint.sh

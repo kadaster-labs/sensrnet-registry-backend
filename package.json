@@ -39,6 +39,7 @@
     "class-validator": "^0.12.2",
     "cookie-parser": "^1.4.5",
     "geteventstore-promise": "^3.2.4",
+    "migrate-mongo": "^8.1.4",
     "moment": "^2.26.0",
     "mongoose": "^5.11.10",
     "passport": "^0.4.1",
