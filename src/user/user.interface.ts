@@ -5,7 +5,7 @@ export interface User extends Document {
     role?: string;
     password: string;
     refreshToken?: string;
-    organizationId?: string;
+    legalEntityId?: string;
 
     checkPassword(pass: string, callback: (err, isMatch) => void): void;
     checkRefreshToken(token: string, callback: (err, isMatch) => void): void;

@@ -1,20 +1,20 @@
 import { Test } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { AuthService } from '../auth/auth.service';
-import { OrganizationGateway } from './gateway/organization.gateway';
+import { LegalEntityGateway } from './gateway/legal-entity.gateway';
 import { SensorGateway } from './gateway/sensor.gateway';
-import { RetrieveSensorQuery } from './model/sensor.query';
-import { RetrieveSensorsQuery } from './model/sensors.query';
-import { OrganizationProcessor } from './processor/organization.processor';
+import { RetrieveSensorQuery } from './controller/query/sensor.query';
+import { RetrieveSensorsQuery } from './controller/query/sensors.query';
+import { LegalEntityProcessor } from './processor/legal-entity.processor';
 import { SensorProcessor } from './processor/sensor.processor';
-import { OrganizationController } from './controller/organization.controller';
+import { LegalEntityController } from './controller/legal-entity.controller';
 import { SensorController } from './controller/sensor.controller';
-import { RetrieveOrganizationQuery } from './model/retrieve-organization.query';
+import { LegalEntityQuery } from './controller/query/legal-entity.query';
 import { EventStoreModule } from '../event-store/event-store.module';
-import { RetrieveSensorQueryHandler } from './handler/sensor.handler';
+import { RetrieveSensorQueryHandler } from './controller/handler/sensor.handler';
 import { CommandBus, CqrsModule, EventPublisher } from '@nestjs/cqrs';
-import { RetrieveSensorsQueryHandler } from './handler/sensors.handler';
-import { RetrieveOrganizationQueryHandler } from './handler/retrieve-organization.handler';
+import { RetrieveSensorsQueryHandler } from './controller/handler/sensors.handler';
+import { LegalEntityQueryHandler } from './controller/handler/legal-entity.handler';
 import { AccessJwtStrategy } from '../auth/access-jwt.strategy';
 
 const testObjects = [
@@ -62,15 +62,15 @@ describe('Query (integration)', () => {
                 CqrsModule,
                 EventStoreModule,
             ], controllers: [
-                OrganizationController,
+                LegalEntityController,
                 SensorController,
             ], providers: [
-                OrganizationGateway,
+                LegalEntityGateway,
                 SensorGateway,
                 EventPublisher,
-                OrganizationProcessor,
+                LegalEntityProcessor,
                 SensorProcessor,
-                RetrieveOrganizationQueryHandler,
+                LegalEntityQueryHandler,
                 RetrieveSensorQueryHandler,
                 RetrieveSensorsQueryHandler,
                 {
@@ -83,7 +83,7 @@ describe('Query (integration)', () => {
                     provide: getModelToken('Sensor'),
                     useValue: mockRepository,
                 }, {
-                    provide: getModelToken('Organization'),
+                    provide: getModelToken('LegalEntity'),
                     useValue: mockRepository,
                 },
             ],
@@ -92,12 +92,12 @@ describe('Query (integration)', () => {
 
     it(`Should retrieve an organization`, async () => {
         const commandBus: CommandBus = moduleRef.get(CommandBus);
-        const ownerQueryHandler: RetrieveOrganizationQueryHandler = moduleRef.get(RetrieveOrganizationQueryHandler);
-        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RetrieveOrganizationQuery) => ownerQueryHandler.execute(c));
+        const ownerQueryHandler: LegalEntityQueryHandler = moduleRef.get(LegalEntityQueryHandler);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: LegalEntityQuery) => ownerQueryHandler.execute(c));
 
         let organizations;
         try {
-            organizations = await commandBus.execute(new RetrieveOrganizationQuery('test-id'));
+            organizations = await commandBus.execute(new LegalEntityQuery('test-id'));
         } catch {
             organizations = null;
         }

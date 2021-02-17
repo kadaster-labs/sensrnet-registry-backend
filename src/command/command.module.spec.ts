@@ -1,34 +1,25 @@
 import { Test } from '@nestjs/testing';
 import { Logger } from '@nestjs/common';
 import { EventStore } from '../event-store/event-store';
-import { CreateSensorCommand } from './model/create-sensor.command';
-import { UpdateSensorCommand } from './model/update-sensor.command';
+import { RegisterSensorCommand } from './command/sensor/register-sensor.command';
+import { UpdateSensorCommand } from './command/sensor/update-sensor.command';
 import { SensorAggregate } from '../core/aggregates/sensor.aggregate';
 import { SensorRepository } from '../core/repositories/sensor.repository';
 import { EventStorePublisher } from '../event-store/event-store.publisher';
-import { CreateSensorCommandHandler } from './handler/create-sensor.handler';
-import { UpdateSensorCommandHandler } from './handler/update-sensor.handler';
-import { DeleteSensorCommandHandler } from './handler/delete-sensor.handler';
+import { RegisterSensorCommandHandler } from './handler/model/sensor/register-sensor.handler';
+import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor.handler';
+import { DeleteSensorCommandHandler } from './handler/model/sensor/delete-sensor.handler';
 import { CommandBus, CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
-import { UpdateOrganizationCommand } from './model/update-organization.command';
-import { DeleteOrganizationCommand } from './model/delete-organization.command';
-import { OrganizationAggregate } from '../core/aggregates/organization.aggregate';
-import { ActivateSensorCommandHandler } from './handler/activate-sensor.handler';
-import { RegisterOrganizationCommand } from './model/register-organization.command';
-import { DeactivateSensorCommandHandler } from './handler/deactivate-sensor.handler';
-import { CreateDatastreamCommandHandler } from './handler/create-datastream.handler';
-import { DeleteDataStreamCommandHandler } from './handler/delete-datastream.handler';
-import { ShareSensorOwnershipCommand } from './model/share-sensor-ownership.command';
-import { UpdateOrganizationCommandHandler } from './handler/update-organization.handler';
-import { DeleteOrganizationCommandHandler } from './handler/delete-organization.handler';
-import { TransferSensorOwnershipCommand } from './model/transfer-sensor-ownership.command';
-import { RegisterOrganizationCommandHandler } from './handler/register-organization.handler';
-import { OrganizationRepository } from '../core/repositories/organization.repository';
-import { UpdateSensorLocationCommandHandler } from './handler/update-sensor-location.handler';
-import { ShareSensorOwnershipCommandHandler } from './handler/share-sensor-ownership.handler';
-import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor-ownership.handler';
-
-const logger: Logger = new Logger();
+import { UpdateLegalEntityCommand } from './command/legal-entity/update-legal-entity.command';
+import { DeleteLegalEntityCommand } from './command/legal-entity/delete-legal-entity.command';
+import { LegalEntityAggregate } from '../core/aggregates/legal-entity.aggregate';
+import { RegisterLegalEntityCommand } from './command/legal-entity/register-legal-entity.command';
+import { CreateDataStreamCommandHandler } from './handler/model/data-stream/register-datastream.handler';
+import { DeleteDataStreamCommandHandler } from './handler/model/data-stream/delete-datastream.handler';
+import { UpdateLegalEntityCommandHandler } from './handler/model/legal-entity/update-legal-entity.handler';
+import { DeleteLegalEntityCommandHandler } from './handler/model/legal-entity/delete-legal-entity.handler';
+import { RegisterLegalEntityCommandHandler } from './handler/model/legal-entity/register-legal-entity.handler';
+import { LegalEntityRepository } from '../core/repositories/legal-entity.repository';
 
 const getEsMock = (organizationExist, sensorExist) => {
     return function ExistingEventStoreMock() {
@@ -46,26 +37,21 @@ describe('Command (integration)', () => {
             ], providers: [
                 EventBus,
                 EventPublisher,
-                OrganizationAggregate,
+                LegalEntityAggregate,
                 SensorAggregate,
-                OrganizationRepository,
+                LegalEntityRepository,
                 SensorRepository,
                 EventStorePublisher,
                 // organization
-                UpdateOrganizationCommandHandler,
-                DeleteOrganizationCommandHandler,
-                RegisterOrganizationCommandHandler,
+                UpdateLegalEntityCommandHandler,
+                DeleteLegalEntityCommandHandler,
+                RegisterLegalEntityCommandHandler,
                 // sensor
-                CreateSensorCommandHandler,
+                RegisterSensorCommandHandler,
                 UpdateSensorCommandHandler,
                 DeleteSensorCommandHandler,
-                ActivateSensorCommandHandler,
-                DeactivateSensorCommandHandler,
-                CreateDatastreamCommandHandler,
+                CreateDataStreamCommandHandler,
                 DeleteDataStreamCommandHandler,
-                UpdateSensorLocationCommandHandler,
-                ShareSensorOwnershipCommandHandler,
-                TransferSensorOwnershipCommandHandler,
                 // mocked providers
                 ...Providers,
             ],
@@ -76,11 +62,11 @@ describe('Command (integration)', () => {
         const moduleRef = await getModuleRef(eventStoreProvider);
         const commandBus: CommandBus = moduleRef.get(CommandBus);
         const eventPublisher: EventPublisher = moduleRef.get(EventPublisher);
-        const organizationAggregate: OrganizationAggregate = moduleRef.get(OrganizationAggregate);
+        const organizationAggregate: LegalEntityAggregate = moduleRef.get(LegalEntityAggregate);
         const sensorAggregate: SensorAggregate = moduleRef.get(SensorAggregate);
-        const organizationRepository: OrganizationRepository = moduleRef.get(OrganizationRepository);
+        const organizationRepository: LegalEntityRepository = moduleRef.get(LegalEntityRepository);
         const sensorRepository: SensorRepository = moduleRef.get(SensorRepository);
-        const mergeObjectImpl = (a) => a instanceof OrganizationAggregate ? organizationAggregate : sensorAggregate;
+        const mergeObjectImpl = (a) => a instanceof LegalEntityAggregate ? organizationAggregate : sensorAggregate;
         jest.spyOn(eventPublisher, 'mergeObjectContext').mockImplementation(mergeObjectImpl);
 
         return { commandBus, eventPublisher, organizationAggregate, sensorAggregate, organizationRepository, sensorRepository };
@@ -90,15 +76,15 @@ describe('Command (integration)', () => {
         const { commandBus, eventPublisher,
             organizationAggregate, organizationRepository } = await getOrganizationCommandPipeline(eventStoreProvider);
 
-        const commandHandler = new RegisterOrganizationCommandHandler(eventPublisher, organizationRepository);
-        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RegisterOrganizationCommand) => commandHandler.execute(c));
+        const commandHandler = new RegisterLegalEntityCommandHandler(eventPublisher, organizationRepository);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RegisterLegalEntityCommand) => commandHandler.execute(c));
         const registerFn = jest.spyOn(organizationAggregate, 'onOrganizationRegistered');
 
         try {
-            await commandBus.execute(new RegisterOrganizationCommand('test-id', 'test-site',
+            await commandBus.execute(new RegisterLegalEntityCommand('test-id', 'test-site',
                 'test-name', 'test-mail', 'test-phone'));
         } catch {
-            logger.log('Failed to register organization.');
+            Logger.log('Failed to register organization.');
         }
 
         return registerFn;
@@ -128,15 +114,15 @@ describe('Command (integration)', () => {
         const { commandBus, eventPublisher,
             organizationAggregate, organizationRepository } = await getOrganizationCommandPipeline(eventStoreProvider);
 
-        const commandHandler = new UpdateOrganizationCommandHandler(eventPublisher, organizationRepository);
-        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: UpdateOrganizationCommand) => commandHandler.execute(c));
+        const commandHandler = new UpdateLegalEntityCommandHandler(eventPublisher, organizationRepository);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: UpdateLegalEntityCommand) => commandHandler.execute(c));
         const updateFn = jest.spyOn(organizationAggregate, 'onOrganizationUpdated');
 
         try {
-            await commandBus.execute(new UpdateOrganizationCommand('test-id', 'test-site',
+            await commandBus.execute(new UpdateLegalEntityCommand('test-id', 'test-site',
                 'test-name', 'test-mail', 'test-phone'));
         } catch {
-            logger.log('Failed to update organization.');
+            Logger.log('Failed to update organization.');
         }
 
         return updateFn;
@@ -166,14 +152,14 @@ describe('Command (integration)', () => {
         const { commandBus, eventPublisher,
             organizationAggregate, organizationRepository } = await getOrganizationCommandPipeline(eventStoreProvider);
 
-        const commandHandler = new DeleteOrganizationCommandHandler(eventPublisher, organizationRepository);
-        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: DeleteOrganizationCommand) => commandHandler.execute(c));
+        const commandHandler = new DeleteLegalEntityCommandHandler(eventPublisher, organizationRepository);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: DeleteLegalEntityCommand) => commandHandler.execute(c));
         const deleteFn = jest.spyOn(organizationAggregate, 'onOrganizationDeleted');
 
         try {
-            await commandBus.execute(new DeleteOrganizationCommand('test-id'));
+            await commandBus.execute(new DeleteLegalEntityCommand('test-id'));
         } catch {
-            logger.log('Failed to delete organization');
+            Logger.log('Failed to delete organization');
         }
 
         return deleteFn;
@@ -208,17 +194,17 @@ describe('Command (integration)', () => {
             organizationRepository,
         } = await getOrganizationCommandPipeline(eventStoreProvider);
 
-        const commandHandler = new CreateSensorCommandHandler(eventPublisher, sensorRepository, organizationRepository);
-        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: CreateSensorCommand) => commandHandler.execute(c));
+        const commandHandler = new RegisterSensorCommandHandler(eventPublisher, sensorRepository, organizationRepository);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RegisterSensorCommand) => commandHandler.execute(c));
         const registerFn = jest.spyOn(sensorAggregate, 'onSensorRegistered');
 
         try {
-            await commandBus.execute(new CreateSensorCommand('test-id', 'test-id', 'test-name',
+            await commandBus.execute(new RegisterSensorCommand('test-id', 'test-id', 'test-name',
                 [0, 0, 0], 'test-base-id',  [], 'test-aim', 'test-description',
                 'test-manufacturer', true, undefined, 'test-url', undefined,
                 'test-category', 'test-type', undefined));
         } catch {
-            logger.log('Failed to register sensor.');
+            Logger.log('Failed to register sensor.');
         }
 
         return registerFn;
@@ -290,7 +276,7 @@ describe('Command (integration)', () => {
                 'test-aim', 'test-description', 'test-manufacturer', undefined,
                 'test-url', undefined, 'test-category', 'test-type', undefined));
         } catch {
-            logger.log('Failed to update.');
+            Logger.log('Failed to update.');
         }
 
         return updateFn;
@@ -339,7 +325,7 @@ describe('Command (integration)', () => {
             await commandBus.execute(new TransferSensorOwnershipCommand('test-id', 'test-id',
                 'new-test-id'));
         } catch {
-            logger.log('Failed to transfer.');
+            Logger.log('Failed to transfer.');
         }
 
         return transferFn;
@@ -387,7 +373,7 @@ describe('Command (integration)', () => {
         try {
             await commandBus.execute(new ShareSensorOwnershipCommand('test-id', 'test-id', 'new-test-id'));
         } catch {
-            logger.log('Failed to share ownership.');
+            Logger.log('Failed to share ownership.');
         }
 
         return shareFn;

@@ -66,8 +66,8 @@ export class RetrieveSensorsParams {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'A sensor organizationId.',
+    description: 'A legal entity ID which must have rights over sensors.',
   })
   @Type(() => String)
-  readonly organizationId: string;
+  readonly legalEntityId: string;
 }

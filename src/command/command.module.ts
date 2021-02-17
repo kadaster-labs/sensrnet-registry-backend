@@ -6,27 +6,31 @@ import { CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
 import { EventStoreModule } from '../event-store/event-store.module';
 import { SensorRepository } from '../core/repositories/sensor.repository';
 import { EventStorePublisher } from '../event-store/event-store.publisher';
-import { CreateSensorCommandHandler } from './handler/create-sensor.handler';
-import { UpdateSensorCommandHandler } from './handler/update-sensor.handler';
-import { DeleteSensorCommandHandler } from './handler/delete-sensor.handler';
-import { OrganizationController } from './controller/organization.controller';
-import { ActivateSensorCommandHandler } from './handler/activate-sensor.handler';
-import { UpdateDataStreamCommandHandler } from './handler/update-datastream.handler';
-import { DeactivateSensorCommandHandler } from './handler/deactivate-sensor.handler';
-import { CreateDatastreamCommandHandler } from './handler/create-datastream.handler';
-import { DeleteDataStreamCommandHandler } from './handler/delete-datastream.handler';
-import { UpdateOrganizationCommandHandler } from './handler/update-organization.handler';
-import { DeleteOrganizationCommandHandler } from './handler/delete-organization.handler';
-import { RegisterOrganizationCommandHandler } from './handler/register-organization.handler';
-import { OrganizationRepository } from '../core/repositories/organization.repository';
-import { UpdateSensorLocationCommandHandler } from './handler/update-sensor-location.handler';
-import { ShareSensorOwnershipCommandHandler } from './handler/share-sensor-ownership.handler';
-import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor-ownership.handler';
+import { RegisterSensorCommandHandler } from './handler/model/sensor/register-sensor.handler';
+import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor.handler';
+import { DeleteSensorCommandHandler } from './handler/model/sensor/delete-sensor.handler';
+import { LegalEntityController } from './controller/legal-entity.controller';
+import { UpdateDataStreamCommandHandler } from './handler/model/data-stream/update-datastream.handler';
+import { CreateDataStreamCommandHandler } from './handler/model/data-stream/register-datastream.handler';
+import { DeleteDataStreamCommandHandler } from './handler/model/data-stream/delete-datastream.handler';
+import { UpdateLegalEntityCommandHandler } from './handler/model/legal-entity/update-legal-entity.handler';
+import { DeleteLegalEntityCommandHandler } from './handler/model/legal-entity/delete-legal-entity.handler';
+import { RegisterLegalEntityCommandHandler } from './handler/model/legal-entity/register-legal-entity.handler';
+import { LegalEntityRepository } from '../core/repositories/legal-entity.repository';
+import { RegisterDeviceCommandHandler } from './handler/model/device/register-device.handler';
+import { UpdateDeviceCommandHandler } from './handler/model/device/update-device.handler';
+import { DeleteDeviceCommandHandler } from './handler/model/device/delete-device.handler';
+import { DeviceRepository } from '../core/repositories/device.repository';
+import { DeviceController } from './controller/device.controller';
+import { DataStreamRepository } from '../core/repositories/data-stream.repository';
+import { DataStreamController } from './controller/data-stream.controller';
 
 @Module({
     controllers: [
-        OrganizationController,
+        LegalEntityController,
         SensorController,
+        DeviceController,
+        DataStreamController,
     ], imports: [
         CqrsModule,
         EventStoreModule,
@@ -34,27 +38,25 @@ import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor
     ], providers: [
         EventBus,
         EventPublisher,
-        OrganizationRepository,
+        LegalEntityRepository,
         SensorRepository,
+        DeviceRepository,
+        DataStreamRepository,
         EventStorePublisher,
-        // owner
-        UpdateOrganizationCommandHandler,
-        DeleteOrganizationCommandHandler,
-        RegisterOrganizationCommandHandler,
-        // sensor
-        CreateSensorCommandHandler,
+        UpdateDeviceCommandHandler,
+        DeleteDeviceCommandHandler,
+        RegisterDeviceCommandHandler,
+        RegisterLegalEntityCommandHandler,
+        UpdateLegalEntityCommandHandler,
+        DeleteLegalEntityCommandHandler,
+        RegisterSensorCommandHandler,
         UpdateSensorCommandHandler,
         DeleteSensorCommandHandler,
-        ActivateSensorCommandHandler,
-        DeactivateSensorCommandHandler,
-        CreateDatastreamCommandHandler,
+        CreateDataStreamCommandHandler,
         DeleteDataStreamCommandHandler,
         UpdateDataStreamCommandHandler,
-        UpdateSensorLocationCommandHandler,
-        ShareSensorOwnershipCommandHandler,
-        TransferSensorOwnershipCommandHandler,
     ], exports: [
-        OrganizationRepository,
+        LegalEntityRepository,
     ],
 })
 

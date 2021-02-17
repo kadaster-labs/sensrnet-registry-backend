@@ -1,26 +1,27 @@
 import { UserService } from '../user.service';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 import { UpdateUserCommand } from '../command/update-user.command';
-import { validateOrganization } from '../../command/handler/util/organization.utils';
-import { OrganizationRepository } from '../../core/repositories/organization.repository';
+import { validateLegalEntity } from '../../command/handler/util/legal-entity.utils';
+import { LegalEntityRepository } from '../../core/repositories/legal-entity.repository';
 
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserCommandHandler implements ICommandHandler<UpdateUserCommand> {
 
   constructor(
       private readonly usersService: UserService,
-      private readonly ownerRepository: OrganizationRepository,
+      private readonly legalEntityRepository: LegalEntityRepository,
   ) {}
 
   async execute(command: UpdateUserCommand): Promise<void> {
-    if (command.organization) {
-      await validateOrganization(this.ownerRepository, command.organization);
+    if (command.legalEntityId) {
+      await validateLegalEntity(this.legalEntityRepository, command.legalEntityId);
     }
 
-    let updateFields = {};
-    updateFields = {organizationId: command.organization, ...updateFields};
+    const updateFields = {
+      legalEntityId: command.legalEntityId,
+    } as Record<string, any>;
     if (command.password) {
-      updateFields = {password: command.password, ...updateFields};
+      updateFields.password = command.password;
     }
 
     await this.usersService.updateOne(command.email, updateFields);

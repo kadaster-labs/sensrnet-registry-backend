@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
 import { LocalStrategy } from './local.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { AuthController } from './auth.controller';
+import { AuthController } from './controllers/auth.controller';
 import { AnonymousStrategy } from './anonymous.strategy';
 import { AccessJwtStrategy } from './access-jwt.strategy';
 import { RefreshJwtStrategy } from './refresh-jwt.strategy';

@@ -13,9 +13,9 @@ export class SensorEsListener extends AbstractEsListener {
     constructor(
         eventStore: EventStorePublisher,
         checkpointService: CheckpointService,
-        sensorProcessor: SensorProcessor,
+        processor: SensorProcessor,
     ) {
-        super('backend-sensor-es', '$ce-sensor', eventStore, checkpointService, sensorProcessor);
+        super('backend-sensor-es', '$ce-sensor', eventStore, checkpointService, processor);
     }
 
     parseEvent(eventMessage: ESEvent): SensorEvent {

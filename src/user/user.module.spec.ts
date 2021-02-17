@@ -3,7 +3,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { getModelToken } from '@nestjs/mongoose';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { OrganizationRepository } from '../core/repositories/organization.repository';
+import { LegalEntityRepository } from '../core/repositories/legal-entity.repository';
 import { DeleteUserCommandHandler } from './handler/delete-user.handler';
 import { UpdateUserCommandHandler } from './handler/update-user.handler';
 import { RegisterUserCommandHandler } from './handler/register-user.handler';
@@ -67,7 +67,7 @@ describe('User (integration)', () => {
                     useValue: mockUserRepository,
                 },
                 {
-                    provide: OrganizationRepository,
+                    provide: LegalEntityRepository,
                     useValue: mockOwnerRepository,
                 },
             ],

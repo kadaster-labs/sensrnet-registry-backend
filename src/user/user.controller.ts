@@ -9,7 +9,7 @@ import { DeleteUserCommand } from './command/delete-user.command';
 import { AccessJwtAuthGuard } from '../auth/access-jwt-auth.guard';
 import { RegisterUserCommand } from './command/register-user.command';
 import { DomainExceptionFilter } from '../core/errors/domain-exception.filter';
-import { DeleteUserParams } from '../command/controller/model/delete-user.params';
+import { DeleteUserParams } from './model/delete-user.params';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UseFilters, Controller, Delete, UseGuards, Req, Param, Post, Body, Put } from '@nestjs/common';
 
@@ -38,7 +38,7 @@ export class UserController {
     @ApiResponse({ status: 400, description: 'User update failed' })
     async updateUser(@Req() req: Request, @Body() userBody: UpdateUserBody): Promise<any> {
         const user: Record<string, any> = req.user;
-        return await this.commandBus.execute(new UpdateUserCommand(user.userId, userBody.organization, userBody.password));
+        return await this.commandBus.execute(new UpdateUserCommand(user.userId, userBody.legalEntityId, userBody.password));
     }
 
     @Delete()

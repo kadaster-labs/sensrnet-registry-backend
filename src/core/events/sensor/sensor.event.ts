@@ -2,6 +2,8 @@ import { Event } from '../../../event-store/event';
 
 export abstract class SensorEvent extends Event {
 
+  static streamRootValue = 'sensor';
+
   readonly sensorId: string;
 
   protected constructor(sensorId: string, version: string) {
@@ -11,7 +13,7 @@ export abstract class SensorEvent extends Event {
   }
 
   streamRoot(): string {
-    return 'sensor';
+    return SensorEvent.streamRootValue;
   }
 
 }

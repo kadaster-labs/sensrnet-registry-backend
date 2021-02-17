@@ -2,8 +2,8 @@ import { Request } from 'express';
 import { QueryBus } from '@nestjs/cqrs';
 import { SensorIdParams } from './model/id-params';
 import { jwtConstants } from '../../auth/constants';
-import { RetrieveSensorQuery } from '../model/sensor.query';
-import { RetrieveSensorsQuery } from '../model/sensors.query';
+import { RetrieveSensorQuery } from './query/sensor.query';
+import { RetrieveSensorsQuery } from './query/sensors.query';
 import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
 import { RetrieveSensorsParams } from './model/retrieve-sensors-params';
 import { AccessAnonymousAuthGuard } from '../../auth/access-anonymous-auth.guard';
@@ -37,9 +37,9 @@ export class SensorController {
   @ApiResponse({ status: 400, description: 'Sensors retrieval failed' })
   async retrieveSensors(@Req() req: Request, @Query() sensorParams: RetrieveSensorsParams): Promise<any> {
     const user: Record<string, any> = req.user;
-    const requestOrganizationId = user ? user.organizationId : undefined;
-    return await this.queryBus.execute(new RetrieveSensorsQuery(requestOrganizationId, sensorParams.bottomLeftLongitude,
+    const requestLegalEntityId = user ? user.legalEntityId : undefined;
+    return await this.queryBus.execute(new RetrieveSensorsQuery(requestLegalEntityId, sensorParams.bottomLeftLongitude,
         sensorParams.bottomLeftLatitude, sensorParams.upperRightLongitude, sensorParams.upperRightLatitude,
-        sensorParams.pageIndex, sensorParams.organizationId));
+        sensorParams.pageIndex, sensorParams.legalEntityId));
   }
 }

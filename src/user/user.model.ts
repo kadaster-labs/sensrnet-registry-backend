@@ -7,7 +7,7 @@ export const UserSchema = new Schema({
     role: { type: String, required: false },
     password: { type: String, required: true },
     refreshToken: { type: String, required: false },
-    organizationId: { type: String, required: false },
+    legalEntityId: { type: String, required: false },
 }, {
     autoCreate: true,
 });

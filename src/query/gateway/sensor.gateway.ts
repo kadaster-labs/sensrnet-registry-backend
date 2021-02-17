@@ -20,10 +20,10 @@ export class SensorGateway implements OnGatewayConnection {
         private accessJwtStrategy: AccessJwtStrategy,
     ) {}
 
-    setupRoom(client: Socket, organizationId?: string): void {
+    setupRoom(client: Socket, legalEntityId?: string): void {
         client.leaveAll();
-        if (organizationId) {
-            client.join(organizationId);
+        if (legalEntityId) {
+            client.join(legalEntityId);
         }
     }
 
@@ -38,7 +38,7 @@ export class SensorGateway implements OnGatewayConnection {
                 const decodedToken = await this.authService.verifyToken(authToken);
                 const userInfo = await this.accessJwtStrategy.validate(decodedToken);
 
-                this.setupRoom(client, userInfo.organizationId);
+                this.setupRoom(client, userInfo.legalEntityId);
             } catch {
                 client.disconnect(true);
                 this.logger.log('Failed to authenticate websocket client.');
@@ -47,13 +47,13 @@ export class SensorGateway implements OnGatewayConnection {
     }
 
     emit(event: string, updatedSensor: Record<string, any>): void {
-        for (const organization of updatedSensor.organizations) {
-            this.server.to(organization.id).emit(event, updatedSensor);
-        }
+        // for (const organization of updatedSensor.organizations) {
+        //     this.server.to(organization.id).emit(event, updatedSensor);
+        // }
     }
 
-    @SubscribeMessage('OrganizationUpdated')
+    @SubscribeMessage('LegalEntityUpdated')
     handleEvent(@ConnectedSocket() client: Socket, @MessageBody() data: Record<string, string>): void {
-        this.setupRoom(client, data.organizationId);
+        this.setupRoom(client, data.legalEntityId);
     }
 }

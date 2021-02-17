@@ -6,9 +6,9 @@ export class UpdateUserBody {
     @IsOptional()
     @ApiProperty({
         type: String,
-        description: 'The id of the organization to join.',
+        description: 'The id of the legal entity to join.',
     })
-    readonly organization: string;
+    readonly legalEntityId: string;
 
     @IsString()
     @IsOptional()

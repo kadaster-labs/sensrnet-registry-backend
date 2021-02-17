@@ -2,10 +2,13 @@ import { jwtConstants } from './constants';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AccessJwtStrategy extends PassportStrategy(Strategy, 'access') {
-    constructor() {
+    constructor(
+        private usersService: UserService,
+    ) {
         super({
             ignoreExpiration: false,
             secretOrKey: jwtConstants.secret,
@@ -17,6 +20,8 @@ export class AccessJwtStrategy extends PassportStrategy(Strategy, 'access') {
         if (payload.type !== 'access') {
             throw new UnauthorizedException();
         }
-        return { userId: payload.sub, organizationId: payload.organizationId, role: payload.role };
+        const legalEntity = await this.usersService.findOne(payload.sub);
+
+        return { userId: payload.sub, legalEntityId: legalEntity ? legalEntity.legalEntityId : null, role: payload.role };
     }
 }

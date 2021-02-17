@@ -3,30 +3,23 @@ import { SensorEvent } from '../sensor.event';
 export class SensorUpdated extends SensorEvent {
   static version = '1';
 
+  readonly legalEntityId: string;
   readonly name: string;
-  readonly aim: string;
   readonly description: string;
+  readonly supplier: string;
   readonly manufacturer: string;
-  readonly observationArea: Record<string, any>;
   readonly documentationUrl: string;
-  readonly theme: string[];
-  readonly category: string;
-  readonly typeName: string;
-  readonly typeDetails: Record<string, any>;
+  readonly active: boolean;
 
-  constructor(sensorId: string, name: string, aim: string, description: string, manufacturer: string,
-              observationArea: Record<string, any>, documentationUrl: string, theme: string[], category: string,
-              typeName: string, typeDetails: Record<string, any>) {
+  constructor(sensorId: string, legalEntityId: string, name: string, description: string, supplier: string,
+              manufacturer: string, documentationUrl: string, active: boolean) {
     super(sensorId, SensorUpdated.version);
+    this.legalEntityId = legalEntityId;
     this.name = name;
-    this.aim = aim;
     this.description = description;
+    this.supplier = supplier;
     this.manufacturer = manufacturer;
-    this.observationArea = observationArea;
     this.documentationUrl = documentationUrl;
-    this.theme = theme;
-    this.category = category;
-    this.typeName = typeName;
-    this.typeDetails = typeDetails;
+    this.active = active;
   }
 }

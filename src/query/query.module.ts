@@ -2,27 +2,34 @@ import { Module } from '@nestjs/common';
 import { UserSchema } from '../user/user.model';
 import { AuthModule } from '../auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SensorSchema } from './data/sensor.model';
+import { SensorSchema } from './model/sensor.model';
 import { UserService } from '../user/user.service';
+import { DeviceSchema } from './model/device.model';
+import { RelationSchema } from './model/relation.model';
 import { SensorGateway } from './gateway/sensor.gateway';
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
+import { LegalEntitySchema } from './model/legal-entity.model';
+import { DataStreamSchema } from './model/datastream.model';
 import { SensorProcessor } from './processor/sensor.processor';
+import { DataStreamProcessor } from './processor/data-stream.processor';
+import { DataStreamEsListener } from './processor/data-stream.es.listener';
 import { SensorEsListener } from './processor/sensor.es.listener';
 import { SensorController } from './controller/sensor.controller';
 import { EventStoreModule } from '../event-store/event-store.module';
-import { OrganizationGateway } from './gateway/organization.gateway';
-import { RetrieveSensorQueryHandler } from './handler/sensor.handler';
+import { LegalEntityGateway } from './gateway/legal-entity.gateway';
+import { RetrieveSensorQueryHandler } from './controller/handler/sensor.handler';
 import { SensorESController } from './controller/sensor.es.controller';
-import { RetrieveSensorsQueryHandler } from './handler/sensors.handler';
+import { RetrieveSensorsQueryHandler } from './controller/handler/sensors.handler';
 import { CheckpointModule } from './service/checkpoint/checkpoint.module';
-import { OrganizationSchema } from './controller/model/organization.model';
-import { OrganizationProcessor } from './processor/organization.processor';
-import { OrganizationController } from './controller/organization.controller';
-import { OrganizationEsController } from './controller/organization.es.controller';
-import { OrganizationEsListener } from './processor/organization-es-listener';
-import { RetrieveOrganizationQueryHandler } from './handler/retrieve-organization.handler';
-import { RetrieveOrganizationsQueryHandler } from './handler/retrieve-organizations.handler';
-import { OrganizationsController } from './controller/organizations.controller';
+import { LegalEntityProcessor } from './processor/legal-entity.processor';
+import { LegalEntityController } from './controller/legal-entity.controller';
+import { LegalEntityEsController } from './controller/legal-entity.es.controller';
+import { LegalEntityEsListener } from './processor/legal-entity-es-listener.service';
+import { LegalEntityQueryHandler } from './controller/handler/legal-entity.handler';
+import { LegalEntitiesQueryHandler } from './controller/handler/legal-entities.handler';
+import { LegalEntitiesController } from './controller/legal-entities.controller';
+import { DeviceProcessor } from './processor/device.processor';
+import { DeviceEsListener } from './processor/device.es.listener';
 
 @Module({
     imports: [
@@ -32,26 +39,33 @@ import { OrganizationsController } from './controller/organizations.controller';
         EventStoreModule,
         MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
         MongooseModule.forFeature([{name: 'Sensor', schema: SensorSchema}]),
-        MongooseModule.forFeature([{name: 'Organization', schema: OrganizationSchema}]),
+        MongooseModule.forFeature([{name: 'Device', schema: DeviceSchema}]),
+        MongooseModule.forFeature([{name: 'Relation', schema: RelationSchema}]),
+        MongooseModule.forFeature([{name: 'DataStream', schema: DataStreamSchema}]),
+        MongooseModule.forFeature([{name: 'LegalEntity', schema: LegalEntitySchema}]),
     ], controllers: [
         SensorController,
         SensorESController,
-        OrganizationController,
-        OrganizationsController,
-        OrganizationEsController,
+        LegalEntityController,
+        LegalEntitiesController,
+        LegalEntityEsController,
     ], providers: [
         UserService,
-        SensorGateway,
         EventPublisher,
+        DeviceProcessor,
+        DeviceEsListener,
+        SensorGateway,
         SensorProcessor,
         SensorEsListener,
-        OrganizationGateway,
-        OrganizationProcessor,
-        OrganizationEsListener,
+        DataStreamProcessor,
+        DataStreamEsListener,
+        LegalEntityGateway,
+        LegalEntityProcessor,
+        LegalEntityEsListener,
         RetrieveSensorQueryHandler,
         RetrieveSensorsQueryHandler,
-        RetrieveOrganizationQueryHandler,
-        RetrieveOrganizationsQueryHandler,
+        LegalEntityQueryHandler,
+        LegalEntitiesQueryHandler,
     ],
 })
 

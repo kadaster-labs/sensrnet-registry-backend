@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { QueryBus } from '@nestjs/cqrs';
-import { RetrieveSensorQuery } from '../model/sensor.query';
+import { RetrieveSensorQuery } from './query/sensor.query';
 import { SensorIdParams } from './model/id-params';
 import { SensorController } from './sensor.controller';
 import { RetrieveSensorsParams } from './model/retrieve-sensors-params';
