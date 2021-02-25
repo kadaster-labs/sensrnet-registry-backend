@@ -3,7 +3,7 @@ import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
 import { SensorIdParams } from './model/sensor/sensorid.params';
 import { UpdateSensorBody } from './model/sensor/update-sensor.body';
-import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
+import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
 import { RegisterSensorBody } from './model/sensor/register-sensor.body';
 import { UpdateSensorCommand } from '../command/sensor/update-sensor.command';
 import { DeleteSensorCommand } from '../command/sensor/delete-sensor.command';

@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { jwtConstants } from '../../auth/constants';
 import { AuthService } from '../../auth/auth.service';
-import { AccessJwtStrategy } from '../../auth/access-jwt.strategy';
+import { AccessJwtStrategy } from '../../auth/strategy/access-jwt.strategy';
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage,
     MessageBody } from '@nestjs/websockets';
 

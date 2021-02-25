@@ -1,8 +1,8 @@
-import { jwtConstants } from './constants';
+import { jwtConstants } from '../constants';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { UserService } from '../../user/user.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AccessJwtStrategy extends PassportStrategy(Strategy, 'access') {
@@ -20,8 +20,8 @@ export class AccessJwtStrategy extends PassportStrategy(Strategy, 'access') {
         if (payload.type !== 'access') {
             throw new UnauthorizedException();
         }
-        const legalEntity = await this.usersService.findOne(payload.sub);
+        const user = await this.usersService.findOne({_id: payload.sub});
 
-        return { userId: payload.sub, legalEntityId: legalEntity ? legalEntity.legalEntityId : null, role: payload.role };
+        return { userId: payload.sub, legalEntityId: user ? user.legalEntityId : null, role: payload.role };
     }
 }

@@ -1,10 +1,10 @@
 import { ApiTags } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 import { AuthService } from '../auth.service';
-import { LocalAuthGuard } from '../local-auth.guard';
-import { AuthenticateBody } from '../models/auth-body';
-import { RefreshJwtStrategy } from '../refresh-jwt.strategy';
-import { RefreshJwtAuthGuard } from '../refresh-jwt-auth.guard';
+import { AuthenticateBody } from '../model/auth-body';
+import { LocalAuthGuard } from '../guard/local-auth.guard';
+import { RefreshJwtStrategy } from '../strategy/refresh-jwt.strategy';
+import { RefreshJwtAuthGuard } from '../guard/refresh-jwt-auth.guard';
 import { Controller, Req, Res, Post, UseGuards, Body, UnauthorizedException } from '@nestjs/common';
 
 @ApiTags('Authentication')
@@ -17,10 +17,7 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('login')
     async login(@Body() body: AuthenticateBody, @Req() req: Request, @Res() res: Response): Promise<Response> {
-        const {
-            accessToken,
-            refreshToken,
-        } = await this.authService.login(req.user);
+        const { accessToken, refreshToken } = await this.authService.login(req.user);
 
         res.cookie('Authentication', refreshToken, {
           httpOnly: true,

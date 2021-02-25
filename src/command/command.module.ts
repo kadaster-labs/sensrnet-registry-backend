@@ -1,4 +1,4 @@
-import { UserSchema } from '../user/user.model';
+import { UserSchema } from '../user/model/user.model';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Module, OnModuleInit } from '@nestjs/common';
 import { SensorController } from './controller/sensor.controller';

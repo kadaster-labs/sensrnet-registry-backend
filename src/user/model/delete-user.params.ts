@@ -7,7 +7,7 @@ export class DeleteUserParams {
   @ApiProperty({
     type: String,
     required: true,
-    description: 'The user email.',
+    description: 'The user id.',
   })
   readonly id: string;
 }

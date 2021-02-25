@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { QueryBus } from '@nestjs/cqrs';
 import { Controller, Get, UseGuards, Req } from '@nestjs/common';
-import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
+import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
 import { LegalEntityQuery } from './query/legal-entity.query';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 

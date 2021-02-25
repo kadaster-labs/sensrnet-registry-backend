@@ -67,7 +67,7 @@ export class SensorProcessor extends AbstractProcessor {
       },
     };
 
-    await this.saveRelation(event.legalEntityId, RelationVariant.SENSOR_OWNER, ObjectVariant.SENSOR, event.sensorId);
+    // await this.saveRelation(event.legalEntityId, RelationVariant.SENSOR_OWNER, ObjectVariant.SENSOR, event.sensorId);
 
     let sensor: ISensor;
     try {

@@ -1,6 +1,6 @@
 import { QueryBus } from '@nestjs/cqrs';
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
+import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
 import { LegalEntitiesQuery } from './query/legal-entities.query';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { LegalEntitiesParams } from './model/legal-entities-params';

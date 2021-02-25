@@ -1,17 +1,16 @@
 import { model, Schema, Document, Model } from 'mongoose';
 
 export enum RelationVariant {
-    DEVICE_OWNER,
-    SENSOR_OWNER,
-    TECHNICAL_STEWARD,
-    LEGAL_STEWARD,
-    DATA_STEWARD,
+    DEVICE_OWNER = 0,
+    TECHNICAL_STEWARD = 1,
+    LEGAL_STEWARD = 2,
+    DATA_STEWARD = 3,
 }
 
 export enum ObjectVariant {
-    DEVICE,
-    SENSOR,
-    DATA_STREAM,
+    DEVICE = 0,
+    SENSOR = 1,
+    DATA_STREAM = 2,
 }
 
 export interface IRelation extends Document {

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, MaxLength } from 'class-validator';
 import { LegalEntityBody } from './legal-entity.body';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class UpdateLegalEntityBody extends LegalEntityBody {
     @IsString()

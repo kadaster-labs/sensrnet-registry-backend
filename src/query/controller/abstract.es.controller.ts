@@ -1,5 +1,6 @@
 import { OffsetBody } from './model/offset-body';
 import { Get, Post, Body } from '@nestjs/common';
+import { UserRole } from '../../user/model/user.model';
 import { Roles } from '../../core/guards/roles.decorator';
 import { ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AbstractEsListener } from '../processor/abstract.es.listener';
@@ -9,7 +10,7 @@ export abstract class AbstractEsController {
         protected readonly eventStoreListener: AbstractEsListener,
     ) {}
 
-    @Roles('admin')
+    @Roles(UserRole.ADMIN)
     @Post('subscription/open')
     @ApiOperation({ summary: 'Open subscription' })
     @ApiResponse({ status: 200, description: 'Subscription opened' })
@@ -18,7 +19,7 @@ export abstract class AbstractEsController {
         await this.eventStoreListener.openSubscription();
     }
 
-    @Roles('admin')
+    @Roles(UserRole.ADMIN)
     @Post('subscription/close')
     @ApiOperation({ summary: 'Close subscription' })
     @ApiResponse({ status: 200, description: 'Subscription closed' })
@@ -27,7 +28,7 @@ export abstract class AbstractEsController {
         this.eventStoreListener.closeSubscription();
     }
 
-    @Roles('admin')
+    @Roles(UserRole.ADMIN)
     @Get('checkpoint')
     @ApiOperation({ summary: 'Retrieve checkpoint offset' })
     @ApiResponse({ status: 200, description: 'Checkpoint offset retrieved' })
@@ -36,7 +37,7 @@ export abstract class AbstractEsController {
         return this.eventStoreListener.getOffset();
     }
 
-    @Roles('admin')
+    @Roles(UserRole.ADMIN)
     @Post('checkpoint')
     @ApiOperation({ summary: 'Set checkpoint offset' })
     @ApiResponse({ status: 200, description: 'Checkpoint offset set' })

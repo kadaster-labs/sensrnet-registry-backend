@@ -11,14 +11,14 @@ export class DeleteLegalEntityCommandHandler implements ICommandHandler<DeleteLe
   ) {}
 
   async execute(command: DeleteLegalEntityCommand): Promise<void> {
-    let aggregate = await this.repository.get(command.legalEntityId);
+    let aggregate = await this.repository.get(command.id);
     if (aggregate) {
       aggregate = this.publisher.mergeObjectContext(aggregate);
 
       aggregate.delete();
       aggregate.commit();
     } else {
-      throw new UnknowObjectException(command.legalEntityId);
+      throw new UnknowObjectException(command.id);
     }
   }
 }

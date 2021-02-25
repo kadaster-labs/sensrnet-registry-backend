@@ -4,7 +4,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { SensorIdParams } from './model/sensor/sensorid.params';
 import { DataStreamIdParams } from './model/data-stream/datastreamid.params';
 import { RegisterDatastreamBody } from './model/data-stream/register-datastream.body';
-import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
+import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
 import { UpdateDatastreamBody } from './model/data-stream/update-datastream.body';
 import { RegisterDataStreamCommand } from '../command/data-stream/register-data-stream.command';
 import { DeleteDataStreamCommand } from '../command/data-stream/delete-data-stream.command';

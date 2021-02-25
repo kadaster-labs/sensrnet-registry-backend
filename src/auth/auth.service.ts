@@ -28,12 +28,12 @@ export class AuthService {
         return this.jwtService.verifyAsync(token);
     }
 
-    async validateUser(username: string, pass: string): Promise<any> {
-        const user = await this.usersService.findOne(username);
+    async validateUser(email: string, password: string): Promise<any> {
+        const user = await this.usersService.findOne({email});
 
         let userDetails;
         if (user) {
-            const pwdPromise = new Promise((resolve, reject) => user.checkPassword(pass, (err, isMatch) => {
+            const pwdPromise = new Promise((resolve, reject) => user.checkPassword(password, (err, isMatch) => {
                 if (err) {
                     reject();
                 } else {
@@ -62,7 +62,7 @@ export class AuthService {
     }
 
     async refresh(reqUser: Record<string, any>, refreshToken: string): Promise<Record<string, string>> {
-        const user = await this.usersService.findOne(reqUser.userId);
+        const user = await this.usersService.findOne({_id: reqUser.userId});
 
         let refreshTokenMatches;
         if (user) {

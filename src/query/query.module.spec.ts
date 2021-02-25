@@ -15,7 +15,7 @@ import { RetrieveSensorQueryHandler } from './controller/handler/sensor.handler'
 import { CommandBus, CqrsModule, EventPublisher } from '@nestjs/cqrs';
 import { RetrieveSensorsQueryHandler } from './controller/handler/sensors.handler';
 import { LegalEntityQueryHandler } from './controller/handler/legal-entity.handler';
-import { AccessJwtStrategy } from '../auth/access-jwt.strategy';
+import { AccessJwtStrategy } from '../auth/strategy/access-jwt.strategy';
 
 const testObjects = [
     {

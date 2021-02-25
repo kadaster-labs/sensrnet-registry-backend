@@ -3,7 +3,7 @@ import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
 import { DeviceIdParams } from './model/device/deviceIdParams';
 import { UpdateDeviceBody } from './model/device/update-device.body';
-import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
+import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
 import { RegisterDeviceBody } from './model/device/register-device.body';
 import { RegisterDeviceCommand } from '../command/device/register-device.command';
 import { UpdateDeviceCommand } from '../command/device/update-device.command';

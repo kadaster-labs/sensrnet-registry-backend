@@ -1,16 +1,36 @@
 import * as bcrypt from 'bcryptjs';
-import { Schema } from 'mongoose';
-import { User } from './user.interface';
+import { Document, Schema } from 'mongoose';
+
+export enum UserRole {
+    USER,
+    ADMIN,
+}
+
+export interface IUser extends Document {
+    _id: string;
+    role?: number;
+    email: string;
+    password: string;
+    socialId: string;
+    refreshToken?: string;
+    legalEntityId?: string;
+
+    checkPassword(pass: string, callback: (err, isMatch) => void): void;
+    checkRefreshToken(token: string, callback: (err, isMatch) => void): void;
+}
 
 export const UserSchema = new Schema({
     _id: { type: String, required: true },
-    role: { type: String, required: false },
+    role: { type: Number, required: false },
+    email: { type: String, required: true },
     password: { type: String, required: true },
+    socialId: { type: String, required: false },
     refreshToken: { type: String, required: false },
     legalEntityId: { type: String, required: false },
 }, {
     autoCreate: true,
 });
+UserSchema.index({ email: 1 }, { unique: true });
 
 export const hashableFields = ['password', 'refreshToken'];
 
@@ -32,7 +52,7 @@ export const hashField = (field: string,
     });
 };
 
-UserSchema.pre<User>('save', function(next) {
+UserSchema.pre<IUser>('save', function(next) {
     const fields = [];
     const promises = [];
     const hashFunction = (hashableField) => (resolve, reject) => hashField(this[hashableField], resolve, reject);

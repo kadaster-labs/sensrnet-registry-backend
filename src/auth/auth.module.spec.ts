@@ -3,20 +3,20 @@ import { JwtModule } from '@nestjs/jwt';
 import { Logger } from '@nestjs/common';
 import { jwtConstants } from './constants';
 import { AuthService } from './auth.service';
-import { LocalStrategy } from './local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { UserService } from '../user/user.service';
-import { AuthController } from './controllers/auth.controller';
-import { AccessJwtStrategy } from './access-jwt.strategy';
-import { RefreshJwtStrategy } from './refresh-jwt.strategy';
-
-const logger: Logger = new Logger();
+import { UserRole } from '../user/model/user.model';
+import { LocalStrategy } from './strategy/local.strategy';
+import { AuthController } from './controller/auth.controller';
+import { AccessJwtStrategy } from './strategy/access-jwt.strategy';
+import { RefreshJwtStrategy } from './strategy/refresh-jwt.strategy';
 
 const testUser = {
     _id: 'test-id',
-    role: 'test-role',
+    role: UserRole.USER,
     password: 'test-pass',
-    organizationId: 'test-id',
+    email: 'test@email.com',
+    legalEntityId: 'test-id',
     refreshToken: 'test-refresh',
 };
 
@@ -68,7 +68,7 @@ describe('Authentication (integration)', () => {
         try {
             user = await authService.validateUser(testUser._id, testUser.password);
         } catch {
-            logger.log('Failed to validate.');
+            Logger.log('Failed to validate.');
         }
 
         expect(user).toBeDefined();
@@ -79,7 +79,7 @@ describe('Authentication (integration)', () => {
         try {
             user = await authService.validateUser(testUser._id, 'wrong-pass');
         } catch {
-            logger.log('Failed to validate.');
+            Logger.log('Failed to validate.');
         }
 
         expect(user).toBeNull();
@@ -90,7 +90,7 @@ describe('Authentication (integration)', () => {
         try {
             result = await authService.refresh(testUser, testUser.refreshToken);
         } catch {
-            logger.log('Failed to refresh.');
+            Logger.log('Failed to refresh.');
         }
 
         expect(result).toBeDefined();
@@ -102,7 +102,7 @@ describe('Authentication (integration)', () => {
         try {
             result = await authService.refresh(testUser, 'wrong-refresh');
         } catch {
-            logger.log('Failed to refresh.');
+            Logger.log('Failed to refresh.');
         }
 
         expect(result).toBeUndefined();

@@ -1,9 +1,10 @@
 import { v4 } from 'uuid';
 import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
+import { UserRole } from '../../user/model/user.model';
 import { Roles } from '../../core/guards/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
-import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
+import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UpdateLegalEntityBody } from './model/legal-entity/update-legal-entity.body';
@@ -60,7 +61,7 @@ export class LegalEntityController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  @Roles('admin')
+  @Roles(UserRole.ADMIN)
   @UseFilters(new DomainExceptionFilter())
   @UseGuards(AccessJwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Remove legal entity' })
