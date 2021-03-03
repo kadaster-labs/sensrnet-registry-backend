@@ -1,10 +1,13 @@
 import { model, Schema, Document, Model, Types } from 'mongoose';
-import { SensorSchema } from './sensor.model';
 
 export interface IDevice extends Document {
     _id: string;
-    description: string;
+    name: string;
+    description?: string;
+    category?: string;
     connectivity?: string;
+    locationName?: string;
+    locationDescription?: string;
     location: {
         type: 'Point',
         coordinates: Types.Array<number>,
@@ -13,8 +16,12 @@ export interface IDevice extends Document {
 
 export const DeviceSchema = new Schema({
     _id: { type: String, required: true },
+    name: { type: String, required: true },
     description: { type: String, required: false },
+    category: { type: String, required: false },
     connectivity: { type: String, required: false },
+    locationName: { type: String, required: true },
+    locationDescription: { type: String, required: false },
     location: {
         type: { type: String, enum: ['Point'], required: true },
         coordinates: { type: [Number], required: true },
@@ -22,4 +29,4 @@ export const DeviceSchema = new Schema({
 });
 DeviceSchema.index({ location: '2dsphere' });
 
-export const Relation = model<IDevice, Model<IDevice>>('Device', DeviceSchema);
+export const Device = model<IDevice, Model<IDevice>>('Device', DeviceSchema);

@@ -7,9 +7,9 @@ export class UpdateSensorCommand implements ICommand {
       public readonly deviceId: string,
       public readonly name: string,
       public readonly description: string,
-      public readonly supplier: string,
+      public readonly type: string,
       public readonly manufacturer: string,
-      public readonly documentationUrl: string,
-      public readonly active: boolean,
+      public readonly supplier: string,
+      public readonly documentation: string,
     ) {}
 }

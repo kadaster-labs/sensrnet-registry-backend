@@ -4,11 +4,10 @@ import { CommandBus } from '@nestjs/cqrs';
 import { UserRole } from '../../user/model/user.model';
 import { Roles } from '../../core/guards/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
+import { LegalEntityBody } from './model/legal-entity/legal-entity.body';
 import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UpdateLegalEntityBody } from './model/legal-entity/update-legal-entity.body';
-import { RegisterLegalEntityBody } from './model/legal-entity/register-legal-entity.body';
 import { DeleteLegalEntityParams } from './model/legal-entity/delete-legal-entity.params';
 import { UpdateLegalEntityCommand } from '../command/legal-entity/update-legal-entity.command';
 import { DeleteLegalEntityCommand } from '../command/legal-entity/delete-legal-entity.command';
@@ -25,11 +24,11 @@ export class LegalEntityController {
   @ApiOperation({ summary: 'Register legal entity' })
   @ApiResponse({ status: 200, description: 'Legal entity registered' })
   @ApiResponse({ status: 400, description: 'Legal entity registration failed' })
-  async registerLegalEntity(@Body() registerLegalEntityBody: RegisterLegalEntityBody): Promise<Record<string, any>> {
+  async registerLegalEntity(@Body() registerLegalEntityBody: LegalEntityBody): Promise<Record<string, any>> {
     const legalEntityID = v4();
 
-    await this.commandBus.execute(new RegisterLegalEntityCommand(legalEntityID, registerLegalEntityBody.name,
-        registerLegalEntityBody.website, registerLegalEntityBody.contactDetails));
+    await this.commandBus.execute(new RegisterLegalEntityCommand(legalEntityID, registerLegalEntityBody.website,
+        registerLegalEntityBody.contactDetails));
 
     return { legalEntityID };
   }
@@ -41,10 +40,10 @@ export class LegalEntityController {
   @ApiOperation({ summary: 'Update legal entity' })
   @ApiResponse({ status: 200, description: 'Legal entity updated' })
   @ApiResponse({ status: 400, description: 'Legal entity update failed' })
-  async updateLegalEntity(@Req() req: Request, @Body() updateLegalEntityBody: UpdateLegalEntityBody): Promise<any> {
+  async updateLegalEntity(@Req() req: Request, @Body() updateLegalEntityBody: LegalEntityBody): Promise<any> {
     const user: Record<string, any> = req.user;
-    return await this.commandBus.execute(new UpdateLegalEntityCommand(user.legalEntityId, updateLegalEntityBody.name,
-        updateLegalEntityBody.website, updateLegalEntityBody.contactDetails));
+    return await this.commandBus.execute(new UpdateLegalEntityCommand(user.legalEntityId, updateLegalEntityBody.website,
+        updateLegalEntityBody.contactDetails));
   }
 
   @Delete()

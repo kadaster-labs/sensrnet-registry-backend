@@ -15,7 +15,7 @@ export class UpdateLegalEntityCommandHandler implements ICommandHandler<UpdateLe
     if (aggregate) {
       aggregate = this.publisher.mergeObjectContext(aggregate);
 
-      aggregate.update(command.name, command.website, command.contactDetails);
+      aggregate.update(command.website, command.contactDetails);
       aggregate.commit();
     } else {
       throw new UnknowObjectException(command.legalEntityId);

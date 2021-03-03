@@ -6,7 +6,7 @@ import { ILegalEntity } from '../model/legal-entity.model';
 import { LegalEntityGateway } from '../gateway/legal-entity.gateway';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { LegalEntityEvent } from '../../core/events/legal-entity/legal-entity.event';
-import { LegalEntityDeleted, LegalEntityRegistered, LegalEntityUpdated } from '../../core/events/legal-entity';
+import { LegalEntityRemoved, LegalEntityRegistered, LegalEntityUpdated } from '../../core/events/legal-entity';
 import { IRelation } from '../model/relation.model';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class LegalEntityProcessor extends AbstractProcessor {
     } else if (event instanceof LegalEntityUpdated) {
       await this.processUpdated(event);
       result = event;
-    } else if (event instanceof LegalEntityDeleted) {
+    } else if (event instanceof LegalEntityRemoved) {
       await this.processDeleted(event);
       result = event;
     }
@@ -43,7 +43,6 @@ export class LegalEntityProcessor extends AbstractProcessor {
   async processRegistered(event: LegalEntityRegistered, originSync: boolean): Promise<ILegalEntity> {
     const legalEntity = new this.model({
       _id: event.aggregateId,
-      name: event.name,
       website: event.website,
       originSync: !!originSync,
       contactDetails: event.contactDetails,
@@ -53,12 +52,11 @@ export class LegalEntityProcessor extends AbstractProcessor {
 
   async processUpdated(event: LegalEntityUpdated): Promise<void> {
     const legalEntityUpdate: Record<string, any> = {};
-    if (AbstractProcessor.isDefined(event.name)) { legalEntityUpdate.name = event.name; }
-    if (AbstractProcessor.isDefined(event.website)) { legalEntityUpdate.website = event.website; }
-    if (AbstractProcessor.isDefined(event.contactDetails)) {
+    if (AbstractProcessor.defined(event.website)) { legalEntityUpdate.website = event.website; }
+    if (AbstractProcessor.defined(event.contactDetails)) {
       legalEntityUpdate.contactDetails = {};
       for (const [k, v] of Object.entries(event.contactDetails)) {
-        if (AbstractProcessor.isDefined(v)) {
+        if (AbstractProcessor.defined(v)) {
           legalEntityUpdate.contactDetails[k] = v;
         }
       }
@@ -71,7 +69,7 @@ export class LegalEntityProcessor extends AbstractProcessor {
     });
   }
 
-  async processDeleted(event: LegalEntityDeleted): Promise<void> {
+  async processDeleted(event: LegalEntityRemoved): Promise<void> {
     await this.model.deleteOne({_id: event.aggregateId});
 
     const legalEntityStreamName = LegalEntityEvent.getStreamName(LegalEntityEvent.streamRootValue, event.aggregateId);

@@ -1,4 +1,4 @@
 export * from './registered';
 export * from './updated';
-export * from './deleted';
+export * from './removed';
 export * from './device-event-type';

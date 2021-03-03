@@ -8,7 +8,17 @@ export class DeviceBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The way this device is connected to the net.',
+    description: 'The device description.',
+  })
+  readonly description: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(255)
+  @ApiProperty({
+    type: String,
+    required: false,
+    description: 'The way the device is connected to the net.',
   })
   readonly connectivity: string;
 }

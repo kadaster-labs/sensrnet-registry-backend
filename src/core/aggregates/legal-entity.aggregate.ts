@@ -2,9 +2,9 @@ import { Aggregate } from '../../event-store/aggregate';
 import { EventMessage } from '../../event-store/event-message';
 import { LegalEntityState, LegalEntityStateImpl } from './legal-entity-state';
 import { LegalEntityUpdated, getLegalEntityUpdatedEvent } from '../events/legal-entity/updated';
-import { LegalEntityDeleted, getLegalEntityDeletedEvent } from '../events/legal-entity/deleted';
-import { LegalEntityRegistered, getLegalEntityRegisteredEvent } from '../events/legal-entity/registered';
+import { LegalEntityRemoved, getLegalEntityDeletedEvent } from '../events/legal-entity/removed';
 import { ContactDetailsBody } from '../../command/controller/model/contact-details/contact-details.body';
+import { LegalEntityRegistered, getLegalEntityRegisteredEvent } from '../events/legal-entity/registered';
 
 export class LegalEntityAggregate extends Aggregate {
   state!: LegalEntityState;
@@ -15,33 +15,33 @@ export class LegalEntityAggregate extends Aggregate {
     super();
   }
 
-  register(name: string, website: string, contactDetails: ContactDetailsBody): void {
-    this.simpleApply(new LegalEntityRegistered(this.aggregateId, name, website, contactDetails));
+  register(website: string, contactDetails: ContactDetailsBody): void {
+    this.simpleApply(new LegalEntityRegistered(this.aggregateId, website, contactDetails));
   }
 
-  update(name: string, website: string, contactDetails: ContactDetailsBody): void {
-    this.simpleApply(new LegalEntityUpdated(this.aggregateId, name, website, contactDetails));
+  update(website: string, contactDetails: ContactDetailsBody): void {
+    this.simpleApply(new LegalEntityUpdated(this.aggregateId, website, contactDetails));
   }
 
-  delete(): void {
-    this.simpleApply(new LegalEntityDeleted(this.aggregateId));
+  remove(): void {
+    this.simpleApply(new LegalEntityRemoved(this.aggregateId));
   }
 
-  onOrganizationRegistered(eventMessage: EventMessage): void {
+  onLegalEntityRegistered(eventMessage: EventMessage): void {
     const event: LegalEntityRegistered = getLegalEntityRegisteredEvent(eventMessage);
 
     this.state = new LegalEntityStateImpl(this.aggregateId);
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  onOrganizationUpdated(eventMessage: EventMessage): void {
+  onLegalEntityUpdated(eventMessage: EventMessage): void {
     const event: LegalEntityUpdated = getLegalEntityUpdatedEvent(eventMessage);
 
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
-  onOrganizationDeleted(eventMessage: EventMessage): void {
-    const event: LegalEntityDeleted = getLegalEntityDeletedEvent(eventMessage);
+  onLegalEntityRemoved(eventMessage: EventMessage): void {
+    const event: LegalEntityRemoved = getLegalEntityDeletedEvent(eventMessage);
 
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }

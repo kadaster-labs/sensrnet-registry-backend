@@ -1,36 +1,39 @@
-import { UserSchema } from '../user/model/user.model';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UserSchema } from '../user/model/user.model';
 import { Module, OnModuleInit } from '@nestjs/common';
+import { DeviceController } from './controller/device.controller';
 import { SensorController } from './controller/sensor.controller';
 import { CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
 import { EventStoreModule } from '../event-store/event-store.module';
-import { SensorRepository } from '../core/repositories/sensor.repository';
+import { DeviceRepository } from '../core/repositories/device.repository';
+import { DataStreamController } from './controller/data-stream.controller';
 import { EventStorePublisher } from '../event-store/event-store.publisher';
-import { RegisterSensorCommandHandler } from './handler/model/sensor/register-sensor.handler';
-import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor.handler';
-import { DeleteSensorCommandHandler } from './handler/model/sensor/delete-sensor.handler';
 import { LegalEntityController } from './controller/legal-entity.controller';
+import { AddSensorCommandHandler } from './handler/model/sensor/add-sensor.handler';
+import { LegalEntityRepository } from '../core/repositories/legal-entity.repository';
+import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor.handler';
+import { RemoveSensorCommandHandler } from './handler/model/sensor/remove-sensor.handler';
+import { UpdateDeviceCommandHandler } from './handler/model/device/update-device.handler';
+import { RemoveDeviceCommandHandler } from './handler/model/device/remove-device.handler';
+import { RegisterDeviceCommandHandler } from './handler/model/device/register-device.handler';
+import { AddDataStreamCommandHandler } from './handler/model/data-stream/add-datastream.handler';
 import { UpdateDataStreamCommandHandler } from './handler/model/data-stream/update-datastream.handler';
-import { CreateDataStreamCommandHandler } from './handler/model/data-stream/register-datastream.handler';
-import { DeleteDataStreamCommandHandler } from './handler/model/data-stream/delete-datastream.handler';
+import { RemoveDataStreamCommandHandler } from './handler/model/data-stream/remove-datastream.handler';
 import { UpdateLegalEntityCommandHandler } from './handler/model/legal-entity/update-legal-entity.handler';
 import { DeleteLegalEntityCommandHandler } from './handler/model/legal-entity/delete-legal-entity.handler';
 import { RegisterLegalEntityCommandHandler } from './handler/model/legal-entity/register-legal-entity.handler';
-import { LegalEntityRepository } from '../core/repositories/legal-entity.repository';
-import { RegisterDeviceCommandHandler } from './handler/model/device/register-device.handler';
-import { UpdateDeviceCommandHandler } from './handler/model/device/update-device.handler';
-import { DeleteDeviceCommandHandler } from './handler/model/device/delete-device.handler';
-import { DeviceRepository } from '../core/repositories/device.repository';
-import { DeviceController } from './controller/device.controller';
-import { DataStreamRepository } from '../core/repositories/data-stream.repository';
-import { DataStreamController } from './controller/data-stream.controller';
+import { AddObservationGoalCommandHandler } from './handler/model/observation-goal/add-observation-goal.handler';
+import { UpdateObservationGoalCommandHandler } from './handler/model/observation-goal/update-observation-goal.handler';
+import { RemoveObservationGoalCommandHandler } from './handler/model/observation-goal/remove-observation-goal.handler';
+import { ObservationGoalController } from './controller/observation-goal.controller';
 
 @Module({
     controllers: [
-        LegalEntityController,
         SensorController,
         DeviceController,
         DataStreamController,
+        LegalEntityController,
+        ObservationGoalController,
     ], imports: [
         CqrsModule,
         EventStoreModule,
@@ -39,22 +42,23 @@ import { DataStreamController } from './controller/data-stream.controller';
         EventBus,
         EventPublisher,
         LegalEntityRepository,
-        SensorRepository,
         DeviceRepository,
-        DataStreamRepository,
         EventStorePublisher,
         UpdateDeviceCommandHandler,
-        DeleteDeviceCommandHandler,
+        RemoveDeviceCommandHandler,
         RegisterDeviceCommandHandler,
         RegisterLegalEntityCommandHandler,
         UpdateLegalEntityCommandHandler,
         DeleteLegalEntityCommandHandler,
-        RegisterSensorCommandHandler,
+        AddSensorCommandHandler,
         UpdateSensorCommandHandler,
-        DeleteSensorCommandHandler,
-        CreateDataStreamCommandHandler,
-        DeleteDataStreamCommandHandler,
+        RemoveSensorCommandHandler,
+        AddDataStreamCommandHandler,
+        RemoveDataStreamCommandHandler,
         UpdateDataStreamCommandHandler,
+        AddObservationGoalCommandHandler,
+        UpdateObservationGoalCommandHandler,
+        RemoveObservationGoalCommandHandler,
     ], exports: [
         LegalEntityRepository,
     ],

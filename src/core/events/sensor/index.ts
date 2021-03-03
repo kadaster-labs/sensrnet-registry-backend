@@ -1,4 +1,3 @@
-export * from './registered';
+export * from './added';
 export * from './updated';
-export * from './deleted';
-export * from './sensor-event-type';
+export * from './removed';

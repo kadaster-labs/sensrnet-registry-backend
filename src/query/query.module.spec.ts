@@ -2,18 +2,18 @@ import { Test } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { AuthService } from '../auth/auth.service';
 import { LegalEntityGateway } from './gateway/legal-entity.gateway';
-import { SensorGateway } from './gateway/sensor.gateway';
-import { RetrieveSensorQuery } from './controller/query/sensor.query';
-import { RetrieveSensorsQuery } from './controller/query/sensors.query';
+import { DeviceGateway } from './gateway/device.gateway';
+import { RetrieveDevicesQuery } from './controller/query/device.query';
+import { RetrieveDevicesQuery } from './controller/query/devices.query';
 import { LegalEntityProcessor } from './processor/legal-entity.processor';
 import { SensorProcessor } from './processor/sensor.processor';
 import { LegalEntityController } from './controller/legal-entity.controller';
-import { SensorController } from './controller/sensor.controller';
+import { DeviceController } from './controller/device-controller';
 import { LegalEntityQuery } from './controller/query/legal-entity.query';
 import { EventStoreModule } from '../event-store/event-store.module';
-import { RetrieveSensorQueryHandler } from './controller/handler/sensor.handler';
+import { RetrieveDeviceQueryHandler } from './controller/handler/device.handler';
 import { CommandBus, CqrsModule, EventPublisher } from '@nestjs/cqrs';
-import { RetrieveSensorsQueryHandler } from './controller/handler/sensors.handler';
+import { RetrieveDevicesQueryHandler } from './controller/handler/devices.handler';
 import { LegalEntityQueryHandler } from './controller/handler/legal-entity.handler';
 import { AccessJwtStrategy } from '../auth/strategy/access-jwt.strategy';
 
@@ -63,16 +63,16 @@ describe('Query (integration)', () => {
                 EventStoreModule,
             ], controllers: [
                 LegalEntityController,
-                SensorController,
+                DeviceController,
             ], providers: [
                 LegalEntityGateway,
-                SensorGateway,
+                DeviceGateway,
                 EventPublisher,
                 LegalEntityProcessor,
                 SensorProcessor,
                 LegalEntityQueryHandler,
-                RetrieveSensorQueryHandler,
-                RetrieveSensorsQueryHandler,
+                RetrieveDeviceQueryHandler,
+                RetrieveDevicesQueryHandler,
                 {
                     provide: AuthService,
                     useValue: mockAuthService,
@@ -107,12 +107,12 @@ describe('Query (integration)', () => {
 
     it(`Should retrieve a sensor`, async () => {
         const commandBus: CommandBus = moduleRef.get(CommandBus);
-        const sensorQueryHandler: RetrieveSensorQueryHandler = moduleRef.get(RetrieveSensorQueryHandler);
-        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RetrieveSensorQuery) => sensorQueryHandler.execute(c));
+        const sensorQueryHandler: RetrieveDeviceQueryHandler = moduleRef.get(RetrieveDeviceQueryHandler);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RetrieveDevicesQuery) => sensorQueryHandler.execute(c));
 
         let sensors;
         try {
-            sensors = await commandBus.execute(new RetrieveSensorQuery('test-id'));
+            sensors = await commandBus.execute(new RetrieveDevicesQuery('test-id'));
         } finally {
             expect(sensors).toBeDefined();
         }
@@ -120,12 +120,12 @@ describe('Query (integration)', () => {
 
     it(`Should retrieve sensors`, async () => {
         const commandBus: CommandBus = moduleRef.get(CommandBus);
-        const sensorsQueryHandler: RetrieveSensorsQueryHandler = moduleRef.get(RetrieveSensorsQueryHandler);
-        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RetrieveSensorsQuery) => sensorsQueryHandler.execute(c));
+        const sensorsQueryHandler: RetrieveDevicesQueryHandler = moduleRef.get(RetrieveDevicesQueryHandler);
+        jest.spyOn(commandBus, 'execute').mockImplementation(async (c: RetrieveDevicesQuery) => sensorsQueryHandler.execute(c));
 
         let sensors;
         try {
-            sensors = await commandBus.execute(new RetrieveSensorsQuery());
+            sensors = await commandBus.execute(new RetrieveDevicesQuery());
         } catch {
             sensors = [];
         }

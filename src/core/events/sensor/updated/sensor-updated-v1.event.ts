@@ -1,25 +1,27 @@
-import { SensorEvent } from '../sensor.event';
+import { DeviceEvent } from '../../device/device.event';
 
-export class SensorUpdated extends SensorEvent {
+export class SensorUpdated extends DeviceEvent {
   static version = '1';
 
+  readonly sensorId: string;
   readonly legalEntityId: string;
   readonly name: string;
   readonly description: string;
-  readonly supplier: string;
+  readonly type: string;
   readonly manufacturer: string;
-  readonly documentationUrl: string;
-  readonly active: boolean;
+  readonly supplier: string;
+  readonly documentation: string;
 
-  constructor(sensorId: string, legalEntityId: string, name: string, description: string, supplier: string,
-              manufacturer: string, documentationUrl: string, active: boolean) {
-    super(sensorId, SensorUpdated.version);
+  constructor(deviceId: string, sensorId: string, legalEntityId: string, name: string, description: string,
+              type: string, manufacturer: string, supplier: string, documentation: string) {
+    super(deviceId, SensorUpdated.version);
+    this.sensorId = sensorId;
     this.legalEntityId = legalEntityId;
     this.name = name;
     this.description = description;
-    this.supplier = supplier;
+    this.type = type;
     this.manufacturer = manufacturer;
-    this.documentationUrl = documentationUrl;
-    this.active = active;
+    this.supplier = supplier;
+    this.documentation = documentation;
   }
 }

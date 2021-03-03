@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { DeviceBody } from './device.body';
-import { IsString, IsOptional, MaxLength, IsArray, IsNotEmpty, ArrayMinSize, ArrayMaxSize, IsNumber, Validate } from 'class-validator';
-import { LongitudeLatitudeValidator } from '../../validation/location';
+import { IsString, IsOptional, MaxLength, IsObject } from 'class-validator';
 import { Type } from 'class-transformer';
+import { Category } from '../category.body';
+import { UpdateLocationBody } from '../location/update-location.body';
 
 export class UpdateDeviceBody extends DeviceBody {
   @IsString()
@@ -11,22 +12,26 @@ export class UpdateDeviceBody extends DeviceBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The device description.',
+    description: 'The device name.',
   })
-  readonly description: string;
+  readonly name: string;
 
-
-  @IsArray()
-  @IsNotEmpty()
-  @ArrayMinSize(2)
-  @ArrayMaxSize(3)
-  @IsNumber({}, {each: true})
+  @IsString()
+  @IsOptional()
+  @MaxLength(255)
   @ApiProperty({
-    type: Number,
-    isArray: true,
+    type: String,
+    required: false,
+    description: 'The device category.',
+  })
+  readonly category: Category;
+
+  @IsObject()
+  @IsOptional()
+  @ApiProperty({
+    type: UpdateLocationBody,
     required: false,
   })
-  @Validate(LongitudeLatitudeValidator)
-  @Type(() => Number)
-  readonly location: number[];
+  @Type(() => UpdateLocationBody)
+  readonly location: UpdateLocationBody;
 }

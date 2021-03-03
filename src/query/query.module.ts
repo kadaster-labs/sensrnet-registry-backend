@@ -6,20 +6,16 @@ import { SensorSchema } from './model/sensor.model';
 import { UserService } from '../user/user.service';
 import { DeviceSchema } from './model/device.model';
 import { RelationSchema } from './model/relation.model';
-import { SensorGateway } from './gateway/sensor.gateway';
+import { DeviceGateway } from './gateway/device.gateway';
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
 import { LegalEntitySchema } from './model/legal-entity.model';
 import { DataStreamSchema } from './model/datastream.model';
-import { SensorProcessor } from './processor/sensor.processor';
-import { DataStreamProcessor } from './processor/data-stream.processor';
-import { DataStreamEsListener } from './processor/data-stream.es.listener';
-import { SensorEsListener } from './processor/sensor.es.listener';
-import { SensorController } from './controller/sensor.controller';
+import { DeviceController } from './controller/device-controller';
 import { EventStoreModule } from '../event-store/event-store.module';
 import { LegalEntityGateway } from './gateway/legal-entity.gateway';
-import { RetrieveSensorQueryHandler } from './controller/handler/sensor.handler';
-import { SensorESController } from './controller/sensor.es.controller';
-import { RetrieveSensorsQueryHandler } from './controller/handler/sensors.handler';
+import { RetrieveDeviceQueryHandler } from './controller/handler/device.handler';
+import { DeviceEsController } from './controller/device.es.controller';
+import { RetrieveDevicesQueryHandler } from './controller/handler/devices.handler';
 import { CheckpointModule } from './service/checkpoint/checkpoint.module';
 import { LegalEntityProcessor } from './processor/legal-entity.processor';
 import { LegalEntityController } from './controller/legal-entity.controller';
@@ -44,8 +40,8 @@ import { DeviceEsListener } from './processor/device.es.listener';
         MongooseModule.forFeature([{name: 'DataStream', schema: DataStreamSchema}]),
         MongooseModule.forFeature([{name: 'LegalEntity', schema: LegalEntitySchema}]),
     ], controllers: [
-        SensorController,
-        SensorESController,
+        DeviceController,
+        DeviceEsController,
         LegalEntityController,
         LegalEntitiesController,
         LegalEntityEsController,
@@ -54,16 +50,12 @@ import { DeviceEsListener } from './processor/device.es.listener';
         EventPublisher,
         DeviceProcessor,
         DeviceEsListener,
-        SensorGateway,
-        SensorProcessor,
-        SensorEsListener,
-        DataStreamProcessor,
-        DataStreamEsListener,
+        DeviceGateway,
         LegalEntityGateway,
         LegalEntityProcessor,
         LegalEntityEsListener,
-        RetrieveSensorQueryHandler,
-        RetrieveSensorsQueryHandler,
+        RetrieveDeviceQueryHandler,
+        RetrieveDevicesQueryHandler,
         LegalEntityQueryHandler,
         LegalEntitiesQueryHandler,
     ],

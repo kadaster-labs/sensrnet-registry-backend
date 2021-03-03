@@ -4,7 +4,6 @@ import { ContactDetailsBody } from '../../controller/model/contact-details/conta
 export class LegalEntityCommand implements ICommand {
   constructor(
       public readonly legalEntityId: string,
-      public readonly name: string,
       public readonly website: string,
       public readonly contactDetails: ContactDetailsBody,
   ) {}

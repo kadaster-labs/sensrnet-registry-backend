@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsObject } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 import { DatastreamBody } from './datastream.body';
-import { UpdateObservationBody } from '../observation/update-observation.body';
-import { Type } from 'class-transformer';
 
 export class UpdateDatastreamBody extends DatastreamBody {
     @IsString()
@@ -13,13 +11,4 @@ export class UpdateDatastreamBody extends DatastreamBody {
         description: 'DataStream name.',
     })
     readonly name: string;
-
-    @IsObject()
-    @IsOptional()
-    @ApiProperty({
-        type: UpdateObservationBody,
-        required: false,
-    })
-    @Type(() => UpdateObservationBody)
-    readonly observation: UpdateObservationBody;
 }

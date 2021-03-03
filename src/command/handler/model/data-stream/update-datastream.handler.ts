@@ -1,27 +1,37 @@
 import { UnknowObjectException } from '../../error/unknow-object-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { DataStreamRepository } from '../../../../core/repositories/data-stream.repository';
+import { DeviceRepository } from '../../../../core/repositories/device.repository';
 import { UpdateDataStreamCommand } from '../../../command/data-stream/update-data-stream.command';
+import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
+import { validateLegalEntity } from '../../util/legal-entity.utils';
+import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
 
 @CommandHandler(UpdateDataStreamCommand)
 export class UpdateDataStreamCommandHandler implements ICommandHandler<UpdateDataStreamCommand> {
   constructor(
     private readonly publisher: EventPublisher,
-    private readonly repository: DataStreamRepository,
+    private readonly repository: DeviceRepository,
+    private readonly legalEntityRepository: LegalEntityRepository,
   ) {}
 
   async execute(command: UpdateDataStreamCommand): Promise<void> {
-    let aggregate = await this.repository.get(command.dataStreamId);
+    if (command.legalEntityId) {
+      await validateLegalEntity(this.legalEntityRepository, command.legalEntityId);
+    } else {
+      throw new NoLegalEntityException();
+    }
+
+    let aggregate = await this.repository.get(command.deviceId);
     if (aggregate) {
       aggregate = this.publisher.mergeObjectContext(aggregate);
 
-      aggregate.update(command.legalEntityId, command.sensorId, command.name, command.description,
-          command.unitOfMeasurement, command.isPublic, command.isOpenData, command.isReusable,
-          command.containsPersonalInfoData, command.documentationUrl, command.dataLink, command.dataFrequency,
-          command.dataQuality, command.theme, command.observation);
+      aggregate.updateDataStream(command.sensorId, command.legalEntityId, command.dataStreamId,
+          command.name, command.description, command.unitOfMeasurement, command.observationArea,
+          command.theme, command.dataQuality, command.isActive, command.isPublic, command.isOpenData,
+          command.containsPersonalInfoData, command.isReusable, command.documentation, command.dataLink);
       aggregate.commit();
     } else {
-      throw new UnknowObjectException(command.dataStreamId);
+      throw new UnknowObjectException(command.deviceId);
     }
   }
 }

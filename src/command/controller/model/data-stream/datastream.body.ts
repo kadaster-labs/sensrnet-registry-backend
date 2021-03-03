@@ -1,8 +1,7 @@
 import { Theme } from '../theme.body';
 import { ApiProperty } from '@nestjs/swagger';
-import { RegisterObservationBody } from '../observation/register-observation.body';
-import { IsString, IsBoolean, IsUrl, IsNumber, IsUUID, IsOptional, ValidateIf, IsArray, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsString, IsBoolean, IsUrl, IsNumber, IsUUID, IsOptional, ValidateIf,
+    IsArray, IsObject } from 'class-validator';
 
 export abstract class DatastreamBody {
     @IsUUID(4)
@@ -18,14 +17,53 @@ export abstract class DatastreamBody {
     })
     readonly description: string;
 
+    @IsObject()
+    @IsOptional()
+    @ApiProperty({
+        type: Object,
+        required: false,
+        description: 'DataStream unit of measurement.',
+    })
+    readonly unitOfMeasurement: Record<string, any>;
+
+    @IsObject()
+    @IsOptional()
+    @ApiProperty({
+        type: Object,
+        required: false,
+        description: 'Bounding box of the observed area.',
+    })
+    readonly observedArea: Record<string, any>;
+
+    @IsArray()
+    @IsOptional()
+    @ApiProperty({
+        type: String,
+        isArray: true,
+        required: false,
+        enum: Theme,
+        description: 'The sensor theme.',
+    })
+    readonly theme: string[];
+
     @IsString()
     @IsOptional()
     @ApiProperty({
         type: String,
         required: false,
-        description: 'DataStream unit of measurement.',
+        description: 'Data quality.',
     })
-    readonly unitOfMeasurement: string;
+    readonly dataQuality: string;
+
+    @IsBoolean()
+    @IsOptional()
+    @ApiProperty({
+        type: Boolean,
+        default: true,
+        required: false,
+        description: 'Whether the DataStream is active.',
+    })
+    readonly isActive: boolean;
 
     @IsBoolean()
     @IsOptional()
@@ -51,23 +89,23 @@ export abstract class DatastreamBody {
     @IsOptional()
     @ApiProperty({
         type: Boolean,
+        default: false,
+        required: false,
+        description: 'Whether the DataStream can lead to a person.',
+    })
+    readonly containsPersonalInfoData: boolean;
+
+    @IsBoolean()
+    @IsOptional()
+    @ApiProperty({
+        type: Boolean,
         default: true,
         required: false,
         description: 'Whether the DataStream is reusable.',
     })
     readonly isReusable: boolean;
 
-    @IsBoolean()
-    @IsOptional()
-    @ApiProperty({
-        type: Boolean,
-        default: false,
-        required: false,
-        description: 'Whether the DataStream can lead to persons.',
-    })
-    readonly containsPersonalInfoData: boolean;
-
-    @ValidateIf(e => e.documentationUrl !== '')
+    @ValidateIf(e => e.documentation !== '')
     @IsUrl()
     @IsOptional()
     @ApiProperty({
@@ -75,7 +113,7 @@ export abstract class DatastreamBody {
         required: false,
         description: 'A link to the datastream documentation.',
     })
-    readonly documentationUrl: string;
+    readonly documentation: string;
 
     @ValidateIf(e => e.dataLink !== '')
     @IsUrl()
@@ -86,33 +124,4 @@ export abstract class DatastreamBody {
         description: 'Data link.',
     })
     readonly dataLink: string;
-
-    @IsNumber()
-    @IsOptional()
-    @ApiProperty({
-        type: Number,
-        required: false,
-        description: 'Data frequency.',
-    })
-    readonly dataFrequency: number;
-
-    @IsNumber()
-    @IsOptional()
-    @ApiProperty({
-        type: Number,
-        required: false,
-        description: 'Data quality.',
-    })
-    readonly dataQuality: number;
-
-    @IsArray()
-    @IsOptional()
-    @ApiProperty({
-        type: String,
-        isArray: true,
-        required: false,
-        enum: Theme,
-        description: 'The sensor theme.',
-    })
-    readonly theme: string[];
 }

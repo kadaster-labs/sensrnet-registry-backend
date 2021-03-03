@@ -1,7 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Description } from '../description.body';
 import { SensorBody } from './sensor.body';
-import { IsString, IsOptional, MaxLength, IsNotEmpty } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { SensorType } from '../sensor-type.body';
+import { IsString, IsOptional, MaxLength } from 'class-validator';
 
 export class UpdateSensorBody extends SensorBody {
   @IsString()
@@ -20,18 +20,18 @@ export class UpdateSensorBody extends SensorBody {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'The associated deviceId.',
+    description: 'The sensor description.',
   })
-  readonly deviceId: string;
+  readonly description: string;
 
   @IsString()
   @IsOptional()
   @MaxLength(255)
   @ApiProperty({
     type: String,
-    enum: Description,
+    enum: SensorType,
     required: false,
-    description: 'The sensor description.',
+    description: 'The sensor type.',
   })
-  readonly description: string;
+  readonly type: string;
 }

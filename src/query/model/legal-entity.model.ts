@@ -2,8 +2,7 @@ import { model, Schema, Document, Model } from 'mongoose';
 
 export interface ILegalEntity extends Document {
     _id: string;
-    name: string;
-    website?: string;
+    website: string;
     originSync?: string;
     contactDetails?: {
         name: string,
@@ -20,8 +19,7 @@ const ContactDetailsSchema = new Schema({
 
 export const LegalEntitySchema = new Schema({
     _id: { type: String, required: true },
-    name: { type: String, required: true },
-    website: { type: String, required: false },
+    website: { type: String, required: true },
     originSync: { type: Boolean, required: false },
     contactDetails: ContactDetailsSchema,
 });

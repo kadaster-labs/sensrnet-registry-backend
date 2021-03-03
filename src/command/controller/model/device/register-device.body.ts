@@ -1,8 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { DeviceBody } from './device.body';
-import { IsString, IsNotEmpty, MaxLength, IsArray, ArrayMinSize, ArrayMaxSize, IsNumber, Validate } from 'class-validator';
-import { LongitudeLatitudeValidator } from '../../validation/location';
 import { Type } from 'class-transformer';
+import { DeviceBody } from './device.body';
+import { Category } from '../category.body';
+import { ApiProperty } from '@nestjs/swagger';
+import { RegisterLocationBody } from '../location/register-location.body';
+import { IsString, IsNotEmpty, MaxLength, IsObject, ValidateNested } from 'class-validator';
 
 export class RegisterDeviceBody extends DeviceBody {
   @IsString()
@@ -11,21 +12,28 @@ export class RegisterDeviceBody extends DeviceBody {
   @ApiProperty({
     type: String,
     required: true,
-    description: 'The device description.',
+    description: 'The device name.',
   })
-  readonly description: string;
+  readonly name: string;
 
-  @IsArray()
+  @IsString()
   @IsNotEmpty()
-  @ArrayMinSize(2)
-  @ArrayMaxSize(3)
-  @IsNumber({}, {each: true})
+  @MaxLength(255)
   @ApiProperty({
-    type: Number,
-    isArray: true,
+    type: String,
+    required: true,
+    enum: Category,
+    description: 'The device category.',
+  })
+  readonly category: Category;
+
+  @IsObject()
+  @IsNotEmpty()
+  @ValidateNested()
+  @ApiProperty({
+    type: RegisterLocationBody,
     required: true,
   })
-  @Validate(LongitudeLatitudeValidator)
-  @Type(() => Number)
-  readonly location: number[];
+  @Type(() => RegisterLocationBody)
+  readonly location: RegisterLocationBody;
 }

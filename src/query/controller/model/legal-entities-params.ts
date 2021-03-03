@@ -7,7 +7,7 @@ export class LegalEntitiesParams {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'Filter to apply to name.',
+    description: 'Filter to apply to website.',
   })
-  readonly name: string;
+  readonly website: string;
 }
