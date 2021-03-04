@@ -3,10 +3,10 @@ import { DeviceState, DeviceStateImpl } from './device-state';
 import { EventMessage } from '../../event-store/event-message';
 import { getSensorRemovedEvent, SensorRemoved } from '../events/sensor/removed';
 import { getSensorUpdatedEvent, SensorUpdated } from '../events/sensor/updated';
-import { DatastreamAdded, getDatastreamAddedEvent } from '../events/data-stream/added';
+import { DatastreamAdded, getDatastreamAddedEvent } from '../events/datastream/added';
 import { getSensorAddedEvent, SensorAdded } from '../events/sensor/added';
-import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../events/data-stream/updated';
-import { DatastreamRemoved, getDatastreamRemovedEvent } from '../events/data-stream/removed';
+import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../events/datastream/updated';
+import { DatastreamRemoved, getDatastreamRemovedEvent } from '../events/datastream/removed';
 import { Category } from '../../command/controller/model/category.body';
 import { DeviceUpdated, getDeviceUpdatedEvent } from '../events/device/updated';
 import { DeviceRemoved, getDeviceRemovedEvent } from '../events/device/removed';
@@ -16,39 +16,51 @@ import { RegisterLocationBody } from '../../command/controller/model/location/re
 import { getObservationGoalAddedEvent, ObservationGoalAdded } from '../events/observation-goal/added';
 import { getObservationGoalUpdatedEvent, ObservationGoalUpdated } from '../events/observation-goal/updated';
 import { getObservationGoalRemovedEvent, ObservationGoalRemoved } from '../events/observation-goal/removed';
+import { DeviceLocated, getDeviceLocatedEvent } from '../events/device/located';
+import { DeviceRelocated, getDeviceRelocatedEvent } from '../events/device/relocated';
 
 export class DeviceAggregate extends Aggregate {
 
   state!: DeviceState;
 
   constructor(
-      private readonly aggregateId: string,
-      ) {
+    private readonly aggregateId: string,
+  ) {
     super();
   }
 
   registerDevice(legalEntityId: string, name: string, description: string, category: Category,
                  connectivity: string, location: RegisterLocationBody): void {
     this.simpleApply(new DeviceRegistered(this.aggregateId, legalEntityId, name, description,
-        category, connectivity, location));
+      category, connectivity));
+    this.simpleApply(new DeviceLocated(this.aggregateId, location.name, location.description, location.location));
   }
 
   onDeviceRegistered(eventMessage: EventMessage): void {
     const event: DeviceRegistered = getDeviceRegisteredEvent(eventMessage);
-    this.state = new DeviceStateImpl(this.aggregateId, event.location.location);
+    // TODO remove method?
+  }
+
+  onDeviceLocated(eventMessage: EventMessage): void {
+    const event: DeviceLocated = getDeviceLocatedEvent(eventMessage);
+    this.state = new DeviceStateImpl(this.aggregateId, event.location);
   }
 
   updateDevice(legalEntityId: string, name: string, description: string,
                category: Category, connectivity: string, location: UpdateLocationBody): void {
     this.simpleApply(new DeviceUpdated(this.aggregateId, legalEntityId, name, description,
-        category, connectivity, location));
+      category, connectivity));
+    this.simpleApply(new DeviceRelocated(this.aggregateId, location.name, location.description, location.location));
   }
 
   onDeviceUpdated(eventMessage: EventMessage): void {
     const event: DeviceUpdated = getDeviceUpdatedEvent(eventMessage);
-    if (event.location && event.location.location) {
-      this.state.location = event.location.location;
-    }
+    // TODO remove method?
+  }
+
+  onDeviceRelocated(eventMessage: EventMessage): void {
+    const event: DeviceRelocated = getDeviceRelocatedEvent(eventMessage);
+    this.state.location = event.location;
   }
 
   removeDevice(legalEntityId: string): void {
@@ -63,7 +75,7 @@ export class DeviceAggregate extends Aggregate {
   addSensor(sensorId: string, legalEntityId: string, name: string, description: string,
             type: string, manufacturer: string, supplier: string, documentation: string): void {
     this.simpleApply(new SensorAdded(this.aggregateId, sensorId, legalEntityId, name, description,
-        type, manufacturer, supplier, documentation));
+      type, manufacturer, supplier, documentation));
   }
 
   onSensorAdded(eventMessage: EventMessage): void {
@@ -74,7 +86,7 @@ export class DeviceAggregate extends Aggregate {
   updateSensor(sensorId: string, legalEntityId: string, name: string, description: string,
                type: string, manufacturer: string, supplier: string, documentation: string): void {
     this.simpleApply(new SensorUpdated(this.aggregateId, sensorId, legalEntityId, name, description,
-        type, manufacturer, supplier, documentation));
+      type, manufacturer, supplier, documentation));
   }
 
   onSensorUpdated(eventMessage: EventMessage): void {
@@ -96,8 +108,8 @@ export class DeviceAggregate extends Aggregate {
                 theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
                 containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
     this.simpleApply(new DatastreamAdded(this.aggregateId, sensorId, legalEntityId, dataStreamId, name,
-        description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
-        containsPersonalInfoData, isReusable, documentation, dataLink));
+      description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
+      containsPersonalInfoData, isReusable, documentation, dataLink));
   }
 
   onDatastreamAdded(eventMessage: EventMessage): void {
@@ -110,8 +122,8 @@ export class DeviceAggregate extends Aggregate {
                    theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
                    containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
     this.simpleApply(new DatastreamUpdated(this.aggregateId, sensorId, legalEntityId, dataStreamId, name,
-        description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
-        containsPersonalInfoData, isReusable, documentation, dataLink));
+      description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
+      containsPersonalInfoData, isReusable, documentation, dataLink));
   }
 
   onDatastreamUpdated(eventMessage: EventMessage): void {
@@ -131,7 +143,7 @@ export class DeviceAggregate extends Aggregate {
   addObservationGoal(dataStreamId: string, observationGoalId: string, legalEntityId: string, name: string,
                      description: string, legalGround: string, legalGroundLink: string): void {
     this.simpleApply(new ObservationGoalAdded(this.aggregateId, dataStreamId, observationGoalId, legalEntityId,
-        name, description, legalGround, legalGroundLink));
+      name, description, legalGround, legalGroundLink));
   }
 
   onObservationGoalAdded(eventMessage: EventMessage): void {
@@ -142,7 +154,7 @@ export class DeviceAggregate extends Aggregate {
   updateObservationGoal(dataStreamId: string, observationGoalId: string, legalEntityId: string, name: string,
                         description: string, legalGround: string, legalGroundLink: string): void {
     this.simpleApply(new ObservationGoalUpdated(this.aggregateId, dataStreamId, observationGoalId, legalEntityId,
-        name, description, legalGround, legalGroundLink));
+      name, description, legalGround, legalGroundLink));
   }
 
   onObservationGoalUpdated(eventMessage: EventMessage): void {
