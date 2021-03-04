@@ -30,10 +30,10 @@ export class DeviceAggregate extends Aggregate {
   }
 
   registerDevice(legalEntityId: string, name: string, description: string, category: Category,
-    connectivity: string, location: RegisterLocationBody): void {
+                 connectivity: string, location: RegisterLocationBody): void {
     this.simpleApply(new DeviceRegistered(this.aggregateId, legalEntityId, name, description,
       category, connectivity));
-    this.simpleApply(new DeviceLocated(this.aggregateId, location.name, location.description, location.location))
+    this.simpleApply(new DeviceLocated(this.aggregateId, location.name, location.description, location.location));
   }
 
   onDeviceRegistered(eventMessage: EventMessage): void {
@@ -47,10 +47,10 @@ export class DeviceAggregate extends Aggregate {
   }
 
   updateDevice(legalEntityId: string, name: string, description: string,
-    category: Category, connectivity: string, location: UpdateLocationBody): void {
+               category: Category, connectivity: string, location: UpdateLocationBody): void {
     this.simpleApply(new DeviceUpdated(this.aggregateId, legalEntityId, name, description,
       category, connectivity));
-    this.simpleApply(new DeviceRelocated(this.aggregateId, location.name, location.description, location.location))
+    this.simpleApply(new DeviceRelocated(this.aggregateId, location.name, location.description, location.location));
   }
 
   onDeviceUpdated(eventMessage: EventMessage): void {
@@ -73,7 +73,7 @@ export class DeviceAggregate extends Aggregate {
   }
 
   addSensor(sensorId: string, legalEntityId: string, name: string, description: string,
-    type: string, manufacturer: string, supplier: string, documentation: string): void {
+            type: string, manufacturer: string, supplier: string, documentation: string): void {
     this.simpleApply(new SensorAdded(this.aggregateId, sensorId, legalEntityId, name, description,
       type, manufacturer, supplier, documentation));
   }
@@ -84,7 +84,7 @@ export class DeviceAggregate extends Aggregate {
   }
 
   updateSensor(sensorId: string, legalEntityId: string, name: string, description: string,
-    type: string, manufacturer: string, supplier: string, documentation: string): void {
+               type: string, manufacturer: string, supplier: string, documentation: string): void {
     this.simpleApply(new SensorUpdated(this.aggregateId, sensorId, legalEntityId, name, description,
       type, manufacturer, supplier, documentation));
   }
@@ -104,9 +104,9 @@ export class DeviceAggregate extends Aggregate {
   }
 
   addDataStream(sensorId: string, legalEntityId: string, dataStreamId: string, name: string,
-    description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
-    theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
-    containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
+                description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
+                theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
+                containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
     this.simpleApply(new DatastreamAdded(this.aggregateId, sensorId, legalEntityId, dataStreamId, name,
       description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
       containsPersonalInfoData, isReusable, documentation, dataLink));
@@ -118,9 +118,9 @@ export class DeviceAggregate extends Aggregate {
   }
 
   updateDataStream(sensorId: string, legalEntityId: string, dataStreamId: string, name: string,
-    description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
-    theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
-    containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
+                   description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
+                   theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
+                   containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
     this.simpleApply(new DatastreamUpdated(this.aggregateId, sensorId, legalEntityId, dataStreamId, name,
       description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
       containsPersonalInfoData, isReusable, documentation, dataLink));
@@ -141,7 +141,7 @@ export class DeviceAggregate extends Aggregate {
   }
 
   addObservationGoal(dataStreamId: string, observationGoalId: string, legalEntityId: string, name: string,
-    description: string, legalGround: string, legalGroundLink: string): void {
+                     description: string, legalGround: string, legalGroundLink: string): void {
     this.simpleApply(new ObservationGoalAdded(this.aggregateId, dataStreamId, observationGoalId, legalEntityId,
       name, description, legalGround, legalGroundLink));
   }
@@ -152,7 +152,7 @@ export class DeviceAggregate extends Aggregate {
   }
 
   updateObservationGoal(dataStreamId: string, observationGoalId: string, legalEntityId: string, name: string,
-    description: string, legalGround: string, legalGroundLink: string): void {
+                        description: string, legalGround: string, legalGroundLink: string): void {
     this.simpleApply(new ObservationGoalUpdated(this.aggregateId, dataStreamId, observationGoalId, legalEntityId,
       name, description, legalGround, legalGroundLink));
   }

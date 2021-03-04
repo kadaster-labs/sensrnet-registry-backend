@@ -36,6 +36,10 @@ export class DeviceProcessor extends AbstractProcessor {
       await this.processDeviceUpdated(event);
     } else if (event instanceof DeviceRemoved) {
       await this.processDeviceDeleted(event);
+    } else if (event instanceof DeviceLocated) {
+      await this.processDeviceLocated(event);
+    } else if (event instanceof DeviceRelocated) {
+      await this.processDeviceRelocated(event);
     } else if (event instanceof SensorAdded) {
       await this.processSensorAdded(event);
     } else if (event instanceof SensorUpdated) {
@@ -68,7 +72,7 @@ export class DeviceProcessor extends AbstractProcessor {
       name: event.name,
       description: event.description,
       category: event.category,
-      connectivity: event.connectivity
+      connectivity: event.connectivity,
     };
 
     try {
@@ -125,7 +129,7 @@ export class DeviceProcessor extends AbstractProcessor {
     }
 
     try {
-      await this.deviceModel.updateOne({ _id: event.deviceId }, deviceUpdate);
+      await this.deviceModel.updateOne({ _id: event.deviceId }, { $set: deviceUpdate });
     } catch {
       this.errorCallback(event);
     }

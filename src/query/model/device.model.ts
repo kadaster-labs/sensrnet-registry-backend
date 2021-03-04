@@ -50,7 +50,7 @@ export interface IDevice extends Document {
     category?: string;
     connectivity?: string;
     locationDetails?: ILocationDetails;
-    location: {
+    location?: {
         type: 'Point',
         coordinates: Types.Array<number>,
     };
@@ -109,8 +109,8 @@ export const DeviceSchema = new Schema({
     connectivity: { type: String, required: false },
     locationDetails: { type: LocationSchema, required: false },
     location: {
-        type: { type: String, enum: ['Point'], required: true },
-        coordinates: { type: [Number], required: true },
+        type: { type: String, enum: ['Point'], required: false },
+        coordinates: { type: [Number], required: false },
     },
     dataStreams: [DataStreamSchema],
     sensors: [SensorSchema],
