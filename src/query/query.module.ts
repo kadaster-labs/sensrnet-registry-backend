@@ -2,14 +2,12 @@ import { Module } from '@nestjs/common';
 import { UserSchema } from '../user/model/user.model';
 import { AuthModule } from '../auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SensorSchema } from './model/sensor.model';
 import { UserService } from '../user/user.service';
 import { DeviceSchema } from './model/device.model';
 import { RelationSchema } from './model/relation.model';
 import { DeviceGateway } from './gateway/device.gateway';
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
 import { LegalEntitySchema } from './model/legal-entity.model';
-import { DataStreamSchema } from './model/datastream.model';
 import { DeviceController } from './controller/device-controller';
 import { EventStoreModule } from '../event-store/event-store.module';
 import { LegalEntityGateway } from './gateway/legal-entity.gateway';
@@ -34,10 +32,8 @@ import { DeviceEsListener } from './processor/device.es.listener';
         CheckpointModule,
         EventStoreModule,
         MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
-        MongooseModule.forFeature([{name: 'Sensor', schema: SensorSchema}]),
         MongooseModule.forFeature([{name: 'Device', schema: DeviceSchema}]),
         MongooseModule.forFeature([{name: 'Relation', schema: RelationSchema}]),
-        MongooseModule.forFeature([{name: 'DataStream', schema: DataStreamSchema}]),
         MongooseModule.forFeature([{name: 'LegalEntity', schema: LegalEntitySchema}]),
     ], controllers: [
         DeviceController,

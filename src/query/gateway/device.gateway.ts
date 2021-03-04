@@ -46,14 +46,14 @@ export class DeviceGateway implements OnGatewayConnection {
         }
     }
 
-    emit(event: string, updatedSensor: Record<string, any>): void {
-        // for (const organization of updatedSensor.organizations) {
-        //     this.server.to(organization.id).emit(event, updatedSensor);
-        // }
+    emit(event: string, legalEntityIds: string[], updatedDevice: Record<string, any>): void {
+        for (const legalEntityId of legalEntityIds) {
+            this.server.to(legalEntityId).emit(event, updatedDevice);
+        }
     }
 
-    @SubscribeMessage('LegalEntityUpdated')
-    handleEvent(@ConnectedSocket() client: Socket, @MessageBody() data: Record<string, string>): void {
-        this.setupRoom(client, data.legalEntityId);
-    }
+    // @SubscribeMessage('LegalEntityUpdated')
+    // handleEvent(@ConnectedSocket() client: Socket, @MessageBody() data: Record<string, string>): void {
+    //     this.setupRoom(client, data.legalEntityId);
+    // }
 }

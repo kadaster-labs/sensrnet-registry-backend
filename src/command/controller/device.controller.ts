@@ -10,7 +10,7 @@ import { RemoveDeviceCommand } from '../command/device/remove-device.command';
 import { RegisterDeviceCommand } from '../command/device/register-device.command';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { Controller, Param, Post, Put, Body, Delete, UseFilters, Req, UseGuards, Logger } from '@nestjs/common';
+import { Controller, Param, Post, Put, Body, Delete, UseFilters, Req, UseGuards } from '@nestjs/common';
 
 @ApiBearerAuth()
 @UseGuards(AccessJwtAuthGuard)

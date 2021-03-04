@@ -5,9 +5,6 @@ import { AbstractProcessor } from './abstract.processor';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { DeviceRemoved, DeviceUpdated, DeviceRegistered } from '../../core/events/device';
 import { DeviceEvent } from '../../core/events/device/device.event';
-import { IDevice } from '../model/device.model';
-import { ISensor } from '../model/sensor.model';
-import { IDataStream } from '../model/datastream.model';
 import { IRelation, RelationVariant } from '../model/relation.model';
 import { SensorUpdated } from '../../core/events/sensor/updated';
 import { SensorAdded, SensorRemoved } from '../../core/events/sensor';
@@ -17,16 +14,17 @@ import { DatastreamRemoved } from '../../core/events/data-stream/removed';
 import { ObservationGoalAdded } from '../../core/events/observation-goal/added';
 import { ObservationGoalUpdated } from '../../core/events/observation-goal/updated';
 import { ObservationGoalRemoved } from '../../core/events/observation-goal/removed';
+import { IDevice } from '../model/device.model';
+import { DeviceGateway } from '../gateway/device.gateway';
 
 @Injectable()
 export class DeviceProcessor extends AbstractProcessor {
 
   constructor(
       eventStore: EventStorePublisher,
+      private readonly deviceGateway: DeviceGateway,
       @InjectModel('Device') private deviceModel: Model<IDevice>,
-      @InjectModel('Sensor') private sensorModel: Model<ISensor>,
       @InjectModel('Relation') public relationModel: Model<IRelation>,
-      @InjectModel('DataStream') private dataStreamModel: Model<IDataStream>,
   ) {
     super(eventStore, relationModel);
   }
@@ -57,6 +55,11 @@ export class DeviceProcessor extends AbstractProcessor {
     } else if (event instanceof ObservationGoalRemoved) {
       await this.processObservationGoalRemoved(event);
     }
+
+    if (event instanceof DeviceRegistered || event instanceof DeviceUpdated || event instanceof DeviceRemoved) {
+      const device = await this.deviceModel.findOne({_id: event.deviceId});
+      this.deviceGateway.emit(event.constructor.name, [event.legalEntityId], device ? device.toObject() : {});
+    }
   }
 
   async processDeviceRegistered(event: DeviceRegistered): Promise<void> {
@@ -66,36 +69,49 @@ export class DeviceProcessor extends AbstractProcessor {
       description: event.description,
       category: event.category,
       connectivity: event.connectivity,
-      locationName: event.location.name,
-      locationDescription: event.location.description,
+      locationDetails: {
+        name: event.location.name,
+        description: event.location.description,
+      },
       location: {
         type: 'Point',
         coordinates: event.location.location,
       },
     };
+
     try {
       await new this.deviceModel(deviceData).save();
-    } catch (e) {
-      Logger.warn(e);
+      await this.saveRelation(event.legalEntityId, RelationVariant.DEVICE_OWNER, event.deviceId);
+    } catch {
       this.errorCallback(event);
     }
-
-    await this.saveRelation(event.legalEntityId, RelationVariant.DEVICE_OWNER, event.deviceId);
   }
 
   async processDeviceUpdated(event: DeviceUpdated): Promise<void> {
     const deviceUpdate: Record<string, any> = {};
 
-    if (AbstractProcessor.defined(event.name)) { deviceUpdate.name = event.name; }
-    if (AbstractProcessor.defined(event.description)) { deviceUpdate.description = event.description; }
-    if (AbstractProcessor.defined(event.category)) { deviceUpdate.category = event.category; }
-    if (AbstractProcessor.defined(event.connectivity)) { deviceUpdate.connectivity = event.connectivity; }
+    if (AbstractProcessor.defined(event.name)) {
+      deviceUpdate.name = event.name;
+    }
+    if (AbstractProcessor.defined(event.description)) {
+      deviceUpdate.description = event.description;
+    }
+    if (AbstractProcessor.defined(event.category)) {
+      deviceUpdate.category = event.category;
+    }
+    if (AbstractProcessor.defined(event.connectivity)) {
+      deviceUpdate.connectivity = event.connectivity;
+    }
     if (AbstractProcessor.defined(event.location)) {
+      const locationDetails: Record<string, any> = {};
       if (AbstractProcessor.defined(event.location.name)) {
-        deviceUpdate.locationName = event.location.name;
+        locationDetails.name = event.location.name;
       }
       if (AbstractProcessor.defined(event.location.description)) {
-        deviceUpdate.locationDescription = event.location.description;
+        locationDetails.description = event.location.description;
+      }
+      if (Object.keys(locationDetails).length) {
+        deviceUpdate.locationDetails = locationDetails;
       }
       if (AbstractProcessor.defined(event.location.location)) {
         deviceUpdate.location = {
@@ -113,21 +129,19 @@ export class DeviceProcessor extends AbstractProcessor {
   }
 
   async processDeviceDeleted(event: DeviceRemoved): Promise<void> {
-    const deviceFilter = {_id: event.deviceId};
-    await this.sensorModel.deleteMany(deviceFilter);
-    await this.dataStreamModel.deleteMany(deviceFilter);
-
-    await this.deleteRelations(event.deviceId);
-    await this.deviceModel.deleteOne(deviceFilter);
-
-    await this.eventStore.deleteStream(DeviceEvent.getStreamName(DeviceEvent.streamRootValue, event.deviceId));
+    try {
+      await this.deleteRelations(event.deviceId);
+      await this.deviceModel.deleteOne({_id: event.deviceId});
+      await this.eventStore.deleteStream(DeviceEvent.getStreamName(DeviceEvent.streamRootValue, event.deviceId));
+    } catch {
+      this.errorCallback(event);
+    }
   }
 
   async processSensorAdded(event: SensorAdded): Promise<void> {
     const sensorData = {
       _id: event.sensorId,
       name: event.name,
-      deviceId: event.deviceId,
       description: event.description,
       type: event.type,
       manufacturer: event.manufacturer,
@@ -136,133 +150,212 @@ export class DeviceProcessor extends AbstractProcessor {
     };
 
     try {
-      await new this.sensorModel(sensorData).save();
+      await this.deviceModel.updateOne({_id: event.deviceId}, {$push: {sensors: sensorData}});
     } catch {
       this.errorCallback(event);
     }
   }
 
   async processSensorUpdated(event: SensorUpdated): Promise<void> {
-    const sensorUpdate: Record<string, any> = {};
+    const sensorFilter = {
+      '_id': event.deviceId,
+      'sensors._id': event.sensorId,
+    };
 
-    if (AbstractProcessor.defined(event.name)) { sensorUpdate.name = event.name; }
-    if (AbstractProcessor.defined(event.description)) { sensorUpdate.description = event.description; }
-    if (AbstractProcessor.defined(event.type)) { sensorUpdate.type = event.type; }
-    if (AbstractProcessor.defined(event.manufacturer)) { sensorUpdate.manufacturer = event.manufacturer; }
-    if (AbstractProcessor.defined(event.supplier)) { sensorUpdate.supplier = event.supplier; }
-    if (AbstractProcessor.defined(event.documentation)) { sensorUpdate.documentation = event.documentation; }
+    const sensorUpdate: Record<string, any> = {};
+    if (AbstractProcessor.defined(event.name)) {
+      sensorUpdate['sensors.$.name'] = event.name;
+    }
+    if (AbstractProcessor.defined(event.description)) {
+      sensorUpdate['sensors.$.description'] = event.description;
+    }
+    if (AbstractProcessor.defined(event.type)) {
+      sensorUpdate['sensors.$.type'] = event.type;
+    }
+    if (AbstractProcessor.defined(event.manufacturer)) {
+      sensorUpdate['sensors.$.manufacturer'] = event.manufacturer;
+    }
+    if (AbstractProcessor.defined(event.supplier)) {
+      sensorUpdate['sensors.$.supplier'] = event.supplier;
+    }
+    if (AbstractProcessor.defined(event.documentation)) {
+      sensorUpdate['sensors.$.documentation'] = event.documentation;
+    }
 
     try {
-      await this.sensorModel.updateOne({_id: event.sensorId}, sensorUpdate);
+      await this.deviceModel.updateOne(sensorFilter, {$set: sensorUpdate});
     } catch {
       this.errorCallback(event);
     }
   }
 
   async processSensorRemoved(event: SensorRemoved): Promise<void> {
-    await this.sensorModel.deleteMany({_id: event.sensorId});
+    await this.deviceModel.updateOne({_id: event.deviceId}, {$pull: {sensors: {_id: event.sensorId}}});
   }
 
   async processDatastreamAdded(event: DatastreamAdded): Promise<void> {
-    const dataStreamData: Record<string, any> = {
+    const dataStreamData = {
       _id: event.dataStreamId,
       sensorId: event.sensorId,
-      deviceId: event.deviceId,
       name: event.name,
+      description: event.description,
+      unitOfMeasurement: event.unitOfMeasurement,
+      observationArea: event.observationArea,
+      theme: event.theme,
+      dataQuality: event.dataQuality,
       isActive: !!event.isActive,
       isPublic: !!event.isPublic,
       isOpenData: !!event.isOpenData,
-      isReusable: !!event.isReusable,
       containsPersonalInfoData: !!event.containsPersonalInfoData,
+      isReusable: !!event.isReusable,
+      documentation: event.documentation,
+      dataLink: event.dataLink,
     };
 
-    if (AbstractProcessor.defined(event.description)) { dataStreamData.description = event.description; }
-    if (AbstractProcessor.defined(event.unitOfMeasurement)) { dataStreamData.unitOfMeasurement = event.unitOfMeasurement; }
-    if (AbstractProcessor.defined(event.observationArea)) { dataStreamData.observationArea = event.observationArea; }
-    if (AbstractProcessor.defined(event.theme)) { dataStreamData.theme = event.theme; }
-    if (AbstractProcessor.defined(event.dataQuality)) { dataStreamData.dataQuality = event.dataQuality; }
-    if (AbstractProcessor.defined(event.documentation)) { dataStreamData.documentation = event.documentation; }
-    if (AbstractProcessor.defined(event.dataLink)) { dataStreamData.dataLink = event.dataLink; }
-
-    await new this.dataStreamModel(dataStreamData).save();
+    try {
+      await this.deviceModel.updateOne({_id: event.deviceId}, {$push: {dataStreams: dataStreamData}});
+    } catch {
+      this.errorCallback(event);
+    }
   }
 
   async processDatastreamUpdated(event: DatastreamUpdated): Promise<void> {
-    const dataStreamUpdate: Record<string, any> = {};
+    const dataStreamFilter = {
+      '_id': event.deviceId,
+      'dataStreams._id': event.dataStreamId,
+    };
 
-    if (AbstractProcessor.defined(event.name)) { dataStreamUpdate.name = event.name; }
-    if (AbstractProcessor.defined(event.description)) { dataStreamUpdate.description = event.description; }
-    if (AbstractProcessor.defined(event.unitOfMeasurement)) { dataStreamUpdate.unitOfMeasurement = event.unitOfMeasurement; }
-    if (AbstractProcessor.defined(event.observationArea)) { dataStreamUpdate.observationArea = event.observationArea; }
-    if (AbstractProcessor.defined(event.theme)) { dataStreamUpdate.theme = event.theme; }
-    if (AbstractProcessor.defined(event.dataQuality)) { dataStreamUpdate.dataQuality = event.dataQuality; }
-    if (AbstractProcessor.defined(event.isActive)) { dataStreamUpdate.isActive = !!event.isActive; }
-    if (AbstractProcessor.defined(event.isPublic)) { dataStreamUpdate.isPublic = !!event.isPublic; }
-    if (AbstractProcessor.defined(event.isOpenData)) { dataStreamUpdate.isOpenData = !!event.isOpenData; }
-    if (AbstractProcessor.defined(event.containsPersonalInfoData)) { dataStreamUpdate.containsPersonalInfoData = !!event.containsPersonalInfoData; }
-    if (AbstractProcessor.defined(event.isReusable)) { dataStreamUpdate.isReusable = !!event.isReusable; }
-    if (AbstractProcessor.defined(event.documentation)) { dataStreamUpdate.documentation = event.documentation; }
-    if (AbstractProcessor.defined(event.dataLink)) { dataStreamUpdate.dataLink = event.dataLink; }
+    const dataStreamUpdate: Record<string, any> = {};
+    if (AbstractProcessor.defined(event.name)) {
+      dataStreamUpdate['dataStreams.$.name'] = event.name;
+    }
+    if (AbstractProcessor.defined(event.description)) {
+      dataStreamUpdate['dataStreams.$.description'] = event.description;
+    }
+    if (AbstractProcessor.defined(event.unitOfMeasurement)) {
+      dataStreamUpdate['dataStreams.$.unitOfMeasurement'] = event.unitOfMeasurement;
+    }
+    if (AbstractProcessor.defined(event.observationArea)) {
+      dataStreamUpdate['dataStreams.$.observationArea'] = event.observationArea;
+    }
+    if (AbstractProcessor.defined(event.theme)) {
+      dataStreamUpdate['dataStreams.$.theme'] = event.theme;
+    }
+    if (AbstractProcessor.defined(event.dataQuality)) {
+      dataStreamUpdate['dataStreams.$.dataQuality'] = event.dataQuality;
+    }
+    if (AbstractProcessor.defined(event.isActive)) {
+      dataStreamUpdate['dataStreams.$.isActive'] = !!event.isActive;
+    }
+    if (AbstractProcessor.defined(event.isPublic)) {
+      dataStreamUpdate['dataStreams.$.isPublic'] = !!event.isPublic;
+    }
+    if (AbstractProcessor.defined(event.isOpenData)) {
+      dataStreamUpdate['dataStreams.$.isOpenData'] = !!event.isOpenData;
+    }
+    if (AbstractProcessor.defined(event.containsPersonalInfoData)) {
+      dataStreamUpdate['dataStreams.$.containsPersonalInfoData'] = !!event.containsPersonalInfoData;
+    }
+    if (AbstractProcessor.defined(event.isReusable)) {
+      dataStreamUpdate['dataStreams.$.isReusable'] = !!event.isReusable;
+    }
+    if (AbstractProcessor.defined(event.documentation)) {
+      dataStreamUpdate['dataStreams.$.documentation'] = event.documentation;
+    }
+    if (AbstractProcessor.defined(event.dataLink)) {
+      dataStreamUpdate['dataStreams.$.dataLink'] = event.dataLink;
+    }
 
     try {
-      await this.dataStreamModel.updateOne({_id: event.dataStreamId}, dataStreamUpdate);
+      await this.deviceModel.updateOne(dataStreamFilter, {$set: dataStreamUpdate});
     } catch {
       this.errorCallback(event);
     }
   }
 
   async processDatastreamRemoved(event: DatastreamRemoved): Promise<void> {
-    await this.dataStreamModel.deleteMany({_id: event.dataStreamId});
-  }
-
-  async processObservationGoalAdded(event: ObservationGoalAdded): Promise<void> {
-    await this.dataStreamModel.updateOne(
-        { _id: event.dataStreamId },
-        { $push: {
-          observationGoals: {
-            _id: event.observationGoalId,
-            name: event.name,
-            description: event.description,
-            legalGround: event.legalGround,
-            legalGroundLink: event.legalGroundLink,
-          },
-        }},
-    );
-  }
-
-  async processObservationGoalUpdated(event: ObservationGoalUpdated): Promise<void> {
-    const filter = {
-      '_id': event.dataStreamId,
-      'observationGoals._id': event.observationGoalId,
-    };
-    const updateObservationGoal: Record<string, any> = {};
-    if (event.name) { updateObservationGoal['observationGoals.$.name'] = event.name; }
-    if (event.description) { updateObservationGoal['observationGoals.$.description'] = event.description; }
-    if (event.legalGround) { updateObservationGoal['observationGoals.$.legalGround'] = event.legalGround; }
-    if (event.legalGroundLink) { updateObservationGoal['observationGoals.$.legalGroundLink'] = event.legalGroundLink; }
-
+    const dataStreamFilter = {_id: event.deviceId};
+    const dataStreamRemove = {$pull: {dataStreams: {_id: event.dataStreamId}}};
     try {
-      await this.dataStreamModel.updateOne(filter, {
-        $set: updateObservationGoal,
-      });
+      await this.deviceModel.updateOne(dataStreamFilter, dataStreamRemove);
     } catch {
       this.errorCallback(event);
     }
   }
 
-  async processObservationGoalRemoved(event: ObservationGoalRemoved): Promise<void> {
-    const filter = {
-      '_id': event.dataStreamId,
-      'observationGoals._id': event.observationGoalId,
+  async processObservationGoalAdded(event: ObservationGoalAdded): Promise<void> {
+    const observationGoalData = {
+      _id: event.observationGoalId,
+      name: event.name,
+      description: event.description,
+      legalGround: event.legalGround,
+      legalGroundLink: event.legalGroundLink,
     };
+
+    const dataStreamFilter = {
+      '_id': event.deviceId,
+      'dataStreams._id': event.dataStreamId,
+    };
+
+    const dataStreamUpdate = {
+      $push: {
+        'dataStreams.$.observationGoals': observationGoalData,
+      },
+    };
+
     try {
-      await this.dataStreamModel.updateOne(filter, {
-        $pull: {
-          observationGoals: {
-            _id: event.observationGoalId,
-          },
-        },
-      });
+      await this.deviceModel.updateOne(dataStreamFilter, dataStreamUpdate);
+    } catch {
+      this.errorCallback(event);
+    }
+  }
+
+  async processObservationGoalUpdated(event: ObservationGoalUpdated): Promise<void> {
+    const observationGoalFilter = {
+      '_id': event.deviceId,
+      'dataStreams._id': event.dataStreamId,
+      'dataStreams.observationGoals._id': event.observationGoalId,
+    };
+
+    const observationGoalUpdate: Record<string, any> = {};
+    if (AbstractProcessor.defined(event.name)) {
+      observationGoalUpdate['dataStreams.$[outer].observationGoals.$[inner].name'] = event.name;
+    }
+    if (AbstractProcessor.defined(event.description)) {
+      observationGoalUpdate['dataStreams.$[outer].observationGoals.$[inner].description'] = event.description;
+    }
+    if (AbstractProcessor.defined(event.legalGround)) {
+      observationGoalUpdate['dataStreams.$[outer].observationGoals.$[inner].legalGround'] = event.legalGround;
+    }
+    if (AbstractProcessor.defined(event.legalGroundLink)) {
+      observationGoalUpdate['dataStreams.$[outer].observationGoals.$[inner].legalGroundLink'] = event.legalGroundLink;
+    }
+
+    const options = {
+      arrayFilters: [{
+        'outer._id': event.dataStreamId,
+      }, {
+        'inner._id': event.observationGoalId,
+      }],
+    };
+
+    try {
+      await this.deviceModel.updateOne(observationGoalFilter, {$set: observationGoalUpdate}, options);
+    } catch (e) {
+      Logger.warn(e);
+      this.errorCallback(event);
+    }
+  }
+
+  async processObservationGoalRemoved(event: ObservationGoalRemoved): Promise<void> {
+    const observationGoalFilter = {
+      '_id': event.deviceId,
+      'dataStreams._id': event.dataStreamId,
+    };
+
+    const observationGoalRemove = {$pull: {'dataStreams.$.observationGoals': {_id: event.observationGoalId}}};
+    try {
+      await this.deviceModel.updateOne(observationGoalFilter, observationGoalRemove);
     } catch {
       this.errorCallback(event);
     }
