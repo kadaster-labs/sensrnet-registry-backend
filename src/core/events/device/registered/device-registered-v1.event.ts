@@ -1,6 +1,4 @@
 import { DeviceEvent } from '../device.event';
-import { Category } from '../../../../command/controller/model/category.body';
-import { RegisterLocationBody } from '../../../../command/controller/model/location/register-location.body';
 
 export class DeviceRegistered extends DeviceEvent {
   static version = '1';
@@ -8,12 +6,11 @@ export class DeviceRegistered extends DeviceEvent {
   readonly legalEntityId: string;
   readonly name: string;
   readonly description: string;
-  readonly category: Category;
+  readonly category: String;
   readonly connectivity: string;
-  readonly location: RegisterLocationBody;
 
   constructor(deviceId: string, legalEntityId: string, name: string, description: string,
-              category: Category, connectivity: string, location: RegisterLocationBody) {
+    category: String, connectivity: string) {
     super(deviceId, DeviceRegistered.version);
 
     this.legalEntityId = legalEntityId;
@@ -21,6 +18,5 @@ export class DeviceRegistered extends DeviceEvent {
     this.description = description;
     this.category = category;
     this.connectivity = connectivity;
-    this.location = location;
   }
 }

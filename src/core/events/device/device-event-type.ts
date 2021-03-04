@@ -2,9 +2,11 @@ import { AbstractEventType } from '../abstract-event-type';
 import { DeviceUpdated, getDeviceUpdatedEvent } from './updated';
 import { DeviceRemoved, getDeviceRemovedEvent } from './removed';
 import { DeviceRegistered, getDeviceRegisteredEvent } from './registered';
-import { DatastreamAdded, getDatastreamAddedEvent } from '../data-stream/added';
-import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../data-stream/updated';
-import { DatastreamRemoved, getDatastreamRemovedEvent } from '../data-stream/removed';
+import { DeviceLocated, getDeviceLocatedEvent } from './located';
+import { DeviceRelocated, getDeviceRelocatedEvent } from './relocated';
+import { DatastreamAdded, getDatastreamAddedEvent } from '../datastream/added';
+import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../datastream/updated';
+import { DatastreamRemoved, getDatastreamRemovedEvent } from '../datastream/removed';
 import { getObservationGoalAddedEvent, ObservationGoalAdded } from '../observation-goal/added';
 import { getObservationGoalUpdatedEvent, ObservationGoalUpdated } from '../observation-goal/updated';
 import { getObservationGoalRemovedEvent, ObservationGoalRemoved } from '../observation-goal/removed';
@@ -19,6 +21,8 @@ class DeviceEventType extends AbstractEventType {
     this.add(DeviceRegistered, getDeviceRegisteredEvent);
     this.add(DeviceUpdated, getDeviceUpdatedEvent);
     this.add(DeviceRemoved, getDeviceRemovedEvent);
+    this.add(DeviceLocated, getDeviceLocatedEvent);
+    this.add(DeviceRelocated, getDeviceRelocatedEvent);
 
     this.add(SensorAdded, getSensorAddedEvent);
     this.add(SensorUpdated, getSensorUpdatedEvent);
