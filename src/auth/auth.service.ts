@@ -1,6 +1,9 @@
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
+import { RegisterOidcUserCommand } from '../user/command/register-oidc-user.command';
+import { TokenSet } from 'openid-client';
 
 @Injectable()
 export class AuthService {
@@ -8,6 +11,7 @@ export class AuthService {
     public readonly refreshTokenExpiresIn: number;
 
     constructor(
+        private commandBus: CommandBus,
         private jwtService: JwtService,
         private usersService: UserService,
     ) {
@@ -92,7 +96,7 @@ export class AuthService {
 
         if (refreshTokenMatches) {
             const accessPayload = { sub: user._id, organizationId: user.organizationId, role: user.role, type: 'access' };
-            const accessToken = this.jwtService.sign(accessPayload, {expiresIn: this.accessTokenExpiresIn});
+            const accessToken = this.jwtService.sign(accessPayload, { expiresIn: this.accessTokenExpiresIn });
             return { accessToken };
         } else {
             throw new UnauthorizedException();
@@ -100,13 +104,30 @@ export class AuthService {
     }
 
     async login(user: Record<string, any>): Promise<Record<string, any>> {
+        Logger.log(`Login user`);
         const refreshPayload = { sub: user._id, role: user.role, type: 'refresh' };
         const refreshToken = this.jwtService.sign(refreshPayload, { expiresIn: this.refreshTokenExpiresIn });
-        await this.usersService.updateOne(user._id, { refreshToken });
+        try {
+            await this.usersService.updateOne(user._id, { refreshToken });
+        } catch (error) {
+            Logger.log(`Could not create user with error: ${error}`);
+        }
 
         const accessPayload = { sub: user._id, organizationId: user.organizationId, role: user.role, type: 'access' };
         const accessToken = this.jwtService.sign(accessPayload, { expiresIn: this.accessTokenExpiresIn });
 
         return { accessToken, refreshToken };
+    }
+
+    async createOrLogin(reqUser): Promise<Record<string, any>> {
+        Logger.verbose(`Create or login OIDC user ${JSON.stringify(reqUser)}`);
+        let user = await this.usersService.findOidcUser(reqUser.userinfo.sub);
+        if (!user) {
+            const userId = await this.commandBus.execute(new RegisterOidcUserCommand(reqUser));
+            Logger.log(`Created new user ${JSON.stringify(userId)}`);
+            user = await this.usersService.findOne(userId.id);
+        }
+
+        return this.login(user);
     }
 }

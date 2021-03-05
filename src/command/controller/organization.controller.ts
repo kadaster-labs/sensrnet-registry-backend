@@ -2,7 +2,6 @@ import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
 import { Roles } from '../../core/guards/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
-import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
 import { UpdateOrganizationBody } from './model/update-organization.body';
 import { DeleteOrganizationParams } from './model/delete-organization.params';
 import { RegisterOrganizationBody } from './model/register-organization.body';
@@ -34,7 +33,6 @@ export class OrganizationController {
 
   @Put()
   @ApiBearerAuth()
-  @UseGuards(AccessJwtAuthGuard)
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update organization' })
   @ApiResponse({ status: 200, description: 'Organization updated' })
@@ -47,7 +45,6 @@ export class OrganizationController {
 
   @Delete()
   @ApiBearerAuth()
-  @UseGuards(AccessJwtAuthGuard)
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Remove organization' })
   @ApiResponse({ status: 200, description: 'Organization removed' })
@@ -61,7 +58,6 @@ export class OrganizationController {
   @ApiBearerAuth()
   @Roles('admin')
   @UseFilters(new DomainExceptionFilter())
-  @UseGuards(AccessJwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Remove organization' })
   @ApiResponse({ status: 200, description: 'Organization removed' })
   @ApiResponse({ status: 400, description: 'Organization removal failed' })

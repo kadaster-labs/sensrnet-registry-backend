@@ -1,20 +1,23 @@
 import { Model } from 'mongoose';
-import { User } from './user.interface';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { hashField, hashableFields } from './user.model';
+import { UserDoc, hashField, hashableFields, User } from './user.model';
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectModel('User') private userModel: Model<User>,
+        @InjectModel(User.name) private userModel: Model<UserDoc>,
         ) {}
 
-    async findOne(email: string): Promise<User | undefined> {
+    async findOne(email: string): Promise<UserDoc | undefined> {
         return this.userModel.findOne({_id: email});
     }
 
-    async updateOne(email: string, updateFields: Record<string, any>): Promise<any> {
+    async findOidcUser(sub: string): Promise<UserDoc | undefined> {
+        return this.userModel.findOne({ 'oidc.userinfo.sub': sub });
+    }
+
+    async updateOne(_id: string, updateFields: Record<string, any>): Promise<any> {
         const deleteFunction = (hashableField) => () => delete updateFields[hashableField];
         const updateFunction = (hashableField) => (hash) => updateFields[hashableField] = hash;
         const hashFunction = (hashableField) => (resolve, reject) => hashField(updateFields[hashableField], resolve, reject);
@@ -26,6 +29,6 @@ export class UserService {
             }
         }
 
-        return this.userModel.updateOne({_id: email}, updateFields);
+        return this.userModel.updateOne({ _id }, updateFields);
     }
 }

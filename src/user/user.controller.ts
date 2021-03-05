@@ -1,17 +1,15 @@
 import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
 import { Roles } from '../core/guards/roles.decorator';
-import { RolesGuard } from '../core/guards/roles.guard';
 import { UpdateUserBody } from './model/update-user.body';
 import { RegisterUserBody } from './model/register-user.body';
 import { UpdateUserCommand } from './command/update-user.command';
 import { DeleteUserCommand } from './command/delete-user.command';
-import { AccessJwtAuthGuard } from '../auth/access-jwt-auth.guard';
 import { RegisterUserCommand } from './command/register-user.command';
 import { DomainExceptionFilter } from '../core/errors/domain-exception.filter';
 import { DeleteUserParams } from '../command/controller/model/delete-user.params';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UseFilters, Controller, Delete, UseGuards, Req, Param, Post, Body, Put } from '@nestjs/common';
+import { UseFilters, Controller, Delete, Req, Param, Post, Body, Put } from '@nestjs/common';
 
 @ApiTags('User')
 @Controller('user')
@@ -31,7 +29,6 @@ export class UserController {
 
     @Put()
     @ApiBearerAuth()
-    @UseGuards(AccessJwtAuthGuard)
     @UseFilters(new DomainExceptionFilter())
     @ApiOperation({ summary: 'Update user' })
     @ApiResponse({ status: 200, description: 'User updated' })
@@ -43,7 +40,6 @@ export class UserController {
 
     @Delete()
     @ApiBearerAuth()
-    @UseGuards(AccessJwtAuthGuard)
     @UseFilters(new DomainExceptionFilter())
     @ApiOperation({ summary: 'Remove user' })
     @ApiResponse({ status: 200, description: 'User removed' })
@@ -57,7 +53,6 @@ export class UserController {
     @ApiBearerAuth()
     @Roles('admin')
     @UseFilters(new DomainExceptionFilter())
-    @UseGuards(AccessJwtAuthGuard, RolesGuard)
     @ApiOperation({ summary: 'Remove user' })
     @ApiResponse({ status: 200, description: 'User removed' })
     @ApiResponse({ status: 400, description: 'User removal failed' })

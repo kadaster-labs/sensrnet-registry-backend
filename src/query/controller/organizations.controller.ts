@@ -1,12 +1,10 @@
 import { QueryBus } from '@nestjs/cqrs';
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
 import { RetrieveOrganizationsQuery } from '../model/retrieve-organizations.query';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { OrganizationsParams } from './model/organizations-params';
 
 @ApiBearerAuth()
-@UseGuards(AccessJwtAuthGuard)
 @ApiTags('Organizations')
 @Controller('organizations')
 export class OrganizationsController {

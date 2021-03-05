@@ -8,6 +8,7 @@ import { CommandModule } from '../command/command.module';
 import { UpdateUserCommandHandler } from './handler/update-user.handler';
 import { DeleteUserCommandHandler } from './handler/delete-user.handler';
 import { RegisterUserCommandHandler } from './handler/register-user.handler';
+import { RegisterOidcUserCommandHandler } from './handler/register-oidc-user.handler';
 
 @Module({
     imports: [
@@ -22,6 +23,7 @@ import { RegisterUserCommandHandler } from './handler/register-user.handler';
         DeleteUserCommandHandler,
         UpdateUserCommandHandler,
         RegisterUserCommandHandler,
+        RegisterOidcUserCommandHandler,
     ], exports: [
         UserService,
     ],

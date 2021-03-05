@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { User } from '../user.interface';
+import { UserDoc, User } from '../user.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 import { DeleteUserCommand } from '../command/delete-user.command';
@@ -9,7 +9,7 @@ import { DeleteFailedException } from '../../command/handler/error/delete-failed
 export class DeleteUserCommandHandler implements ICommandHandler<DeleteUserCommand> {
 
   constructor(
-      @InjectModel('User') private userModel: Model<User>,
+    @InjectModel(User.name) private userModel: Model<UserDoc>,
   ) {}
 
   async execute(command: DeleteUserCommand): Promise<void> {

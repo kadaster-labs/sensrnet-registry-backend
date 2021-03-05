@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TerminusModule } from '@nestjs/terminus';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
@@ -15,6 +16,7 @@ const database = process.env.MONGO_DATABASE || 'sensrnet';
 @Module({
     imports: [
         AuthModule,
+        ConfigModule.forRoot(),
         UserModule,
         QueryModule,
         CommandModule,

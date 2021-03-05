@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UserSchema } from '../user/user.model';
+import { User, UserSchema } from '../user/user.model';
 import { AuthModule } from '../auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SensorSchema } from './data/sensor.model';
@@ -30,7 +30,7 @@ import { OrganizationsController } from './controller/organizations.controller';
         AuthModule,
         CheckpointModule,
         EventStoreModule,
-        MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
+        MongooseModule.forFeature([{name: User.name, schema: UserSchema}]),
         MongooseModule.forFeature([{name: 'Sensor', schema: SensorSchema}]),
         MongooseModule.forFeature([{name: 'Organization', schema: OrganizationSchema}]),
     ], controllers: [

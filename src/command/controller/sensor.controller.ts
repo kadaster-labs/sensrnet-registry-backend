@@ -11,7 +11,6 @@ import { CreateSensorCommand } from '../model/create-sensor.command';
 import { UpdateSensorCommand } from '../model/update-sensor.command';
 import { DeleteSensorCommand } from '../model/delete-sensor.command';
 import { CreateDatastreamBody } from './model/create-datastream.body';
-import { AccessJwtAuthGuard } from '../../auth/access-jwt-auth.guard';
 import { UpdateDatastreamBody } from './model/update-datastream.body';
 import { TransferOwnershipBody } from './model/transfer-ownership.body';
 import { ActivateSensorCommand } from '../model/activate-sensor.command';
@@ -27,7 +26,6 @@ import { TransferSensorOwnershipCommand } from '../model/transfer-sensor-ownersh
 import { Controller, Param, Post, Put, Body, Delete, UseFilters, Req, UseGuards } from '@nestjs/common';
 
 @ApiBearerAuth()
-@UseGuards(AccessJwtAuthGuard)
 @ApiTags('Sensor')
 @Controller('sensor')
 export class SensorController {

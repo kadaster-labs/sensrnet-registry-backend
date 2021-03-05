@@ -1,8 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-import { jwtConstants } from '../../auth/constants';
 import { AuthService } from '../../auth/auth.service';
-import { AccessJwtStrategy } from '../../auth/access-jwt.strategy';
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage,
     MessageBody } from '@nestjs/websockets';
 
@@ -17,7 +15,6 @@ export class SensorGateway implements OnGatewayConnection {
 
     constructor(
         private authService: AuthService,
-        private accessJwtStrategy: AccessJwtStrategy,
     ) {}
 
     setupRoom(client: Socket, organizationId?: string): void {
@@ -30,13 +27,16 @@ export class SensorGateway implements OnGatewayConnection {
     async handleConnection(@ConnectedSocket() client: Socket): Promise<void> {
         this.logger.log(`Client connected: ${client.id}.`);
 
-        if (jwtConstants.enabled) {
+        if (process.env.REQUIRE_AUTHENTICATION) {
             const authHeader: string = client.handshake.headers.authorization;
             const authToken = authHeader && authHeader.length > 7 ? authHeader.substring(7, authHeader.length) : '';
 
             try {
-                const decodedToken = await this.authService.verifyToken(authToken);
-                const userInfo = await this.accessJwtStrategy.validate(decodedToken);
+                // const decodedToken = await this.authService.verifyToken(authToken);
+                // const userInfo = await this.accessJwtStrategy.validate(decodedToken);
+                const userInfo = {
+                    organizationId: '123',
+                }
 
                 this.setupRoom(client, userInfo.organizationId);
             } catch {
