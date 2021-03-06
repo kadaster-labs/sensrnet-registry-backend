@@ -1,21 +1,21 @@
-import { Model } from 'mongoose';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { AbstractProcessor } from './abstract.processor';
+import { Model } from 'mongoose';
+import { ObservationGoalAdded } from '../../core/events/observationgoal/added';
+import { ObservationGoalRemoved } from '../../core/events/observationgoal/removed';
+import { ObservationGoalUpdated } from '../../core/events/observationgoal/updated';
+import { DatastreamAdded } from '../../core/events/sensordevice/datastream/added';
+import { DatastreamRemoved } from '../../core/events/sensordevice/datastream/removed';
+import { DatastreamUpdated } from '../../core/events/sensordevice/datastream/updated';
+import { DeviceLocated, DeviceRegistered, DeviceRelocated, DeviceRemoved, DeviceUpdated } from '../../core/events/sensordevice/device';
+import { SensorAdded, SensorRemoved } from '../../core/events/sensordevice/sensor';
+import { SensorUpdated } from '../../core/events/sensordevice/sensor/updated';
+import { SensorDeviceEvent } from '../../core/events/sensordevice/sensordevice.event';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import { DeviceRemoved, DeviceUpdated, DeviceRegistered, DeviceLocated, DeviceRelocated } from '../../core/events/device';
-import { DeviceEvent } from '../../core/events/device/device.event';
-import { IRelation, RelationVariant } from '../model/relation.model';
-import { SensorUpdated } from '../../core/events/sensor/updated';
-import { SensorAdded, SensorRemoved } from '../../core/events/sensor';
-import { DatastreamAdded } from '../../core/events/datastream/added';
-import { DatastreamUpdated } from '../../core/events/datastream/updated';
-import { DatastreamRemoved } from '../../core/events/datastream/removed';
-import { ObservationGoalAdded } from '../../core/events/observation-goal/added';
-import { ObservationGoalUpdated } from '../../core/events/observation-goal/updated';
-import { ObservationGoalRemoved } from '../../core/events/observation-goal/removed';
-import { IDevice } from '../model/device.model';
 import { DeviceGateway } from '../gateway/device.gateway';
+import { IDevice } from '../model/device.model';
+import { IRelation, RelationVariant } from '../model/relation.model';
+import { AbstractProcessor } from './abstract.processor';
 
 @Injectable()
 export class DeviceProcessor extends AbstractProcessor {
@@ -29,7 +29,7 @@ export class DeviceProcessor extends AbstractProcessor {
     super(eventStore, relationModel);
   }
 
-  async process(event: DeviceEvent): Promise<void> {
+  async process(event: SensorDeviceEvent): Promise<void> {
     if (event instanceof DeviceRegistered) {
       await this.processDeviceRegistered(event);
     } else if (event instanceof DeviceUpdated) {
@@ -139,7 +139,7 @@ export class DeviceProcessor extends AbstractProcessor {
     try {
       await this.deleteRelations(event.deviceId);
       await this.deviceModel.deleteOne({ _id: event.deviceId });
-      await this.eventStore.deleteStream(DeviceEvent.getStreamName(DeviceEvent.streamRootValue, event.deviceId));
+      await this.eventStore.deleteStream(SensorDeviceEvent.getStreamName(SensorDeviceEvent.streamRootValue, event.deviceId));
     } catch {
       this.errorCallback(event);
     }

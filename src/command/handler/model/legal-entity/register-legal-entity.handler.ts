@@ -1,6 +1,6 @@
 import { AlreadyExistsException } from '../../error/already-exists-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { LegalEntityAggregate } from '../../../../core/aggregates/legal-entity.aggregate';
+import { LegalEntityAggregate } from '../../../../core/aggregates/legalentity.aggregate';
 import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
 import { RegisterLegalEntityCommand } from '../../../command/legal-entity/register-legal-entity.command';
 

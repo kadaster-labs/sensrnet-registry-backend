@@ -1,6 +1,6 @@
 import { AlreadyExistsException } from '../../error/already-exists-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { DeviceAggregate } from '../../../../core/aggregates/device.aggregate';
+import { SensorDeviceAggregate } from '../../../../core/aggregates/device.aggregate';
 import { DeviceRepository } from '../../../../core/repositories/device.repository';
 import { RegisterDeviceCommand } from '../../../command/device/register-device.command';
 import { validateLegalEntity } from '../../util/legal-entity.utils';
@@ -26,7 +26,7 @@ export class RegisterDeviceCommandHandler implements ICommandHandler<RegisterDev
     if (aggregate) {
       throw new AlreadyExistsException(command.deviceId);
     } else {
-      aggregate = new DeviceAggregate(command.deviceId);
+      aggregate = new SensorDeviceAggregate(command.deviceId);
       aggregate = this.publisher.mergeObjectContext(aggregate);
 
       aggregate.registerDevice(command.legalEntityId, command.name, command.description,

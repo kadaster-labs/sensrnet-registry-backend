@@ -4,8 +4,8 @@ import { LegalEntityProcessor } from './legal-entity.processor';
 import { CheckpointService } from '../service/checkpoint/checkpoint.service';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { Event as ESEvent } from 'geteventstore-promise';
-import { LegalEntityEvent } from '../../core/events/legal-entity/legal-entity.event';
-import { legalEntityEventType } from '../../core/events/legal-entity';
+import { LegalEntityEvent } from '../../core/events/legalentity/legalentity.event';
+import { legalEntityEventType } from '../../core/events/legalentity';
 
 @Injectable()
 export class LegalEntityEsListener extends AbstractEsListener {
