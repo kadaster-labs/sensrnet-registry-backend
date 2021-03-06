@@ -36,6 +36,10 @@ export class DeviceProcessor extends AbstractProcessor {
       await this.processDeviceUpdated(event);
     } else if (event instanceof DeviceRemoved) {
       await this.processDeviceDeleted(event);
+    } else if (event instanceof DeviceLocated) {
+      await this.processDeviceLocated(event);
+    } else if (event instanceof DeviceRelocated) {
+      await this.processDeviceRelocated(event);
     } else if (event instanceof SensorAdded) {
       await this.processSensorAdded(event);
     } else if (event instanceof SensorUpdated) {
