@@ -1,23 +1,23 @@
-import { Aggregate } from '../../event-store/aggregate';
-import { DeviceState, DeviceStateImpl } from './device-state';
-import { EventMessage } from '../../event-store/event-message';
-import { getSensorRemovedEvent, SensorRemoved } from '../events/sensor/removed';
-import { getSensorUpdatedEvent, SensorUpdated } from '../events/sensor/updated';
-import { DatastreamAdded, getDatastreamAddedEvent } from '../events/datastream/added';
-import { getSensorAddedEvent, SensorAdded } from '../events/sensor/added';
-import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../events/datastream/updated';
-import { DatastreamRemoved, getDatastreamRemovedEvent } from '../events/datastream/removed';
 import { Category } from '../../command/controller/model/category.body';
-import { DeviceUpdated, getDeviceUpdatedEvent } from '../events/device/updated';
-import { DeviceRemoved, getDeviceRemovedEvent } from '../events/device/removed';
-import { DeviceRegistered, getDeviceRegisteredEvent } from '../events/device/registered';
-import { UpdateLocationBody } from '../../command/controller/model/location/update-location.body';
 import { RegisterLocationBody } from '../../command/controller/model/location/register-location.body';
+import { UpdateLocationBody } from '../../command/controller/model/location/update-location.body';
+import { Aggregate } from '../../event-store/aggregate';
+import { EventMessage } from '../../event-store/event-message';
 import { getObservationGoalAddedEvent, ObservationGoalAdded } from '../events/observation-goal/added';
-import { getObservationGoalUpdatedEvent, ObservationGoalUpdated } from '../events/observation-goal/updated';
 import { getObservationGoalRemovedEvent, ObservationGoalRemoved } from '../events/observation-goal/removed';
-import { DeviceLocated, getDeviceLocatedEvent } from '../events/device/located';
-import { DeviceRelocated, getDeviceRelocatedEvent } from '../events/device/relocated';
+import { getObservationGoalUpdatedEvent, ObservationGoalUpdated } from '../events/observation-goal/updated';
+import { DatastreamAdded, getDatastreamAddedEvent } from '../events/sensordevice/datastream/added';
+import { DatastreamRemoved, getDatastreamRemovedEvent } from '../events/sensordevice/datastream/removed';
+import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../events/sensordevice/datastream/updated';
+import { DeviceLocated, getDeviceLocatedEvent } from '../events/sensordevice/device/located';
+import { DeviceRegistered, getDeviceRegisteredEvent } from '../events/sensordevice/device/registered';
+import { DeviceRelocated, getDeviceRelocatedEvent } from '../events/sensordevice/device/relocated';
+import { DeviceRemoved, getDeviceRemovedEvent } from '../events/sensordevice/device/removed';
+import { DeviceUpdated, getDeviceUpdatedEvent } from '../events/sensordevice/device/updated';
+import { getSensorAddedEvent, SensorAdded } from '../events/sensordevice/sensor/added';
+import { getSensorRemovedEvent, SensorRemoved } from '../events/sensordevice/sensor/removed';
+import { getSensorUpdatedEvent, SensorUpdated } from '../events/sensordevice/sensor/updated';
+import { DeviceState, DeviceStateImpl } from './device-state';
 
 export class DeviceAggregate extends Aggregate {
 

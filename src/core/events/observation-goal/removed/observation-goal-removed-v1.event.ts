@@ -1,6 +1,6 @@
-import { DeviceEvent } from '../../device/device.event';
+import { ObservationGoalEvent } from '../observation-goal.event';
 
-export class ObservationGoalRemoved extends DeviceEvent {
+export class ObservationGoalRemoved extends ObservationGoalEvent {
   static version = '1';
 
   readonly dataStreamId: string;

@@ -1,12 +1,5 @@
-import { Schema, Document, Types } from 'mongoose';
-
-export interface IObservationGoals extends Document {
-    _id: string;
-    name: string;
-    description?: string;
-    legalGround?: string;
-    legalGroundLink?: string;
-}
+import { Document, Schema, Types } from 'mongoose';
+import { IObservationGoal, ObservationGoalSchema } from './observation-goal.model';
 
 export interface IDataStream extends Document {
     _id: string;
@@ -24,7 +17,7 @@ export interface IDataStream extends Document {
     isReusable?: boolean;
     documentation?: string;
     dataLink?: string;
-    observationGoals?: [IObservationGoals];
+    observationGoals?: Types.Array<IObservationGoal>;
 }
 
 export interface ISensor extends Document {
@@ -58,14 +51,6 @@ export interface IDevice extends Document {
     dataStreams: Types.Array<IDataStream>;
 }
 
-export const ObservationGoalsSchema = new Schema({
-    _id: { type: String, required: true },
-    name: { type: String, required: true },
-    description: { type: String, required: false },
-    legalGround: { type: String, required: false },
-    legalGroundLink: { type: String, required: false },
-});
-
 export const DataStreamSchema = new Schema({
     _id: { type: String, required: true },
     sensorId: { type: String, required: true },
@@ -73,16 +58,16 @@ export const DataStreamSchema = new Schema({
     description: { type: String, required: false },
     unitOfMeasurement: { type: Object, required: false },
     observationArea: { type: Object, required: false },
-    theme:  { type: [String], required: false },
-    dataQuality:  { type: String, required: false },
+    theme: { type: [String], required: false },
+    dataQuality: { type: String, required: false },
     isActive: { type: Boolean, required: false },
     isPublic: { type: Boolean, required: false },
     isOpenData: { type: Boolean, required: false },
     containsPersonalInfoData: { type: Boolean, required: false },
     isReusable: { type: Boolean, required: false },
-    documentation:  { type: String, required: false },
-    dataLink:  { type: String, required: false },
-    observationGoals: [ObservationGoalsSchema],
+    documentation: { type: String, required: false },
+    dataLink: { type: String, required: false },
+    observationGoals: [ObservationGoalSchema],
 });
 
 export const SensorSchema = new Schema({
