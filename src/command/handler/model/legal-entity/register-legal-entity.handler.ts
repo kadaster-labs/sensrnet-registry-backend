@@ -20,7 +20,7 @@ export class RegisterLegalEntityCommandHandler implements ICommandHandler<Regist
       aggregate = new LegalEntityAggregate(command.legalEntityId);
       aggregate = this.publisher.mergeObjectContext(aggregate);
 
-      aggregate.register(command.website, command.contactDetails);
+      aggregate.register(command.name, command.website);
       aggregate.commit();
     }
   }

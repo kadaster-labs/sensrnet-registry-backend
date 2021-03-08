@@ -6,7 +6,7 @@ import { ILegalEntity } from '../model/legal-entity.model';
 import { LegalEntityGateway } from '../gateway/legal-entity.gateway';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { LegalEntityEvent } from '../../core/events/legal-entity/legal-entity.event';
-import { LegalEntityRemoved, LegalEntityRegistered, LegalEntityUpdated } from '../../core/events/legal-entity';
+import { LegalEntityRemoved, OrganizationRegistered, OrganizationUpdated } from '../../core/events/legal-entity';
 import { IRelation, RelationVariant } from '../model/relation.model';
 
 @Injectable()
@@ -24,10 +24,10 @@ export class LegalEntityProcessor extends AbstractProcessor {
 
   async process(event: LegalEntityEvent, originSync: boolean): Promise<void> {
     let result;
-    if (event instanceof LegalEntityRegistered) {
+    if (event instanceof OrganizationRegistered) {
       await this.processRegistered(event, originSync);
       result = event;
-    } else if (event instanceof LegalEntityUpdated) {
+    } else if (event instanceof OrganizationUpdated) {
       await this.processUpdated(event);
       result = event;
     } else if (event instanceof LegalEntityRemoved) {
@@ -40,12 +40,13 @@ export class LegalEntityProcessor extends AbstractProcessor {
     }
   }
 
-  async processRegistered(event: LegalEntityRegistered, originSync: boolean): Promise<ILegalEntity> {
+  async processRegistered(event: OrganizationRegistered, originSync: boolean): Promise<ILegalEntity> {
     const legalEntityData: Record<string, any> = {
       _id: event.aggregateId,
       website: event.website,
       originSync: !!originSync,
-      contactDetails: [event.contactDetails],
+      // TODO implement contact details
+      // contactDetails: [event.contactDetails],
     };
 
     let legalEntity;
@@ -58,7 +59,7 @@ export class LegalEntityProcessor extends AbstractProcessor {
     return legalEntity;
   }
 
-  async processUpdated(event: LegalEntityUpdated): Promise<void> {
+  async processUpdated(event: OrganizationUpdated): Promise<void> {
     const legalEntityUpdate: Record<string, any> = {};
     if (AbstractProcessor.defined(event.website)) { legalEntityUpdate.website = event.website; }
     // if (AbstractProcessor.defined(event.contactDetails)) {

@@ -4,6 +4,15 @@ import { ContactDetailsBody } from '../contact-details/contact-details.body';
 import { IsObject, IsOptional, IsUrl, MaxLength, ValidateIf } from 'class-validator';
 
 export class LegalEntityBody {
+    @ValidateIf(e => e.name !== '')
+    @MaxLength(255)
+    @ApiProperty({
+        type: String,
+        required: true,
+        description: 'The organization name.',
+    })
+    readonly name: string;
+
     @ValidateIf(e => e.website !== '')
     @IsUrl()
     @IsOptional()
