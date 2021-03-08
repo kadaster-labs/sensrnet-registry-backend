@@ -1,23 +1,25 @@
-import { Aggregate } from '../../event-store/aggregate';
-import { DeviceState, DeviceStateImpl } from './device-state';
-import { EventMessage } from '../../event-store/event-message';
-import { getSensorRemovedEvent, SensorRemoved } from '../events/sensor/removed';
-import { getSensorUpdatedEvent, SensorUpdated } from '../events/sensor/updated';
-import { DatastreamAdded, getDatastreamAddedEvent } from '../events/datastream/added';
-import { getSensorAddedEvent, SensorAdded } from '../events/sensor/added';
-import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../events/datastream/updated';
-import { DatastreamRemoved, getDatastreamRemovedEvent } from '../events/datastream/removed';
 import { Category } from '../../command/controller/model/category.body';
-import { DeviceUpdated, getDeviceUpdatedEvent } from '../events/device/updated';
-import { DeviceRemoved, getDeviceRemovedEvent } from '../events/device/removed';
-import { DeviceRegistered, getDeviceRegisteredEvent } from '../events/device/registered';
-import { UpdateLocationBody } from '../../command/controller/model/location/update-location.body';
 import { RegisterLocationBody } from '../../command/controller/model/location/register-location.body';
-import { getObservationGoalAddedEvent, ObservationGoalAdded } from '../events/observation-goal/added';
-import { getObservationGoalUpdatedEvent, ObservationGoalUpdated } from '../events/observation-goal/updated';
+import { UpdateLocationBody } from '../../command/controller/model/location/update-location.body';
+import { Aggregate } from '../../event-store/aggregate';
+import { EventMessage } from '../../event-store/event-message';
+import { getObservationGoalRegisteredEvent, ObservationGoalRegistered } from '../events/observation-goal/registered';
 import { getObservationGoalRemovedEvent, ObservationGoalRemoved } from '../events/observation-goal/removed';
-import { DeviceLocated, getDeviceLocatedEvent } from '../events/device/located';
-import { DeviceRelocated, getDeviceRelocatedEvent } from '../events/device/relocated';
+import { getObservationGoalUpdatedEvent, ObservationGoalUpdated } from '../events/observation-goal/updated';
+import { DatastreamAdded, getDatastreamAddedEvent } from '../events/sensordevice/datastream/added';
+import { DatastreamRemoved, getDatastreamRemovedEvent } from '../events/sensordevice/datastream/removed';
+import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../events/sensordevice/datastream/updated';
+import { DeviceLocated, getDeviceLocatedEvent } from '../events/sensordevice/device/located';
+import { DeviceRegistered, getDeviceRegisteredEvent } from '../events/sensordevice/device/registered';
+import { DeviceRelocated, getDeviceRelocatedEvent } from '../events/sensordevice/device/relocated';
+import { DeviceRemoved, getDeviceRemovedEvent } from '../events/sensordevice/device/removed';
+import { DeviceUpdated, getDeviceUpdatedEvent } from '../events/sensordevice/device/updated';
+import { getSensorAddedEvent, SensorAdded } from '../events/sensordevice/sensor/added';
+import { getSensorRemovedEvent, SensorRemoved } from '../events/sensordevice/sensor/removed';
+import { getSensorUpdatedEvent, SensorUpdated } from '../events/sensordevice/sensor/updated';
+import { DeviceState, DeviceStateImpl } from './device-state';
+import { getObservationGoalLinkedEvent, ObservationGoalLinked } from '../events/sensordevice/datastream/observation-goal-linked';
+import { ObservationGoalUnlinked } from '../events/sensordevice/datastream/observation-goal-unlinked/observation-goal-unlinked-v1.event';
 
 export class DeviceAggregate extends Aggregate {
 
@@ -50,7 +52,9 @@ export class DeviceAggregate extends Aggregate {
                category: Category, connectivity: string, location: UpdateLocationBody): void {
     this.simpleApply(new DeviceUpdated(this.aggregateId, legalEntityId, name, description,
       category, connectivity));
-    this.simpleApply(new DeviceRelocated(this.aggregateId, location.name, location.description, location.location));
+    if (location) {
+      this.simpleApply(new DeviceRelocated(this.aggregateId, location.name, location.description, location.location));
+    }
   }
 
   onDeviceUpdated(eventMessage: EventMessage): void {
@@ -131,43 +135,30 @@ export class DeviceAggregate extends Aggregate {
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
+  linkObservationGoal(sensorId: string, legalEntityId: string, dataStreamId: string, observationGoalId: string): void {
+    this.simpleApply(new ObservationGoalLinked(this.aggregateId, sensorId, legalEntityId, dataStreamId, observationGoalId));
+  }
+
+  onObservationGoalLinked(eventMessage: EventMessage): void {
+    const event: ObservationGoalLinked = getObservationGoalLinkedEvent(eventMessage);
+    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+  }
+
+  unlinkObservationGoal(sensorId: string, legalEntityId: string, dataStreamId: string, observationGoalId: string): void {
+    this.simpleApply(new ObservationGoalUnlinked(this.aggregateId, sensorId, legalEntityId, dataStreamId, observationGoalId));
+  }
+
+  onObservationGoalUnlinked(eventMessage: EventMessage): void {
+    const event: ObservationGoalLinked = getObservationGoalLinkedEvent(eventMessage);
+    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+  }
+
   removeDataStream(sensorId: string, legalEntityId: string, dataStreamId: string): void {
     this.simpleApply(new DatastreamRemoved(this.aggregateId, sensorId, legalEntityId, dataStreamId));
   }
 
   onDatastreamRemoved(eventMessage: EventMessage): void {
     const event: DatastreamRemoved = getDatastreamRemovedEvent(eventMessage);
-    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
-  }
-
-  addObservationGoal(dataStreamId: string, observationGoalId: string, legalEntityId: string, name: string,
-                     description: string, legalGround: string, legalGroundLink: string): void {
-    this.simpleApply(new ObservationGoalAdded(this.aggregateId, dataStreamId, observationGoalId, legalEntityId,
-      name, description, legalGround, legalGroundLink));
-  }
-
-  onObservationGoalAdded(eventMessage: EventMessage): void {
-    const event: ObservationGoalAdded = getObservationGoalAddedEvent(eventMessage);
-    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
-  }
-
-  updateObservationGoal(dataStreamId: string, observationGoalId: string, legalEntityId: string, name: string,
-                        description: string, legalGround: string, legalGroundLink: string): void {
-    this.simpleApply(new ObservationGoalUpdated(this.aggregateId, dataStreamId, observationGoalId, legalEntityId,
-      name, description, legalGround, legalGroundLink));
-  }
-
-  onObservationGoalUpdated(eventMessage: EventMessage): void {
-    const event: ObservationGoalUpdated = getObservationGoalUpdatedEvent(eventMessage);
-    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
-  }
-
-  removeObservationGoal(dataStreamId: string, observationGoalId: string, legalEntityId: string): void {
-    this.simpleApply(new ObservationGoalRemoved(this.aggregateId, dataStreamId, observationGoalId, legalEntityId));
-  }
-
-  onObservationGoalRemoved(eventMessage: EventMessage): void {
-    const event: ObservationGoalRemoved = getObservationGoalRemovedEvent(eventMessage);
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 }

@@ -7,7 +7,7 @@ import { LegalEntityGateway } from '../gateway/legal-entity.gateway';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { LegalEntityEvent } from '../../core/events/legal-entity/legal-entity.event';
 import { LegalEntityRemoved, LegalEntityRegistered, LegalEntityUpdated } from '../../core/events/legal-entity';
-import { IRelation } from '../model/relation.model';
+import { IRelation, RelationVariant } from '../model/relation.model';
 
 @Injectable()
 export class LegalEntityProcessor extends AbstractProcessor {
@@ -41,26 +41,34 @@ export class LegalEntityProcessor extends AbstractProcessor {
   }
 
   async processRegistered(event: LegalEntityRegistered, originSync: boolean): Promise<ILegalEntity> {
-    const legalEntity = new this.model({
+    const legalEntityData: Record<string, any> = {
       _id: event.aggregateId,
       website: event.website,
       originSync: !!originSync,
-      contactDetails: event.contactDetails,
-    });
-    return await legalEntity.save();
+      contactDetails: [event.contactDetails],
+    };
+
+    let legalEntity;
+    try {
+      legalEntity = await new this.model(legalEntityData).save();
+    } catch {
+      this.errorCallback(event);
+    }
+
+    return legalEntity;
   }
 
   async processUpdated(event: LegalEntityUpdated): Promise<void> {
     const legalEntityUpdate: Record<string, any> = {};
     if (AbstractProcessor.defined(event.website)) { legalEntityUpdate.website = event.website; }
-    if (AbstractProcessor.defined(event.contactDetails)) {
-      legalEntityUpdate.contactDetails = {};
-      for (const [k, v] of Object.entries(event.contactDetails)) {
-        if (AbstractProcessor.defined(v)) {
-          legalEntityUpdate.contactDetails[k] = v;
-        }
-      }
-    }
+    // if (AbstractProcessor.defined(event.contactDetails)) {
+    //   legalEntityUpdate.contactDetails = {};
+    //   for (const [k, v] of Object.entries(event.contactDetails)) {
+    //     if (AbstractProcessor.defined(v)) {
+    //       legalEntityUpdate.contactDetails[k] = v;
+    //     }
+    //   }
+    // }
 
     this.model.updateOne({_id: event.aggregateId}, legalEntityUpdate, {}, (err) => {
       if (err) {

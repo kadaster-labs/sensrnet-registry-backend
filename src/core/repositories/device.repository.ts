@@ -9,12 +9,12 @@ export class DeviceRepository {
       ) {}
 
   async get(aggregateId: string): Promise<DeviceAggregate> {
-    const exists = await this.eventStore.exists(`device-${aggregateId}`);
+    const exists = await this.eventStore.exists(`sensordevice-${aggregateId}`);
     if (!exists) {
       return undefined;
     }
 
-    const events = await this.eventStore.getEvents(`device-${aggregateId}`);
+    const events = await this.eventStore.getEvents(`sensordevice-${aggregateId}`);
     const aggregate = new DeviceAggregate(aggregateId);
     aggregate.loadFromHistory(events);
 

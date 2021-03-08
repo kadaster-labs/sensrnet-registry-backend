@@ -24,6 +24,9 @@ import { LegalEntitiesQueryHandler } from './controller/handler/legal-entities.h
 import { LegalEntitiesController } from './controller/legal-entities.controller';
 import { DeviceProcessor } from './processor/device.processor';
 import { DeviceEsListener } from './processor/device.es.listener';
+import { ObservationGoalProcessor } from './processor/observationgoal.processor';
+import { ObservationGoalEsListener } from './processor/observationgoal.es.listener';
+import { ObservationGoalSchema } from './model/observation-goal.model';
 
 @Module({
     imports: [
@@ -35,6 +38,7 @@ import { DeviceEsListener } from './processor/device.es.listener';
         MongooseModule.forFeature([{name: 'Device', schema: DeviceSchema}]),
         MongooseModule.forFeature([{name: 'Relation', schema: RelationSchema}]),
         MongooseModule.forFeature([{name: 'LegalEntity', schema: LegalEntitySchema}]),
+        MongooseModule.forFeature([{name: 'ObservationGoal', schema: ObservationGoalSchema}]),
     ], controllers: [
         DeviceController,
         DeviceEsController,
@@ -50,6 +54,8 @@ import { DeviceEsListener } from './processor/device.es.listener';
         LegalEntityGateway,
         LegalEntityProcessor,
         LegalEntityEsListener,
+        ObservationGoalProcessor,
+        ObservationGoalEsListener,
         RetrieveDeviceQueryHandler,
         RetrieveDevicesQueryHandler,
         LegalEntityQueryHandler,
