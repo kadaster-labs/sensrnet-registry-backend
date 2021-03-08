@@ -15,7 +15,7 @@ export class DeviceEsListener extends AbstractEsListener {
         checkpointService: CheckpointService,
         processor: DeviceProcessor,
     ) {
-        super('backend-device-es', '$ce-device', eventStore, checkpointService, processor);
+        super('backend-sensordevice-es', '$ce-sensordevice', eventStore, checkpointService, processor);
     }
 
     parseEvent(eventMessage: ESEvent): SensorDeviceEvent {

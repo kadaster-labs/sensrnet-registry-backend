@@ -1,9 +1,8 @@
 import { ObservationGoalEvent } from '../observation-goal.event';
 
-export class ObservationGoalAdded extends ObservationGoalEvent {
+export class ObservationGoalRegistered extends ObservationGoalEvent {
   static version = '1';
 
-  readonly dataStreamId: string;
   readonly observationGoalId: string;
   readonly legalEntityId: string;
   readonly name: string;
@@ -11,10 +10,9 @@ export class ObservationGoalAdded extends ObservationGoalEvent {
   readonly legalGround: string;
   readonly legalGroundLink: string;
 
-  constructor(deviceId: string, dataStreamId: string, observationGoalId: string, legalEntityId: string, name: string,
-    description: string, legalGround: string, legalGroundLink: string) {
-    super(deviceId, ObservationGoalAdded.version);
-    this.dataStreamId = dataStreamId;
+  constructor(observationGoalId: string, legalEntityId: string, name: string, description: string,
+              legalGround: string, legalGroundLink: string) {
+    super(observationGoalId, ObservationGoalRegistered.version);
     this.observationGoalId = observationGoalId;
     this.legalEntityId = legalEntityId;
     this.name = name;

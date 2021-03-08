@@ -1,3 +1,3 @@
-export * from './added';
+export * from './registered';
 export * from './updated';
 export * from './removed';

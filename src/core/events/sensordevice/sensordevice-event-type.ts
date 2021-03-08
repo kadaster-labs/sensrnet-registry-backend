@@ -10,6 +10,8 @@ import { DeviceUpdated, getDeviceUpdatedEvent } from './device/updated';
 import { getSensorAddedEvent, SensorAdded } from './sensor/added';
 import { getSensorRemovedEvent, SensorRemoved } from './sensor/removed';
 import { getSensorUpdatedEvent, SensorUpdated } from './sensor/updated';
+import { getObservationGoalLinkedEvent, ObservationGoalLinked } from './datastream/observation-goal-linked';
+import { getObservationGoalUnlinkedEvent, ObservationGoalUnlinked } from './datastream/observation-goal-unlinked';
 
 class SensorDeviceEventType extends AbstractEventType {
   constructor() {
@@ -28,6 +30,9 @@ class SensorDeviceEventType extends AbstractEventType {
     this.add(DatastreamAdded, getDatastreamAddedEvent);
     this.add(DatastreamUpdated, getDatastreamUpdatedEvent);
     this.add(DatastreamRemoved, getDatastreamRemovedEvent);
+
+    this.add(ObservationGoalLinked, getObservationGoalLinkedEvent);
+    this.add(ObservationGoalUnlinked, getObservationGoalUnlinkedEvent);
   }
 }
 

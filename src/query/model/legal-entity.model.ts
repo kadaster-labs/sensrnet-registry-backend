@@ -1,14 +1,17 @@
-import { model, Schema, Document, Model } from 'mongoose';
+import { model, Schema, Document, Model, Types } from 'mongoose';
+
+export interface IContactDetails extends Document {
+    _id?: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+}
 
 export interface ILegalEntity extends Document {
     _id: string;
     website: string;
     originSync?: string;
-    contactDetails?: {
-        name: string,
-        email: string,
-        phone: string,
-    };
+    contactDetails?: Types.Array<IContactDetails>;
 }
 
 const ContactDetailsSchema = new Schema({
@@ -21,8 +24,8 @@ export const LegalEntitySchema = new Schema({
     _id: { type: String, required: true },
     website: { type: String, required: true },
     originSync: { type: Boolean, required: false },
-    contactDetails: ContactDetailsSchema,
+    contactDetails: [ContactDetailsSchema],
 });
-LegalEntitySchema.index({ name: 1 });
+LegalEntitySchema.index({ website: 1 });
 
 export const LegalEntity = model<ILegalEntity, Model<ILegalEntity>>('LegalEntity', LegalEntitySchema);

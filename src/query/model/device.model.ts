@@ -1,5 +1,4 @@
 import { Document, Schema, Types } from 'mongoose';
-import { IObservationGoal, ObservationGoalSchema } from './observation-goal.model';
 
 export interface IDataStream extends Document {
     _id: string;
@@ -17,7 +16,7 @@ export interface IDataStream extends Document {
     isReusable?: boolean;
     documentation?: string;
     dataLink?: string;
-    observationGoals?: Types.Array<IObservationGoal>;
+    observationGoalIds?: string[];
 }
 
 export interface ISensor extends Document {
@@ -67,8 +66,9 @@ export const DataStreamSchema = new Schema({
     isReusable: { type: Boolean, required: false },
     documentation: { type: String, required: false },
     dataLink: { type: String, required: false },
-    observationGoals: [ObservationGoalSchema],
+    observationGoalIds: { type: [String], required: false },
 });
+DataStreamSchema.index({ observationGoalIds: 1 });
 
 export const SensorSchema = new Schema({
     _id: { type: String, required: true },

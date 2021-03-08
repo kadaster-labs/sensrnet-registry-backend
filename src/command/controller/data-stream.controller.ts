@@ -12,6 +12,9 @@ import { AddDataStreamCommand } from '../command/data-stream/add-data-stream.com
 import { RemoveDataStreamCommand } from '../command/data-stream/remove-data-stream.command';
 import { UpdateDataStreamCommand } from '../command/data-stream/update-data-stream.command';
 import { Controller, Param, Post, Put, Body, Delete, UseFilters, Req, UseGuards } from '@nestjs/common';
+import { ObservationGoalBody } from './model/data-stream/observation-goal.body';
+import { LinkObservationGoalCommand } from '../command/data-stream/link-observationgoal.command';
+import { UnlinkObservationGoalCommand } from '../command/data-stream/unlink-observationgoal.command';
 
 @ApiBearerAuth()
 @UseGuards(AccessJwtAuthGuard)
@@ -55,6 +58,30 @@ export class DataStreamController {
             dataStreamBody.dataQuality, dataStreamBody.isActive, dataStreamBody.isPublic, dataStreamBody.isOpenData,
             dataStreamBody.containsPersonalInfoData, dataStreamBody.isReusable, dataStreamBody.documentation,
             dataStreamBody.dataLink));
+    }
+
+    @Put(':deviceId/sensor/:sensorId/datastream/:dataStreamId/linkgoal')
+    @UseFilters(new DomainExceptionFilter())
+    @ApiOperation({ summary: 'Link observation goal' })
+    @ApiResponse({ status: 200, description: 'Observation goal linked' })
+    @ApiResponse({ status: 400, description: 'Observation goal linking failed' })
+    async linkObservationGoal(@Req() req: Request, @Param() params: DataStreamIdParams,
+                              @Body() observationGoalBody: ObservationGoalBody): Promise<any> {
+        const user: Record<string, any> = req.user;
+        return await this.commandBus.execute(new LinkObservationGoalCommand(params.deviceId, params.sensorId,
+            user.legalEntityId, params.dataStreamId, observationGoalBody.observationGoalId));
+    }
+
+    @Put(':deviceId/sensor/:sensorId/datastream/:dataStreamId/unlinkgoal')
+    @UseFilters(new DomainExceptionFilter())
+    @ApiOperation({ summary: 'Unlink observation goal' })
+    @ApiResponse({ status: 200, description: 'Observation goal unlinked' })
+    @ApiResponse({ status: 400, description: 'Observation goal unlinking failed' })
+    async unlinkObservationGoal(@Req() req: Request, @Param() params: DataStreamIdParams,
+                                @Body() observationGoalBody: ObservationGoalBody): Promise<any> {
+        const user: Record<string, any> = req.user;
+        return await this.commandBus.execute(new UnlinkObservationGoalCommand(params.deviceId, params.sensorId,
+            user.legalEntityId, params.dataStreamId, observationGoalBody.observationGoalId));
     }
 
     @Delete(':deviceId/sensor/:sensorId/datastream/:dataStreamId')

@@ -4,8 +4,8 @@ export abstract class ObservationGoalEvent extends Event {
 
   static streamRootValue = 'observationgoal';
 
-  protected constructor(legalEntityId: string, version: string) {
-    super(legalEntityId, version);
+  protected constructor(observationGoalId: string, version: string) {
+    super(observationGoalId, version);
   }
 
   streamRoot(): string {

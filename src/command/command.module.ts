@@ -22,10 +22,13 @@ import { RemoveDataStreamCommandHandler } from './handler/model/data-stream/remo
 import { UpdateLegalEntityCommandHandler } from './handler/model/legal-entity/update-legal-entity.handler';
 import { DeleteLegalEntityCommandHandler } from './handler/model/legal-entity/delete-legal-entity.handler';
 import { RegisterLegalEntityCommandHandler } from './handler/model/legal-entity/register-legal-entity.handler';
-import { AddObservationGoalCommandHandler } from './handler/model/observation-goal/add-observation-goal.handler';
+import { RegisterObservationGoalCommandHandler } from './handler/model/observation-goal/add-observation-goal.handler';
 import { UpdateObservationGoalCommandHandler } from './handler/model/observation-goal/update-observation-goal.handler';
 import { RemoveObservationGoalCommandHandler } from './handler/model/observation-goal/remove-observation-goal.handler';
 import { ObservationGoalController } from './controller/observation-goal.controller';
+import { LinkObservationGoalCommandHandler } from './handler/model/data-stream/link-observationgoal.handler';
+import { UnlinkObservationGoalCommandHandler } from './handler/model/data-stream/unlink-observationgoal.handler';
+import { ObservationGoalRepository } from '../core/repositories/observation-goal.repository';
 
 @Module({
     controllers: [
@@ -43,6 +46,7 @@ import { ObservationGoalController } from './controller/observation-goal.control
         EventPublisher,
         LegalEntityRepository,
         DeviceRepository,
+        ObservationGoalRepository,
         EventStorePublisher,
         UpdateDeviceCommandHandler,
         RemoveDeviceCommandHandler,
@@ -56,8 +60,10 @@ import { ObservationGoalController } from './controller/observation-goal.control
         AddDataStreamCommandHandler,
         RemoveDataStreamCommandHandler,
         UpdateDataStreamCommandHandler,
-        AddObservationGoalCommandHandler,
+        RegisterObservationGoalCommandHandler,
         UpdateObservationGoalCommandHandler,
+        LinkObservationGoalCommandHandler,
+        UnlinkObservationGoalCommandHandler,
         RemoveObservationGoalCommandHandler,
     ], exports: [
         LegalEntityRepository,

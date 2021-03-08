@@ -1,8 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ObservationGoalLinked } from 'src/core/events/sensordevice/datastream';
-import { ObservationGoalAdded, ObservationGoalRemoved, ObservationGoalUpdated } from '../../core/events/observation-goal';
+import { ObservationGoalLinked, ObservationGoalUnlinked } from 'src/core/events/sensordevice/datastream';
 import { DatastreamAdded, DatastreamRemoved, DatastreamUpdated } from '../../core/events/sensordevice/datastream';
 import { DeviceLocated, DeviceRegistered, DeviceRelocated, DeviceRemoved, DeviceUpdated } from '../../core/events/sensordevice/device';
 import { SensorAdded, SensorRemoved, SensorUpdated } from '../../core/events/sensordevice/sensor';
@@ -50,12 +49,10 @@ export class DeviceProcessor extends AbstractProcessor {
       await this.processDatastreamUpdated(event);
     } else if (event instanceof DatastreamRemoved) {
       await this.processDatastreamRemoved(event);
-    } else if (event instanceof ObservationGoalAdded) {
-      await this.processObservationGoalAdded(event);
-    } else if (event instanceof ObservationGoalUpdated) {
-      await this.processObservationGoalUpdated(event);
-    } else if (event instanceof ObservationGoalRemoved) {
-      await this.processObservationGoalRemoved(event);
+    } else if (event instanceof ObservationGoalLinked) {
+      await this.processObservationGoalLinked(event);
+    } else if (event instanceof ObservationGoalUnlinked) {
+      await this.processObservationGoalUnlinked(event);
     }
 
     if (event instanceof DeviceRegistered || event instanceof DeviceUpdated || event instanceof DeviceRemoved) {
@@ -98,7 +95,7 @@ export class DeviceProcessor extends AbstractProcessor {
     }
 
     try {
-      await this.deviceModel.updateOne({ _id: event.deviceId }, deviceUpdate);
+      await this.deviceModel.updateOne({ _id: event.deviceId }, { $set: deviceUpdate });
     } catch {
       this.errorCallback(event);
     }
@@ -158,8 +155,13 @@ export class DeviceProcessor extends AbstractProcessor {
       documentation: event.documentation,
     };
 
+    const sensorFilter = {
+      '_id': event.deviceId,
+      'sensors._id': {$ne: event.sensorId},
+    };
+
     try {
-      await this.deviceModel.updateOne({ _id: event.deviceId }, { $push: { sensors: sensorData } });
+      await this.deviceModel.updateOne(sensorFilter, { $push: { sensors: sensorData } });
     } catch {
       this.errorCallback(event);
     }
@@ -221,8 +223,13 @@ export class DeviceProcessor extends AbstractProcessor {
       dataLink: event.dataLink,
     };
 
+    const dataStreamFilter = {
+      '_id': event.deviceId,
+      'dataStreams._id': {$ne: event.dataStreamId},
+    };
+
     try {
-      await this.deviceModel.updateOne({ _id: event.deviceId }, { $push: { dataStreams: dataStreamData } });
+      await this.deviceModel.updateOne(dataStreamFilter, { $push: { dataStreams: dataStreamData } });
     } catch {
       this.errorCallback(event);
     }
@@ -296,11 +303,12 @@ export class DeviceProcessor extends AbstractProcessor {
     const dataStreamFilter = {
       '_id': event.deviceId,
       'dataStreams._id': event.dataStreamId,
+      'dataStreams.observationGoalIds': {$ne: event.observationGoalId},
     };
 
     const dataStreamUpdate = {
       $push: {
-        'dataStreams.$.observationGoals': event.observationGoalId,
+        'dataStreams.$.observationGoalIds': event.observationGoalId,
       },
     };
 
@@ -311,48 +319,22 @@ export class DeviceProcessor extends AbstractProcessor {
     }
   }
 
-  async processObservationGoalAdded(event: ObservationGoalAdded): Promise<void> {
-    const observationGoalData = {
-      _id: event.observationGoalId,
-      name: event.name,
-      description: event.description,
-      legalGround: event.legalGround,
-      legalGroundLink: event.legalGroundLink,
+  async processObservationGoalUnlinked(event: ObservationGoalUnlinked): Promise<void> {
+    const dataStreamFilter = {
+      '_id': event.deviceId,
+      'dataStreams._id': event.dataStreamId,
+    };
+
+    const dataStreamUpdate = {
+      $pull: {
+        'dataStreams.$.observationGoalIds': event.observationGoalId,
+      },
     };
 
     try {
-      await new this.observationGoalModel(observationGoalData).save();
+      await this.deviceModel.updateOne(dataStreamFilter, dataStreamUpdate);
     } catch {
       this.errorCallback(event);
     }
   }
-
-  async processObservationGoalUpdated(event: ObservationGoalUpdated): Promise<void> {
-
-    const observationGoalUpdate: Record<string, any> = {};
-    if (AbstractProcessor.defined(event.name)) {
-      observationGoalUpdate['dataStreams.$[outer].observationGoals.$[inner].name'] = event.name;
-    }
-    if (AbstractProcessor.defined(event.description)) {
-      observationGoalUpdate['dataStreams.$[outer].observationGoals.$[inner].description'] = event.description;
-    }
-    if (AbstractProcessor.defined(event.legalGround)) {
-      observationGoalUpdate['dataStreams.$[outer].observationGoals.$[inner].legalGround'] = event.legalGround;
-    }
-    if (AbstractProcessor.defined(event.legalGroundLink)) {
-      observationGoalUpdate['dataStreams.$[outer].observationGoals.$[inner].legalGroundLink'] = event.legalGroundLink;
-    }
-
-    try {
-      await this.observationGoalModel.updateOne({ _id: event.observationGoalId }, observationGoalUpdate);
-    } catch (e) {
-      Logger.warn(e);
-      this.errorCallback(event);
-    }
-  }
-
-  async processObservationGoalRemoved(event: ObservationGoalRemoved): Promise<void> {
-    await this.observationGoalModel.deleteOne({ _id: event.observationGoalId });
-  }
-
 }

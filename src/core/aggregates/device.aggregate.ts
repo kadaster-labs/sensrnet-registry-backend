@@ -3,7 +3,7 @@ import { RegisterLocationBody } from '../../command/controller/model/location/re
 import { UpdateLocationBody } from '../../command/controller/model/location/update-location.body';
 import { Aggregate } from '../../event-store/aggregate';
 import { EventMessage } from '../../event-store/event-message';
-import { getObservationGoalAddedEvent, ObservationGoalAdded } from '../events/observation-goal/added';
+import { getObservationGoalRegisteredEvent, ObservationGoalRegistered } from '../events/observation-goal/registered';
 import { getObservationGoalRemovedEvent, ObservationGoalRemoved } from '../events/observation-goal/removed';
 import { getObservationGoalUpdatedEvent, ObservationGoalUpdated } from '../events/observation-goal/updated';
 import { DatastreamAdded, getDatastreamAddedEvent } from '../events/sensordevice/datastream/added';
@@ -18,6 +18,8 @@ import { getSensorAddedEvent, SensorAdded } from '../events/sensordevice/sensor/
 import { getSensorRemovedEvent, SensorRemoved } from '../events/sensordevice/sensor/removed';
 import { getSensorUpdatedEvent, SensorUpdated } from '../events/sensordevice/sensor/updated';
 import { DeviceState, DeviceStateImpl } from './device-state';
+import { getObservationGoalLinkedEvent, ObservationGoalLinked } from '../events/sensordevice/datastream/observation-goal-linked';
+import { ObservationGoalUnlinked } from '../events/sensordevice/datastream/observation-goal-unlinked/observation-goal-unlinked-v1.event';
 
 export class DeviceAggregate extends Aggregate {
 
@@ -50,7 +52,9 @@ export class DeviceAggregate extends Aggregate {
                category: Category, connectivity: string, location: UpdateLocationBody): void {
     this.simpleApply(new DeviceUpdated(this.aggregateId, legalEntityId, name, description,
       category, connectivity));
-    this.simpleApply(new DeviceRelocated(this.aggregateId, location.name, location.description, location.location));
+    if (location) {
+      this.simpleApply(new DeviceRelocated(this.aggregateId, location.name, location.description, location.location));
+    }
   }
 
   onDeviceUpdated(eventMessage: EventMessage): void {
@@ -131,43 +135,30 @@ export class DeviceAggregate extends Aggregate {
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 
+  linkObservationGoal(sensorId: string, legalEntityId: string, dataStreamId: string, observationGoalId: string): void {
+    this.simpleApply(new ObservationGoalLinked(this.aggregateId, sensorId, legalEntityId, dataStreamId, observationGoalId));
+  }
+
+  onObservationGoalLinked(eventMessage: EventMessage): void {
+    const event: ObservationGoalLinked = getObservationGoalLinkedEvent(eventMessage);
+    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+  }
+
+  unlinkObservationGoal(sensorId: string, legalEntityId: string, dataStreamId: string, observationGoalId: string): void {
+    this.simpleApply(new ObservationGoalUnlinked(this.aggregateId, sensorId, legalEntityId, dataStreamId, observationGoalId));
+  }
+
+  onObservationGoalUnlinked(eventMessage: EventMessage): void {
+    const event: ObservationGoalLinked = getObservationGoalLinkedEvent(eventMessage);
+    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+  }
+
   removeDataStream(sensorId: string, legalEntityId: string, dataStreamId: string): void {
     this.simpleApply(new DatastreamRemoved(this.aggregateId, sensorId, legalEntityId, dataStreamId));
   }
 
   onDatastreamRemoved(eventMessage: EventMessage): void {
     const event: DatastreamRemoved = getDatastreamRemovedEvent(eventMessage);
-    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
-  }
-
-  addObservationGoal(dataStreamId: string, observationGoalId: string, legalEntityId: string, name: string,
-                     description: string, legalGround: string, legalGroundLink: string): void {
-    this.simpleApply(new ObservationGoalAdded(this.aggregateId, dataStreamId, observationGoalId, legalEntityId,
-      name, description, legalGround, legalGroundLink));
-  }
-
-  onObservationGoalAdded(eventMessage: EventMessage): void {
-    const event: ObservationGoalAdded = getObservationGoalAddedEvent(eventMessage);
-    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
-  }
-
-  updateObservationGoal(dataStreamId: string, observationGoalId: string, legalEntityId: string, name: string,
-                        description: string, legalGround: string, legalGroundLink: string): void {
-    this.simpleApply(new ObservationGoalUpdated(this.aggregateId, dataStreamId, observationGoalId, legalEntityId,
-      name, description, legalGround, legalGroundLink));
-  }
-
-  onObservationGoalUpdated(eventMessage: EventMessage): void {
-    const event: ObservationGoalUpdated = getObservationGoalUpdatedEvent(eventMessage);
-    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
-  }
-
-  removeObservationGoal(dataStreamId: string, observationGoalId: string, legalEntityId: string): void {
-    this.simpleApply(new ObservationGoalRemoved(this.aggregateId, dataStreamId, observationGoalId, legalEntityId));
-  }
-
-  onObservationGoalRemoved(eventMessage: EventMessage): void {
-    const event: ObservationGoalRemoved = getObservationGoalRemovedEvent(eventMessage);
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
 }

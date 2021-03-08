@@ -1,4 +1,4 @@
-import { Schema, Document, Types } from 'mongoose';
+import { Schema, Document } from 'mongoose';
 
 export interface IObservationGoal extends Document {
     _id: string;
