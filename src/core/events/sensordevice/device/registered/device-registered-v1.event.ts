@@ -6,11 +6,11 @@ export class DeviceRegistered extends SensorDeviceEvent {
   readonly legalEntityId: string;
   readonly name: string;
   readonly description: string;
-  readonly category: String;
+  readonly category: string;
   readonly connectivity: string;
 
   constructor(deviceId: string, legalEntityId: string, name: string, description: string,
-    category: String, connectivity: string) {
+              category: string, connectivity: string) {
     super(deviceId, DeviceRegistered.version);
 
     this.legalEntityId = legalEntityId;

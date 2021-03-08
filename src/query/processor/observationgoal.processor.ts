@@ -7,12 +7,14 @@ import { IObservationGoal } from '../model/observation-goal.model';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { ObservationGoalEvent } from '../../core/events/observation-goal/observation-goal.event';
 import { ObservationGoalRegistered, ObservationGoalRemoved, ObservationGoalUpdated } from '../../core/events/observation-goal';
+import { IDevice } from '../model/device.model';
 
 @Injectable()
 export class ObservationGoalProcessor extends AbstractProcessor {
 
   constructor(
     eventStore: EventStorePublisher,
+    @InjectModel('Device') public deviceModel: Model<IDevice>,
     @InjectModel('Relation') public relationModel: Model<IRelation>,
     @InjectModel('ObservationGoal') private observationGoalModel: Model<IObservationGoal>,
   ) {
@@ -69,6 +71,14 @@ export class ObservationGoalProcessor extends AbstractProcessor {
 
   async processObservationGoalRemoved(event: ObservationGoalRemoved): Promise<void> {
     try {
+      const deviceFilter = {
+        'dataStreams.observationGoalIds': event.observationGoalId,
+      };
+      const deviceUpdate = {
+        $pull: {'dataStreams.$.observationGoalIds': event.observationGoalId},
+      };
+      await this.deviceModel.updateMany(deviceFilter, deviceUpdate);
+
       await this.observationGoalModel.deleteOne({ _id: event.observationGoalId });
       await this.eventStore.deleteStream(ObservationGoalEvent.getStreamName(ObservationGoalEvent.streamRootValue,
           event.observationGoalId));

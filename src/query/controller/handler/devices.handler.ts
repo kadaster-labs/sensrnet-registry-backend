@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { RetrieveDevicesQuery } from '../query/devices.query';
-import { IRelation } from '../../model/relation.model';
+import { IRelation, TargetVariant } from '../../model/relation.model';
 import { IDevice } from '../../model/device.model';
 
 @QueryHandler(RetrieveDevicesQuery)
@@ -60,9 +60,10 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
                 if (retrieveDevicesQuery.requestLegalEntityId) {
                     const relationFilter = {
                         legalEntityId: retrieveDevicesQuery.requestLegalEntityId,
+                        targetVariant: TargetVariant.DEVICE,
                     };
                     const myRelations = await this.relationModel.find(relationFilter);
-                    const myDeviceIds = myRelations.map((x) => x.deviceId);
+                    const myDeviceIds = myRelations.map((x) => x.targetId);
                     legalEntityFilter._id = {
                         $in: myDeviceIds,
                     };
@@ -71,9 +72,10 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         } else if (retrieveDevicesQuery.legalEntityId) {
             const relationFilter = {
                 legalEntityId: retrieveDevicesQuery.legalEntityId,
+                targetVariant: TargetVariant.DEVICE,
             };
             const myRelations = await this.relationModel.find(relationFilter);
-            const myDeviceIds = myRelations.map((x) => x.deviceId);
+            const myDeviceIds = myRelations.map((x) => x.targetId);
             legalEntityFilter._id = {
                 $in: myDeviceIds,
             };

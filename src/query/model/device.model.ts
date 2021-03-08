@@ -68,7 +68,6 @@ export const DataStreamSchema = new Schema({
     dataLink: { type: String, required: false },
     observationGoalIds: { type: [String], required: false },
 });
-DataStreamSchema.index({ observationGoalIds: 1 });
 
 export const SensorSchema = new Schema({
     _id: { type: String, required: true },
@@ -101,3 +100,4 @@ export const DeviceSchema = new Schema({
     sensors: [SensorSchema],
 });
 DeviceSchema.index({ location: '2dsphere' });
+DeviceSchema.index({ 'dataStreams.observationGoalIds': 1 });

@@ -3,15 +3,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ObservationGoalLinked, ObservationGoalUnlinked } from 'src/core/events/sensordevice/datastream';
 import { DatastreamAdded, DatastreamRemoved, DatastreamUpdated } from '../../core/events/sensordevice/datastream';
-import { DeviceLocated, DeviceRegistered, DeviceRelocated, DeviceRemoved, DeviceUpdated } from '../../core/events/sensordevice/device';
 import { SensorAdded, SensorRemoved, SensorUpdated } from '../../core/events/sensordevice/sensor';
 import { SensorDeviceEvent } from '../../core/events/sensordevice/sensordevice.event';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { DeviceGateway } from '../gateway/device.gateway';
 import { IDevice } from '../model/device.model';
 import { IObservationGoal } from '../model/observation-goal.model';
-import { IRelation, RelationVariant } from '../model/relation.model';
+import { IRelation, RelationVariant, TargetVariant } from '../model/relation.model';
 import { AbstractProcessor } from './abstract.processor';
+import { DeviceLocated, DeviceRegistered, DeviceRelocated, DeviceRemoved, DeviceUpdated } from '../../core/events/sensordevice/device';
 
 @Injectable()
 export class DeviceProcessor extends AbstractProcessor {
@@ -56,8 +56,10 @@ export class DeviceProcessor extends AbstractProcessor {
     }
 
     if (event instanceof DeviceRegistered || event instanceof DeviceUpdated || event instanceof DeviceRemoved) {
+      const eventRecord = event as Record<string, any>;
       const device = await this.deviceModel.findOne({ _id: event.deviceId });
-      this.deviceGateway.emit(event.constructor.name, [event.legalEntityId], device ? device.toObject() : {});
+      const deviceRecord = device ? device.toObject() : {};
+      this.deviceGateway.emit(event.constructor.name, [eventRecord.legalEntityId], deviceRecord);
     }
   }
 
@@ -72,7 +74,7 @@ export class DeviceProcessor extends AbstractProcessor {
 
     try {
       await new this.deviceModel(deviceData).save();
-      await this.saveRelation(event.legalEntityId, RelationVariant.DEVICE_OWNER, event.deviceId);
+      await this.saveRelation(event.legalEntityId, RelationVariant.RESPONSIBLE, TargetVariant.DEVICE, event.deviceId);
     } catch {
       this.errorCallback(event);
     }
@@ -136,7 +138,8 @@ export class DeviceProcessor extends AbstractProcessor {
 
   async processDeviceDeleted(event: DeviceRemoved): Promise<void> {
     try {
-      await this.deleteRelations(event.deviceId);
+      await this.deleteRelations(event.legalEntityId, event.deviceId, TargetVariant.DEVICE);
+
       await this.deviceModel.deleteOne({ _id: event.deviceId });
       await this.eventStore.deleteStream(SensorDeviceEvent.getStreamName(SensorDeviceEvent.streamRootValue, event.deviceId));
     } catch {

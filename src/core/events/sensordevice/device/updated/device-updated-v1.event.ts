@@ -10,7 +10,7 @@ export class DeviceUpdated extends SensorDeviceEvent {
   readonly connectivity: string;
 
   constructor(deviceId: string, legalEntityId: string, name: string, description: string,
-    category: string, connectivity: string) {
+              category: string, connectivity: string) {
     super(deviceId, DeviceUpdated.version);
     this.legalEntityId = legalEntityId;
     this.name = name;

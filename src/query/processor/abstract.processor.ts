@@ -27,10 +27,11 @@ export abstract class AbstractProcessor {
         this.logger.error(`Error while updating projection for ${event.aggregateId}.`);
     }
 
-    public async saveRelation(legalEntityId: string, relationVariant: number, deviceId: string): Promise<IRelation> {
+    public async saveRelation(legalEntityId: string, relationVariant: number, targetVariant: number,
+                              targetId: string): Promise<IRelation> {
         let relation: IRelation;
         try {
-            relation = await new this.relationModel({legalEntityId, relationVariant, deviceId}).save();
+            relation = await new this.relationModel({legalEntityId, relationVariant, targetVariant, targetId}).save();
         } catch (e) {
             Logger.error(e);
         }
@@ -38,9 +39,9 @@ export abstract class AbstractProcessor {
         return relation;
     }
 
-    public async deleteRelations(deviceId: string): Promise<void> {
+    public async deleteRelations(legalEntityId: string, targetId: string, targetVariant: number): Promise<void> {
         try {
-            await this.relationModel.deleteMany({deviceId});
+            await this.relationModel.deleteMany({ legalEntityId, targetId, targetVariant });
         } catch (e) {
             Logger.error(e);
         }

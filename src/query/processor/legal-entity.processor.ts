@@ -11,6 +11,7 @@ import { IRelation } from '../model/relation.model';
 import { PublicContactDetailsAdded } from '../../core/events/legal-entity/contact-details/added';
 import { ContactDetailsUpdated } from '../../core/events/legal-entity/contact-details/updated';
 import { ContactDetailsRemoved } from '../../core/events/legal-entity/contact-details/removed';
+import { IDevice } from '../model/device.model';
 
 @Injectable()
 export class LegalEntityProcessor extends AbstractProcessor {
@@ -20,6 +21,7 @@ export class LegalEntityProcessor extends AbstractProcessor {
       eventStore: EventStorePublisher,
       private readonly legalEntityGateway: LegalEntityGateway,
       @InjectModel('LegalEntity') private model: Model<ILegalEntity>,
+      @InjectModel('Device') public deviceModel: Model<IDevice>,
       @InjectModel('Relation') public relationModel: Model<IRelation>,
   ) {
     super(eventStore, relationModel);
@@ -85,6 +87,8 @@ export class LegalEntityProcessor extends AbstractProcessor {
 
   async processDeleted(event: LegalEntityRemoved): Promise<void> {
     try {
+      this.relationModel.deleteMany({legalEntityId: event.aggregateId});
+
       await this.model.deleteOne({_id: event.aggregateId});
       const legalEntityStreamName = LegalEntityEvent.getStreamName(LegalEntityEvent.streamRootValue, event.aggregateId);
       await this.eventStore.deleteStream(legalEntityStreamName);
