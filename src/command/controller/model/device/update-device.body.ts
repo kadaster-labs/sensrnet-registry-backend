@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { DeviceBody } from './device.body';
-import { IsString, IsOptional, MaxLength, IsObject } from 'class-validator';
+import { IsString, IsOptional, MaxLength, IsObject, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Category } from '../category.body';
 import { UpdateLocationBody } from '../location/update-location.body';
@@ -18,6 +18,7 @@ export class UpdateDeviceBody extends DeviceBody {
 
   @IsString()
   @IsOptional()
+  @IsEnum(Category)
   @MaxLength(255)
   @ApiProperty({
     type: String,

@@ -13,7 +13,7 @@ import { UpdateLegalEntityBody } from './model/legal-entity/update-legal-entity.
 import { RegisterLegalEntityBody } from './model/legal-entity/register-legal-entity.body';
 import { DeleteLegalEntityParams } from './model/legal-entity/delete-legal-entity.params';
 import { UpdateLegalEntityCommand } from '../command/legal-entity/update-legal-entity.command';
-import { DeleteLegalEntityCommand } from '../command/legal-entity/delete-legal-entity.command';
+import { RemoveLegalEntityCommand } from '../command/legal-entity/remove-legal-entity.command';
 import { RegisterLegalEntityCommand } from '../command/legal-entity/register-legal-entity.command';
 import { RemoveContactDetailsCommand } from '../command/legal-entity/remove-contact-details.command';
 import { UseFilters, Controller, Post, Body, Put, Delete, UseGuards, Req, Param } from '@nestjs/common';
@@ -75,12 +75,12 @@ export class LegalEntityController {
   @ApiBearerAuth()
   @UseFilters(new DomainExceptionFilter())
   @UseGuards(AccessJwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: 'Delete legal entity' })
-  @ApiResponse({ status: 200, description: 'Legal entity deleted' })
-  @ApiResponse({ status: 400, description: 'Legal entity delete failed' })
-  async deleteLegalEntity(@Req() req: Request): Promise<any> {
+  @ApiOperation({ summary: 'Remove legal entity' })
+  @ApiResponse({ status: 200, description: 'Legal entity removed' })
+  @ApiResponse({ status: 400, description: 'Legal entity removal failed' })
+  async removeLegalEntity(@Req() req: Request): Promise<any> {
     const user: Record<string, any> = req.user;
-    return await this.commandBus.execute(new DeleteLegalEntityCommand(user.legalEntityId));
+    return await this.commandBus.execute(new RemoveLegalEntityCommand(user.legalEntityId));
   }
 
   @Delete(':id')
@@ -92,7 +92,7 @@ export class LegalEntityController {
   @ApiResponse({ status: 200, description: 'Legal entity deleted' })
   @ApiResponse({ status: 400, description: 'Legal entity delete failed' })
   async deleteLegalEntityById(@Req() req: Request, @Param() param: DeleteLegalEntityParams): Promise<any> {
-    return await this.commandBus.execute(new DeleteLegalEntityCommand(param.id));
+    return await this.commandBus.execute(new RemoveLegalEntityCommand(param.id));
   }
 
   @Delete('/contactdetails/:contactDetailsId')

@@ -1,7 +1,7 @@
 import { SensorBody } from './sensor.body';
 import { ApiProperty } from '@nestjs/swagger';
 import { SensorType } from '../sensor-type.body';
-import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsEnum } from 'class-validator';
 
 export class AddSensorBody extends SensorBody {
   @IsString()
@@ -26,6 +26,7 @@ export class AddSensorBody extends SensorBody {
 
   @IsString()
   @IsNotEmpty()
+  @IsEnum(SensorType)
   @MaxLength(255)
   @ApiProperty({
     type: String,

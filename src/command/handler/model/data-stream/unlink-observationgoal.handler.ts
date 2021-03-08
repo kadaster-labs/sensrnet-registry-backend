@@ -5,6 +5,7 @@ import { LegalEntityRepository } from '../../../../core/repositories/legal-entit
 import { validateLegalEntity } from '../../util/legal-entity.utils';
 import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
 import { UnlinkObservationGoalCommand } from '../../../command/data-stream/unlink-observationgoal.command';
+import { ObservationGoalRepository } from '../../../../core/repositories/observation-goal.repository';
 
 @CommandHandler(UnlinkObservationGoalCommand)
 export class UnlinkObservationGoalCommandHandler implements ICommandHandler<UnlinkObservationGoalCommand> {
@@ -12,6 +13,7 @@ export class UnlinkObservationGoalCommandHandler implements ICommandHandler<Unli
     private readonly publisher: EventPublisher,
     private readonly repository: DeviceRepository,
     private readonly legalEntityRepository: LegalEntityRepository,
+    private readonly observationGoalRepository: ObservationGoalRepository,
   ) {}
 
   async execute(command: UnlinkObservationGoalCommand): Promise<void> {
@@ -19,6 +21,10 @@ export class UnlinkObservationGoalCommandHandler implements ICommandHandler<Unli
       await validateLegalEntity(this.legalEntityRepository, command.legalEntityId);
     } else {
       throw new NoLegalEntityException();
+    }
+
+    if (!await this.observationGoalRepository.get(command.observationGoalId)) {
+      throw new UnknowObjectException(command.observationGoalId);
     }
 
     let aggregate = await this.repository.get(command.deviceId);

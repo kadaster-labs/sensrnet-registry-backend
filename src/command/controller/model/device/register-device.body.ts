@@ -3,7 +3,7 @@ import { DeviceBody } from './device.body';
 import { Category } from '../category.body';
 import { ApiProperty } from '@nestjs/swagger';
 import { RegisterLocationBody } from '../location/register-location.body';
-import { IsString, IsNotEmpty, MaxLength, IsObject, ValidateNested } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsObject, ValidateNested, IsEnum } from 'class-validator';
 
 export class RegisterDeviceBody extends DeviceBody {
   @IsString()
@@ -18,6 +18,7 @@ export class RegisterDeviceBody extends DeviceBody {
 
   @IsString()
   @IsNotEmpty()
+  @IsEnum(Category)
   @MaxLength(255)
   @ApiProperty({
     type: String,

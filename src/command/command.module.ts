@@ -21,7 +21,7 @@ import { AddDataStreamCommandHandler } from './handler/model/data-stream/add-dat
 import { UpdateDataStreamCommandHandler } from './handler/model/data-stream/update-datastream.handler';
 import { RemoveDataStreamCommandHandler } from './handler/model/data-stream/remove-datastream.handler';
 import { UpdateLegalEntityCommandHandler } from './handler/model/legal-entity/update-legal-entity.handler';
-import { DeleteLegalEntityCommandHandler } from './handler/model/legal-entity/delete-legal-entity.handler';
+import { RemoveLegalEntityCommandHandler } from './handler/model/legal-entity/delete-legal-entity.handler';
 import { RegisterLegalEntityCommandHandler } from './handler/model/legal-entity/register-legal-entity.handler';
 import { RegisterObservationGoalCommandHandler } from './handler/model/observation-goal/add-observation-goal.handler';
 import { UpdateObservationGoalCommandHandler } from './handler/model/observation-goal/update-observation-goal.handler';
@@ -53,7 +53,7 @@ import { RemoveContactDetailsCommandHandler } from './handler/model/legal-entity
         EventStorePublisher,
         RegisterLegalEntityCommandHandler,
         UpdateLegalEntityCommandHandler,
-        DeleteLegalEntityCommandHandler,
+        RemoveLegalEntityCommandHandler,
         AddPublicContactDetailsCommandHandler,
         UpdateContactDetailsCommandHandler,
         RemoveContactDetailsCommandHandler,

@@ -27,6 +27,7 @@ import { DeviceEsListener } from './processor/device.es.listener';
 import { ObservationGoalProcessor } from './processor/observationgoal.processor';
 import { ObservationGoalEsListener } from './processor/observationgoal.es.listener';
 import { ObservationGoalSchema } from './model/observation-goal.model';
+import { ObservationGoalEsController } from './controller/observation-goal.es.controller';
 
 @Module({
     imports: [
@@ -45,6 +46,7 @@ import { ObservationGoalSchema } from './model/observation-goal.model';
         LegalEntityController,
         LegalEntitiesController,
         LegalEntityEsController,
+        ObservationGoalEsController,
     ], providers: [
         UserService,
         EventPublisher,

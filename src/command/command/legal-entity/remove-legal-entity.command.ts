@@ -1,6 +1,6 @@
 import { ICommand } from '@nestjs/cqrs';
 
-export class DeleteLegalEntityCommand implements ICommand {
+export class RemoveLegalEntityCommand implements ICommand {
   constructor(
     public readonly id: string,
   ) {}

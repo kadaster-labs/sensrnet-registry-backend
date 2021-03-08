@@ -20,8 +20,8 @@ export class LegalEntityProcessor extends AbstractProcessor {
   constructor(
       eventStore: EventStorePublisher,
       private readonly legalEntityGateway: LegalEntityGateway,
-      @InjectModel('LegalEntity') private model: Model<ILegalEntity>,
       @InjectModel('Device') public deviceModel: Model<IDevice>,
+      @InjectModel('LegalEntity') private model: Model<ILegalEntity>,
       @InjectModel('Relation') public relationModel: Model<IRelation>,
   ) {
     super(eventStore, relationModel);
