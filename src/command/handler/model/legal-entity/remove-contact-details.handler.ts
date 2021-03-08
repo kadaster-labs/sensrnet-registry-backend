@@ -1,16 +1,16 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
-import { DeleteContactDetailsCommand } from '../../../command/legal-entity/delete-contact-details.command';
+import { RemoveContactDetailsCommand } from '../../../command/legal-entity/remove-contact-details.command';
 import { UnknowObjectException } from '../../error/unknow-object-exception';
 
-@CommandHandler(DeleteContactDetailsCommand)
-export class DeleteContactDetailsCommandHandler implements ICommandHandler<DeleteContactDetailsCommand> {
+@CommandHandler(RemoveContactDetailsCommand)
+export class RemoveContactDetailsCommandHandler implements ICommandHandler<RemoveContactDetailsCommand> {
   constructor(
     private readonly publisher: EventPublisher,
     private readonly repository: LegalEntityRepository,
   ) { }
 
-  async execute(command: DeleteContactDetailsCommand): Promise<void> {
+  async execute(command: RemoveContactDetailsCommand): Promise<void> {
     let aggregate = await this.repository.get(command.legalEntityId);
     if (aggregate) {
       aggregate = this.publisher.mergeObjectContext(aggregate);

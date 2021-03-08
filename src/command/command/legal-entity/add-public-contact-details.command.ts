@@ -1,3 +1,3 @@
-import { ContactDetailsCommand } from "./contact-details.command";
+import { ContactDetailsCommand } from './contact-details.command';
 
-export class AddPublicContactDetailsCommand extends ContactDetailsCommand { }
+export class AddPublicContactDetailsCommand extends ContactDetailsCommand {}

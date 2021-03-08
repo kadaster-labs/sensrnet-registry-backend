@@ -15,6 +15,7 @@ import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor
 import { RemoveSensorCommandHandler } from './handler/model/sensor/remove-sensor.handler';
 import { UpdateDeviceCommandHandler } from './handler/model/device/update-device.handler';
 import { RemoveDeviceCommandHandler } from './handler/model/device/remove-device.handler';
+import { ObservationGoalRepository } from '../core/repositories/observation-goal.repository';
 import { RegisterDeviceCommandHandler } from './handler/model/device/register-device.handler';
 import { AddDataStreamCommandHandler } from './handler/model/data-stream/add-datastream.handler';
 import { UpdateDataStreamCommandHandler } from './handler/model/data-stream/update-datastream.handler';
@@ -28,7 +29,9 @@ import { RemoveObservationGoalCommandHandler } from './handler/model/observation
 import { ObservationGoalController } from './controller/observation-goal.controller';
 import { LinkObservationGoalCommandHandler } from './handler/model/data-stream/link-observationgoal.handler';
 import { UnlinkObservationGoalCommandHandler } from './handler/model/data-stream/unlink-observationgoal.handler';
-import { ObservationGoalRepository } from '../core/repositories/observation-goal.repository';
+import { AddPublicContactDetailsCommandHandler } from './handler/model/legal-entity/add-contact-details.handler';
+import { UpdateContactDetailsCommandHandler } from './handler/model/legal-entity/update-contact-details.handler';
+import { RemoveContactDetailsCommandHandler } from './handler/model/legal-entity/remove-contact-details.handler';
 
 @Module({
     controllers: [
@@ -48,12 +51,15 @@ import { ObservationGoalRepository } from '../core/repositories/observation-goal
         DeviceRepository,
         ObservationGoalRepository,
         EventStorePublisher,
-        UpdateDeviceCommandHandler,
-        RemoveDeviceCommandHandler,
-        RegisterDeviceCommandHandler,
         RegisterLegalEntityCommandHandler,
         UpdateLegalEntityCommandHandler,
         DeleteLegalEntityCommandHandler,
+        AddPublicContactDetailsCommandHandler,
+        UpdateContactDetailsCommandHandler,
+        RemoveContactDetailsCommandHandler,
+        UpdateDeviceCommandHandler,
+        RemoveDeviceCommandHandler,
+        RegisterDeviceCommandHandler,
         AddSensorCommandHandler,
         UpdateSensorCommandHandler,
         RemoveSensorCommandHandler,

@@ -5,7 +5,7 @@ import { ContactDetailsRemoved, getContactDetailsRemovedEvent } from './contact-
 import { ContactDetailsUpdated, getContactDetailsUpdatedEvent } from './contact-details/updated';
 import { getOrganizationRegisteredEvent, OrganizationRegistered } from './organization/registered';
 import { getOrganizationUpdatedEvent, OrganizationUpdated } from './organization/updated';
-import { getLegalEntityDeletedEvent as getLegalEntityRemovedEvent, LegalEntityRemoved } from './removed';
+import { getLegalEntityRemovedEvent as getLegalEntityRemovedEvent, LegalEntityRemoved } from './removed';
 
 class LegalEntityEventType extends AbstractEventType {
   constructor() {
@@ -16,8 +16,6 @@ class LegalEntityEventType extends AbstractEventType {
     this.add(LegalEntityRemoved, getLegalEntityRemovedEvent);
 
     // TODO when private contact details need to be implemented
-    // this.add(PrivateContactDetailsAdded, getPrivateContactDetailsAddedEvent);
-
     this.add(PublicContactDetailsAdded, getPublicContactDetailsAddedEvent);
     this.add(ContactDetailsUpdated, getContactDetailsUpdatedEvent);
     this.add(ContactDetailsRemoved, getContactDetailsRemovedEvent);

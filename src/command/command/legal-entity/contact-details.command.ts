@@ -7,5 +7,5 @@ export class ContactDetailsCommand implements ICommand {
     public readonly name: string,
     public readonly email: string,
     public readonly phone: string,
-  ) { }
+  ) {}
 }

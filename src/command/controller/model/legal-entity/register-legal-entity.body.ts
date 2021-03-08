@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ContactDetailsBody } from '../contact-details/contact-details.body';
 import { IsObject, IsOptional, IsUrl, MaxLength, ValidateIf } from 'class-validator';
 
-export class LegalEntityBody {
+export class RegisterLegalEntityBody {
     @ValidateIf(e => e.name !== '')
     @MaxLength(255)
     @ApiProperty({
