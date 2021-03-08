@@ -138,7 +138,7 @@ export class DeviceProcessor extends AbstractProcessor {
 
   async processDeviceDeleted(event: DeviceRemoved): Promise<void> {
     try {
-      await this.deleteRelations(event.legalEntityId, event.deviceId, TargetVariant.DEVICE);
+      await this.deleteRelations(event.legalEntityId, TargetVariant.DEVICE, event.deviceId);
 
       await this.deviceModel.deleteOne({ _id: event.deviceId });
       await this.eventStore.deleteStream(SensorDeviceEvent.getStreamName(SensorDeviceEvent.streamRootValue, event.deviceId));

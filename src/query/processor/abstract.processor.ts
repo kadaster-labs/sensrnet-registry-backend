@@ -39,9 +39,9 @@ export abstract class AbstractProcessor {
         return relation;
     }
 
-    public async deleteRelations(legalEntityId: string, targetId: string, targetVariant: number): Promise<void> {
+    public async deleteRelations(legalEntityId: string, targetVariant: number, targetId: string): Promise<void> {
         try {
-            await this.relationModel.deleteMany({ legalEntityId, targetId, targetVariant });
+            await this.relationModel.deleteMany({ legalEntityId, targetVariant, targetId });
         } catch (e) {
             Logger.error(e);
         }
