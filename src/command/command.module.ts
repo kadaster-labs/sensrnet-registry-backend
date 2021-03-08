@@ -1,5 +1,6 @@
-import { User, UserSchema } from '../user/user.model';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UserService } from '../user/user.service';
+import { User, UserSchema } from '../user/user.model';
 import { Module, OnModuleInit } from '@nestjs/common';
 import { SensorController } from './controller/sensor.controller';
 import { CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
@@ -33,6 +34,7 @@ import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor
         MongooseModule.forFeature([{name: User.name, schema: UserSchema}]),
     ], providers: [
         EventBus,
+        UserService,
         EventPublisher,
         OrganizationRepository,
         SensorRepository,

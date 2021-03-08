@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { request, Request } from 'express';
 import { QueryBus } from '@nestjs/cqrs';
 import { SensorIdParams } from './model/id-params';
 import { RetrieveSensorQuery } from '../model/sensor.query';
@@ -8,6 +8,8 @@ import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Controller, Get, Param, Query, UseGuards, UseFilters, Req } from '@nestjs/common';
 import { AuthenticatedGuard } from '../../auth/authenticated.guard';
+import { UserToken } from '../../auth/models/user-token';
+import { UserService } from '../../user/user.service';
 
 @ApiTags('Sensor')
 @Controller('sensor')
@@ -15,10 +17,10 @@ import { AuthenticatedGuard } from '../../auth/authenticated.guard';
 export class SensorController {
   constructor(
       private readonly queryBus: QueryBus,
+      private readonly userService: UserService,
   ) {}
 
   @Get(':sensorId')
-  // @ApiBearerAuth()
   @ApiOperation({ summary: 'Retrieve Sensor' })
   @ApiResponse({ status: 200, description: 'Sensor retrieved' })
   @ApiResponse({ status: 400, description: 'Sensor retrieval failed' })
@@ -27,14 +29,16 @@ export class SensorController {
   }
 
   @Get()
-  // @ApiBearerAuth()
   @UseGuards(AuthenticatedGuard)
   @ApiOperation({ summary: 'Retrieve Sensors' })
   @ApiResponse({ status: 200, description: 'Sensors retrieved' })
   @ApiResponse({ status: 400, description: 'Sensors retrieval failed' })
   async retrieveSensors(@Req() req: Request, @Query() sensorParams: RetrieveSensorsParams): Promise<any> {
-    const user: Record<string, any> = req.user;
-    const requestOrganizationId = user ? user.organizationId : undefined;
+    const user: UserToken = req.user as UserToken;
+    let requestOrganizationId: string;
+    if (user) {
+      requestOrganizationId = await this.userService.getOrganizationId(user.userinfo.sub);
+    }
     return await this.queryBus.execute(new RetrieveSensorsQuery(requestOrganizationId, sensorParams.bottomLeftLongitude,
         sensorParams.bottomLeftLatitude, sensorParams.upperRightLongitude, sensorParams.upperRightLatitude,
         sensorParams.pageIndex, sensorParams.organizationId));

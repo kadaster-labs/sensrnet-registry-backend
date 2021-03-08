@@ -1,7 +1,6 @@
 import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
 import { Roles } from '../../core/guards/roles.decorator';
-import { RolesGuard } from '../../core/guards/roles.guard';
 import { UpdateOrganizationBody } from './model/update-organization.body';
 import { DeleteOrganizationParams } from './model/delete-organization.params';
 import { RegisterOrganizationBody } from './model/register-organization.body';
@@ -10,12 +9,17 @@ import { DeleteOrganizationCommand } from '../model/delete-organization.command'
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RegisterOrganizationCommand } from '../model/register-organization.command';
-import { UseFilters, Controller, Post, Body, Put, Delete, UseGuards, Req, Param } from '@nestjs/common';
+import { UseFilters, Controller, Post, Body, Put, Delete, Req, Param } from '@nestjs/common';
+import { UserToken } from '../../auth/models/user-token';
+import { UserService } from '../../user/user.service';
 
 @ApiTags('Organization')
 @Controller('organization')
 export class OrganizationController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly userService: UserService,
+  ) {}
 
   @Post()
   @UseFilters(new DomainExceptionFilter())
@@ -38,8 +42,9 @@ export class OrganizationController {
   @ApiResponse({ status: 200, description: 'Organization updated' })
   @ApiResponse({ status: 400, description: 'Organization update failed' })
   async updateOrganization(@Req() req: Request, @Body() updateOrganizationBody: UpdateOrganizationBody): Promise<any> {
-    const user: Record<string, any> = req.user;
-    return await this.commandBus.execute(new UpdateOrganizationCommand(user.organizationId, updateOrganizationBody.website,
+    const user: UserToken = req.user as UserToken;
+    const organizationId: string = await this.userService.getOrganizationId(user.userinfo.sub);
+    return await this.commandBus.execute(new UpdateOrganizationCommand(organizationId, updateOrganizationBody.website,
         updateOrganizationBody.contactName, updateOrganizationBody.contactEmail, updateOrganizationBody.contactPhone));
   }
 
@@ -50,8 +55,9 @@ export class OrganizationController {
   @ApiResponse({ status: 200, description: 'Organization removed' })
   @ApiResponse({ status: 400, description: 'Organization removal failed' })
   async removeOrganization(@Req() req: Request): Promise<any> {
-    const user: Record<string, any> = req.user;
-    return await this.commandBus.execute(new DeleteOrganizationCommand(user.organizationId));
+    const user: UserToken = req.user as UserToken;
+    const organizationId: string = await this.userService.getOrganizationId(user.userinfo.sub);
+    return await this.commandBus.execute(new DeleteOrganizationCommand(organizationId));
   }
 
   @Delete(':id')

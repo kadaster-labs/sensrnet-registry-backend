@@ -16,15 +16,17 @@ export class RegisterOidcUserCommandHandler implements ICommandHandler<RegisterO
   ) {}
 
   async execute(command: RegisterOidcUserCommand): Promise<{ id: string }> {
+    Logger.log('Going to register user');
     const userInstance = new this.userModel({
-      _id: uuidv4(),
-      email: command.token.preferred_username,
+      _id: command.token.userinfo.sub,
+      email: command.token.userinfo.email,
       oidc: command.token,
       role: 'user',
     });
 
     try {
       await userInstance.save();
+      Logger.log('User Created in DB');
       return { id: userInstance._id };
     } catch (error) {
       Logger.warn(error);

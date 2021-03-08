@@ -1,8 +1,8 @@
 import { ICommand } from '@nestjs/cqrs';
-import { TokenSet } from 'openid-client';
+import { UserToken } from '../../auth/models/user-token';
 
 export class RegisterOidcUserCommand implements ICommand {
   constructor(
-    public readonly token: TokenSet,
+    public readonly token: UserToken,
     ) {}
 }

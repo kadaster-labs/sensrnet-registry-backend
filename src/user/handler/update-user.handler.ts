@@ -23,6 +23,6 @@ export class UpdateUserCommandHandler implements ICommandHandler<UpdateUserComma
       updateFields = {password: command.password, ...updateFields};
     }
 
-    await this.usersService.updateOne(command.email, updateFields);
+    await this.usersService.updateOne(command.id, updateFields);
   }
 }

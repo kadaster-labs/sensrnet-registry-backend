@@ -1,9 +1,11 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { AuthService } from '../../auth/auth.service';
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage,
     MessageBody } from '@nestjs/websockets';
+import { AuthenticatedGuard } from '../../auth/authenticated.guard';
 
+@UseGuards(AuthenticatedGuard)
 @WebSocketGateway({
     namespace: 'sensor',
     path: '/api/socket.io',
@@ -32,8 +34,7 @@ export class SensorGateway implements OnGatewayConnection {
             const authToken = authHeader && authHeader.length > 7 ? authHeader.substring(7, authHeader.length) : '';
 
             try {
-                // const decodedToken = await this.authService.verifyToken(authToken);
-                // const userInfo = await this.accessJwtStrategy.validate(decodedToken);
+                const access_token = await this.authService.verifyToken(authToken);
                 const userInfo = {
                     organizationId: '123',
                 }

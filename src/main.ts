@@ -22,14 +22,14 @@ async function bootstrap() {
     store: MongoStore.create({
       mongoUrl: process.env.MONGODB_URL,
       dbName: process.env.MONGO_DATABASE,
-    }), // where session will be stored
-    secret: process.env.SESSION_SECRET, // to sign session id
-    resave: false, // will default to false in near future: https://github.com/expressjs/session#resave
-    saveUninitialized: false, // will default to false in near future: https://github.com/expressjs/session#saveuninitialized
-    rolling: true, // keep session alive
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    rolling: true,
     cookie: {
-      maxAge: 30 * 60 * 1000, // session expires in 1hr, refreshed by `rolling: true` option.
-      httpOnly: true, // so that cookie can't be accessed via client-side script
+      maxAge: 30 * 60 * 1000,
+      httpOnly: true,
     }
   }));
   app.use(passport.initialize());

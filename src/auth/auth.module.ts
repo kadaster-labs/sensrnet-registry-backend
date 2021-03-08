@@ -3,16 +3,12 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { UserModule } from '../user/user.module';
-import { LocalStrategy } from './local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { OidcStrategy, buildOpenIdClient } from './oidc.strategy';
 import { SessionSerializer } from './session.serializer';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { CqrsModule } from '@nestjs/cqrs';
-import { AccessJwtStrategy } from './access-jwt.strategy';
-import { AnonymousStrategy } from './anonymous.strategy';
-import { RefreshJwtStrategy } from './refresh-jwt.strategy';
 
 const OidcStrategyFactory = {
     provide: 'OidcStrategy',
@@ -36,16 +32,11 @@ const OidcStrategyFactory = {
     ], controllers: [
         AuthController,
     ], providers: [
-        // LocalStrategy,
-        // AccessJwtStrategy,
-        // RefreshJwtStrategy,
-        // AnonymousStrategy,
         OidcStrategyFactory,
         SessionSerializer,
         AuthService,
     ], exports: [
         AuthService,
-        // AccessJwtStrategy,
     ],
 })
 
