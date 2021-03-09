@@ -1,8 +1,14 @@
 import { Logger } from '@nestjs/common';
-import { Event } from '../../event-store/event';
 import { Event as ESEvent } from 'geteventstore-promise';
+import { Event } from '../../event-store/event';
 
 export abstract class AbstractEventType {
+
+  public readonly streamRootValue: string;
+
+  constructor(streamRootValue: string) {
+    this.streamRootValue = streamRootValue;
+  }
 
   public supportedTypes: Record<string, any> = {};
 

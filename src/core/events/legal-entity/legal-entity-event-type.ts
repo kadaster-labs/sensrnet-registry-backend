@@ -9,7 +9,7 @@ import { getLegalEntityRemovedEvent as getLegalEntityRemovedEvent, LegalEntityRe
 
 class LegalEntityEventType extends AbstractEventType {
   constructor() {
-    super();
+    super('legalentity');
 
     this.add(OrganizationRegistered, getOrganizationRegisteredEvent);
     this.add(OrganizationUpdated, getOrganizationUpdatedEvent);
