@@ -50,8 +50,12 @@ export class DeviceAggregate extends Aggregate {
     this.simpleApply(new DeviceUpdated(this.aggregateId, legalEntityId, name, description,
       category, connectivity));
     if (location) {
-      this.simpleApply(new DeviceRelocated(this.aggregateId, location.name, location.description, location.location));
+      this.relocateDevice(location);
     }
+  }
+
+  relocateDevice(location: UpdateLocationBody): void {
+    this.simpleApply(new DeviceRelocated(this.aggregateId, location.name, location.description, location.location));
   }
 
   onDeviceUpdated(eventMessage: EventMessage): void {

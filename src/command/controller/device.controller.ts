@@ -1,16 +1,18 @@
-import { v4 } from 'uuid';
-import { Request } from 'express';
+import { Body, Controller, Delete, Param, Post, Put, Req, UseFilters, UseGuards } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { DeviceIdParams } from './model/device/device-id.params';
-import { UpdateDeviceBody } from './model/device/update-device.body';
-import { RegisterDeviceBody } from './model/device/register-device.body';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
+import { v4 } from 'uuid';
 import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
-import { UpdateDeviceCommand } from '../command/device/update-device.command';
-import { RemoveDeviceCommand } from '../command/device/remove-device.command';
-import { RegisterDeviceCommand } from '../command/device/register-device.command';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
-import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { Controller, Param, Post, Put, Body, Delete, UseFilters, Req, UseGuards } from '@nestjs/common';
+import { RegisterDeviceCommand } from '../command/device/register-device.command';
+import { RelocateDeviceCommand } from '../command/device/relocate-device.command';
+import { RemoveDeviceCommand } from '../command/device/remove-device.command';
+import { UpdateDeviceCommand } from '../command/device/update-device.command';
+import { DeviceIdParams } from './model/device/device-id.params';
+import { RegisterDeviceBody } from './model/device/register-device.body';
+import { UpdateDeviceBody } from './model/device/update-device.body';
+import { UpdateLocationBody } from './model/location/update-location.body';
 
 @ApiBearerAuth()
 @UseGuards(AccessJwtAuthGuard)
@@ -19,7 +21,7 @@ import { Controller, Param, Post, Put, Body, Delete, UseFilters, Req, UseGuards 
 export class DeviceController {
     constructor(
         private readonly commandBus: CommandBus,
-    ) {}
+    ) { }
 
     @Post()
     @UseFilters(new DomainExceptionFilter())
@@ -42,10 +44,21 @@ export class DeviceController {
     @ApiResponse({ status: 200, description: 'Device updated' })
     @ApiResponse({ status: 400, description: 'Device update failed' })
     async updateDevice(@Req() req: Request, @Param() params: DeviceIdParams,
-                       @Body() deviceBody: UpdateDeviceBody): Promise<any> {
+        @Body() deviceBody: UpdateDeviceBody): Promise<any> {
         const user: Record<string, any> = req.user;
         return await this.commandBus.execute(new UpdateDeviceCommand(params.deviceId, user.legalEntityId,
             deviceBody.name, deviceBody.description, deviceBody.category, deviceBody.connectivity, deviceBody.location));
+    }
+
+    @Put(':deviceId/location')
+    @UseFilters(new DomainExceptionFilter())
+    @ApiOperation({ summary: 'Relocate device' })
+    @ApiResponse({ status: 200, description: 'Device relocated' })
+    @ApiResponse({ status: 400, description: 'Device relocation failed' })
+    async relocateDevice(@Req() req: Request, @Param() params: DeviceIdParams,
+        @Body() deviceBody: UpdateLocationBody): Promise<any> {
+        const user: Record<string, any> = req.user;
+        return await this.commandBus.execute(new RelocateDeviceCommand(params.deviceId, user.legalEntityId, deviceBody));
     }
 
     @Delete(':deviceId')
