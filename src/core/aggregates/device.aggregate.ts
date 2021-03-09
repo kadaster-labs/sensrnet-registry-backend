@@ -3,10 +3,9 @@ import { RegisterLocationBody } from '../../command/controller/model/location/re
 import { UpdateLocationBody } from '../../command/controller/model/location/update-location.body';
 import { Aggregate } from '../../event-store/aggregate';
 import { EventMessage } from '../../event-store/event-message';
-import { getObservationGoalRegisteredEvent, ObservationGoalRegistered } from '../events/observation-goal/registered';
-import { getObservationGoalRemovedEvent, ObservationGoalRemoved } from '../events/observation-goal/removed';
-import { getObservationGoalUpdatedEvent, ObservationGoalUpdated } from '../events/observation-goal/updated';
 import { DatastreamAdded, getDatastreamAddedEvent } from '../events/sensordevice/datastream/added';
+import { getObservationGoalLinkedEvent, ObservationGoalLinked } from '../events/sensordevice/datastream/observation-goal-linked';
+import { ObservationGoalUnlinked } from '../events/sensordevice/datastream/observation-goal-unlinked/observation-goal-unlinked-v1.event';
 import { DatastreamRemoved, getDatastreamRemovedEvent } from '../events/sensordevice/datastream/removed';
 import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../events/sensordevice/datastream/updated';
 import { DeviceLocated, getDeviceLocatedEvent } from '../events/sensordevice/device/located';
@@ -18,8 +17,6 @@ import { getSensorAddedEvent, SensorAdded } from '../events/sensordevice/sensor/
 import { getSensorRemovedEvent, SensorRemoved } from '../events/sensordevice/sensor/removed';
 import { getSensorUpdatedEvent, SensorUpdated } from '../events/sensordevice/sensor/updated';
 import { DeviceState, DeviceStateImpl } from './device-state';
-import { getObservationGoalLinkedEvent, ObservationGoalLinked } from '../events/sensordevice/datastream/observation-goal-linked';
-import { ObservationGoalUnlinked } from '../events/sensordevice/datastream/observation-goal-unlinked/observation-goal-unlinked-v1.event';
 
 export class DeviceAggregate extends Aggregate {
 
@@ -32,7 +29,7 @@ export class DeviceAggregate extends Aggregate {
   }
 
   registerDevice(legalEntityId: string, name: string, description: string, category: Category,
-                 connectivity: string, location: RegisterLocationBody): void {
+    connectivity: string, location: RegisterLocationBody): void {
     this.simpleApply(new DeviceRegistered(this.aggregateId, legalEntityId, name, description,
       category, connectivity));
     this.simpleApply(new DeviceLocated(this.aggregateId, location.name, location.description, location.location));
@@ -49,7 +46,7 @@ export class DeviceAggregate extends Aggregate {
   }
 
   updateDevice(legalEntityId: string, name: string, description: string,
-               category: Category, connectivity: string, location: UpdateLocationBody): void {
+    category: Category, connectivity: string, location: UpdateLocationBody): void {
     this.simpleApply(new DeviceUpdated(this.aggregateId, legalEntityId, name, description,
       category, connectivity));
     if (location) {
@@ -77,7 +74,7 @@ export class DeviceAggregate extends Aggregate {
   }
 
   addSensor(sensorId: string, legalEntityId: string, name: string, description: string,
-            type: string, manufacturer: string, supplier: string, documentation: string): void {
+    type: string, manufacturer: string, supplier: string, documentation: string): void {
     this.simpleApply(new SensorAdded(this.aggregateId, sensorId, legalEntityId, name, description,
       type, manufacturer, supplier, documentation));
   }
@@ -88,7 +85,7 @@ export class DeviceAggregate extends Aggregate {
   }
 
   updateSensor(sensorId: string, legalEntityId: string, name: string, description: string,
-               type: string, manufacturer: string, supplier: string, documentation: string): void {
+    type: string, manufacturer: string, supplier: string, documentation: string): void {
     this.simpleApply(new SensorUpdated(this.aggregateId, sensorId, legalEntityId, name, description,
       type, manufacturer, supplier, documentation));
   }
@@ -108,9 +105,9 @@ export class DeviceAggregate extends Aggregate {
   }
 
   addDataStream(sensorId: string, legalEntityId: string, dataStreamId: string, name: string,
-                description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
-                theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
-                containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
+    description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
+    theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
+    containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
     this.simpleApply(new DatastreamAdded(this.aggregateId, sensorId, legalEntityId, dataStreamId, name,
       description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
       containsPersonalInfoData, isReusable, documentation, dataLink));
@@ -122,9 +119,9 @@ export class DeviceAggregate extends Aggregate {
   }
 
   updateDataStream(sensorId: string, legalEntityId: string, dataStreamId: string, name: string,
-                   description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
-                   theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
-                   containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
+    description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
+    theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
+    containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
     this.simpleApply(new DatastreamUpdated(this.aggregateId, sensorId, legalEntityId, dataStreamId, name,
       description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
       containsPersonalInfoData, isReusable, documentation, dataLink));
