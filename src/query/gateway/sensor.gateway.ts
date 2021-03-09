@@ -33,7 +33,8 @@ export class SensorGateway implements OnGatewayConnection {
             const authToken = authHeader && authHeader.length > 7 ? authHeader.substring(7, authHeader.length) : '';
 
             try {
-                // TODO: get organizationID
+                // TODO: get sockets working again. How to send userId / organizationId to client?
+                // Hints at: https://github.com/nestjs/nest/issues/3206#issuecomment-543767894
                 const userInfo = {
                     organizationId: '123',
                 }
