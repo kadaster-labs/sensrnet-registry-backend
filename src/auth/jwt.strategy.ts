@@ -25,7 +25,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'access') {
   }
 
   async validate(payload: Record<string, any>): Promise<Record<string, any>> {
-    Logger.log('User authenticated');
     const userId: string = await this.authService.createOrLogin(payload);
 
     return { userId };

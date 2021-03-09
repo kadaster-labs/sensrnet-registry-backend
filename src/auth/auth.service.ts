@@ -12,7 +12,6 @@ export class AuthService {
     ) { }
 
     async createOrLogin(reqUser: Record<string, any>): Promise<string> {
-        Logger.verbose(`Create or login OIDC user ${JSON.stringify(reqUser)}`);
         let user: UserDoc = await this.usersService.findOne(reqUser.sub);
         if (!user) {
             const userId: string = await this.commandBus.execute(new RegisterOidcUserCommand(reqUser));
