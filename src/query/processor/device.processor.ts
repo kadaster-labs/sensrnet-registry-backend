@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ObservationGoalLinked, ObservationGoalUnlinked } from 'src/core/events/sensordevice/datastream';
-import { DatastreamAdded, DatastreamRemoved, DatastreamUpdated } from '../../core/events/sensordevice/datastream';
+import { DatastreamAdded, DatastreamRemoved, DatastreamUpdated, ObservationGoalLinked, ObservationGoalUnlinked } from '../../core/events/sensordevice/datastream';
+import { DeviceLocated, DeviceRegistered, DeviceRelocated, DeviceRemoved, DeviceUpdated } from '../../core/events/sensordevice/device';
 import { SensorAdded, SensorRemoved, SensorUpdated } from '../../core/events/sensordevice/sensor';
 import { SensorDeviceEvent } from '../../core/events/sensordevice/sensordevice.event';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
@@ -11,7 +11,6 @@ import { IDevice } from '../model/device.model';
 import { IObservationGoal } from '../model/observation-goal.model';
 import { IRelation, RelationVariant, TargetVariant } from '../model/relation.model';
 import { AbstractProcessor } from './abstract.processor';
-import { DeviceLocated, DeviceRegistered, DeviceRelocated, DeviceRemoved, DeviceUpdated } from '../../core/events/sensordevice/device';
 
 @Injectable()
 export class DeviceProcessor extends AbstractProcessor {
@@ -160,7 +159,7 @@ export class DeviceProcessor extends AbstractProcessor {
 
     const sensorFilter = {
       '_id': event.deviceId,
-      'sensors._id': {$ne: event.sensorId},
+      'sensors._id': { $ne: event.sensorId },
     };
 
     try {
@@ -228,7 +227,7 @@ export class DeviceProcessor extends AbstractProcessor {
 
     const dataStreamFilter = {
       '_id': event.deviceId,
-      'dataStreams._id': {$ne: event.dataStreamId},
+      'dataStreams._id': { $ne: event.dataStreamId },
     };
 
     try {
@@ -306,7 +305,7 @@ export class DeviceProcessor extends AbstractProcessor {
     const dataStreamFilter = {
       '_id': event.deviceId,
       'dataStreams._id': event.dataStreamId,
-      'dataStreams.observationGoalIds': {$ne: event.observationGoalId},
+      'dataStreams.observationGoalIds': { $ne: event.observationGoalId },
     };
 
     const dataStreamUpdate = {
