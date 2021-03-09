@@ -23,6 +23,8 @@ import { OrganizationEsListener } from './processor/organization-es-listener';
 import { RetrieveOrganizationQueryHandler } from './handler/retrieve-organization.handler';
 import { RetrieveOrganizationsQueryHandler } from './handler/retrieve-organizations.handler';
 import { OrganizationsController } from './controller/organizations.controller';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Module({
     imports: [
@@ -30,9 +32,9 @@ import { OrganizationsController } from './controller/organizations.controller';
         AuthModule,
         CheckpointModule,
         EventStoreModule,
-        MongooseModule.forFeature([{name: User.name, schema: UserSchema}]),
-        MongooseModule.forFeature([{name: 'Sensor', schema: SensorSchema}]),
-        MongooseModule.forFeature([{name: 'Organization', schema: OrganizationSchema}]),
+        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+        MongooseModule.forFeature([{ name: 'Sensor', schema: SensorSchema }]),
+        MongooseModule.forFeature([{ name: 'Organization', schema: OrganizationSchema }]),
     ], controllers: [
         SensorController,
         SensorESController,
@@ -52,7 +54,11 @@ import { OrganizationsController } from './controller/organizations.controller';
         RetrieveSensorsQueryHandler,
         RetrieveOrganizationQueryHandler,
         RetrieveOrganizationsQueryHandler,
+        {
+            provide: APP_GUARD,
+            useClass: JwtAuthGuard,
+        },
     ],
 })
 
-export class QueryModule {}
+export class QueryModule { }

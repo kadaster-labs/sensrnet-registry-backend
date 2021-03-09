@@ -1,5 +1,5 @@
 import { QueryBus } from '@nestjs/cqrs';
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { RetrieveOrganizationsQuery } from '../model/retrieve-organizations.query';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { OrganizationsParams } from './model/organizations-params';

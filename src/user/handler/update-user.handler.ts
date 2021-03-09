@@ -19,9 +19,6 @@ export class UpdateUserCommandHandler implements ICommandHandler<UpdateUserComma
 
     let updateFields = {};
     updateFields = {organizationId: command.organization, ...updateFields};
-    if (command.password) {
-      updateFields = {password: command.password, ...updateFields};
-    }
 
     await this.usersService.updateOne(command.id, updateFields);
   }

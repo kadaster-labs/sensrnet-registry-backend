@@ -9,8 +9,8 @@ export class UserService {
         @InjectModel(User.name) private userModel: Model<UserDoc>,
     ) { }
 
-    async findOne(sub: string): Promise<UserDoc | undefined> {
-        return this.userModel.findOne({ 'oidc.sub': sub });
+    async findOne(_id: string): Promise<UserDoc | undefined> {
+        return this.userModel.findOne({ _id });
     }
 
     async updateOne(_id: string, updateFields: Record<string, any>): Promise<any> {

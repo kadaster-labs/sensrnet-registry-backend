@@ -1,11 +1,10 @@
-import { Logger, UseGuards } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { AuthService } from '../../auth/auth.service';
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage,
     MessageBody } from '@nestjs/websockets';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
 @WebSocketGateway({
     namespace: 'sensor',
     path: '/api/socket.io',

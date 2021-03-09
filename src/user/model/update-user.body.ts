@@ -9,12 +9,4 @@ export class UpdateUserBody {
         description: 'The id of the organization to join.',
     })
     readonly organization: string;
-
-    @IsString()
-    @IsOptional()
-    @ApiProperty({
-        type: String,
-        description: 'The user password.',
-    })
-    readonly password: string;
 }
