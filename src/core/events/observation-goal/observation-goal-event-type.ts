@@ -5,7 +5,7 @@ import { getObservationGoalUpdatedEvent, ObservationGoalUpdated } from './update
 
 class ObservationGoalEventType extends AbstractEventType {
   constructor() {
-    super('observationgoal');
+    super();
 
     this.add(ObservationGoalRegistered, getObservationGoalRegisteredEvent);
     this.add(ObservationGoalUpdated, getObservationGoalUpdatedEvent);

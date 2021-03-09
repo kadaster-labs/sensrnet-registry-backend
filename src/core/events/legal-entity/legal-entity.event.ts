@@ -1,9 +1,9 @@
 import { Event } from '../../../event-store/event';
-import { legalEntityEventType } from './legal-entity-event-type';
+import { legalEntityStreamRootValue } from './legal-entity.stream';
 
 export abstract class LegalEntityEvent extends Event {
 
-  static streamRootValue = legalEntityEventType.streamRootValue;
+  static streamRootValue = legalEntityStreamRootValue;
 
   protected constructor(legalEntityId: string, version: string) {
     super(legalEntityId, version);

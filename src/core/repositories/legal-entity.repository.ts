@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventStore } from '../../event-store/event-store';
 import { LegalEntityAggregate } from '../aggregates/legal-entity.aggregate';
-import { legalEntityEventType } from '../events/legal-entity/legal-entity-event-type';
+import { legalEntityStreamRootValue } from '../events/legal-entity/legal-entity.stream';
 
 @Injectable()
 export class LegalEntityRepository {
@@ -9,7 +9,7 @@ export class LegalEntityRepository {
   readonly streamRootValue: string;
 
   constructor(private readonly eventStore: EventStore) {
-    this.streamRootValue = legalEntityEventType.streamRootValue;
+    this.streamRootValue = legalEntityStreamRootValue;
   }
 
   async get(aggregateId: string): Promise<LegalEntityAggregate> {

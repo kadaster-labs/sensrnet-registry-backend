@@ -1,9 +1,9 @@
 import { Event } from '../../../event-store/event';
-import { observationGoalEventType } from './observation-goal-event-type';
+import { observationGoalStreamRootValue } from './observation-goal.stream';
 
 export abstract class ObservationGoalEvent extends Event {
 
-  static streamRootValue = observationGoalEventType.streamRootValue;
+  static streamRootValue = observationGoalStreamRootValue;
 
   protected constructor(observationGoalId: string, version: string) {
     super(observationGoalId, version);

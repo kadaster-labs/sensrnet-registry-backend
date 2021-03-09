@@ -15,7 +15,7 @@ import { getSensorUpdatedEvent, SensorUpdated } from './sensor/updated';
 
 class SensorDeviceEventType extends AbstractEventType {
   constructor() {
-    super('sensordevice');
+    super();
 
     this.add(DeviceRegistered, getDeviceRegisteredEvent);
     this.add(DeviceUpdated, getDeviceUpdatedEvent);

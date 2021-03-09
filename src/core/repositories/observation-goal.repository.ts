@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventStore } from '../../event-store/event-store';
 import { ObservationGoalAggregate } from '../aggregates/observation-goal.aggregate';
-import { observationGoalEventType } from '../events/observation-goal/observation-goal-event-type';
+import { observationGoalStreamRootValue } from '../events/observation-goal/observation-goal.stream';
 
 @Injectable()
 export class ObservationGoalRepository {
@@ -9,7 +9,7 @@ export class ObservationGoalRepository {
   readonly streamRootValue: string;
 
   constructor(private readonly eventStore: EventStore) {
-    this.streamRootValue = observationGoalEventType.streamRootValue;
+    this.streamRootValue = observationGoalStreamRootValue;
   }
 
   async get(aggregateId: string): Promise<ObservationGoalAggregate> {

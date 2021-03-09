@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventStore } from '../../event-store/event-store';
 import { DeviceAggregate } from '../aggregates/device.aggregate';
-import { sensorDeviceEventType } from '../events/sensordevice/sensordevice-event-type';
+import { sensorDeviceStreamRootValue } from '../events/sensordevice/sensordevice.stream';
 
 @Injectable()
 export class DeviceRepository {
@@ -9,7 +9,7 @@ export class DeviceRepository {
   readonly streamRootValue: string;
 
   constructor(private readonly eventStore: EventStore) {
-    this.streamRootValue = sensorDeviceEventType.streamRootValue;
+    this.streamRootValue = sensorDeviceStreamRootValue;
   }
 
   async get(aggregateId: string): Promise<DeviceAggregate> {

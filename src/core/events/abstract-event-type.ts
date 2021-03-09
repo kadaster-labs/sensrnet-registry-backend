@@ -4,11 +4,7 @@ import { Event } from '../../event-store/event';
 
 export abstract class AbstractEventType {
 
-  public readonly streamRootValue: string;
-
-  constructor(streamRootValue: string) {
-    this.streamRootValue = streamRootValue;
-  }
+  constructor() { }
 
   public supportedTypes: Record<string, any> = {};
 

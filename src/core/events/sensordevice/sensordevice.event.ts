@@ -1,9 +1,9 @@
 import { Event } from '../../../event-store/event';
-import { sensorDeviceEventType } from './sensordevice-event-type';
+import { sensorDeviceStreamRootValue } from './sensordevice.stream';
 
 export abstract class SensorDeviceEvent extends Event {
 
-  static streamRootValue = sensorDeviceEventType.streamRootValue;
+  static streamRootValue = sensorDeviceStreamRootValue;
 
   readonly deviceId: string;
 
