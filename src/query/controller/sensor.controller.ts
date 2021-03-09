@@ -7,9 +7,8 @@ import { RetrieveSensorsParams } from './model/retrieve-sensors-params';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Controller, Get, Param, Query, UseGuards, UseFilters, Req } from '@nestjs/common';
-import { AuthenticatedGuard } from '../../auth/authenticated.guard';
-import { UserToken } from '../../auth/models/user-token';
 import { UserService } from '../../user/user.service';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @ApiTags('Sensor')
 @Controller('sensor')
@@ -29,15 +28,15 @@ export class SensorController {
   }
 
   @Get()
-  @UseGuards(AuthenticatedGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Retrieve Sensors' })
   @ApiResponse({ status: 200, description: 'Sensors retrieved' })
   @ApiResponse({ status: 400, description: 'Sensors retrieval failed' })
   async retrieveSensors(@Req() req: Request, @Query() sensorParams: RetrieveSensorsParams): Promise<any> {
-    const user: UserToken = req.user as UserToken;
+    const user: any = req['user'] as any;
     let requestOrganizationId: string;
     if (user) {
-      requestOrganizationId = await this.userService.getOrganizationId(user.userinfo.sub);
+      requestOrganizationId = await this.userService.getOrganizationId(user.userId);;
     }
     return await this.queryBus.execute(new RetrieveSensorsQuery(requestOrganizationId, sensorParams.bottomLeftLongitude,
         sensorParams.bottomLeftLatitude, sensorParams.upperRightLongitude, sensorParams.upperRightLatitude,

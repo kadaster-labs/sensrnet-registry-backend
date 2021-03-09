@@ -3,7 +3,6 @@ import { QueryBus } from '@nestjs/cqrs';
 import { Controller, Get, UseGuards, Req } from '@nestjs/common';
 import { RetrieveOrganizationQuery } from '../model/retrieve-organization.query';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UserToken } from '../../auth/models/user-token';
 import { UserService } from '../../user/user.service';
 
 @ApiBearerAuth()
@@ -20,8 +19,8 @@ export class OrganizationController {
   @ApiResponse({ status: 200, description: 'Organization retrieved' })
   @ApiResponse({ status: 400, description: 'Organization retrieval failed' })
   async retrieveOrganization(@Req() req: Request): Promise<any> {
-    const user: UserToken = req.user as UserToken;
-    const organizationId: string = await this.userService.getOrganizationId(user.userinfo.sub);
+    const user: any = req['user'] as any;
+    const organizationId: string = await this.userService.getOrganizationId(user.userId);;
     return await this.queryBus.execute(new RetrieveOrganizationQuery(organizationId));
   }
 }

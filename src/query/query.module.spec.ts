@@ -15,7 +15,7 @@ import { RetrieveSensorQueryHandler } from './handler/sensor.handler';
 import { CommandBus, CqrsModule, EventPublisher } from '@nestjs/cqrs';
 import { RetrieveSensorsQueryHandler } from './handler/sensors.handler';
 import { RetrieveOrganizationQueryHandler } from './handler/retrieve-organization.handler';
-import { AccessJwtStrategy } from '../auth/access-jwt.strategy';
+import { AccessJwtStrategy } from '../auth/jwt.strategy';
 
 const testObjects = [
     {

@@ -4,9 +4,8 @@ import { UpdateUserCommand } from './command/update-user.command';
 import { DomainExceptionFilter } from '../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UseFilters, Controller, Req, Body, Put, Get, UseGuards, Request } from '@nestjs/common';
-import { UserToken } from '../auth/models/user-token';
-import { AuthenticatedGuard } from '../auth/authenticated.guard';
 import { UserService } from './user.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('User')
 @Controller('user')
@@ -23,11 +22,11 @@ export class UserController {
     @ApiResponse({ status: 200, description: 'User updated' })
     @ApiResponse({ status: 400, description: 'User update failed' })
     async updateUser(@Request() req, @Body() userBody: UpdateUserBody): Promise<any> {
-        const user: UserToken = req.user as UserToken;
+        const user: any = req['user'] as any;
         return await this.commandBus.execute(new UpdateUserCommand(user.userinfo.sub, userBody.organization));
     }
 
-    @UseGuards(AuthenticatedGuard)
+    @UseGuards(JwtAuthGuard)
     @Get()
     async user(@Request() req) {
 

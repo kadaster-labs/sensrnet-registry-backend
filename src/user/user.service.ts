@@ -10,7 +10,7 @@ export class UserService {
     ) { }
 
     async findOne(sub: string): Promise<UserDoc | undefined> {
-        return this.userModel.findOne({ 'oidc.userinfo.sub': sub });
+        return this.userModel.findOne({ 'oidc.sub': sub });
     }
 
     async updateOne(_id: string, updateFields: Record<string, any>): Promise<any> {

@@ -1,4 +1,3 @@
-import { TokenSet } from 'openid-client';
 import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Organization } from '../query/data/organization.interface';
@@ -14,7 +13,7 @@ export class User {
     email: string;
 
     @Prop({ type: Types.Map })
-    oidc?: TokenSet;
+    oidc?: Record<string, any>;
 
     @Prop({ type: String })
     organizationId?: Organization['_id'];
