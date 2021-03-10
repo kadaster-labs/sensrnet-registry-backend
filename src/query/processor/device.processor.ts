@@ -56,9 +56,10 @@ export class DeviceProcessor extends AbstractProcessor {
 
     if (event instanceof DeviceRegistered || event instanceof DeviceUpdated || event instanceof DeviceRemoved) {
       const eventRecord = event as Record<string, any>;
-      const device = await this.deviceModel.findOne({ _id: event.deviceId });
-      const deviceRecord = device ? device.toObject() : {};
-      this.deviceGateway.emit(event.constructor.name, [eventRecord.legalEntityId], deviceRecord);
+      const device = await this.deviceModel.findOne({_id: event.deviceId});
+      if (device) {
+        this.deviceGateway.emit(event.constructor.name, [eventRecord.legalEntityId], device.toObject());
+      }
     }
   }
 

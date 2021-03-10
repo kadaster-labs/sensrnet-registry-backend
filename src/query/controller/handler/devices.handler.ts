@@ -4,6 +4,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { RetrieveDevicesQuery } from '../query/devices.query';
 import { IRelation, TargetVariant } from '../../model/relation.model';
 import { IDevice } from '../../model/device.model';
+import { Logger } from '@nestjs/common';
 
 @QueryHandler(RetrieveDevicesQuery)
 export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevicesQuery> {
@@ -89,9 +90,9 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         const hasLegalEntityFilter = Object.keys(legalEntityFilter).length > 0;
         if (hasLocationFilter && hasLegalEntityFilter) {
             deviceFilter = {
-                $or: [
-                    hasLocationFilter,
-                    hasLegalEntityFilter,
+                $and: [
+                    locationFilter,
+                    legalEntityFilter,
                 ],
             };
         } else if (hasLocationFilter) {
