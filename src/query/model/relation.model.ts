@@ -26,6 +26,7 @@ export const RelationSchema = new Schema({
     targetVariant: { type: Number, required: true },
     targetId: { type: String, required: true },
 });
-RelationSchema.index({ legalEntityId: 1, targetVariant: 1, targetId: 1 });
+RelationSchema.index({ legalEntityId: 1 });
+RelationSchema.index({ targetVariant: 1, targetId: 1 });
 
 export const Relation = model<IRelation, Model<IRelation>>('Relation', RelationSchema);
