@@ -1,9 +1,12 @@
-import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-import { AuthService } from '../../auth/auth.service';
+
+import { Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage,
     MessageBody } from '@nestjs/websockets';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+
+import { AuthService } from '../../auth/auth.service';
+import { UserService } from '../../user/user.service';
 
 @WebSocketGateway({
     namespace: 'sensor',
@@ -15,7 +18,9 @@ export class SensorGateway implements OnGatewayConnection {
     private logger: Logger = new Logger(this.constructor.name);
 
     constructor(
-        private authService: AuthService,
+        private readonly authService: AuthService,
+        private readonly jwtService: JwtService,
+        private readonly userService: UserService,
     ) {}
 
     setupRoom(client: Socket, organizationId?: string): void {
@@ -33,13 +38,10 @@ export class SensorGateway implements OnGatewayConnection {
             const authToken = authHeader && authHeader.length > 7 ? authHeader.substring(7, authHeader.length) : '';
 
             try {
-                // TODO: get sockets working again. How to send userId / organizationId to client?
-                // Hints at: https://github.com/nestjs/nest/issues/3206#issuecomment-543767894
-                const userInfo = {
-                    organizationId: '123',
-                }
+                const token = this.jwtService.decode(authToken);
+                const organizationId: string = await this.userService.getOrganizationId(token.sub);
 
-                this.setupRoom(client, userInfo.organizationId);
+                this.setupRoom(client, organizationId);
             } catch {
                 client.disconnect(true);
                 this.logger.log('Failed to authenticate websocket client.');

@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+
 import { User, UserSchema } from '../user/user.model';
 import { AuthModule } from '../auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -28,6 +30,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Module({
     imports: [
+        JwtModule.register({}),
         CqrsModule,
         AuthModule,
         CheckpointModule,
