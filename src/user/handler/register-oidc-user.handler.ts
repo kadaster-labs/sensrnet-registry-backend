@@ -19,7 +19,7 @@ export class RegisterOidcUserCommandHandler implements ICommandHandler<RegisterO
     Logger.log('Going to register user');
     const userInstance = new this.userModel({
       _id: command.token.sub,
-      email: command.token.preferred_username, // TODO: email
+      email: command.token.email,
       oidc: command.token,
       role: 'user',
     });
