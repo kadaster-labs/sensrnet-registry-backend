@@ -1,4 +1,4 @@
-issuer: http://localhost:5556/dex
+issuer: http://localhost:4200/dex
 
 storage:
   type: sqlite3
@@ -20,12 +20,17 @@ staticClients:
 enablePasswordDB: true
 
 staticPasswords:
-- email: "stefan@kadaster.nl"
+- email: "admin@sensrnet.nl"
   hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"  # hash for: password
   userID: "1"
   username: "admin"
-  name: "Stefan admin"
+  name: "Admin user"
 
 oauth2:
   responseTypes: [ "code", "token", "id_token" ]
   skipApprovalScreen: true
+
+connectors:
+  - type: microsoft
+    id: microsoft
+    name: Microsoft
