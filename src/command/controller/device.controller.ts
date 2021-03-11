@@ -21,7 +21,7 @@ import { UpdateLocationBody } from './model/location/update-location.body';
 export class DeviceController {
     constructor(
         private readonly commandBus: CommandBus,
-    ) { }
+    ) {}
 
     @Post()
     @UseFilters(new DomainExceptionFilter())

@@ -1,10 +1,9 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { IDevice } from '../../model/device.model';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { RetrieveDevicesQuery } from '../query/devices.query';
 import { IRelation, TargetVariant } from '../../model/relation.model';
-import { IDevice } from '../../model/device.model';
-import { Logger } from '@nestjs/common';
 
 @QueryHandler(RetrieveDevicesQuery)
 export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevicesQuery> {
@@ -39,6 +38,19 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
     }
 
     async execute(retrieveDevicesQuery: RetrieveDevicesQuery): Promise<any> {
+        let myDeviceIds;
+        if (retrieveDevicesQuery.requestLegalEntityId) {
+            const relationFilter = {
+                legalEntityId: retrieveDevicesQuery.requestLegalEntityId,
+                targetVariant: TargetVariant.DEVICE,
+            };
+            const myRelations = await this.relationModel.find(relationFilter);
+            myDeviceIds = myRelations.map((x) => x.targetId);
+        } else {
+            myDeviceIds = [];
+        }
+        const myDeviceIdsSet = new Set(myDeviceIds);
+
         const locationFilter: Record<string, any> = {};
         const legalEntityFilter: Record<string, any> = {};
 
@@ -59,12 +71,6 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
 
             if (pointDistance > this.showDevicesDistance) {
                 if (retrieveDevicesQuery.requestLegalEntityId) {
-                    const relationFilter = {
-                        legalEntityId: retrieveDevicesQuery.requestLegalEntityId,
-                        targetVariant: TargetVariant.DEVICE,
-                    };
-                    const myRelations = await this.relationModel.find(relationFilter);
-                    const myDeviceIds = myRelations.map((x) => x.targetId);
                     legalEntityFilter._id = {
                         $in: myDeviceIds,
                     };
@@ -75,10 +81,10 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
                 legalEntityId: retrieveDevicesQuery.legalEntityId,
                 targetVariant: TargetVariant.DEVICE,
             };
-            const myRelations = await this.relationModel.find(relationFilter);
-            const myDeviceIds = myRelations.map((x) => x.targetId);
+            const relations = await this.relationModel.find(relationFilter);
+            const deviceIds = relations.map((x) => x.targetId);
             legalEntityFilter._id = {
-                $in: myDeviceIds,
+                $in: deviceIds,
             };
         }
 
@@ -103,6 +109,14 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
             deviceFilter = {};
         }
 
-        return deviceFilter ? this.model.find(deviceFilter, {}, { skip: start, limit: stop }) : [];
+        const devices = [];
+        if (deviceFilter) {
+            const mongoDevices = await this.model.find(deviceFilter, {}, { skip: start, limit: stop });
+            for (const device of mongoDevices) {
+                devices.push({canEdit: myDeviceIdsSet.has(device._id), ...device.toObject()});
+            }
+        }
+
+        return devices;
     }
 }

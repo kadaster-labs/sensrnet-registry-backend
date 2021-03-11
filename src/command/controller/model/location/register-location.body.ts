@@ -2,14 +2,14 @@ import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { LocationBody } from './location.body';
 import { LongitudeLatitudeValidator } from '../../validation/location';
-import { IsString, IsNumber, IsNotEmpty, IsArray, ArrayMinSize, ArrayMaxSize, Validate } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, IsArray, ArrayMinSize, ArrayMaxSize, Validate, IsOptional } from 'class-validator';
 
 export class RegisterLocationBody extends LocationBody {
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty({
         type: String,
-        required: true,
+        required: false,
         description: 'Location name.',
     })
     readonly name: string;

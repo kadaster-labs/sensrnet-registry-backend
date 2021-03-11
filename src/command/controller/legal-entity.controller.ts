@@ -26,6 +26,7 @@ export class LegalEntityController {
   constructor(private readonly commandBus: CommandBus) { }
 
   @Post()
+  @UseGuards(AccessJwtAuthGuard)
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Register legal entity' })
   @ApiResponse({ status: 200, description: 'Legal entity registered' })

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DatastreamAdded, DatastreamRemoved, DatastreamUpdated, ObservationGoalLinked, ObservationGoalUnlinked } from '../../core/events/sensordevice/datastream';
@@ -67,7 +67,7 @@ export class DeviceProcessor extends AbstractProcessor {
         legalEntityId: 1,
       };
       const legalEntityIds = await this.relationModel.find(relationFilter, relationResult);
-      this.deviceGateway.emit(event.constructor.name, legalEntityIds.map(x => x.legalEntityId), device.toObject());
+      this.deviceGateway.emit(event.constructor.name, legalEntityIds.map(x => x.legalEntityId), {canEdit: true, ...device.toObject()});
     }
   }
 
