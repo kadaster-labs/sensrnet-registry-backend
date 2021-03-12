@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Event as ESEvent } from 'geteventstore-promise';
-import { AbstractEsListener } from './abstract.es.listener';
-import { CheckpointService } from '../service/checkpoint/checkpoint.service';
-import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import { ObservationGoalProcessor } from './observationgoal.processor';
+import { observationGoalStreamRootValue } from 'src/core/events/observation-goal';
 import { observationGoalEventType } from '../../core/events/observation-goal/observation-goal-event-type';
 import { ObservationGoalEvent } from '../../core/events/observation-goal/observation-goal.event';
+import { EventStorePublisher } from '../../event-store/event-store.publisher';
+import { CheckpointService } from '../service/checkpoint/checkpoint.service';
+import { AbstractEsListener } from './abstract.es.listener';
+import { ObservationGoalProcessor } from './observationgoal.processor';
 
 @Injectable()
 export class ObservationGoalEsListener extends AbstractEsListener {
@@ -15,10 +16,11 @@ export class ObservationGoalEsListener extends AbstractEsListener {
         checkpointService: CheckpointService,
         processor: ObservationGoalProcessor,
     ) {
-        super('backend-observationgoal-es', '$ce-observationgoal', eventStore, checkpointService, processor);
+        super(`backend-${observationGoalStreamRootValue}-es`, `$ce-${observationGoalStreamRootValue}`, eventStore, checkpointService, processor);
     }
 
     parseEvent(eventMessage: ESEvent): ObservationGoalEvent {
         return observationGoalEventType.getEvent(eventMessage) as ObservationGoalEvent;
     }
+
 }

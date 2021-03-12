@@ -4,7 +4,7 @@ import { AbstractEsController } from './abstract.es.controller';
 import { Controller, UseGuards, UseFilters } from '@nestjs/common';
 import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
-import { LegalEntityEsListener } from '../processor/legal-entity-es-listener.service';
+import { LegalEntityEsListener } from '../processor/legal-entity.es.listener';
 
 @ApiBearerAuth()
 @ApiTags('Legal Entity ES')

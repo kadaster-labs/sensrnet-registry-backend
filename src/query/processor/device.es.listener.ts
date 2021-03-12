@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Event as ESEvent } from 'geteventstore-promise';
+import { sensorDeviceEventType, sensorDeviceStreamRootValue } from '../../core/events/sensordevice';
+import { SensorDeviceEvent } from '../../core/events/sensordevice/sensordevice.event';
+import { EventStorePublisher } from '../../event-store/event-store.publisher';
+import { CheckpointService } from '../service/checkpoint/checkpoint.service';
 import { AbstractEsListener } from './abstract.es.listener';
 import { DeviceProcessor } from './device.processor';
-import { sensorDeviceEventType } from '../../core/events/sensordevice';
-import { CheckpointService } from '../service/checkpoint/checkpoint.service';
-import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import { SensorDeviceEvent } from '../../core/events/sensordevice/sensordevice.event';
 
 @Injectable()
 export class DeviceEsListener extends AbstractEsListener {
@@ -15,10 +15,11 @@ export class DeviceEsListener extends AbstractEsListener {
         checkpointService: CheckpointService,
         processor: DeviceProcessor,
     ) {
-        super('backend-sensordevice-es', '$ce-sensordevice', eventStore, checkpointService, processor);
+        super(`backend-${sensorDeviceStreamRootValue}-es`, `$ce-${sensorDeviceStreamRootValue}`, eventStore, checkpointService, processor);
     }
 
     parseEvent(eventMessage: ESEvent): SensorDeviceEvent {
         return sensorDeviceEventType.getEvent(eventMessage) as SensorDeviceEvent;
     }
+
 }

@@ -18,7 +18,7 @@ import { CheckpointModule } from './service/checkpoint/checkpoint.module';
 import { LegalEntityProcessor } from './processor/legal-entity.processor';
 import { LegalEntityController } from './controller/legal-entity.controller';
 import { LegalEntityEsController } from './controller/legal-entity.es.controller';
-import { LegalEntityEsListener } from './processor/legal-entity-es-listener.service';
+import { LegalEntityEsListener } from './processor/legal-entity.es.listener';
 import { LegalEntityQueryHandler } from './controller/handler/legal-entity.handler';
 import { LegalEntitiesQueryHandler } from './controller/handler/legal-entities.handler';
 import { LegalEntitiesController } from './controller/legal-entities.controller';
