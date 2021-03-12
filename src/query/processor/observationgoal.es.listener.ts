@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Event as ESEvent } from 'geteventstore-promise';
-import { observationGoalStreamRootValue } from 'src/core/events/observation-goal';
+import { observationGoalStreamRootValue } from '../../core/events/observation-goal';
 import { observationGoalEventType } from '../../core/events/observation-goal/observation-goal-event-type';
 import { ObservationGoalEvent } from '../../core/events/observation-goal/observation-goal.event';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
