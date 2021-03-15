@@ -1,7 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { UserService } from '../user/user.service';
+import { Injectable, Logger } from '@nestjs/common';
 import { passportJwtSecret } from 'jwks-rsa';
 import { AuthService } from './auth.service';
 
@@ -17,8 +16,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'access') {
         rateLimit: true,
         jwksRequestsPerMinute: 5,
         jwksUri: process.env.OIDC_JWKS_URL,
+        handleSigningKeyError: (err, cb) => {
+          Logger.warn(`Could not verify token signature: ${JSON.stringify(err.name)}`);
+          return cb(err);
+        }
       }),
-      issuer: process.env.OIDC_ISSUER_URL,
+      issuer: process.env.OIDC_ISSUER,
       audience: process.env.OIDC_AUDIENCE,
       algorithms: ['RS256'],
     });

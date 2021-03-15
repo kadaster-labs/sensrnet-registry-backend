@@ -14,21 +14,20 @@ spec:
           value: eventstore-cluster
         - name: EVENT_STORE_PORT
           value: eventstore-tcp
-        - name: JWT_SECRET
-          valueFrom:
-              secretKeyRef:
-                name: backend-secret
-                key: jwt-secret
-        - name: JWT_ACCESS_EXPIRES_IN
-          value: "86400"
-        - name: JWT_REFRESH_EXPIRES_IN
-          value: "604800"
         - name: MONGO_DATABASE
           value: sensrnet
         - name: MONGO_HOST
           value: mongo
         - name: MONGO_PORT
           value: mongo
+        - name: REQUIRE_AUTHENTICATION
+          value: "true"
+        - name: OIDC_ISSUER
+          value: http://localhost/dex
+        - name: OIDC_JWKS_URL
+          value: http://dex.dex.svc.cluster.local:5556/dex/keys
+        - name: OIDC_AUDIENCE
+          value: registry-frontend
         ports:
         - name: http
           containerPort: 3000
