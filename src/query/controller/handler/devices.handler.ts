@@ -51,7 +51,7 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         }
         const myDeviceIdsSet = new Set(myDeviceIds);
 
-        const locationFilter: Record<string, any> = {};
+        let locationFilter: Record<string, any> = {};
         const legalEntityFilter: Record<string, any> = {};
 
         if (retrieveDevicesQuery.bottomLeftLongitude && retrieveDevicesQuery.bottomLeftLatitude &&
@@ -74,6 +74,8 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
                     legalEntityFilter._id = {
                         $in: myDeviceIds,
                     };
+                } else {
+                    locationFilter = null;
                 }
             }
         } else if (retrieveDevicesQuery.legalEntityId) {
@@ -92,8 +94,8 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         const stop = start + this.pageSize;
 
         let deviceFilter: Record<string, any>;
-        const hasLocationFilter = Object.keys(locationFilter).length > 0;
-        const hasLegalEntityFilter = Object.keys(legalEntityFilter).length > 0;
+        const hasLocationFilter = locationFilter && Object.keys(locationFilter).length;
+        const hasLegalEntityFilter = legalEntityFilter && Object.keys(legalEntityFilter).length;
         if (hasLocationFilter && hasLegalEntityFilter) {
             deviceFilter = {
                 $and: [
@@ -110,7 +112,7 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         }
 
         const devices = [];
-        if (deviceFilter) {
+        if (deviceFilter && Object.keys(deviceFilter).length) {
             const mongoDevices = await this.model.find(deviceFilter, {}, { skip: start, limit: stop });
             for (const device of mongoDevices) {
                 devices.push({canEdit: myDeviceIdsSet.has(device._id), ...device.toObject()});
