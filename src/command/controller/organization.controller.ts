@@ -11,7 +11,6 @@ import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RegisterOrganizationCommand } from '../model/register-organization.command';
 import { UseFilters, Controller, Post, Body, Put, Delete, Request, Param } from '@nestjs/common';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @ApiTags('Organization')
 @Controller('organization')

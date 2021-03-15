@@ -7,8 +7,6 @@ import { UserController } from './user.controller';
 import { CommandModule } from '../command/command.module';
 import { UpdateUserCommandHandler } from './handler/update-user.handler';
 import { RegisterOidcUserCommandHandler } from './handler/register-oidc-user.handler';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Module({
     imports: [
@@ -22,10 +20,6 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
         // user
         UpdateUserCommandHandler,
         RegisterOidcUserCommandHandler,
-        {
-            provide: APP_GUARD,
-            useClass: JwtAuthGuard,
-        },
     ], exports: [
         UserService,
     ],

@@ -25,8 +25,6 @@ import { OrganizationEsListener } from './processor/organization-es-listener';
 import { RetrieveOrganizationQueryHandler } from './handler/retrieve-organization.handler';
 import { RetrieveOrganizationsQueryHandler } from './handler/retrieve-organizations.handler';
 import { OrganizationsController } from './controller/organizations.controller';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Module({
     imports: [
@@ -57,10 +55,6 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
         RetrieveSensorsQueryHandler,
         RetrieveOrganizationQueryHandler,
         RetrieveOrganizationsQueryHandler,
-        {
-            provide: APP_GUARD,
-            useClass: JwtAuthGuard,
-        },
     ],
 })
 

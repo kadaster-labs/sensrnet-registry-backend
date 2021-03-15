@@ -23,8 +23,6 @@ import { OrganizationRepository } from '../core/repositories/organization.reposi
 import { UpdateSensorLocationCommandHandler } from './handler/update-sensor-location.handler';
 import { ShareSensorOwnershipCommandHandler } from './handler/share-sensor-ownership.handler';
 import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor-ownership.handler';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Module({
     controllers: [
@@ -57,10 +55,6 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
         UpdateSensorLocationCommandHandler,
         ShareSensorOwnershipCommandHandler,
         TransferSensorOwnershipCommandHandler,
-        {
-            provide: APP_GUARD,
-            useClass: JwtAuthGuard,
-        },
     ], exports: [
         OrganizationRepository,
     ],
