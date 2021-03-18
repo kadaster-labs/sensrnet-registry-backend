@@ -27,17 +27,23 @@ export class DeviceProcessor extends AbstractProcessor {
 
   async process(event: SensorDeviceEvent): Promise<void> {
     let device: IDevice;
+    let legalEntityIds: string[];
 
     if (event instanceof DeviceRegistered) {
       device = await this.processDeviceRegistered(event);
+      legalEntityIds = await this.getDeviceLegalEntityIds(event);
     } else if (event instanceof DeviceUpdated) {
       device = await this.processDeviceUpdated(event);
+      legalEntityIds = await this.getDeviceLegalEntityIds(event);
     } else if (event instanceof DeviceRemoved) {
+      legalEntityIds = await this.getDeviceLegalEntityIds(event);
       device = await this.processDeviceDeleted(event);
     } else if (event instanceof DeviceLocated) {
       device = await this.processDeviceLocated(event);
+      legalEntityIds = await this.getDeviceLegalEntityIds(event);
     } else if (event instanceof DeviceRelocated) {
       device = await this.processDeviceRelocated(event);
+      legalEntityIds = await this.getDeviceLegalEntityIds(event);
     } else if (event instanceof SensorAdded) {
       await this.processSensorAdded(event);
     } else if (event instanceof SensorUpdated) {
@@ -56,19 +62,17 @@ export class DeviceProcessor extends AbstractProcessor {
       await this.processObservationGoalUnlinked(event);
     }
 
-    if (device) {
-      const eventRecord = event as Record<string, any>;
-      const relationFilter = {
-        targetVariant: TargetVariant.DEVICE,
-        targetId: eventRecord.deviceId,
-      };
-      const relationResult = {
-        _id: 0,
-        legalEntityId: 1,
-      };
-      const legalEntityIds = await this.relationModel.find(relationFilter, relationResult);
-      this.deviceGateway.emit(event.constructor.name, legalEntityIds.map(x => x.legalEntityId), {canEdit: true, ...device.toObject()});
+    if (device && legalEntityIds) {
+      this.deviceGateway.emit(event.constructor.name, legalEntityIds, {canEdit: true, ...device.toObject()});
     }
+  }
+
+  async getDeviceLegalEntityIds(eventRecord: Record<string, any>): Promise<string[]> {
+    const relationFilter = { targetVariant: TargetVariant.DEVICE, targetId: eventRecord.deviceId };
+    const relationResult = { _id: 0, legalEntityId: 1 };
+    const legalEntityIds = await this.relationModel.find(relationFilter, relationResult);
+
+    return legalEntityIds.map(x => x.legalEntityId);
   }
 
   async processDeviceRegistered(event: DeviceRegistered): Promise<IDevice> {
@@ -120,23 +124,21 @@ export class DeviceProcessor extends AbstractProcessor {
   async processDeviceLocated(event: DeviceLocated): Promise<IDevice> {
     const deviceUpdate: Record<string, any> = {};
 
+    const locationDetails: Record<string, any> = {};
+    if (AbstractProcessor.defined(event.name)) {
+      locationDetails.name = event.name;
+    }
+    if (AbstractProcessor.defined(event.description)) {
+      locationDetails.description = event.description;
+    }
+    if (Object.keys(locationDetails).length) {
+      deviceUpdate.locationDetails = locationDetails;
+    }
     if (AbstractProcessor.defined(event.location)) {
-      const locationDetails: Record<string, any> = {};
-      if (AbstractProcessor.defined(event.name)) {
-        locationDetails.name = event.name;
-      }
-      if (AbstractProcessor.defined(event.description)) {
-        locationDetails.description = event.description;
-      }
-      if (Object.keys(locationDetails).length) {
-        deviceUpdate.locationDetails = locationDetails;
-      }
-      if (AbstractProcessor.defined(event.location)) {
-        deviceUpdate.location = {
-          type: 'Point',
-          coordinates: event.location,
-        };
-      }
+      deviceUpdate.location = {
+        type: 'Point',
+        coordinates: event.location,
+      };
     }
 
     let device;

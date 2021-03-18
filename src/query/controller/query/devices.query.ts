@@ -8,6 +8,7 @@ export class RetrieveDevicesQuery implements IQuery {
         public readonly upperRightLongitude?: number,
         public readonly upperRightLatitude?: number,
         public readonly pageIndex?: number,
+        public readonly pageSize?: number,
         public readonly legalEntityId?: string,
     ) {}
 }

@@ -61,6 +61,16 @@ export class RetrieveDevicesParams {
   @Type(() => Number)
   readonly pageIndex: number;
 
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({
+    type: Number,
+    required: false,
+    description: 'Page size.',
+  })
+  @Type(() => Number)
+  readonly pageSize: number;
+
   @IsString()
   @IsOptional()
   @ApiProperty({

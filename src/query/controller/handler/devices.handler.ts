@@ -90,8 +90,8 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
             };
         }
 
-        const start = retrieveDevicesQuery.pageIndex ? retrieveDevicesQuery.pageIndex * this.pageSize : 0;
-        const stop = start + this.pageSize;
+        const pageSize = typeof retrieveDevicesQuery.pageSize === 'undefined' ? this.pageSize : retrieveDevicesQuery.pageSize;
+        const start = typeof retrieveDevicesQuery.pageIndex === 'undefined' ? 0 : retrieveDevicesQuery.pageIndex * pageSize;
 
         let deviceFilter: Record<string, any>;
         const hasLocationFilter = locationFilter && Object.keys(locationFilter).length;
@@ -113,7 +113,7 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
 
         const devices = [];
         if (deviceFilter && Object.keys(deviceFilter).length) {
-            const mongoDevices = await this.model.find(deviceFilter, {}, { skip: start, limit: stop });
+            const mongoDevices = await this.model.find(deviceFilter, {}, { skip: start, limit: pageSize });
             for (const device of mongoDevices) {
                 devices.push({canEdit: myDeviceIdsSet.has(device._id), ...device.toObject()});
             }

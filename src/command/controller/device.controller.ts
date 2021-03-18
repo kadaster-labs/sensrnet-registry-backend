@@ -44,7 +44,7 @@ export class DeviceController {
     @ApiResponse({ status: 200, description: 'Device updated' })
     @ApiResponse({ status: 400, description: 'Device update failed' })
     async updateDevice(@Req() req: Request, @Param() params: DeviceIdParams,
-        @Body() deviceBody: UpdateDeviceBody): Promise<any> {
+                       @Body() deviceBody: UpdateDeviceBody): Promise<any> {
         const user: Record<string, any> = req.user;
         return await this.commandBus.execute(new UpdateDeviceCommand(params.deviceId, user.legalEntityId,
             deviceBody.name, deviceBody.description, deviceBody.category, deviceBody.connectivity, deviceBody.location));
@@ -56,7 +56,7 @@ export class DeviceController {
     @ApiResponse({ status: 200, description: 'Device relocated' })
     @ApiResponse({ status: 400, description: 'Device relocation failed' })
     async relocateDevice(@Req() req: Request, @Param() params: DeviceIdParams,
-        @Body() deviceBody: UpdateLocationBody): Promise<any> {
+                         @Body() deviceBody: UpdateLocationBody): Promise<any> {
         const user: Record<string, any> = req.user;
         return await this.commandBus.execute(new RelocateDeviceCommand(params.deviceId, user.legalEntityId, deviceBody));
     }

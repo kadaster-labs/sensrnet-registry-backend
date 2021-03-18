@@ -9,7 +9,7 @@ import { RetrieveDevicesParams } from './model/retrieve-devices-params';
 import { AccessAnonymousAuthGuard } from '../../auth/guard/access-anonymous-auth.guard';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { Controller, Get, Param, Query, UseGuards, UseFilters, Req } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, UseFilters, Req, Logger } from '@nestjs/common';
 
 @ApiTags('Device')
 @Controller('device')
@@ -35,11 +35,14 @@ export class DeviceController {
   @ApiOperation({ summary: 'Retrieve Devices' })
   @ApiResponse({ status: 200, description: 'Devices retrieved' })
   @ApiResponse({ status: 400, description: 'Devices retrieval failed' })
-  async retrieveSensors(@Req() req: Request, @Query() devicesParams: RetrieveDevicesParams): Promise<any> {
+  async retrieveDevices(@Req() req: Request, @Query() devicesParams: RetrieveDevicesParams): Promise<any> {
     const user: Record<string, any> = req.user;
     const requestLegalEntityId = user ? user.legalEntityId : undefined;
+
+    const pageSize = typeof devicesParams.pageSize === 'undefined' ? undefined : Number(devicesParams.pageSize);
+    const pageIndex = typeof devicesParams.pageIndex === 'undefined' ? undefined : Number(devicesParams.pageIndex);
     return await this.queryBus.execute(new RetrieveDevicesQuery(requestLegalEntityId, devicesParams.bottomLeftLongitude,
         devicesParams.bottomLeftLatitude, devicesParams.upperRightLongitude, devicesParams.upperRightLatitude,
-        devicesParams.pageIndex, devicesParams.legalEntityId));
+        pageIndex, pageSize, devicesParams.legalEntityId));
   }
 }

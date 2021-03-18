@@ -22,7 +22,7 @@ export class SensorBody {
   })
   readonly supplier: string;
 
-  @ValidateIf(e => e.documentationUrl !== '')
+  @ValidateIf(e => e.documentation !== '')
   @IsUrl()
   @IsOptional()
   @MaxLength(255)

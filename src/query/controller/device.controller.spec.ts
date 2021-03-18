@@ -46,7 +46,7 @@ describe('SensorController', () => {
             jest.spyOn(queryBus, 'execute').mockImplementation(async () => testSensors);
 
             const req = {} as RetrieveDevicesParams;
-            expect(await sensorController.retrieveSensors({} as any, req)).toHaveLength(2);
+            expect(await sensorController.retrieveDevices({} as any, req)).toHaveLength(2);
         });
     });
 });
