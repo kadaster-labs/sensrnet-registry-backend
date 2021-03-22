@@ -45,7 +45,7 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
                 targetVariant: TargetVariant.DEVICE,
             };
             const myRelations = await this.relationModel.find(relationFilter);
-            myDeviceIds = myRelations.map((x) => x.targetId);
+            myDeviceIds = myRelations.map(x => x.targetId);
         } else {
             myDeviceIds = [];
         }
@@ -97,12 +97,7 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         const hasLocationFilter = locationFilter && Object.keys(locationFilter).length;
         const hasLegalEntityFilter = legalEntityFilter && Object.keys(legalEntityFilter).length;
         if (hasLocationFilter && hasLegalEntityFilter) {
-            deviceFilter = {
-                $and: [
-                    locationFilter,
-                    legalEntityFilter,
-                ],
-            };
+            deviceFilter = {$and: [locationFilter, legalEntityFilter]};
         } else if (hasLocationFilter) {
             deviceFilter = locationFilter;
         } else if (hasLegalEntityFilter) {

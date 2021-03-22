@@ -1,8 +1,8 @@
+import { Model } from 'mongoose';
 import { Logger } from '@nestjs/common';
 import { Event } from '../../event-store/event';
-import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { IRelation } from '../model/relation.model';
-import { Model } from 'mongoose';
+import { EventStorePublisher } from '../../event-store/event-store.publisher';
 
 export abstract class AbstractProcessor {
     protected logger: Logger = new Logger(this.constructor.name);

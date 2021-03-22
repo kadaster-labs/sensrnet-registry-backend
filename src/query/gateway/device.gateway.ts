@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { jwtConstants } from '../../auth/constants';
 import { AuthService } from '../../auth/auth.service';
@@ -11,8 +10,6 @@ import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket
 })
 export class DeviceGateway implements OnGatewayConnection {
     @WebSocketServer() server: Server;
-
-    private logger: Logger = new Logger(this.constructor.name);
 
     constructor(
         private authService: AuthService,
@@ -27,8 +24,6 @@ export class DeviceGateway implements OnGatewayConnection {
     }
 
     async handleConnection(@ConnectedSocket() client: Socket): Promise<void> {
-        this.logger.log(`Client connected: ${client.id}.`);
-
         if (jwtConstants.enabled) {
             const authHeader: string = client.handshake.headers.authorization;
             const authToken = authHeader && authHeader.length > 7 ? authHeader.substring(7, authHeader.length) : '';
@@ -40,7 +35,6 @@ export class DeviceGateway implements OnGatewayConnection {
                 this.setupRoom(client, userInfo.legalEntityId);
             } catch {
                 client.disconnect(true);
-                this.logger.log('Failed to authenticate websocket client.');
             }
         }
     }

@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { IUser, UserRole } from '../model/user.model';
+import { IUser } from '../model/user.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 import { RegisterUserCommand } from '../command/register-user.command';
@@ -14,22 +14,13 @@ export class RegisterUserCommandHandler implements ICommandHandler<RegisterUserC
   async execute(command: RegisterUserCommand): Promise<void> {
     const userInstance = new this.userModel({
       _id: command.id,
-      role: UserRole.USER,
       email: command.email,
       password: command.password,
     });
 
-    const savePromise = new Promise((resolve, reject) => userInstance.save((err) => {
-      if (err) {
-        reject();
-      } else {
-        resolve();
-      }
-    }));
-
     let userDetails;
     try {
-      await savePromise;
+      await userInstance.save();
       userDetails = { id: userInstance._id };
     } catch (e) {
       throw new UserAlreadyExistsException(command.email);

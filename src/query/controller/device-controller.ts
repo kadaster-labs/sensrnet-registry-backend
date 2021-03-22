@@ -1,15 +1,15 @@
 import { Request } from 'express';
 import { QueryBus } from '@nestjs/cqrs';
-import { DeviceIdParams } from './model/device-id-params';
 import { jwtConstants } from '../../auth/constants';
+import { DeviceIdParams } from './model/device-id-params';
 import { RetrieveDeviceQuery } from './query/device.query';
 import { RetrieveDevicesQuery } from './query/devices.query';
-import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
 import { RetrieveDevicesParams } from './model/retrieve-devices-params';
-import { AccessAnonymousAuthGuard } from '../../auth/guard/access-anonymous-auth.guard';
+import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { Controller, Get, Param, Query, UseGuards, UseFilters, Req, Logger } from '@nestjs/common';
+import { AccessAnonymousAuthGuard } from '../../auth/guard/access-anonymous-auth.guard';
+import { Controller, Get, Param, Query, UseGuards, UseFilters, Req } from '@nestjs/common';
 
 @ApiTags('Device')
 @Controller('device')

@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { EventStore } from '../../event-store/event-store';
+import { observationGoalStreamRootValue } from '../events/observation-goal';
 import { ObservationGoalAggregate } from '../aggregates/observation-goal.aggregate';
-import { observationGoalStreamRootValue } from '../events/observation-goal/observation-goal.stream';
 
 @Injectable()
 export class ObservationGoalRepository {
-
   readonly streamRootValue: string;
 
   constructor(private readonly eventStore: EventStore) {

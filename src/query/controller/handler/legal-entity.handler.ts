@@ -11,6 +11,6 @@ export class LegalEntityQueryHandler implements IQueryHandler<LegalEntityQuery> 
     ) {}
 
     async execute(query: LegalEntityQuery): Promise<any> {
-        return this.model.findOne({ _id: query.id });
+        return this.model.findOne({_id: query.id});
     }
 }

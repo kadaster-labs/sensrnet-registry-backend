@@ -14,8 +14,8 @@ export class LegalEntitiesQueryHandler implements IQueryHandler<LegalEntitiesQue
 
     async execute(query: LegalEntitiesQuery): Promise<any> {
         const fields: Record<string, any> = {originSync: false};
-        if (query.website) {
-            fields.website = {$regex: `^${query.website}`};
+        if (query.name) {
+            fields.name = {$regex: `^${query.name}`};
         }
 
         return this.model.find(fields, {}, {limit: this.limit});

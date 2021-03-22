@@ -1,18 +1,13 @@
 import { Test } from '@nestjs/testing';
 import { QueryBus } from '@nestjs/cqrs';
-import { RetrieveDevicesQuery } from './query/device.query';
-import { DeviceIdParams } from './model/device-id-params';
 import { DeviceController } from './device-controller';
+import { DeviceIdParams } from './model/device-id-params';
+import { RetrieveDeviceQuery } from './query/device.query';
 import { RetrieveDevicesParams } from './model/retrieve-devices-params';
 
-const testSensors = [
-    {
-        _id: 'test-id',
-        name: 'test-sensor',
-    }, {
-        _id: 'test-id-2',
-        name: 'test-sensor-2',
-    },
+const testDevices = [
+    {_id: 'test-id', name: 'test-device'},
+    {_id: 'test-id-2', name: 'test-device-2'},
 ];
 
 describe('SensorController', () => {
@@ -34,8 +29,8 @@ describe('SensorController', () => {
 
     describe('retrieveSensor', () => {
         it('should return an array of sensors', async () => {
-            jest.spyOn(queryBus, 'execute').mockImplementation(async (query: RetrieveDevicesQuery) => {
-                return testSensors.filter((sensor) => sensor._id === query.id);
+            jest.spyOn(queryBus, 'execute').mockImplementation(async (query: RetrieveDeviceQuery) => {
+                return testDevices.filter((sensor) => sensor._id === query.id);
             });
 
             const req = {deviceId: 'test-id'} as DeviceIdParams;
@@ -43,7 +38,7 @@ describe('SensorController', () => {
         });
 
         it('should return an array of all sensors', async () => {
-            jest.spyOn(queryBus, 'execute').mockImplementation(async () => testSensors);
+            jest.spyOn(queryBus, 'execute').mockImplementation(async () => testDevices);
 
             const req = {} as RetrieveDevicesParams;
             expect(await sensorController.retrieveDevices({} as any, req)).toHaveLength(2);

@@ -1,19 +1,22 @@
 import { v4 } from 'uuid';
 import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
+import { UserRole } from '../../user/model/user.model';
+import { Roles } from '../../core/guards/roles.decorator';
+import { RolesGuard } from '../../core/guards/roles.guard';
 import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ObservationGoalIdParams } from './model/observation-goal/observation-goal-id.params';
 import { UpdateObservationGoalBody } from './model/observation-goal/update-observation-goal.body';
-import { RegisterObservationGoalCommand } from '../command/observation-goal/register-observation-goal.command';
 import { RegisterObservationGoalBody } from './model/observation-goal/register-observation-goal.body';
 import { Controller, Param, Post, Put, Body, Delete, UseFilters, Req, UseGuards } from '@nestjs/common';
 import { UpdateObservationGoalCommand } from '../command/observation-goal/update-observation-goal.command';
 import { RemoveObservationGoalCommand } from '../command/observation-goal/remove-observation-goal.command';
+import { RegisterObservationGoalCommand } from '../command/observation-goal/register-observation-goal.command';
 
 @ApiBearerAuth()
-@UseGuards(AccessJwtAuthGuard)
+@UseGuards(AccessJwtAuthGuard, RolesGuard)
 @ApiTags('Observation Goal')
 @Controller('observationgoal')
 export class ObservationGoalController {
@@ -22,6 +25,7 @@ export class ObservationGoalController {
   ) {}
 
   @Post()
+  @Roles(UserRole.ADMIN)
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Register observation goal' })
   @ApiResponse({ status: 200, description: 'Observation goal registered' })
@@ -38,6 +42,7 @@ export class ObservationGoalController {
     return { observationGoalId };
   }
 
+  @Roles(UserRole.ADMIN)
   @Put(':observationGoalId')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update observation goal' })
@@ -51,6 +56,7 @@ export class ObservationGoalController {
         observationGoalBody.legalGroundLink));
   }
 
+  @Roles(UserRole.ADMIN)
   @Delete(':observationGoalId')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Remove observation goal' })

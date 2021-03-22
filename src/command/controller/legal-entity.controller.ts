@@ -23,7 +23,9 @@ import { AddPublicContactDetailsCommand } from '../command/legal-entity/add-publ
 @ApiTags('LegalEntity')
 @Controller('legalentity')
 export class LegalEntityController {
-  constructor(private readonly commandBus: CommandBus) { }
+  constructor(
+      private readonly commandBus: CommandBus,
+      ) { }
 
   @Post()
   @ApiBearerAuth()
@@ -32,36 +34,39 @@ export class LegalEntityController {
   @ApiOperation({ summary: 'Register legal entity' })
   @ApiResponse({ status: 200, description: 'Legal entity registered' })
   @ApiResponse({ status: 400, description: 'Legal entity registration failed' })
-  async registerLegalEntity(@Body() registerLegalEntityBody: RegisterLegalEntityBody): Promise<Record<string, any>> {
-    const legalEntityID = v4();
-    await this.commandBus.execute(new RegisterLegalEntityCommand(legalEntityID, registerLegalEntityBody.name,
+  async registerLegalEntity(@Req() req: Request,
+                            @Body() registerLegalEntityBody: RegisterLegalEntityBody): Promise<Record<string, any>> {
+    const user: Record<string, any> = req.user;
+
+    const legalEntityId = v4();
+    await this.commandBus.execute(new RegisterLegalEntityCommand(legalEntityId, user.userId, registerLegalEntityBody.name,
         registerLegalEntityBody.website));
 
-    let contactDetailsID;
-    if (registerLegalEntityBody.contactDetails && Object.keys(registerLegalEntityBody.contactDetails).length) {
-      contactDetailsID = v4();
-      await this.commandBus.execute(new AddPublicContactDetailsCommand(legalEntityID, contactDetailsID,
-          registerLegalEntityBody.contactDetails.name, registerLegalEntityBody.contactDetails.email, registerLegalEntityBody.contactDetails.phone));
-    }
+    const contactDetailsId = v4();
+    await this.commandBus.execute(new AddPublicContactDetailsCommand(legalEntityId, contactDetailsId,
+        registerLegalEntityBody.contactDetails.name, registerLegalEntityBody.contactDetails.email, registerLegalEntityBody.contactDetails.phone));
 
-    return { legalEntityID, contactDetailsID };
+    return { legalEntityId, contactDetailsId };
   }
 
   @Put()
   @ApiBearerAuth()
-  @UseGuards(AccessJwtAuthGuard)
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AccessJwtAuthGuard, RolesGuard)
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update legal entity' })
   @ApiResponse({ status: 200, description: 'Legal entity updated' })
   @ApiResponse({ status: 400, description: 'Legal entity update failed' })
   async updateLegalEntity(@Req() req: Request, @Body() updateLegalEntityBody: UpdateLegalEntityBody): Promise<any> {
     const user: Record<string, any> = req.user;
-    return await this.commandBus.execute(new UpdateLegalEntityCommand(user.legalEntityId, updateLegalEntityBody.name, updateLegalEntityBody.website));
+    return await this.commandBus.execute(new UpdateLegalEntityCommand(user.legalEntityId, updateLegalEntityBody.name,
+        updateLegalEntityBody.website));
   }
 
   @Put('/contactdetails/:contactDetailsId')
   @ApiBearerAuth()
-  @UseGuards(AccessJwtAuthGuard)
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AccessJwtAuthGuard, RolesGuard)
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update contact details' })
   @ApiResponse({ status: 200, description: 'Contact details updated' })
@@ -69,12 +74,13 @@ export class LegalEntityController {
   async updateContactDetails(@Req() req: Request,  @Param() params: ContactDetailsParams,
                              @Body() updateContactDetailsBody: ContactDetailsBody): Promise<any> {
     const user: Record<string, any> = req.user;
-    return await this.commandBus.execute(new UpdateContactDetailsCommand(user.legalEntityId, params.contactDetailsId, updateContactDetailsBody.name,
-        updateContactDetailsBody.email, updateContactDetailsBody.phone));
+    return await this.commandBus.execute(new UpdateContactDetailsCommand(user.legalEntityId, params.contactDetailsId,
+        updateContactDetailsBody.name, updateContactDetailsBody.email, updateContactDetailsBody.phone));
   }
 
   @Delete()
   @ApiBearerAuth()
+  @Roles(UserRole.ADMIN)
   @UseFilters(new DomainExceptionFilter())
   @UseGuards(AccessJwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Remove legal entity' })
@@ -100,7 +106,8 @@ export class LegalEntityController {
   @Delete('/contactdetails/:contactDetailsId')
   @ApiBearerAuth()
   @UseFilters(new DomainExceptionFilter())
-  @UseGuards(AccessJwtAuthGuard)
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AccessJwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Remove contact details' })
   @ApiResponse({ status: 200, description: 'Contact details removed' })
   @ApiResponse({ status: 400, description: 'Contact details removal failed' })

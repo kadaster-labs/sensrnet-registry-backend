@@ -1,10 +1,10 @@
+import { validateLegalEntity } from '../../util/legal-entity.utils';
 import { UnknowObjectException } from '../../error/unknow-object-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
+import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
 import { DeviceRepository } from '../../../../core/repositories/device.repository';
 import { AddDataStreamCommand } from '../../../command/data-stream/add-data-stream.command';
-import { validateLegalEntity } from '../../util/legal-entity.utils';
 import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
-import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
 
 @CommandHandler(AddDataStreamCommand)
 export class AddDataStreamCommandHandler implements ICommandHandler<AddDataStreamCommand> {

@@ -3,7 +3,7 @@ import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '../auth/auth.module';
 import { EventStoreModule } from '../event-store/event-store.module';
-import { UserSchema } from '../user/model/user.model';
+import { UserPermissionsSchema, UserSchema } from '../user/model/user.model';
 import { UserService } from '../user/user.service';
 import { DeviceController } from './controller/device-controller';
 import { DeviceEsController } from './controller/device.es.controller';
@@ -40,6 +40,7 @@ import { CheckpointModule } from './service/checkpoint/checkpoint.module';
         MongooseModule.forFeature([{name: 'Relation', schema: RelationSchema}]),
         MongooseModule.forFeature([{name: 'LegalEntity', schema: LegalEntitySchema}]),
         MongooseModule.forFeature([{name: 'ObservationGoal', schema: ObservationGoalSchema}]),
+        MongooseModule.forFeature([{name: 'UserPermissions', schema: UserPermissionsSchema}]),
     ], controllers: [
         DeviceController,
         DeviceEsController,

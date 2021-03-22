@@ -8,14 +8,8 @@ import { UpdateUserCommandHandler } from './handler/update-user.handler';
 import { RegisterUserCommandHandler } from './handler/register-user.handler';
 import { LegalEntityRepository } from '../core/repositories/legal-entity.repository';
 
-const testUserOne = {
-    _id: 'test-id',
-    name: 'test-object',
-};
-const testUserTwo = {
-    _id: 'test-id',
-    name: 'test-object',
-};
+const testUserOne = {_id: 'test-id', name: 'test-object'};
+const testUserTwo = {_id: 'test-id', name: 'test-object'};
 const testUsers = [testUserOne, testUserTwo];
 
 const mockUserModel = {
@@ -61,6 +55,9 @@ describe('User (integration)', () => {
                 RegisterUserCommandHandler,
                 {
                     provide: getModelToken('User'),
+                    useValue: mockUserModel,
+                }, {
+                    provide: getModelToken('UserPermissions'),
                     useValue: mockUserModel,
                 }, {
                     provide: LegalEntityRepository,
