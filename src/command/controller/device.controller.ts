@@ -27,7 +27,6 @@ export class DeviceController {
     ) {}
 
     @Post()
-    @Roles(UserRole.ADMIN)
     @UseFilters(new DomainExceptionFilter())
     @ApiOperation({ summary: 'Register device' })
     @ApiResponse({ status: 200, description: 'Device registered' })
@@ -43,7 +42,6 @@ export class DeviceController {
     }
 
     @Put(':deviceId')
-    @Roles(UserRole.ADMIN)
     @UseFilters(new DomainExceptionFilter())
     @ApiOperation({ summary: 'Update device' })
     @ApiResponse({ status: 200, description: 'Device updated' })
@@ -55,7 +53,6 @@ export class DeviceController {
             deviceBody.name, deviceBody.description, deviceBody.category, deviceBody.connectivity, deviceBody.location));
     }
 
-    @Roles(UserRole.ADMIN)
     @Put(':deviceId/location')
     @UseFilters(new DomainExceptionFilter())
     @ApiOperation({ summary: 'Relocate device' })
@@ -67,9 +64,9 @@ export class DeviceController {
         return await this.commandBus.execute(new RelocateDeviceCommand(params.deviceId, user.legalEntityId, deviceBody));
     }
 
-    @Roles(UserRole.ADMIN)
     @Delete(':deviceId')
     @UseFilters(new DomainExceptionFilter())
+    @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
     @ApiOperation({ summary: 'Remove device' })
     @ApiResponse({ status: 200, description: 'Device removed' })
     @ApiResponse({ status: 400, description: 'Device removal failed' })

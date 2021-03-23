@@ -25,7 +25,6 @@ export class SensorController {
       private readonly commandBus: CommandBus,
   ) {}
 
-  @Roles(UserRole.ADMIN)
   @Post(':deviceId/sensor')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Register sensor' })
@@ -43,7 +42,6 @@ export class SensorController {
     return { sensorId };
   }
 
-  @Roles(UserRole.ADMIN)
   @Put(':deviceId/sensor/:sensorId')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update sensor' })
@@ -57,9 +55,9 @@ export class SensorController {
         sensorBody.documentation));
   }
 
-  @Roles(UserRole.ADMIN)
   @Delete(':deviceId/sensor/:sensorId')
   @UseFilters(new DomainExceptionFilter())
+  @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
   @ApiOperation({ summary: 'Remove sensor' })
   @ApiResponse({ status: 200, description: 'Sensor removed' })
   @ApiResponse({ status: 400, description: 'Sensor removal failed' })

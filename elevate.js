@@ -16,26 +16,22 @@ if (commandLineArgs.length > 1) {
     }
     mongoose.connect(url, connectOptions).then();
 
-    const UserSchema = new mongoose.Schema({
+    const UserPermissionsSchema = new mongoose.Schema({
         _id: { type: String, required: true },
-        role: { type: String, required: false },
-        ownerId: { type: String, required: true },
-        password: { type: String, required: true },
+        legalEntityId: { type: String, required: true },
+        role: { type: Number, required: false },
     });
-
-    const UserModel = mongoose.model('User', UserSchema);
+    const UserPermissionsModel = mongoose.model('User', UserPermissionsSchema);
 
     const userId = commandLineArgs[0];
-    const role = commandLineArgs[1];
+    const legalEntityId = commandLineArgs[1];
+    const role = commandLineArgs[2];
+
     console.log(`Elevating ${userId} to ${role}.`);
 
-    const filterKwargs = {
-        _id: userId
-    };
-    const updateKwargs = {
-        role: role
-    }
-    UserModel.updateOne(filterKwargs, updateKwargs).then(() => {
+    const filterKwargs = {_id: userId};
+    const userPermissions = {_id: userId, legalEntityId: legalEntityId, role: role};
+    UserPermissionsModel.updateOne(filterKwargs, userPermissions).then(() => {
         console.log(`Successfully elevated ${userId} to ${role}.`);
         process.exit();
     }, () => {

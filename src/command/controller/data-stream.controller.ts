@@ -28,7 +28,6 @@ export class DataStreamController {
         private readonly commandBus: CommandBus,
     ) {}
 
-    @Roles(UserRole.ADMIN)
     @Post(':deviceId/sensor/:sensorId/datastream')
     @UseFilters(new DomainExceptionFilter())
     @ApiOperation({ summary: 'Add datastream' })
@@ -48,7 +47,6 @@ export class DataStreamController {
         return { dataStreamId };
     }
 
-    @Roles(UserRole.ADMIN)
     @Put(':deviceId/sensor/:sensorId/datastream/:dataStreamId')
     @UseFilters(new DomainExceptionFilter())
     @ApiOperation({ summary: 'Update datastream' })
@@ -65,7 +63,6 @@ export class DataStreamController {
             dataStreamBody.dataLink));
     }
 
-    @Roles(UserRole.ADMIN)
     @Put(':deviceId/sensor/:sensorId/datastream/:dataStreamId/linkgoal')
     @UseFilters(new DomainExceptionFilter())
     @ApiOperation({ summary: 'Link observation goal' })
@@ -78,7 +75,6 @@ export class DataStreamController {
             user.legalEntityId, params.dataStreamId, observationGoalBody.observationGoalId));
     }
 
-    @Roles(UserRole.ADMIN)
     @Put(':deviceId/sensor/:sensorId/datastream/:dataStreamId/unlinkgoal')
     @UseFilters(new DomainExceptionFilter())
     @ApiOperation({ summary: 'Unlink observation goal' })
@@ -91,7 +87,7 @@ export class DataStreamController {
             user.legalEntityId, params.dataStreamId, observationGoalBody.observationGoalId));
     }
 
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
     @Delete(':deviceId/sensor/:sensorId/datastream/:dataStreamId')
     @UseFilters(new DomainExceptionFilter())
     @ApiOperation({ summary: 'Remove datastream' })

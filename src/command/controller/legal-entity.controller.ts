@@ -35,7 +35,7 @@ export class LegalEntityController {
   @ApiResponse({ status: 200, description: 'Organization registered' })
   @ApiResponse({ status: 400, description: 'Organization registration failed' })
   async registerOrganization(@Req() req: Request,
-                            @Body() registerOrganizationBody: RegisterOrganizationBody): Promise<Record<string, any>> {
+                             @Body() registerOrganizationBody: RegisterOrganizationBody): Promise<Record<string, any>> {
     const user: Record<string, any> = req.user;
 
     const legalEntityId = v4();
@@ -51,7 +51,7 @@ export class LegalEntityController {
 
   @Put('/organization')
   @ApiBearerAuth()
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
   @UseGuards(AccessJwtAuthGuard, RolesGuard)
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update organization' })
@@ -65,7 +65,7 @@ export class LegalEntityController {
 
   @Put('/contactdetails/:contactDetailsId')
   @ApiBearerAuth()
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
   @UseGuards(AccessJwtAuthGuard, RolesGuard)
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update contact details' })
@@ -80,7 +80,7 @@ export class LegalEntityController {
 
   @Delete()
   @ApiBearerAuth()
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
   @UseFilters(new DomainExceptionFilter())
   @UseGuards(AccessJwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Remove legal entity' })
@@ -93,7 +93,7 @@ export class LegalEntityController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
   @UseFilters(new DomainExceptionFilter())
   @UseGuards(AccessJwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Delete legal entity' })
@@ -106,7 +106,7 @@ export class LegalEntityController {
   @Delete('/contactdetails/:contactDetailsId')
   @ApiBearerAuth()
   @UseFilters(new DomainExceptionFilter())
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
   @UseGuards(AccessJwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Remove contact details' })
   @ApiResponse({ status: 200, description: 'Contact details removed' })

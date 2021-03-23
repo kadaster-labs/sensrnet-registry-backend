@@ -25,7 +25,6 @@ export class ObservationGoalController {
   ) {}
 
   @Post()
-  @Roles(UserRole.ADMIN)
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Register observation goal' })
   @ApiResponse({ status: 200, description: 'Observation goal registered' })
@@ -42,7 +41,6 @@ export class ObservationGoalController {
     return { observationGoalId };
   }
 
-  @Roles(UserRole.ADMIN)
   @Put(':observationGoalId')
   @UseFilters(new DomainExceptionFilter())
   @ApiOperation({ summary: 'Update observation goal' })
@@ -56,9 +54,9 @@ export class ObservationGoalController {
         observationGoalBody.legalGroundLink));
   }
 
-  @Roles(UserRole.ADMIN)
   @Delete(':observationGoalId')
   @UseFilters(new DomainExceptionFilter())
+  @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
   @ApiOperation({ summary: 'Remove observation goal' })
   @ApiResponse({ status: 200, description: 'Observation goal removed' })
   @ApiResponse({ status: 400, description: 'Observation goal removal failed' })
