@@ -1,25 +1,28 @@
 import { v4 } from 'uuid';
 import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
+import { UserRole } from '../../user/model/user.model';
+import { Roles } from '../../core/guards/roles.decorator';
+import { RolesGuard } from '../../core/guards/roles.guard';
 import { SensorIdParams } from './model/sensor/sensorid.params';
 import { AddDatastreamBody } from './model/data-stream/add-datastream.body';
 import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
 import { DataStreamIdParams } from './model/data-stream/datastreamid.params';
+import { ObservationGoalBody } from './model/data-stream/observation-goal.body';
 import { UpdateDatastreamBody } from './model/data-stream/update-datastream.body';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AddDataStreamCommand } from '../command/data-stream/add-data-stream.command';
 import { RemoveDataStreamCommand } from '../command/data-stream/remove-data-stream.command';
 import { UpdateDataStreamCommand } from '../command/data-stream/update-data-stream.command';
-import { Controller, Param, Post, Put, Body, Delete, UseFilters, Req, UseGuards } from '@nestjs/common';
-import { ObservationGoalBody } from './model/data-stream/observation-goal.body';
 import { LinkObservationGoalCommand } from '../command/data-stream/link-observationgoal.command';
 import { UnlinkObservationGoalCommand } from '../command/data-stream/unlink-observationgoal.command';
+import { Controller, Param, Post, Put, Body, Delete, UseFilters, Req, UseGuards } from '@nestjs/common';
 
 @ApiBearerAuth()
-@UseGuards(AccessJwtAuthGuard)
-@ApiTags('Data Stream')
+@ApiTags('Datastream')
 @Controller('device')
+@UseGuards(AccessJwtAuthGuard, RolesGuard)
 export class DataStreamController {
     constructor(
         private readonly commandBus: CommandBus,
@@ -84,6 +87,7 @@ export class DataStreamController {
             user.legalEntityId, params.dataStreamId, observationGoalBody.observationGoalId));
     }
 
+    @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
     @Delete(':deviceId/sensor/:sensorId/datastream/:dataStreamId')
     @UseFilters(new DomainExceptionFilter())
     @ApiOperation({ summary: 'Remove datastream' })

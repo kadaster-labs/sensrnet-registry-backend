@@ -7,18 +7,18 @@ export class LegalEntitiesParams {
   @ApiProperty({
     type: String,
     required: false,
-    description: 'Get the legal entities which are linked to a certain device.',
+    description: 'Filter to apply to name.',
   })
-  readonly deviceId: string;
+  readonly name: string;
 
   @IsString()
   @IsOptional()
   @ApiProperty({
     type: String,
     required: false,
-    description: 'Filter to apply to website.',
+    description: 'Get the legal entities which are linked to a certain device.',
   })
-  readonly website: string;
+  readonly deviceId: string;
 
   @IsString()
   @IsOptional()

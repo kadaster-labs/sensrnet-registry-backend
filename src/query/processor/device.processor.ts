@@ -19,8 +19,8 @@ export class DeviceProcessor extends AbstractProcessor {
     eventStore: EventStorePublisher,
     private readonly deviceGateway: DeviceGateway,
     @InjectModel('Device') private deviceModel: Model<IDevice>,
-    @InjectModel('ObservationGoal') private observationGoalModel: Model<IObservationGoal>,
     @InjectModel('Relation') public relationModel: Model<IRelation>,
+    @InjectModel('ObservationGoal') private observationGoalModel: Model<IObservationGoal>,
   ) {
     super(eventStore, relationModel);
   }

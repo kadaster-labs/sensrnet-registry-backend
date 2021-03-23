@@ -1,23 +1,26 @@
-import { Body, Controller, Delete, Param, Post, Put, Req, UseFilters, UseGuards } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
 import { v4 } from 'uuid';
+import { Request } from 'express';
+import { CommandBus } from '@nestjs/cqrs';
+import { UserRole } from '../../user/model/user.model';
+import { Roles } from '../../core/guards/roles.decorator';
+import { RolesGuard } from '../../core/guards/roles.guard';
+import { DeviceIdParams } from './model/device/device-id.params';
+import { UpdateDeviceBody } from './model/device/update-device.body';
+import { RegisterDeviceBody } from './model/device/register-device.body';
+import { UpdateLocationBody } from './model/location/update-location.body';
 import { AccessJwtAuthGuard } from '../../auth/guard/access-jwt-auth.guard';
+import { RemoveDeviceCommand } from '../command/device/remove-device.command';
+import { UpdateDeviceCommand } from '../command/device/update-device.command';
 import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { RegisterDeviceCommand } from '../command/device/register-device.command';
 import { RelocateDeviceCommand } from '../command/device/relocate-device.command';
-import { RemoveDeviceCommand } from '../command/device/remove-device.command';
-import { UpdateDeviceCommand } from '../command/device/update-device.command';
-import { DeviceIdParams } from './model/device/device-id.params';
-import { RegisterDeviceBody } from './model/device/register-device.body';
-import { UpdateDeviceBody } from './model/device/update-device.body';
-import { UpdateLocationBody } from './model/location/update-location.body';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Param, Post, Put, Req, UseFilters, UseGuards } from '@nestjs/common';
 
 @ApiBearerAuth()
-@UseGuards(AccessJwtAuthGuard)
 @ApiTags('Device')
 @Controller('device')
+@UseGuards(AccessJwtAuthGuard, RolesGuard)
 export class DeviceController {
     constructor(
         private readonly commandBus: CommandBus,
@@ -63,6 +66,7 @@ export class DeviceController {
 
     @Delete(':deviceId')
     @UseFilters(new DomainExceptionFilter())
+    @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
     @ApiOperation({ summary: 'Remove device' })
     @ApiResponse({ status: 200, description: 'Device removed' })
     @ApiResponse({ status: 400, description: 'Device removal failed' })

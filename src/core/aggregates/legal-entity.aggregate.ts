@@ -17,8 +17,8 @@ export class LegalEntityAggregate extends Aggregate {
     super();
   }
 
-  register(name: string, website: string): void {
-    this.simpleApply(new OrganizationRegistered(this.aggregateId, name, website));
+  register(userId: string, name: string, website: string): void {
+    this.simpleApply(new OrganizationRegistered(this.aggregateId, userId, name, website));
   }
 
   onOrganizationRegistered(eventMessage: EventMessage): void {

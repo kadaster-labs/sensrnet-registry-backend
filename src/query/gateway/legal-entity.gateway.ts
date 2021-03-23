@@ -21,8 +21,7 @@ export class LegalEntityGateway implements OnGatewayConnection {
     }
 
     @SubscribeMessage('create')
-    handleEvent(@MessageBody() data: string, @ConnectedSocket() client: Socket): string {
-        // create the command
+    handleEvent(@MessageBody() data: string): string {
         return data;
     }
 }

@@ -20,8 +20,12 @@ export class AccessJwtStrategy extends PassportStrategy(Strategy, 'access') {
         if (payload.type !== 'access') {
             throw new UnauthorizedException();
         }
-        const user = await this.usersService.findOne({_id: payload.sub});
+        const permissions = await this.usersService.findUserPermissions({_id: payload.sub});
 
-        return { userId: payload.sub, legalEntityId: user ? user.legalEntityId : null, role: payload.role };
+        return {
+            userId: payload.sub,
+            role: permissions ? permissions.role : null,
+            legalEntityId: permissions ? permissions.legalEntityId : null,
+        };
     }
 }

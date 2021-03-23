@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { EventStore } from '../../event-store/event-store';
 import { DeviceAggregate } from '../aggregates/device.aggregate';
-import { sensorDeviceStreamRootValue } from '../events/sensordevice/sensordevice.stream';
+import { sensorDeviceStreamRootValue } from '../events/sensordevice';
 
 @Injectable()
 export class DeviceRepository {
-
   readonly streamRootValue: string;
 
   constructor(private readonly eventStore: EventStore) {

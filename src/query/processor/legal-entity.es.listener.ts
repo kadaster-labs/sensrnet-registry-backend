@@ -14,7 +14,8 @@ export class LegalEntityEsListener extends AbstractEsListener {
         checkpointService: CheckpointService,
         processor: LegalEntityProcessor,
     ) {
-        super(`backend-${legalEntityStreamRootValue}-es`, `$ce-${legalEntityStreamRootValue}`, eventStore, checkpointService, processor);
+        super(`backend-${legalEntityStreamRootValue}-es`, `$ce-${legalEntityStreamRootValue}`, eventStore,
+            checkpointService, processor);
     }
 
     parseEvent(eventMessage: ESEvent): LegalEntityEvent {

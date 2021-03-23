@@ -1,17 +1,19 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { IDevice } from '../model/device.model';
+import { IRelation } from '../model/relation.model';
+import { UserService } from '../../user/user.service';
+import { UserRole } from '../../user/model/user.model';
 import { AbstractProcessor } from './abstract.processor';
 import { ILegalEntity } from '../model/legal-entity.model';
 import { LegalEntityGateway } from '../gateway/legal-entity.gateway';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { LegalEntityEvent } from '../../core/events/legal-entity/legal-entity.event';
-import { LegalEntityRemoved, OrganizationRegistered, OrganizationUpdated } from '../../core/events/legal-entity';
-import { IRelation } from '../model/relation.model';
-import { PublicContactDetailsAdded } from '../../core/events/legal-entity/contact-details/added';
 import { ContactDetailsUpdated } from '../../core/events/legal-entity/contact-details/updated';
 import { ContactDetailsRemoved } from '../../core/events/legal-entity/contact-details/removed';
-import { IDevice } from '../model/device.model';
+import { PublicContactDetailsAdded } from '../../core/events/legal-entity/contact-details/added';
+import { LegalEntityRemoved, OrganizationRegistered, OrganizationUpdated } from '../../core/events/legal-entity';
 
 @Injectable()
 export class LegalEntityProcessor extends AbstractProcessor {
@@ -19,6 +21,7 @@ export class LegalEntityProcessor extends AbstractProcessor {
 
   constructor(
       eventStore: EventStorePublisher,
+      private readonly userService: UserService,
       private readonly legalEntityGateway: LegalEntityGateway,
       @InjectModel('Device') public deviceModel: Model<IDevice>,
       @InjectModel('LegalEntity') private model: Model<ILegalEntity>,
@@ -62,6 +65,11 @@ export class LegalEntityProcessor extends AbstractProcessor {
     let legalEntity;
     try {
       legalEntity = await new this.model(legalEntityData).save();
+
+      if (!originSync) {
+        const userPermissions = {_id: event.userId, role: UserRole.ADMIN, legalEntityId: event.aggregateId};
+        await this.userService.updateUserPermissions({_id: event.userId}, userPermissions);
+      }
     } catch {
       this.errorCallback(event);
     }
@@ -143,6 +151,6 @@ export class LegalEntityProcessor extends AbstractProcessor {
   }
 
   async processContactDetailsRemoved(event: ContactDetailsRemoved): Promise<void> {
-    await this.model.updateOne({ _id: event.legalEntityId }, { $pull: { contactDetails: { _id: event.contactDetailsId } } });
+    await this.model.updateOne({_id: event.legalEntityId}, {$pull: {contactDetails: {_id: event.contactDetailsId}}});
   }
 }

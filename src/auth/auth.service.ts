@@ -33,16 +33,12 @@ export class AuthService {
 
         let userDetails;
         if (user) {
-            const pwdPromise = new Promise((resolve, reject) => user.checkPassword(password, (err, isMatch) => {
+            const pwdPromise = new Promise((resolve, reject) => user.checkPassword(password, async (err, isMatch) => {
                 if (err) {
                     reject();
                 } else {
                     if (isMatch) {
-                        const userObject = {
-                            _id: user._id,
-                            role: user.role,
-                        };
-                        resolve(userObject);
+                        resolve({_id: user._id});
                     } else {
                         reject();
                     }
@@ -90,7 +86,7 @@ export class AuthService {
         }
 
         if (refreshTokenMatches) {
-            const accessPayload = { sub: user._id, role: user.role, type: 'access' };
+            const accessPayload = { sub: user._id, type: 'access' };
             const accessToken = this.jwtService.sign(accessPayload, {expiresIn: this.accessTokenExpiresIn});
             return { accessToken };
         } else {

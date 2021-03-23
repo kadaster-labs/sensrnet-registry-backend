@@ -23,7 +23,7 @@ import { RemoveDeviceCommandHandler } from './handler/model/device/remove-device
 import { UpdateDeviceCommandHandler } from './handler/model/device/update-device.handler';
 import { AddPublicContactDetailsCommandHandler } from './handler/model/legal-entity/add-contact-details.handler';
 import { RemoveLegalEntityCommandHandler } from './handler/model/legal-entity/delete-legal-entity.handler';
-import { RegisterLegalEntityCommandHandler } from './handler/model/legal-entity/register-legal-entity.handler';
+import { RegisterOrganizationCommandHandler } from './handler/model/legal-entity/register-organization.handler';
 import { RemoveContactDetailsCommandHandler } from './handler/model/legal-entity/remove-contact-details.handler';
 import { UpdateContactDetailsCommandHandler } from './handler/model/legal-entity/update-contact-details.handler';
 import { UpdateLegalEntityCommandHandler } from './handler/model/legal-entity/update-legal-entity.handler';
@@ -53,7 +53,7 @@ import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor
         ObservationGoalRepository,
         EventStorePublisher,
         // legal-entity
-        RegisterLegalEntityCommandHandler,
+        RegisterOrganizationCommandHandler,
         UpdateLegalEntityCommandHandler,
         RemoveLegalEntityCommandHandler,
         AddPublicContactDetailsCommandHandler,
@@ -87,7 +87,7 @@ export class CommandModule implements OnModuleInit {
     constructor(
         private readonly eventBus: EventBus,
         private readonly eventStore: EventStorePublisher,
-    ) { }
+    ) {}
 
     onModuleInit(): void {
         this.eventBus.publisher = this.eventStore;

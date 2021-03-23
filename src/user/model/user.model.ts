@@ -4,16 +4,28 @@ import { Document, Schema } from 'mongoose';
 export enum UserRole {
     USER,
     ADMIN,
+    SUPER_USER,
 }
+
+export interface IUserPermissions extends Document {
+    _id: string;
+    legalEntityId: string;
+    role: UserRole;
+}
+
+export const UserPermissionsSchema = new Schema({
+    _id: { type: String, required: true },
+    legalEntityId: { type: String, required: true },
+    role: { type: Number, required: false },
+});
+UserPermissionsSchema.index({ legalEntityId: 1 });
 
 export interface IUser extends Document {
     _id: string;
-    role?: number;
     email: string;
     password: string;
     socialId: string;
     refreshToken?: string;
-    legalEntityId?: string;
 
     checkPassword(pass: string, callback: (err, isMatch) => void): void;
     checkRefreshToken(token: string, callback: (err, isMatch) => void): void;
@@ -21,12 +33,10 @@ export interface IUser extends Document {
 
 export const UserSchema = new Schema({
     _id: { type: String, required: true },
-    role: { type: Number, required: false },
     email: { type: String, required: true },
     password: { type: String, required: true },
     socialId: { type: String, required: false },
     refreshToken: { type: String, required: false },
-    legalEntityId: { type: String, required: false },
 }, {
     autoCreate: true,
 });

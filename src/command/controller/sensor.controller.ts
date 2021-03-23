@@ -1,6 +1,9 @@
 import { v4 } from 'uuid';
 import { Request } from 'express';
 import { CommandBus } from '@nestjs/cqrs';
+import { UserRole } from '../../user/model/user.model';
+import { Roles } from '../../core/guards/roles.decorator';
+import { RolesGuard } from '../../core/guards/roles.guard';
 import { AddSensorBody } from './model/sensor/add-sensor.body';
 import { SensorIdParams } from './model/sensor/sensorid.params';
 import { DeviceIdParams } from './model/device/device-id.params';
@@ -14,9 +17,9 @@ import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagg
 import { Controller, Param, Post, Put, Body, Delete, UseFilters, Req, UseGuards } from '@nestjs/common';
 
 @ApiBearerAuth()
-@UseGuards(AccessJwtAuthGuard)
 @ApiTags('Sensor')
 @Controller('device')
+@UseGuards(AccessJwtAuthGuard, RolesGuard)
 export class SensorController {
   constructor(
       private readonly commandBus: CommandBus,
@@ -54,6 +57,7 @@ export class SensorController {
 
   @Delete(':deviceId/sensor/:sensorId')
   @UseFilters(new DomainExceptionFilter())
+  @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
   @ApiOperation({ summary: 'Remove sensor' })
   @ApiResponse({ status: 200, description: 'Sensor removed' })
   @ApiResponse({ status: 400, description: 'Sensor removal failed' })

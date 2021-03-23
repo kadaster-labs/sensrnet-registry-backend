@@ -15,15 +15,15 @@ export class LegalEntitiesQueryHandler implements IQueryHandler<LegalEntitiesQue
     ) { }
 
     async execute(query: LegalEntitiesQuery): Promise<ILegalEntity[]> {
-        const filter: FilterQuery<ILegalEntity> = { };
+        const filter: FilterQuery<ILegalEntity> = {};
 
         if (query.deviceId) {
             const relationDocs: Array<IRelation> = await this.relationModel.find({ targetId: query.deviceId });
             filter._id = { $in: relationDocs.map(doc => doc.legalEntityId) };
         }
 
-        if (query.website) {
-            filter.website = { $regex: `^${query.website}` };
+        if (query.name) {
+            filter.name = { $regex: `^${query.name}` };
         }
 
         if (!query.allNodes || query.allNodes !== 'true') {

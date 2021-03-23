@@ -10,7 +10,7 @@ export abstract class AbstractEsController {
         protected readonly eventStoreListener: AbstractEsListener,
     ) {}
 
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.SUPER_USER)
     @Post('subscription/open')
     @ApiOperation({ summary: 'Open subscription' })
     @ApiResponse({ status: 200, description: 'Subscription opened' })
@@ -19,7 +19,7 @@ export abstract class AbstractEsController {
         await this.eventStoreListener.openSubscription();
     }
 
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.SUPER_USER)
     @Post('subscription/close')
     @ApiOperation({ summary: 'Close subscription' })
     @ApiResponse({ status: 200, description: 'Subscription closed' })
@@ -28,7 +28,7 @@ export abstract class AbstractEsController {
         this.eventStoreListener.closeSubscription();
     }
 
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.SUPER_USER)
     @Get('checkpoint')
     @ApiOperation({ summary: 'Retrieve checkpoint offset' })
     @ApiResponse({ status: 200, description: 'Checkpoint offset retrieved' })
@@ -37,7 +37,7 @@ export abstract class AbstractEsController {
         return this.eventStoreListener.getOffset();
     }
 
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.SUPER_USER)
     @Post('checkpoint')
     @ApiOperation({ summary: 'Set checkpoint offset' })
     @ApiResponse({ status: 200, description: 'Checkpoint offset set' })

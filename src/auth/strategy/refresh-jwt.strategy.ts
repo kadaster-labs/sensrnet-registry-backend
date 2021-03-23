@@ -18,6 +18,6 @@ export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'refresh') {
         if (payload.type !== 'refresh') {
             throw new UnauthorizedException();
         }
-        return { userId: payload.sub, role: payload.role };
+        return { userId: payload.sub };
     }
 }
