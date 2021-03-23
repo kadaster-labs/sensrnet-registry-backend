@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsEnum } from 'class-validator';
 
 export class LegalEntitiesParams {
   @IsString()
@@ -19,4 +19,14 @@ export class LegalEntitiesParams {
     description: 'Filter to apply to website.',
   })
   readonly website: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    type: String,
+    default: 'false',
+    required: false,
+    description: 'Whether to include legalEntities from other nodes. The legal entities are filtered by creation in the current node by default',
+  })
+  readonly allNodes: string;
 }
