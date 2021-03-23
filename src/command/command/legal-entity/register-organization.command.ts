@@ -1,6 +1,6 @@
 import { LegalEntityCommand } from './legal-entity.command';
 
-export class RegisterLegalEntityCommand extends LegalEntityCommand {
+export class RegisterOrganizationCommand extends LegalEntityCommand {
     constructor(
         public readonly legalEntityId: string,
         public readonly userId: string,
