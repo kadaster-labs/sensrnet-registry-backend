@@ -18,6 +18,6 @@ export class LegalEntitiesController {
   @ApiResponse({ status: 200, description: 'Legal Entities retrieved' })
   @ApiResponse({ status: 400, description: 'Legal Entities retrieval failed' })
   async retrieveLegalEntities(@Query() { website, deviceId, allNodes }: LegalEntitiesParams): Promise<ILegalEntity[]> {
-    return await this.queryBus.execute(new LegalEntitiesQuery(website, deviceId, allNodes));
+    return this.queryBus.execute(new LegalEntitiesQuery(website, deviceId, allNodes));
   }
 }
