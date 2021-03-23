@@ -2,7 +2,8 @@ import { Socket, Server } from 'socket.io';
 import { jwtConstants } from '../../auth/constants';
 import { AuthService } from '../../auth/auth.service';
 import { AccessJwtStrategy } from '../../auth/strategy/access-jwt.strategy';
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket } from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket,
+    SubscribeMessage, MessageBody } from '@nestjs/websockets';
 
 @WebSocketGateway({
     namespace: 'device',
@@ -45,8 +46,8 @@ export class DeviceGateway implements OnGatewayConnection {
         }
     }
 
-    // @SubscribeMessage('LegalEntityUpdated')
-    // handleEvent(@ConnectedSocket() client: Socket, @MessageBody() data: Record<string, string>): void {
-    //     this.setupRoom(client, data.legalEntityId);
-    // }
+    @SubscribeMessage('LegalEntityUpdated')
+    handleEvent(@ConnectedSocket() client: Socket, @MessageBody() data: Record<string, string>): void {
+        this.setupRoom(client, data.legalEntityId);
+    }
 }
