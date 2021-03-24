@@ -1,10 +1,9 @@
 import { Theme } from '../theme.body';
 import { ApiProperty } from '@nestjs/swagger';
 import {
-    IsString, IsBoolean, IsUrl, IsNumber, IsUUID, IsOptional, ValidateIf,
-    IsArray, IsObject, IsEnum
+    IsString, IsBoolean, IsUrl, IsUUID, IsOptional, ValidateIf,
+    IsArray, IsObject, IsEnum,
 } from 'class-validator';
-import { SensorType } from '../sensor-type.body';
 
 export abstract class DatastreamBody {
     @IsUUID(4)
