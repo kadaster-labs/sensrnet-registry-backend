@@ -1,60 +1,85 @@
-import { UserSchema } from '../user/user.model';
-import { MongooseModule } from '@nestjs/mongoose';
 import { Module, OnModuleInit } from '@nestjs/common';
-import { SensorController } from './controller/sensor.controller';
 import { CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
+import { MongooseModule } from '@nestjs/mongoose';
+import { DeviceRepository } from '../core/repositories/device.repository';
+import { LegalEntityRepository } from '../core/repositories/legal-entity.repository';
+import { ObservationGoalRepository } from '../core/repositories/observation-goal.repository';
 import { EventStoreModule } from '../event-store/event-store.module';
-import { SensorRepository } from '../core/repositories/sensor.repository';
 import { EventStorePublisher } from '../event-store/event-store.publisher';
-import { CreateSensorCommandHandler } from './handler/create-sensor.handler';
-import { UpdateSensorCommandHandler } from './handler/update-sensor.handler';
-import { DeleteSensorCommandHandler } from './handler/delete-sensor.handler';
-import { OrganizationController } from './controller/organization.controller';
-import { ActivateSensorCommandHandler } from './handler/activate-sensor.handler';
-import { UpdateDataStreamCommandHandler } from './handler/update-datastream.handler';
-import { DeactivateSensorCommandHandler } from './handler/deactivate-sensor.handler';
-import { CreateDatastreamCommandHandler } from './handler/create-datastream.handler';
-import { DeleteDataStreamCommandHandler } from './handler/delete-datastream.handler';
-import { UpdateOrganizationCommandHandler } from './handler/update-organization.handler';
-import { DeleteOrganizationCommandHandler } from './handler/delete-organization.handler';
-import { RegisterOrganizationCommandHandler } from './handler/register-organization.handler';
-import { OrganizationRepository } from '../core/repositories/organization.repository';
-import { UpdateSensorLocationCommandHandler } from './handler/update-sensor-location.handler';
-import { ShareSensorOwnershipCommandHandler } from './handler/share-sensor-ownership.handler';
-import { TransferSensorOwnershipCommandHandler } from './handler/transfer-sensor-ownership.handler';
+import { UserSchema } from '../user/model/user.model';
+import { DataStreamController } from './controller/data-stream.controller';
+import { DeviceController } from './controller/device.controller';
+import { LegalEntityController } from './controller/legal-entity.controller';
+import { ObservationGoalController } from './controller/observation-goal.controller';
+import { SensorController } from './controller/sensor.controller';
+import { AddDataStreamCommandHandler } from './handler/model/data-stream/add-datastream.handler';
+import { LinkObservationGoalCommandHandler } from './handler/model/data-stream/link-observationgoal.handler';
+import { RemoveDataStreamCommandHandler } from './handler/model/data-stream/remove-datastream.handler';
+import { UnlinkObservationGoalCommandHandler } from './handler/model/data-stream/unlink-observationgoal.handler';
+import { UpdateDataStreamCommandHandler } from './handler/model/data-stream/update-datastream.handler';
+import { RegisterDeviceCommandHandler } from './handler/model/device/register-device.handler';
+import { RelocateDeviceCommandHandler } from './handler/model/device/relocate-device.handler';
+import { RemoveDeviceCommandHandler } from './handler/model/device/remove-device.handler';
+import { UpdateDeviceCommandHandler } from './handler/model/device/update-device.handler';
+import { AddPublicContactDetailsCommandHandler } from './handler/model/legal-entity/add-contact-details.handler';
+import { RemoveLegalEntityCommandHandler } from './handler/model/legal-entity/delete-legal-entity.handler';
+import { RegisterOrganizationCommandHandler } from './handler/model/legal-entity/register-organization.handler';
+import { RemoveContactDetailsCommandHandler } from './handler/model/legal-entity/remove-contact-details.handler';
+import { UpdateContactDetailsCommandHandler } from './handler/model/legal-entity/update-contact-details.handler';
+import { UpdateLegalEntityCommandHandler } from './handler/model/legal-entity/update-legal-entity.handler';
+import { RegisterObservationGoalCommandHandler } from './handler/model/observation-goal/add-observation-goal.handler';
+import { RemoveObservationGoalCommandHandler } from './handler/model/observation-goal/remove-observation-goal.handler';
+import { UpdateObservationGoalCommandHandler } from './handler/model/observation-goal/update-observation-goal.handler';
+import { AddSensorCommandHandler } from './handler/model/sensor/add-sensor.handler';
+import { RemoveSensorCommandHandler } from './handler/model/sensor/remove-sensor.handler';
+import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor.handler';
 
 @Module({
     controllers: [
-        OrganizationController,
         SensorController,
+        DeviceController,
+        DataStreamController,
+        LegalEntityController,
+        ObservationGoalController,
     ], imports: [
         CqrsModule,
         EventStoreModule,
-        MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
+        MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     ], providers: [
         EventBus,
         EventPublisher,
-        OrganizationRepository,
-        SensorRepository,
+        LegalEntityRepository,
+        DeviceRepository,
+        ObservationGoalRepository,
         EventStorePublisher,
-        // owner
-        UpdateOrganizationCommandHandler,
-        DeleteOrganizationCommandHandler,
+        // legal-entity
         RegisterOrganizationCommandHandler,
+        UpdateLegalEntityCommandHandler,
+        RemoveLegalEntityCommandHandler,
+        AddPublicContactDetailsCommandHandler,
+        UpdateContactDetailsCommandHandler,
+        RemoveContactDetailsCommandHandler,
+        // sensor-device
+        RegisterDeviceCommandHandler,
+        UpdateDeviceCommandHandler,
+        RelocateDeviceCommandHandler,
+        RemoveDeviceCommandHandler,
         // sensor
-        CreateSensorCommandHandler,
+        AddSensorCommandHandler,
         UpdateSensorCommandHandler,
-        DeleteSensorCommandHandler,
-        ActivateSensorCommandHandler,
-        DeactivateSensorCommandHandler,
-        CreateDatastreamCommandHandler,
-        DeleteDataStreamCommandHandler,
+        RemoveSensorCommandHandler,
+        // datastream
+        AddDataStreamCommandHandler,
+        RemoveDataStreamCommandHandler,
         UpdateDataStreamCommandHandler,
-        UpdateSensorLocationCommandHandler,
-        ShareSensorOwnershipCommandHandler,
-        TransferSensorOwnershipCommandHandler,
+        LinkObservationGoalCommandHandler,
+        UnlinkObservationGoalCommandHandler,
+        // observation-goal
+        RegisterObservationGoalCommandHandler,
+        UpdateObservationGoalCommandHandler,
+        RemoveObservationGoalCommandHandler,
     ], exports: [
-        OrganizationRepository,
+        LegalEntityRepository,
     ],
 })
 

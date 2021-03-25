@@ -14,7 +14,7 @@ export class CheckpointService {
     }
 
     async updateOne(conditions: Record<string, any>, update: Record<string, any>): Promise<any> {
-        const options = { upsert: true };
+        const options = {upsert: true};
         return this.checkpointModel.updateOne(conditions, update, options);
     }
 }

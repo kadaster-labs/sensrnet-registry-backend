@@ -15,7 +15,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const documentOptions = new DocumentBuilder()
-    .setTitle('Sensrnet Backend API')
+    .setTitle('SensRNet Backend API')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
@@ -25,4 +25,4 @@ async function bootstrap() {
   await app.listen(port);
 }
 
-bootstrap();
+bootstrap().then();

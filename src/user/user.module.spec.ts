@@ -1,49 +1,40 @@
 import { Test } from '@nestjs/testing';
 import { CqrsModule } from '@nestjs/cqrs';
-import { getModelToken } from '@nestjs/mongoose';
 import { UserService } from './user.service';
-import { UserController } from './user.controller';
-import { OrganizationRepository } from '../core/repositories/organization.repository';
+import { getModelToken } from '@nestjs/mongoose';
+import { UserController } from './controller/user.controller';
 import { DeleteUserCommandHandler } from './handler/delete-user.handler';
 import { UpdateUserCommandHandler } from './handler/update-user.handler';
 import { RegisterUserCommandHandler } from './handler/register-user.handler';
+import { LegalEntityRepository } from '../core/repositories/legal-entity.repository';
 
-const testUserOne = {
-    _id: 'test-id',
-    name: 'test-object',
-};
+const testUserOne = {_id: 'test-id', name: 'test-object'};
+const testUserTwo = {_id: 'test-id', name: 'test-object'};
+const testUsers = [testUserOne, testUserTwo];
 
-const testUserTwo = {
-    _id: 'test-id',
-    name: 'test-object',
-};
-
-const testObjects = [testUserOne, testUserTwo];
-
-const mockUserRepository = {
+const mockUserModel = {
     findOne: (values) => {
         let result;
         if (Object.keys(values).length) {
-            const filtered = testObjects.filter((owner) => owner._id === values._id);
+            const filtered = testUsers.filter((user) => user._id === values._id);
             if (filtered.length) {
                 result = filtered[0];
             }
-        } else if (testObjects.length) {
-            result = testObjects[0];
+        } else if (testUsers.length) {
+            result = testUsers[0];
         }
-
         return result;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    updateOne: async (values, _) => {
-        if (!testObjects.map((obj) => obj._id).includes(values._id)) {
+    updateOne: async (...args: any[]) => {
+        const values = args[0];
+        if (!testUsers.map((obj) => obj._id).includes(values._id)) {
             throw new Error('User does not exist.');
         }
     },
 };
 
-const mockOwnerRepository = {
-    get: (aggregateId: string) => testObjects.map((obj) => obj._id).includes(aggregateId),
+const mockLegalEntityRepository = {
+    get: (aggregateId: string) => testUsers.map((obj) => obj._id).includes(aggregateId),
 };
 
 describe('User (integration)', () => {
@@ -64,11 +55,13 @@ describe('User (integration)', () => {
                 RegisterUserCommandHandler,
                 {
                     provide: getModelToken('User'),
-                    useValue: mockUserRepository,
-                },
-                {
-                    provide: OrganizationRepository,
-                    useValue: mockOwnerRepository,
+                    useValue: mockUserModel,
+                }, {
+                    provide: getModelToken('UserPermissions'),
+                    useValue: mockUserModel,
+                }, {
+                    provide: LegalEntityRepository,
+                    useValue: mockLegalEntityRepository,
                 },
             ],
         }).compile();
@@ -77,12 +70,12 @@ describe('User (integration)', () => {
     });
 
     it(`Should find user`, async () => {
-        const user = await userService.findOne(testUserOne._id);
+        const user = await userService.findOne({_id: testUserOne._id});
         expect(user ? user._id : undefined).toBe(testUserOne._id);
     });
 
     it(`Should not find user`, async () => {
-        const user = await userService.findOne('wrong-test-id');
+        const user = await userService.findOne({_id: 'wrong-id'});
         expect(user).toBe(undefined);
     });
 
@@ -112,7 +105,7 @@ describe('User (integration)', () => {
         let hashedPassword = null;
 
         const newPass = 'test-pass';
-        jest.spyOn(mockUserRepository, 'updateOne').mockImplementation(async (_, values) => {
+        jest.spyOn(mockUserModel, 'updateOne').mockImplementation(async (_, values) => {
             hashedPassword = values.password;
         });
 

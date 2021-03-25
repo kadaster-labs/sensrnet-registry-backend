@@ -28,22 +28,17 @@ export class AuthService {
         return this.jwtService.verifyAsync(token);
     }
 
-    async validateUser(username: string, pass: string): Promise<any> {
-        const user = await this.usersService.findOne(username);
+    async validateUser(email: string, password: string): Promise<any> {
+        const user = await this.usersService.findOne({email});
 
         let userDetails;
         if (user) {
-            const pwdPromise = new Promise((resolve, reject) => user.checkPassword(pass, (err, isMatch) => {
+            const pwdPromise = new Promise((resolve, reject) => user.checkPassword(password, async (err, isMatch) => {
                 if (err) {
                     reject();
                 } else {
                     if (isMatch) {
-                        const userObject = {
-                            _id: user._id,
-                            role: user.role,
-                            organizationId: user.organizationId,
-                        };
-                        resolve(userObject);
+                        resolve({_id: user._id});
                     } else {
                         reject();
                     }
@@ -63,7 +58,7 @@ export class AuthService {
     }
 
     async refresh(reqUser: Record<string, any>, refreshToken: string): Promise<Record<string, string>> {
-        const user = await this.usersService.findOne(reqUser.userId);
+        const user = await this.usersService.findOne({_id: reqUser.userId});
 
         let refreshTokenMatches;
         if (user) {
@@ -91,7 +86,7 @@ export class AuthService {
         }
 
         if (refreshTokenMatches) {
-            const accessPayload = { sub: user._id, organizationId: user.organizationId, role: user.role, type: 'access' };
+            const accessPayload = { sub: user._id, type: 'access' };
             const accessToken = this.jwtService.sign(accessPayload, {expiresIn: this.accessTokenExpiresIn});
             return { accessToken };
         } else {
@@ -104,7 +99,7 @@ export class AuthService {
         const refreshToken = this.jwtService.sign(refreshPayload, { expiresIn: this.refreshTokenExpiresIn });
         await this.usersService.updateOne(user._id, { refreshToken });
 
-        const accessPayload = { sub: user._id, organizationId: user.organizationId, role: user.role, type: 'access' };
+        const accessPayload = { sub: user._id, role: user.role, type: 'access' };
         const accessToken = this.jwtService.sign(accessPayload, { expiresIn: this.accessTokenExpiresIn });
 
         return { accessToken, refreshToken };

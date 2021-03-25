@@ -1,20 +1,37 @@
 import { Model } from 'mongoose';
-import { User } from './user.interface';
+import { IUser, IUserPermissions } from './model/user.model';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { hashField, hashableFields } from './user.model';
+import { hashField, hashableFields } from './model/user.model';
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectModel('User') private userModel: Model<User>,
+        @InjectModel('User') private userModel: Model<IUser>,
+        @InjectModel('UserPermissions') private userPermissionsModel: Model<IUserPermissions>,
         ) {}
 
-    async findOne(email: string): Promise<User | undefined> {
-        return this.userModel.findOne({_id: email});
+    async findOne(...args: any[]): Promise<IUser | undefined> {
+        return this.userModel.findOne(...args);
     }
 
-    async updateOne(email: string, updateFields: Record<string, any>): Promise<any> {
+    async find(...args: any[]): Promise<IUser[]> {
+        return this.userModel.find(...args);
+    }
+
+    async findUserPermissions(...args: any[]): Promise<IUserPermissions | undefined> {
+        return this.userPermissionsModel.findOne(...args);
+    }
+
+    async updateUserPermissions(filter: Record<string, any>, update: Record<string, any>): Promise<IUserPermissions | undefined> {
+        return this.userPermissionsModel.updateOne(filter, update, {new: true, upsert: true});
+    }
+
+    async deleteUserPermissions(filter: Record<string, any>): Promise<IUserPermissions | undefined> {
+        return this.userPermissionsModel.deleteOne(filter);
+    }
+
+    async updateOne(id: string, updateFields: Record<string, any>): Promise<any> {
         const deleteFunction = (hashableField) => () => delete updateFields[hashableField];
         const updateFunction = (hashableField) => (hash) => updateFields[hashableField] = hash;
         const hashFunction = (hashableField) => (resolve, reject) => hashField(updateFields[hashableField], resolve, reject);
@@ -26,6 +43,6 @@ export class UserService {
             }
         }
 
-        return this.userModel.updateOne({_id: email}, updateFields);
+        return this.userModel.updateOne({_id: id}, updateFields);
     }
 }

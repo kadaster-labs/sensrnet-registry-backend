@@ -1,14 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsBoolean } from 'class-validator';
 
 export class UpdateUserBody {
     @IsString()
     @IsOptional()
     @ApiProperty({
         type: String,
-        description: 'The id of the organization to join.',
+        description: 'The id of the legal entity to join.',
     })
-    readonly organization: string;
+    readonly legalEntityId: string;
+
+    @IsBoolean()
+    @IsOptional()
+    @ApiProperty({
+        type: Boolean,
+        description: 'Whether to leave your legal entity.',
+    })
+    readonly leaveLegalEntity: boolean;
 
     @IsString()
     @IsOptional()
