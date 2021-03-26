@@ -32,6 +32,8 @@ jobs:
     steps:
     # Check out the code
     - uses: actions/checkout@v2
+      with:
+          token: ${{ secrets.AUTH_TOKEN }} # Use administrator personal access token for pushing to protected branch
 
     - uses: actions/setup-node@v1
       with:
@@ -64,8 +66,6 @@ jobs:
     # https://github.com/marketplace/actions/add-commit
     - name: Add and commit changes
       uses: EndBug/add-and-commit@v4
-      env:
-        GITHUB_TOKEN: ${{ secrets.AUTH_TOKEN }} # Use administrator personal access token for pushing to protected branch
       with:
         message: 'Release v${{ steps.bump-version.outputs.version }}'
 
