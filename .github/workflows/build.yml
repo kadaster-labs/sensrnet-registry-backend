@@ -40,10 +40,8 @@ jobs:
     # Bump the version, https://github.com/marketplace/actions/setup-node-js-environment
     - name: Bump npm version
       id: bump-version
-      env:
-        TYPE: ${{ INPUT_RELEASETYPE }}
       run: |
-        npm version $TYPE --no-git-tag-version
+        npm version $INPUT_RELEASETYPE --no-git-tag-version
         VERSION=$(node -pe "require('./package.json').version")
         echo "$VERSION" > VERSION
         echo "::set-output name=version::${VERSION}"
@@ -61,7 +59,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: ${{ DOCKERHUB_NAMESPACE }}/${{ REPOSITORY }}:${{ steps.bump-version.outputs.version }}
+        tags: ${{ env.DOCKERHUB_NAMESPACE }}/${{ env.REPOSITORY }}:${{ steps.bump-version.outputs.version }}
 
     # https://github.com/marketplace/actions/add-commit
     - name: Add and commit changes
