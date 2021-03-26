@@ -40,8 +40,6 @@ jobs:
     # Bump the version, https://github.com/marketplace/actions/setup-node-js-environment
     - name: Bump npm version
       id: bump-version
-      env:
-        TYPE: ${{ INPUT_RELEASETYPE }}
       run: |
         npm version $INPUT_RELEASETYPE --no-git-tag-version
         VERSION=$(node -pe "require('./package.json').version")
