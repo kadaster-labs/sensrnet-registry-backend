@@ -2,22 +2,30 @@
 # - Updating the NPM version
 # - Updating package.json in repo
 # - Building new Docker image
-# - Pushing image to registry
+# - Pushing image to Docker Hub
+# - Committing new version to repo
+# - Make GH release
 #
 # Prerequisites
-# - AKS cluster w/ attached ACR
-# - Managed identity for cluster access
-# - Github secrets: REGISTRY_USERNAME and REGISTRY_PASSWORD for ACR
+# - Github secrets:
+#   - DOCKERHUB_USERNAME and DOCKERHUB_TOKEN for publishing image to Docker Hub
+#   - AUTH_TOKEN with write permissions on repo, to push the changed package.json, as main is a protected branch
 name: Release and build new version
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      releaseType:
+        description: 'Type of release (major|minor|patch)'
+        required: true
+        default: 'patch'
 
 env:
-  REGISTRY: sensrnetregistry.azurecr.io
-  USERNAME: sensrnet
-  IMAGE: registry-backend
+  DOCKERHUB_NAMESPACE: sensrnetnl
+  REPOSITORY: registry-backend
 
 jobs:
   build-and-push:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.bump-version.outputs.version }}
@@ -32,33 +40,28 @@ jobs:
     # Bump the version, https://github.com/marketplace/actions/setup-node-js-environment
     - name: Bump npm version
       id: bump-version
+      env:
+        TYPE: ${{ INPUT_RELEASETYPE }}
       run: |
-        npm version patch --no-git-tag-version
+        npm version $TYPE --no-git-tag-version
         VERSION=$(node -pe "require('./package.json').version")
         echo "$VERSION" > VERSION
         echo "::set-output name=version::${VERSION}"
 
-    # This step uses Azure's azure-container-registry-login
-    # https://github.com/marketplace/actions/azure-container-registry-login
-    - uses: azure/docker-login@v1
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v1 
       with:
-        login-server: ${{ env.REGISTRY }}
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build Docker images
-      env:
-        VERSION: ${{ steps.bump-version.outputs.version }}
-      run: |
-        docker build . -t $REGISTRY/$USERNAME/$IMAGE:$VERSION
-        docker tag $REGISTRY/$USERNAME/$IMAGE:$VERSION $REGISTRY/$USERNAME/$IMAGE:latest
-
-    - name: Push Docker images to ACR
-      env:
-        VERSION: ${{ steps.bump-version.outputs.version }}
-      run: |
-        docker push $REGISTRY/$USERNAME/$IMAGE:latest
-        docker push $REGISTRY/$USERNAME/$IMAGE:$VERSION
+    - name: Build and push to Docker Hub
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: ${{ DOCKERHUB_NAMESPACE }}/${{ REPOSITORY }}:${{ steps.bump-version.outputs.version }}
 
     # https://github.com/marketplace/actions/add-commit
     - name: Add and commit changes
