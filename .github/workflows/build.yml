@@ -41,7 +41,7 @@ jobs:
     - name: Bump npm version
       id: bump-version
       run: |
-        npm version $INPUT_RELEASETYPE --no-git-tag-version
+        npm version ${{ github.event.inputs.releaseType }} --no-git-tag-version
         VERSION=$(node -pe "require('./package.json').version")
         echo "$VERSION" > VERSION
         echo "::set-output name=version::${VERSION}"
