@@ -1,5 +1,0 @@
-Category;Type;Name;Active;Description;Latitude;Longitude;Height
-Sensor;MotionSensor;My Motionsensor;true;Motionsensor description;51.65384347;4.109595101;9
-Beacon;NavigationBeacon;My NavigationBeacon;false;Navigationbeacon description;52.07187336;6.118777258;5
-Camera;SecurityCamera;My SecurityCamera;false;Securitycamera description;52.60241503;4.969127562;2
-Sensor;RadarDetector;My RadarDetector;true;Radardetector description;53.01939883;6.162063418;1
