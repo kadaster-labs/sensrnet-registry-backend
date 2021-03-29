@@ -15,8 +15,7 @@ import { LegalEntitiesController } from './controller/legal-entities.controller'
 import { LegalEntityController } from './controller/legal-entity.controller';
 import { LegalEntityEsController } from './controller/legal-entity.es.controller';
 import { ObservationGoalEsController } from './controller/observation-goal.es.controller';
-import { DeviceGateway } from './gateway/device.gateway';
-import { LegalEntityGateway } from './gateway/legal-entity.gateway';
+import { Gateway } from './gateway/gateway';
 import { DeviceSchema } from './model/device.model';
 import { LegalEntitySchema } from './model/legal-entity.model';
 import { ObservationGoalSchema } from './model/observation-goal.model';
@@ -49,12 +48,11 @@ import { CheckpointModule } from './service/checkpoint/checkpoint.module';
         LegalEntityEsController,
         ObservationGoalEsController,
     ], providers: [
+        Gateway,
         UserService,
         EventPublisher,
         DeviceProcessor,
         DeviceEsListener,
-        DeviceGateway,
-        LegalEntityGateway,
         LegalEntityProcessor,
         LegalEntityEsListener,
         ObservationGoalProcessor,

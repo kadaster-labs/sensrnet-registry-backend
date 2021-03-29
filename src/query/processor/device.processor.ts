@@ -6,7 +6,7 @@ import { DeviceLocated, DeviceRegistered, DeviceRelocated, DeviceRemoved, Device
 import { SensorAdded, SensorRemoved, SensorUpdated } from '../../core/events/sensordevice/sensor';
 import { SensorDeviceEvent } from '../../core/events/sensordevice/sensordevice.event';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import { DeviceGateway } from '../gateway/device.gateway';
+import { Gateway } from '../gateway/gateway';
 import { IDevice } from '../model/device.model';
 import { IObservationGoal } from '../model/observation-goal.model';
 import { IRelation, RelationVariant, TargetVariant } from '../model/relation.model';
@@ -17,7 +17,7 @@ export class DeviceProcessor extends AbstractProcessor {
 
   constructor(
     eventStore: EventStorePublisher,
-    private readonly deviceGateway: DeviceGateway,
+    private readonly gateway: Gateway,
     @InjectModel('Device') private deviceModel: Model<IDevice>,
     @InjectModel('Relation') public relationModel: Model<IRelation>,
     @InjectModel('ObservationGoal') private observationGoalModel: Model<IObservationGoal>,
@@ -63,7 +63,7 @@ export class DeviceProcessor extends AbstractProcessor {
     }
 
     if (device && legalEntityIds) {
-      this.deviceGateway.emit(event.constructor.name, legalEntityIds, {canEdit: true, ...device.toObject()});
+      this.gateway.emit(event.constructor.name, legalEntityIds, {canEdit: true, ...device.toObject()});
     }
   }
 

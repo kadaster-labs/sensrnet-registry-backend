@@ -2,14 +2,15 @@ import { Socket, Server } from 'socket.io';
 import { jwtConstants } from '../../auth/constants';
 import { AuthService } from '../../auth/auth.service';
 import { AccessJwtStrategy } from '../../auth/strategy/access-jwt.strategy';
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket,
-    SubscribeMessage, MessageBody } from '@nestjs/websockets';
+import {
+    WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage, MessageBody,
+} from '@nestjs/websockets';
 
 @WebSocketGateway({
-    namespace: 'device',
+    namespace: 'sensrnet',
     path: '/api/socket.io',
 })
-export class DeviceGateway implements OnGatewayConnection {
+export class Gateway implements OnGatewayConnection {
     @WebSocketServer() server: Server;
 
     constructor(
@@ -23,6 +24,20 @@ export class DeviceGateway implements OnGatewayConnection {
             client.join(legalEntityId);
         }
     }
+    emit(event: string, legalEntityIds: string[], eventMessage: Record<string, any>): void {
+        if (legalEntityIds) {
+            for (const legalEntityId of legalEntityIds) {
+                this.server.to(legalEntityId).emit(event, eventMessage);
+            }
+        } else {
+            this.server.emit(event, eventMessage);
+        }
+    }
+
+    @SubscribeMessage('LegalEntityUpdated')
+    handleEvent(@ConnectedSocket() client: Socket, @MessageBody() data: Record<string, string>): void {
+        this.setupRoom(client, data.legalEntityId);
+    }
 
     async handleConnection(@ConnectedSocket() client: Socket): Promise<void> {
         if (jwtConstants.enabled) {
@@ -32,22 +47,10 @@ export class DeviceGateway implements OnGatewayConnection {
             try {
                 const decodedToken = await this.authService.verifyToken(authToken);
                 const userInfo = await this.accessJwtStrategy.validate(decodedToken);
-
                 this.setupRoom(client, userInfo.legalEntityId);
             } catch {
                 client.disconnect(true);
             }
         }
-    }
-
-    emit(event: string, legalEntityIds: string[], updatedDevice: Record<string, any>): void {
-        for (const legalEntityId of legalEntityIds) {
-            this.server.to(legalEntityId).emit(event, updatedDevice);
-        }
-    }
-
-    @SubscribeMessage('LegalEntityUpdated')
-    handleEvent(@ConnectedSocket() client: Socket, @MessageBody() data: Record<string, string>): void {
-        this.setupRoom(client, data.legalEntityId);
     }
 }

@@ -7,13 +7,13 @@ import { UserService } from '../../user/user.service';
 import { UserRole } from '../../user/model/user.model';
 import { AbstractProcessor } from './abstract.processor';
 import { ILegalEntity } from '../model/legal-entity.model';
-import { LegalEntityGateway } from '../gateway/legal-entity.gateway';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { LegalEntityEvent } from '../../core/events/legal-entity/legal-entity.event';
 import { ContactDetailsUpdated } from '../../core/events/legal-entity/contact-details/updated';
 import { ContactDetailsRemoved } from '../../core/events/legal-entity/contact-details/removed';
 import { PublicContactDetailsAdded } from '../../core/events/legal-entity/contact-details/added';
 import { LegalEntityRemoved, OrganizationRegistered, OrganizationUpdated } from '../../core/events/legal-entity';
+import { Gateway } from '../gateway/gateway';
 
 @Injectable()
 export class LegalEntityProcessor extends AbstractProcessor {
@@ -21,8 +21,8 @@ export class LegalEntityProcessor extends AbstractProcessor {
 
   constructor(
       eventStore: EventStorePublisher,
+      private readonly gateway: Gateway,
       private readonly userService: UserService,
-      private readonly legalEntityGateway: LegalEntityGateway,
       @InjectModel('Device') public deviceModel: Model<IDevice>,
       @InjectModel('LegalEntity') private model: Model<ILegalEntity>,
       @InjectModel('Relation') public relationModel: Model<IRelation>,
@@ -31,26 +31,30 @@ export class LegalEntityProcessor extends AbstractProcessor {
   }
 
   async process(event: LegalEntityEvent, originSync: boolean): Promise<void> {
-    let result;
+    let legalEntity: Record<string, any>;
+    let legalEntityIds: string[];
+
     if (event instanceof OrganizationRegistered) {
-      await this.processRegistered(event, originSync);
-      result = event;
+      legalEntity = await this.processRegistered(event, originSync);
     } else if (event instanceof OrganizationUpdated) {
-      await this.processUpdated(event);
-      result = event;
+      legalEntity = await this.processUpdated(event);
+      legalEntityIds = [event.aggregateId];
     } else if (event instanceof LegalEntityRemoved) {
-      await this.processDeleted(event);
-      result = event;
+      legalEntity = await this.processDeleted(event);
+      legalEntityIds = [event.aggregateId];
     } else if (event instanceof PublicContactDetailsAdded) {
-      await this.processPublicContactDetailsAdded(event);
+      legalEntity = await this.processPublicContactDetailsAdded(event);
+      legalEntityIds = [event.aggregateId];
     } else if (event instanceof ContactDetailsUpdated) {
-      await this.processContactDetailsUpdated(event);
+      legalEntity = await this.processContactDetailsUpdated(event);
+      legalEntityIds = [event.aggregateId];
     } else if (event instanceof ContactDetailsRemoved) {
-      await this.processContactDetailsRemoved(event);
+      legalEntity = await this.processContactDetailsRemoved(event);
+      legalEntityIds = [event.aggregateId];
     }
 
-    if (result) {
-      this.legalEntityGateway.emit(event.constructor.name, result);
+    if (legalEntity) {
+      this.gateway.emit(event.constructor.name, legalEntityIds, legalEntity.toObject());
     }
   }
 
@@ -77,7 +81,7 @@ export class LegalEntityProcessor extends AbstractProcessor {
     return legalEntity;
   }
 
-  async processUpdated(event: OrganizationUpdated): Promise<void> {
+  async processUpdated(event: OrganizationUpdated): Promise<ILegalEntity> {
     const legalEntityUpdate: Record<string, any> = {};
     if (AbstractProcessor.defined(event.name)) {
       legalEntityUpdate.name = event.name;
@@ -86,26 +90,32 @@ export class LegalEntityProcessor extends AbstractProcessor {
       legalEntityUpdate.website = event.website;
     }
 
+    let legalEntity;
     try {
-      await this.model.updateOne({_id: event.aggregateId}, { $set: legalEntityUpdate });
+      legalEntity = await this.model.findOneAndUpdate({_id: event.aggregateId}, { $set: legalEntityUpdate }, { new: true });
     } catch {
       this.errorCallback(event);
     }
+
+    return legalEntity;
   }
 
-  async processDeleted(event: LegalEntityRemoved): Promise<void> {
+  async processDeleted(event: LegalEntityRemoved): Promise<ILegalEntity> {
+    let legalEntity;
     try {
       this.relationModel.deleteMany({legalEntityId: event.aggregateId});
 
-      await this.model.deleteOne({_id: event.aggregateId});
+      legalEntity = await this.model.findOneAndDelete({_id: event.aggregateId});
       const legalEntityStreamName = LegalEntityEvent.getStreamName(LegalEntityEvent.streamRootValue, event.aggregateId);
       await this.eventStore.deleteStream(legalEntityStreamName);
     } catch {
       this.errorCallback(event);
     }
+
+    return legalEntity;
   }
 
-  async processPublicContactDetailsAdded(event: PublicContactDetailsAdded): Promise<void> {
+  async processPublicContactDetailsAdded(event: PublicContactDetailsAdded): Promise<ILegalEntity> {
     const contactDetailsData = {
       _id: event.contactDetailsId,
       name: event.name,
@@ -119,14 +129,17 @@ export class LegalEntityProcessor extends AbstractProcessor {
       'contactDetails._id': {$ne: event.contactDetailsId},
     };
 
+    let legalEntity;
     try {
-      await this.model.updateOne(legalEntityFilter, { $push: { contactDetails: contactDetailsData } });
+      legalEntity = await this.model.findOneAndUpdate(legalEntityFilter, {$push: {contactDetails: contactDetailsData}}, {new: true});
     } catch {
       this.errorCallback(event);
     }
+
+    return legalEntity;
   }
 
-  async processContactDetailsUpdated(event: ContactDetailsUpdated): Promise<void> {
+  async processContactDetailsUpdated(event: ContactDetailsUpdated): Promise<ILegalEntity> {
     const contactDetailsFilter = {
       '_id': event.legalEntityId,
       'contactDetails._id': event.contactDetailsId,
@@ -143,14 +156,24 @@ export class LegalEntityProcessor extends AbstractProcessor {
       contactDetailsUpdate['contactDetails.$.phone'] = event.phone;
     }
 
+    let legalEntity;
     try {
-      await this.model.updateOne(contactDetailsFilter, { $set: contactDetailsUpdate });
+      legalEntity = await this.model.findOneAndUpdate(contactDetailsFilter, {$set: contactDetailsUpdate}, {new: true});
     } catch {
       this.errorCallback(event);
     }
+
+    return legalEntity;
   }
 
-  async processContactDetailsRemoved(event: ContactDetailsRemoved): Promise<void> {
-    await this.model.updateOne({_id: event.legalEntityId}, {$pull: {contactDetails: {_id: event.contactDetailsId}}});
+  async processContactDetailsRemoved(event: ContactDetailsRemoved): Promise<ILegalEntity> {
+    let legalEntity;
+    try {
+      legalEntity = await this.model.findOneAndUpdate({_id: event.legalEntityId}, {$pull: {contactDetails: {_id: event.contactDetailsId}}}, {new: true});
+    } catch {
+      this.errorCallback(event);
+    }
+
+    return legalEntity;
   }
 }
