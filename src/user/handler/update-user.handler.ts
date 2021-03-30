@@ -9,23 +9,18 @@ import { LegalEntityRepository } from '../../core/repositories/legal-entity.repo
 export class UpdateUserCommandHandler implements ICommandHandler<UpdateUserCommand> {
 
   constructor(
-      private readonly usersService: UserService,
-      private readonly legalEntityRepository: LegalEntityRepository,
-  ) {}
+    private readonly usersService: UserService,
+    private readonly legalEntityRepository: LegalEntityRepository,
+  ) { }
 
   async execute(command: UpdateUserCommand): Promise<void> {
     if (command.legalEntityId) {
       await validateLegalEntity(this.legalEntityRepository, command.legalEntityId);
 
-      const userPermissions = {_id: command.id, legalEntityId: command.legalEntityId, role: UserRole.USER};
-      await this.usersService.updateUserPermissions({_id: command.id}, userPermissions);
+      const userPermissions = { _id: command.id, legalEntityId: command.legalEntityId, role: UserRole.USER };
+      await this.usersService.updateUserPermissions({ _id: command.id }, userPermissions);
     } else if (command.leaveLegalEntity) {
-      await this.usersService.deleteUserPermissions({_id: command.id});
+      await this.usersService.deleteUserPermissions({ _id: command.id });
     }
-
-    let updateFields = {};
-    updateFields = {organizationId: command.organization, ...updateFields};
-
-    await this.usersService.updateOne(command.id, updateFields);
   }
 }

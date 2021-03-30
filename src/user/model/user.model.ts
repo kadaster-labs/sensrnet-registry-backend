@@ -24,7 +24,6 @@ export interface IUser extends Document {
     _id: string;
     email: string;
     oidc: Record<string, any>;
-    socialId: string;
 }
 
 export const UserSchema = new Schema({

@@ -47,7 +47,6 @@ import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor
         MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     ], providers: [
         EventBus,
-        UserService,
         EventPublisher,
         LegalEntityRepository,
         DeviceRepository,
