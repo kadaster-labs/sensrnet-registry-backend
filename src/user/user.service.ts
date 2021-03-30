@@ -34,8 +34,8 @@ export class UserService {
         return this.userModel.updateOne({ _id }, updateFields);
     }
 
-    async getOrganizationId(_id: string): Promise<string> {
-        const user: IUser = await this.userModel.findOne({ _id });
-        return 'testOrg'; // TODO via relation? user.organizationId
-    }
+    // async getOrganizationId(userId: string): Promise<string> {
+    //     const user: IUser = await this.userModel.findOne({ _id: userId });
+    //     return 'testOrg'; // TODO via relation? user.organizationId
+    // }
 }

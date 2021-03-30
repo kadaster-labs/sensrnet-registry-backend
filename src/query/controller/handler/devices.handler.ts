@@ -13,7 +13,7 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
     constructor(
         @InjectModel('Device') private model: Model<IDevice>,
         @InjectModel('Relation') private relationModel: Model<IRelation>,
-    ) {}
+    ) { }
 
     getPointDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
         if ((lat1 === lat2) && (lon1 === lon2)) {
@@ -97,7 +97,7 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         const hasLocationFilter = locationFilter && Object.keys(locationFilter).length;
         const hasLegalEntityFilter = legalEntityFilter && Object.keys(legalEntityFilter).length;
         if (hasLocationFilter && hasLegalEntityFilter) {
-            deviceFilter = {$and: [locationFilter, legalEntityFilter]};
+            deviceFilter = { $and: [locationFilter, legalEntityFilter] };
         } else if (hasLocationFilter) {
             deviceFilter = locationFilter;
         } else if (hasLegalEntityFilter) {
@@ -110,7 +110,7 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         if (deviceFilter && Object.keys(deviceFilter).length) {
             const mongoDevices = await this.model.find(deviceFilter, {}, { skip: start, limit: pageSize });
             for (const device of mongoDevices) {
-                devices.push({canEdit: myDeviceIdsSet.has(device._id), ...device.toObject()});
+                devices.push({ canEdit: myDeviceIdsSet.has(device._id), ...device.toObject() });
             }
         }
 

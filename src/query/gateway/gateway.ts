@@ -48,14 +48,10 @@ export class Gateway implements OnGatewayConnection {
             const authToken = authHeader && authHeader.length > 7 ? authHeader.substring(7, authHeader.length) : '';
 
             try {
-                // TODO
                 const token = this.jwtService.decode(authToken);
-                const organizationId: string = await this.userService.getOrganizationId(token.sub);
+                const { legalEntityId } = await this.userService.findUserPermissions({ _id: token.sub });
 
-                this.setupRoom(client, organizationId);
-                // const decodedToken = await this.authService.verifyToken(authToken);
-                // const userInfo = await this.accessJwtStrategy.validate(decodedToken);
-                // this.setupRoom(client, userInfo.legalEntityId);
+                this.setupRoom(client, legalEntityId);
             } catch {
                 client.disconnect(true);
             }
