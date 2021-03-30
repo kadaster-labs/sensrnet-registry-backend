@@ -1,8 +1,10 @@
 import { Logger } from '@nestjs/common';
-import { Event } from '../../event-store/event';
 import { Event as ESEvent } from 'geteventstore-promise';
+import { Event } from '../../event-store/event';
 
 export abstract class AbstractEventType {
+
+  constructor() { }
 
   public supportedTypes: Record<string, any> = {};
 

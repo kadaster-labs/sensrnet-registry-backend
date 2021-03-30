@@ -10,13 +10,17 @@ export abstract class Event {
     this.aggregateId = aggregateId;
   }
 
+  public static getStreamName(streamRoot: string, aggregateId: string): string {
+    return `${streamRoot}-${aggregateId}`;
+  }
+
   abstract streamRoot(): string;
 
   toEventMessage(): EventMessage {
     const { version, ...eventData } = this;
 
     return new EventMessage(
-        `${this.streamRoot()}-${this.aggregateId}`,
+        Event.getStreamName(this.streamRoot(), this.aggregateId),
         this.constructor.name,
         eventData,
         {version},

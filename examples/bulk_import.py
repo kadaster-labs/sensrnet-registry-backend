@@ -7,13 +7,12 @@ import requests
 import pandas as pd
 
 id_token = <PASTE_TOKEN_HERE>
+URL = 'http://localhost:3000'
 
-for _, row in pd.read_csv('sensors.csv', delimiter='\t').iterrows():
+for _, row in pd.read_csv('devices.csv', delimiter=';').iterrows():
     data = {
-        'category': row['Category'],
-        'typeName': row['Type'],
         'name': row['Name'],
-        'active': row['Active'],
+        'category': row['Category'],
         'description': row['Description'], 'dataStreams': [],
         'location': [
             row['Longitude'],
@@ -22,10 +21,10 @@ for _, row in pd.read_csv('sensors.csv', delimiter='\t').iterrows():
         ]
     }
 
-    r = requests.post('http://localhost:3000/api/sensor', json=data, headers={'Authorization': 'Bearer {}'.format(id_token)}).json()
+    r = requests.post('{}/api/sensor'.format(URL), json=data, headers={'Authorization': 'Bearer {}'.format(id_token)}).json()
 
     if 'statusCode' in r.keys() and r['statusCode'] != 200:
         print(r['error'], r['message'])
         continue
 
-    print('Registered {}: received ID: {}.'.format(row['Name'], r['sensorId']))
+    print('Registered {}: received ID: {}.'.format(row['Name'], r['deviceId']))

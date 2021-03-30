@@ -10,5 +10,4 @@ export class OffsetBody {
         description: 'New offset.',
     })
     readonly offset: number;
-
 }

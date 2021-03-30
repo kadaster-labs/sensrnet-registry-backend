@@ -1,30 +1,32 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-
-import { User, UserSchema } from '../user/user.model';
-import { AuthModule } from '../auth/auth.module';
-import { MongooseModule } from '@nestjs/mongoose';
-import { SensorSchema } from './data/sensor.model';
-import { UserService } from '../user/user.service';
-import { SensorGateway } from './gateway/sensor.gateway';
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
-import { SensorProcessor } from './processor/sensor.processor';
-import { SensorEsListener } from './processor/sensor.es.listener';
-import { SensorController } from './controller/sensor.controller';
+import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from '../auth/auth.module';
 import { EventStoreModule } from '../event-store/event-store.module';
-import { OrganizationGateway } from './gateway/organization.gateway';
-import { RetrieveSensorQueryHandler } from './handler/sensor.handler';
-import { SensorESController } from './controller/sensor.es.controller';
-import { RetrieveSensorsQueryHandler } from './handler/sensors.handler';
+import { UserPermissionsSchema, UserSchema } from '../user/model/user.model';
+import { UserService } from '../user/user.service';
+import { DeviceController } from './controller/device-controller';
+import { DeviceEsController } from './controller/device.es.controller';
+import { RetrieveDeviceQueryHandler } from './controller/handler/device.handler';
+import { RetrieveDevicesQueryHandler } from './controller/handler/devices.handler';
+import { LegalEntitiesQueryHandler } from './controller/handler/legal-entities.handler';
+import { LegalEntityQueryHandler } from './controller/handler/legal-entity.handler';
+import { LegalEntitiesController } from './controller/legal-entities.controller';
+import { LegalEntityController } from './controller/legal-entity.controller';
+import { LegalEntityEsController } from './controller/legal-entity.es.controller';
+import { ObservationGoalEsController } from './controller/observation-goal.es.controller';
+import { Gateway } from './gateway/gateway';
+import { DeviceSchema } from './model/device.model';
+import { LegalEntitySchema } from './model/legal-entity.model';
+import { ObservationGoalSchema } from './model/observation-goal.model';
+import { RelationSchema } from './model/relation.model';
+import { DeviceEsListener } from './processor/device.es.listener';
+import { DeviceProcessor } from './processor/device.processor';
+import { LegalEntityEsListener } from './processor/legal-entity.es.listener';
+import { LegalEntityProcessor } from './processor/legal-entity.processor';
+import { ObservationGoalEsListener } from './processor/observationgoal.es.listener';
+import { ObservationGoalProcessor } from './processor/observationgoal.processor';
 import { CheckpointModule } from './service/checkpoint/checkpoint.module';
-import { OrganizationSchema } from './controller/model/organization.model';
-import { OrganizationProcessor } from './processor/organization.processor';
-import { OrganizationController } from './controller/organization.controller';
-import { OrganizationEsController } from './controller/organization.es.controller';
-import { OrganizationEsListener } from './processor/organization-es-listener';
-import { RetrieveOrganizationQueryHandler } from './handler/retrieve-organization.handler';
-import { RetrieveOrganizationsQueryHandler } from './handler/retrieve-organizations.handler';
-import { OrganizationsController } from './controller/organizations.controller';
 
 @Module({
     imports: [
@@ -33,28 +35,33 @@ import { OrganizationsController } from './controller/organizations.controller';
         AuthModule,
         CheckpointModule,
         EventStoreModule,
-        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-        MongooseModule.forFeature([{ name: 'Sensor', schema: SensorSchema }]),
-        MongooseModule.forFeature([{ name: 'Organization', schema: OrganizationSchema }]),
+        MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
+        MongooseModule.forFeature([{name: 'Device', schema: DeviceSchema}]),
+        MongooseModule.forFeature([{name: 'Relation', schema: RelationSchema}]),
+        MongooseModule.forFeature([{name: 'LegalEntity', schema: LegalEntitySchema}]),
+        MongooseModule.forFeature([{name: 'ObservationGoal', schema: ObservationGoalSchema}]),
+        MongooseModule.forFeature([{name: 'UserPermissions', schema: UserPermissionsSchema}]),
     ], controllers: [
-        SensorController,
-        SensorESController,
-        OrganizationController,
-        OrganizationsController,
-        OrganizationEsController,
+        DeviceController,
+        DeviceEsController,
+        LegalEntityController,
+        LegalEntitiesController,
+        LegalEntityEsController,
+        ObservationGoalEsController,
     ], providers: [
+        Gateway,
         UserService,
-        SensorGateway,
         EventPublisher,
-        SensorProcessor,
-        SensorEsListener,
-        OrganizationGateway,
-        OrganizationProcessor,
-        OrganizationEsListener,
-        RetrieveSensorQueryHandler,
-        RetrieveSensorsQueryHandler,
-        RetrieveOrganizationQueryHandler,
-        RetrieveOrganizationsQueryHandler,
+        DeviceProcessor,
+        DeviceEsListener,
+        LegalEntityProcessor,
+        LegalEntityEsListener,
+        ObservationGoalProcessor,
+        ObservationGoalEsListener,
+        RetrieveDeviceQueryHandler,
+        RetrieveDevicesQueryHandler,
+        LegalEntityQueryHandler,
+        LegalEntitiesQueryHandler,
     ],
 })
 

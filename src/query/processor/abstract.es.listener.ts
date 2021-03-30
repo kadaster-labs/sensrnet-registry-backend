@@ -1,12 +1,12 @@
+import { Event } from '../../event-store/event';
 import { Logger, OnModuleInit } from '@nestjs/common';
+import { Event as ESEvent } from 'geteventstore-promise';
 import { AbstractProcessor } from './abstract.processor';
 import { EventStoreCatchUpSubscription } from 'node-eventstore-client';
 import { CheckpointService } from '../service/checkpoint/checkpoint.service';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import { NoSubscriptionException } from '../handler/errors/no-subscription-exception';
-import { SubscriptionExistsException } from '../handler/errors/subscription-exists-exception';
-import { Event } from '../../event-store/event';
-import { Event as ESEvent } from 'geteventstore-promise';
+import { NoSubscriptionException } from '../controller/handler/errors/no-subscription-exception';
+import { SubscriptionExistsException } from '../controller/handler/errors/subscription-exists-exception';
 
 export abstract class AbstractEsListener implements OnModuleInit {
   private subscription: EventStoreCatchUpSubscription;
