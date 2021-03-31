@@ -1,6 +1,5 @@
 import { Socket, Server } from 'socket.io';
 
-import { Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage,
     MessageBody } from '@nestjs/websockets';

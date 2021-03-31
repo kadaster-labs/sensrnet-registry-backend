@@ -1,7 +1,7 @@
+import { CommandBus } from '@nestjs/cqrs';
 import { IUser } from '../user/model/user.model';
 import { UserService } from '../user/user.service';
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { Injectable, Logger } from '@nestjs/common';
 import { RegisterOidcUserCommand } from '../user/command/register-oidc-user.command';
 
 @Injectable()

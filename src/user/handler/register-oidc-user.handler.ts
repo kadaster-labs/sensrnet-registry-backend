@@ -1,5 +1,4 @@
 import { Model } from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
 
 import { Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,7 +12,7 @@ import { UserAlreadyExistsException } from '../../command/handler/error/user-alr
 export class RegisterOidcUserCommandHandler implements ICommandHandler<RegisterOidcUserCommand> {
   constructor(
     @InjectModel('User') private userModel: Model<IUser>,
-  ) {}
+  ) { }
 
   async execute(command: RegisterOidcUserCommand): Promise<{ id: string }> {
     Logger.log('Going to register user');

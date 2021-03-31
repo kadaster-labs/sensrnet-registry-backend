@@ -1,4 +1,3 @@
-import { UserService } from '../user.service';
 import { UserRole } from '../model/user.model';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { RetrieveUserQuery } from '../query/users.query';
@@ -22,7 +21,6 @@ export class UserController {
     constructor(
         private readonly queryBus: QueryBus,
         private readonly commandBus: CommandBus,
-        private readonly userService: UserService,
     ) { }
 
     @Get()
