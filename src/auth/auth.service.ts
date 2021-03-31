@@ -11,12 +11,12 @@ export class AuthService {
         private usersService: UserService,
     ) { }
 
-    async createOrLogin(reqUser: Record<string, any>): Promise<string> {
-        let user: IUser = await this.usersService.findOne({ _id: reqUser.sub });
+    async createOrLogin(idToken: Record<string, any>): Promise<string> {
+        let user: IUser = await this.usersService.findOne({ _id: idToken.sub });
         if (!user) {
-            const userId: string = await this.commandBus.execute(new RegisterOidcUserCommand(reqUser));
+            const userId: string = await this.commandBus.execute(new RegisterOidcUserCommand(idToken));
             Logger.log(`Created new user ${JSON.stringify(userId)}`);
-            user = await this.usersService.findOne({ _id: reqUser.sub });
+            user = await this.usersService.findOne({ _id: idToken.sub });
         }
 
         return user._id;
