@@ -1,5 +1,5 @@
 import { QueryBus } from '@nestjs/cqrs';
-import { Public } from '../../auth/public';
+import { ValidatedUser } from '../../auth/validated-user';
 import { DeviceIdParams } from './model/device-id-params';
 import { RetrieveDeviceQuery } from './query/device.query';
 import { User } from '../../core/decorators/user.decorator';
@@ -31,7 +31,7 @@ export class DeviceController {
   @ApiOperation({ summary: 'Retrieve Devices' })
   @ApiResponse({ status: 200, description: 'Devices retrieved' })
   @ApiResponse({ status: 400, description: 'Devices retrieval failed' })
-  async retrieveDevices(@User() user, @Query() devicesParams: RetrieveDevicesParams): Promise<any> {
+  async retrieveDevices(@User() user: ValidatedUser, @Query() devicesParams: RetrieveDevicesParams): Promise<any> {
     const requestLegalEntityId = user ? user.legalEntityId : undefined;
 
     const pageSize = typeof devicesParams.pageSize === 'undefined' ? undefined : Number(devicesParams.pageSize);

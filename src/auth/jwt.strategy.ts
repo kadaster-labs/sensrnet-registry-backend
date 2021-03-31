@@ -5,6 +5,7 @@ import { UserService } from '../user/user.service';
 import { passportJwtSecret } from 'jwks-rsa';
 import { AuthService } from './auth.service';
 import { IUserPermissions } from '../user/model/user.model';
+import { ValidatedUser } from './validated-user';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -30,11 +31,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: Record<string, any>): Promise<Record<string, any>> {
-    const user = {};
+  async validate(idToken: Record<string, any>): Promise<ValidatedUser> {
+    let user: ValidatedUser;
 
-    const userId: string = await this.authService.createOrLogin(payload);
-    user['userId'] = userId;
+    const userId: string = await this.authService.createOrLogin(idToken);
+    user = { userId };
 
     const permission: IUserPermissions = await this.userService.findUserPermissions({ _id: userId });
     if (permission && permission.legalEntityId) {

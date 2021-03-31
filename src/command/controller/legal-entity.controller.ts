@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
 import { UserRole } from '../../user/model/user.model';
+import { ValidatedUser } from '../../auth/validated-user';
 import { Roles } from '../../core/guards/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
 import { User } from '../../core/decorators/user.decorator';
@@ -32,7 +33,7 @@ export class LegalEntityController {
   @ApiOperation({ summary: 'Register organization' })
   @ApiResponse({ status: 200, description: 'Organization registered' })
   @ApiResponse({ status: 400, description: 'Organization registration failed' })
-  async registerOrganization(@User() user, @Body() registerOrganizationBody: RegisterOrganizationBody): Promise<Record<string, any>> {
+  async registerOrganization(@User() user: ValidatedUser, @Body() registerOrganizationBody: RegisterOrganizationBody): Promise<Record<string, any>> {
     const legalEntityId = v4();
     await this.commandBus.execute(new RegisterOrganizationCommand(legalEntityId, user.userId, registerOrganizationBody.name,
       registerOrganizationBody.website));
@@ -52,7 +53,7 @@ export class LegalEntityController {
   @ApiOperation({ summary: 'Update organization' })
   @ApiResponse({ status: 200, description: 'Organization updated' })
   @ApiResponse({ status: 400, description: 'Organization update failed' })
-  async updateOrganization(@User() user, @Body() updateOrganizationBody: UpdateOrganizationBody): Promise<any> {
+  async updateOrganization(@User() user: ValidatedUser, @Body() updateOrganizationBody: UpdateOrganizationBody): Promise<any> {
     return await this.commandBus.execute(new UpdateLegalEntityCommand(user.legalEntityId, updateOrganizationBody.name,
       updateOrganizationBody.website));
   }
@@ -65,7 +66,7 @@ export class LegalEntityController {
   @ApiOperation({ summary: 'Update contact details' })
   @ApiResponse({ status: 200, description: 'Contact details updated' })
   @ApiResponse({ status: 400, description: 'Contact details update failed' })
-  async updateContactDetails(@User() user, @Param() params: ContactDetailsParams,
+  async updateContactDetails(@User() user: ValidatedUser, @Param() params: ContactDetailsParams,
                              @Body() updateContactDetailsBody: ContactDetailsBody): Promise<any> {
     return await this.commandBus.execute(new UpdateContactDetailsCommand(user.legalEntityId, params.contactDetailsId,
       updateContactDetailsBody.name, updateContactDetailsBody.email, updateContactDetailsBody.phone));
@@ -79,7 +80,7 @@ export class LegalEntityController {
   @ApiOperation({ summary: 'Remove legal entity' })
   @ApiResponse({ status: 200, description: 'Legal entity removed' })
   @ApiResponse({ status: 400, description: 'Legal entity removal failed' })
-  async removeLegalEntity(@User() user): Promise<any> {
+  async removeLegalEntity(@User() user: ValidatedUser): Promise<any> {
     return await this.commandBus.execute(new RemoveLegalEntityCommand(user.legalEntityId));
   }
 
@@ -103,7 +104,7 @@ export class LegalEntityController {
   @ApiOperation({ summary: 'Remove contact details' })
   @ApiResponse({ status: 200, description: 'Contact details removed' })
   @ApiResponse({ status: 400, description: 'Contact details removal failed' })
-  async removeContactDetails(@User() user, @Param() params: ContactDetailsParams): Promise<any> {
+  async removeContactDetails(@User() user: ValidatedUser, @Param() params: ContactDetailsParams): Promise<any> {
     return await this.commandBus.execute(new RemoveContactDetailsCommand(user.legalEntityId, params.contactDetailsId));
   }
 }

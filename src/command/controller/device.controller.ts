@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
 import { UserRole } from '../../user/model/user.model';
+import { ValidatedUser } from '../../auth/validated-user';
 import { Roles } from '../../core/guards/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
 import { User } from '../../core/decorators/user.decorator';
@@ -30,7 +31,7 @@ export class DeviceController {
     @ApiOperation({ summary: 'Register device' })
     @ApiResponse({ status: 200, description: 'Device registered' })
     @ApiResponse({ status: 400, description: 'Device registration failed' })
-    async registerDevice(@User() user, @Body() deviceBody: RegisterDeviceBody): Promise<Record<string, any>> {
+    async registerDevice(@User() user: ValidatedUser, @Body() deviceBody: RegisterDeviceBody): Promise<Record<string, any>> {
         const deviceId = v4();
 
         await this.commandBus.execute(new RegisterDeviceCommand(deviceId, user.legalEntityId, deviceBody.name,
@@ -44,7 +45,7 @@ export class DeviceController {
     @ApiOperation({ summary: 'Update device' })
     @ApiResponse({ status: 200, description: 'Device updated' })
     @ApiResponse({ status: 400, description: 'Device update failed' })
-    async updateDevice(@User() user, @Param() params: DeviceIdParams,
+    async updateDevice(@User() user: ValidatedUser, @Param() params: DeviceIdParams,
                        @Body() deviceBody: UpdateDeviceBody): Promise<any> {
         return await this.commandBus.execute(new UpdateDeviceCommand(params.deviceId, user.legalEntityId,
             deviceBody.name, deviceBody.description, deviceBody.category, deviceBody.connectivity, deviceBody.location));
@@ -55,7 +56,7 @@ export class DeviceController {
     @ApiOperation({ summary: 'Relocate device' })
     @ApiResponse({ status: 200, description: 'Device relocated' })
     @ApiResponse({ status: 400, description: 'Device relocation failed' })
-    async relocateDevice(@User() user, @Param() params: DeviceIdParams,
+    async relocateDevice(@User() user: ValidatedUser, @Param() params: DeviceIdParams,
                          @Body() deviceBody: UpdateLocationBody): Promise<any> {
         return await this.commandBus.execute(new RelocateDeviceCommand(params.deviceId, user.legalEntityId, deviceBody));
     }
@@ -66,7 +67,7 @@ export class DeviceController {
     @ApiOperation({ summary: 'Remove device' })
     @ApiResponse({ status: 200, description: 'Device removed' })
     @ApiResponse({ status: 400, description: 'Device removal failed' })
-    async removeDevice(@User() user, @Param() params: DeviceIdParams): Promise<any> {
+    async removeDevice(@User() user: ValidatedUser, @Param() params: DeviceIdParams): Promise<any> {
         return await this.commandBus.execute(new RemoveDeviceCommand(params.deviceId, user.legalEntityId));
     }
 }

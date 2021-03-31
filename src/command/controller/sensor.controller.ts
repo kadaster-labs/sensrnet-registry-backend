@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
 import { UserRole } from '../../user/model/user.model';
+import { ValidatedUser } from '../../auth/validated-user';
 import { Roles } from '../../core/guards/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
 import { User } from '../../core/decorators/user.decorator';
@@ -29,7 +30,7 @@ export class SensorController {
   @ApiOperation({ summary: 'Register sensor' })
   @ApiResponse({ status: 200, description: 'Sensor registered' })
   @ApiResponse({ status: 400, description: 'Sensor registration failed' })
-  async registerSensor(@User() user, @Param() params: DeviceIdParams,
+  async registerSensor(@User() user: ValidatedUser, @Param() params: DeviceIdParams,
                        @Body() sensorBody: AddSensorBody): Promise<Record<string, any>> {
     const sensorId = v4();
 
@@ -45,7 +46,7 @@ export class SensorController {
   @ApiOperation({ summary: 'Update sensor' })
   @ApiResponse({ status: 200, description: 'Sensor updated' })
   @ApiResponse({ status: 400, description: 'Sensor update failed' })
-  async updateSensor(@User() user, @Param() params: SensorIdParams,
+  async updateSensor(@User() user: ValidatedUser, @Param() params: SensorIdParams,
                      @Body() sensorBody: UpdateSensorBody): Promise<any> {
     return await this.commandBus.execute(new UpdateSensorCommand(params.sensorId, user.legalEntityId, params.deviceId,
         sensorBody.name, sensorBody.description, sensorBody.type, sensorBody.manufacturer, sensorBody.supplier,
@@ -58,7 +59,7 @@ export class SensorController {
   @ApiOperation({ summary: 'Remove sensor' })
   @ApiResponse({ status: 200, description: 'Sensor removed' })
   @ApiResponse({ status: 400, description: 'Sensor removal failed' })
-  async removeSensor(@User() user, @Param() params: SensorIdParams): Promise<any> {
+  async removeSensor(@User() user: ValidatedUser, @Param() params: SensorIdParams): Promise<any> {
     return await this.commandBus.execute(new RemoveSensorCommand(params.sensorId, user.legalEntityId, params.deviceId));
   }
 }

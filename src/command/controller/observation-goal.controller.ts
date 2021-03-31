@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
 import { UserRole } from '../../user/model/user.model';
+import { ValidatedUser } from '../../auth/validated-user';
 import { Roles } from '../../core/guards/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
 import { User } from '../../core/decorators/user.decorator';
@@ -28,7 +29,7 @@ export class ObservationGoalController {
   @ApiOperation({ summary: 'Register observation goal' })
   @ApiResponse({ status: 200, description: 'Observation goal registered' })
   @ApiResponse({ status: 400, description: 'Observation goal registration failed' })
-  async registerObservationGoal(@User() user,
+  async registerObservationGoal(@User() user: ValidatedUser,
                                 @Body() observationGoalBody: RegisterObservationGoalBody): Promise<Record<string, any>> {
     const observationGoalId = v4();
 
@@ -44,7 +45,7 @@ export class ObservationGoalController {
   @ApiOperation({ summary: 'Update observation goal' })
   @ApiResponse({ status: 200, description: 'Observation goal updated' })
   @ApiResponse({ status: 400, description: 'Observation goal update failed' })
-  async updateObservationGoal(@User() user, @Param() params: ObservationGoalIdParams,
+  async updateObservationGoal(@User() user: ValidatedUser, @Param() params: ObservationGoalIdParams,
                               @Body() observationGoalBody: UpdateObservationGoalBody): Promise<any> {
     return await this.commandBus.execute(new UpdateObservationGoalCommand(params.observationGoalId, user.legalEntityId,
         observationGoalBody.name, observationGoalBody.description, observationGoalBody.legalGround,
@@ -57,7 +58,7 @@ export class ObservationGoalController {
   @ApiOperation({ summary: 'Remove observation goal' })
   @ApiResponse({ status: 200, description: 'Observation goal removed' })
   @ApiResponse({ status: 400, description: 'Observation goal removal failed' })
-  async removeObservationGoal(@User() user, @Param() params: ObservationGoalIdParams): Promise<any> {
+  async removeObservationGoal(@User() user: ValidatedUser, @Param() params: ObservationGoalIdParams): Promise<any> {
     return await this.commandBus.execute(new RemoveObservationGoalCommand(params.observationGoalId, user.legalEntityId));
   }
 }

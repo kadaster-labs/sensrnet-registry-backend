@@ -2,6 +2,7 @@ import { UserService } from '../user.service';
 import { UserRole } from '../model/user.model';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { RetrieveUserQuery } from '../query/users.query';
+import { ValidatedUser } from '../../auth/validated-user';
 import { Roles } from '../../core/guards/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
 import { UpdateUserBody } from '../model/update-user.body';
@@ -30,7 +31,7 @@ export class UserController {
     @ApiOperation({ summary: 'Retrieve users' })
     @ApiResponse({ status: 200, description: 'Users retrieved' })
     @ApiResponse({ status: 400, description: 'Users retrieval failed' })
-    async retrieveUsers(@User() user): Promise<void> {
+    async retrieveUsers(@User() user: ValidatedUser): Promise<void> {
         return user.legalEntityId ? await this.queryBus.execute(new RetrieveUserQuery(user.userId, user.legalEntityId)) : null;
     }
 
@@ -40,7 +41,7 @@ export class UserController {
     @ApiOperation({ summary: 'Update user' })
     @ApiResponse({ status: 200, description: 'User updated' })
     @ApiResponse({ status: 400, description: 'User update failed' })
-    async updateUser(@User() user, @Body() userBody: UpdateUserBody): Promise<any> {
+    async updateUser(@User() user: ValidatedUser, @Body() userBody: UpdateUserBody): Promise<any> {
         return await this.commandBus.execute(new UpdateUserCommand(user.userId, userBody.legalEntityId, userBody.leaveLegalEntity));
     }
 
@@ -52,7 +53,7 @@ export class UserController {
     @ApiOperation({ summary: 'Update user' })
     @ApiResponse({ status: 200, description: 'User updated' })
     @ApiResponse({ status: 400, description: 'User update failed' })
-    async updateUserById(@User() user, @Param() param: DeleteUserParams, @Body() userBody: UpdateUserRoleBody): Promise<any> {
+    async updateUserById(@User() user: ValidatedUser, @Param() param: DeleteUserParams, @Body() userBody: UpdateUserRoleBody): Promise<any> {
         return await this.commandBus.execute(new UpdateUserRoleCommand(param.id, user.legalEntityId, userBody.role));
     }
 
@@ -62,7 +63,7 @@ export class UserController {
     @ApiOperation({ summary: 'Remove user' })
     @ApiResponse({ status: 200, description: 'User removed' })
     @ApiResponse({ status: 400, description: 'User removal failed' })
-    async removeUser(@User() user): Promise<any> {
+    async removeUser(@User() user: ValidatedUser): Promise<any> {
         return await this.commandBus.execute(new DeleteUserCommand(user.userId));
     }
 

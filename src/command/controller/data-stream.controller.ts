@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
 import { UserRole } from '../../user/model/user.model';
+import { ValidatedUser } from '../../auth/validated-user';
 import { Roles } from '../../core/guards/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
 import { User } from '../../core/decorators/user.decorator';
@@ -32,7 +33,7 @@ export class DataStreamController {
     @ApiOperation({ summary: 'Add datastream' })
     @ApiResponse({ status: 200, description: 'Datastream added' })
     @ApiResponse({ status: 400, description: 'Datastream addition failed' })
-    async addDatastream(@User() user, @Param() params: SensorIdParams,
+    async addDatastream(@User() user: ValidatedUser, @Param() params: SensorIdParams,
                         @Body() dataStreamBody: AddDatastreamBody): Promise<any> {
         const dataStreamId = v4();
 
@@ -50,7 +51,7 @@ export class DataStreamController {
     @ApiOperation({ summary: 'Update datastream' })
     @ApiResponse({ status: 200, description: 'Datastream updated' })
     @ApiResponse({ status: 400, description: 'Datastream update failed' })
-    async updateDatastream(@User() user, @Param() params: DataStreamIdParams,
+    async updateDatastream(@User() user: ValidatedUser, @Param() params: DataStreamIdParams,
                            @Body() dataStreamBody: UpdateDatastreamBody): Promise<any> {
         return await this.commandBus.execute(new UpdateDataStreamCommand(params.deviceId, params.sensorId,
             user.legalEntityId, params.dataStreamId, dataStreamBody.name, dataStreamBody.description,
@@ -65,7 +66,7 @@ export class DataStreamController {
     @ApiOperation({ summary: 'Link observation goal' })
     @ApiResponse({ status: 200, description: 'Observation goal linked' })
     @ApiResponse({ status: 400, description: 'Observation goal linking failed' })
-    async linkObservationGoal(@User() user, @Param() params: DataStreamIdParams,
+    async linkObservationGoal(@User() user: ValidatedUser, @Param() params: DataStreamIdParams,
                               @Body() observationGoalBody: ObservationGoalBody): Promise<any> {
         return await this.commandBus.execute(new LinkObservationGoalCommand(params.deviceId, params.sensorId,
             user.legalEntityId, params.dataStreamId, observationGoalBody.observationGoalId));
@@ -76,7 +77,7 @@ export class DataStreamController {
     @ApiOperation({ summary: 'Unlink observation goal' })
     @ApiResponse({ status: 200, description: 'Observation goal unlinked' })
     @ApiResponse({ status: 400, description: 'Observation goal unlinking failed' })
-    async unlinkObservationGoal(@User() user, @Param() params: DataStreamIdParams,
+    async unlinkObservationGoal(@User() user: ValidatedUser, @Param() params: DataStreamIdParams,
                                 @Body() observationGoalBody: ObservationGoalBody): Promise<any> {
         return await this.commandBus.execute(new UnlinkObservationGoalCommand(params.deviceId, params.sensorId,
             user.legalEntityId, params.dataStreamId, observationGoalBody.observationGoalId));
@@ -88,7 +89,7 @@ export class DataStreamController {
     @ApiOperation({ summary: 'Remove datastream' })
     @ApiResponse({ status: 200, description: 'Datastream removed' })
     @ApiResponse({ status: 400, description: 'Datastream removal failed' })
-    async removeDatastream(@User() user, @Param() params: DataStreamIdParams): Promise<any> {
+    async removeDatastream(@User() user: ValidatedUser, @Param() params: DataStreamIdParams): Promise<any> {
         return await this.commandBus.execute(new RemoveDataStreamCommand(params.deviceId, params.sensorId,
             user.legalEntityId, params.dataStreamId));
     }
