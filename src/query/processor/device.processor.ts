@@ -227,7 +227,13 @@ export class DeviceProcessor extends AbstractProcessor {
   }
 
   async processSensorRemoved(event: SensorRemoved): Promise<void> {
-    await this.deviceModel.updateOne({ _id: event.deviceId }, { $pull: { sensors: { _id: event.sensorId } } });
+    const sensorDelete = {
+      $pull: {
+        sensors: {_id: event.sensorId},
+        dataStreams: {sensorId: event.sensorId},
+      },
+    };
+    await this.deviceModel.updateOne({_id: event.deviceId}, sensorDelete);
   }
 
   async processDatastreamAdded(event: DatastreamAdded): Promise<void> {
