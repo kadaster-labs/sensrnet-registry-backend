@@ -27,7 +27,6 @@ export class DeviceController {
   }
 
   @Get()
-  @Public()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Retrieve Devices' })
   @ApiResponse({ status: 200, description: 'Devices retrieved' })
