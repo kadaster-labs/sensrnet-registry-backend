@@ -5,7 +5,6 @@ import { getModelToken } from '@nestjs/mongoose';
 import { UserController } from './controller/user.controller';
 import { DeleteUserCommandHandler } from './handler/delete-user.handler';
 import { UpdateUserCommandHandler } from './handler/update-user.handler';
-import { RegisterUserCommandHandler } from './handler/register-user.handler';
 import { LegalEntityRepository } from '../core/repositories/legal-entity.repository';
 
 const testUserOne = {_id: 'test-id', name: 'test-object'};
@@ -52,7 +51,6 @@ describe('User (integration)', () => {
                 // user
                 DeleteUserCommandHandler,
                 UpdateUserCommandHandler,
-                RegisterUserCommandHandler,
                 {
                     provide: getModelToken('User'),
                     useValue: mockUserModel,
@@ -99,19 +97,5 @@ describe('User (integration)', () => {
             success = false;
         }
         expect(success).not.toBeTruthy();
-    });
-
-    it(`Should check hash`, async () => {
-        let hashedPassword = null;
-
-        const newPass = 'test-pass';
-        jest.spyOn(mockUserModel, 'updateOne').mockImplementation(async (_, values) => {
-            hashedPassword = values.password;
-        });
-
-        await userService.updateOne(testUserOne._id, {password: newPass});
-
-        expect(hashedPassword).toBeTruthy();
-        expect(hashedPassword).not.toBe(newPass);
     });
 });
