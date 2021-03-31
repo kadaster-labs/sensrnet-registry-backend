@@ -77,18 +77,4 @@ export class UserController {
     async removeUserById(@Param() param: DeleteUserParams): Promise<any> {
         return await this.commandBus.execute(new DeleteUserCommand(param.id));
     }
-
-    // @Get()
-    // @ApiBearerAuth()
-    // @ApiOperation({ summary: 'Get user info' })
-    // @ApiResponse({ status: 200, description: 'User info retrieved' })
-    // @ApiResponse({ status: 400, description: 'User info could not be retrieved' })
-    // async user(@User() user) {
-    //     const organizationId: string | undefined = await this.userService.getOrganizationId(user.userId);
-
-    //     return {
-    //         organizationId,
-    //         ...user
-    //     }
-    // }
 }
