@@ -1,4 +1,4 @@
-# SensrNet Backend Application
+# SensRNet Backend Application
 
 <p>
     <a href="https://github.com/kadaster-labs/sensrnet-registry-backend/actions?query=workflow%3A%22Node.js+CI%22" alt="Build status">
@@ -58,7 +58,7 @@ MongoDB:
 * Should be running. For instructions, view the [MongoDB Documentation](https://docs.mongodb.com/manual/installation/).
 
 Backend App:
-* npm install
+* npm ci
 * npm start
 
 #### Containerized
