@@ -1,4 +1,4 @@
-# SensrNet Backend Application
+# SensRNet Backend Application
 
 <p>
     <a href="https://github.com/kadaster-labs/sensrnet-registry-backend/actions?query=workflow%3A%22Node.js+CI%22" alt="Build status">
@@ -9,11 +9,11 @@
     </a>
 </p>
 
-This is the backend for the SensrNet application. It features a NodeJS backend, and makes use of Eventstore and MongoDB.
+This is the repo for the backend component of the SensrNet application. It features a NodeJS backend, makes use of Eventstore for event sourcing, and MongoDB for storing the projection.
 
 ## Getting Started
 
-The stack can be ran locally, or using docker with docker-compose.
+The stack can be ran either locally, using docker with docker-compose, or deployed on a kubernetes cluster.
 
 ### Prerequisities
 
@@ -31,25 +31,34 @@ Module and runtime structures:
 
 ![Dependency Graph](docs/images/dependency-graph.png)
 
-Modules:
+#### Modules:
 
-- command > all command side code
-- events > event definitions
-- query >
-  - query processor to update the database projection
-  - query controllers and query features
+- auth: Module to handle authentication.
+- command:
+    - Command controllers and features.
+    - Command, and handlers which generate events.
+- core: Event definitions, and supporting classes.
+- event-store: Interface to Eventstore.
+- health: Functionality to determine the application health.
+- query:
+  - Query processor to update the MongoDB projection.
+  - Query controllers and features.
+- user: Module to administrate the application users.
 
-The runtime is defined by four Docker containers / `Dockerfile`s. In case of scaling up or out, the `query processor` should be put in its own container (probably stays as a single container).
+The runtime is defined by multiple Docker containers / `Dockerfile`s. In case of scaling up or out, the `query processor` should be put in its own container (probably stays as a single container).
 
 ### Usage
 
 #### Standalone
 
 Eventstore:
-* Windows: EventStore.ClusterNode.exe --db ./db --log ./logs
+* Should be running. For instructions, view the [Eventstore Documentation](https://developers.eventstore.com/).
+
+MongoDB:
+* Should be running. For instructions, view the [MongoDB Documentation](https://docs.mongodb.com/manual/installation/).
 
 Backend App:
-* npm install
+* npm ci
 * npm start
 
 #### Containerized
@@ -57,7 +66,7 @@ Backend App:
 Start entire stack:
 
 ```bash
-$ ./backend up
+$ docker-compose up --build
 ```
 
 * [Registry Backend OpenAPI](http://localhost:3000/api/)
@@ -66,9 +75,12 @@ $ ./backend up
 Stop entire stack:
 
 ```bash
-$ ./backend down
+$ docker-compose stop
 ```
 
+## Deployment
+Once the images are available in the container registry, deployment can be done (on Kubernetes) by using Kustomize and the desired config, i.e.
+`kustomize build deployment/overlays/demo | kubectl apply -f -`
 
 ## Find Us
 
