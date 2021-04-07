@@ -5,6 +5,5 @@ export class UpdateUserCommand implements ICommand {
     public readonly id: string,
     public readonly legalEntityId?: string,
     public readonly leaveLegalEntity?: boolean,
-    public readonly password?: string,
     ) {}
 }

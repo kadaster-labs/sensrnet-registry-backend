@@ -9,12 +9,12 @@ import { DeleteFailedException } from '../../command/handler/error/delete-failed
 export class DeleteUserCommandHandler implements ICommandHandler<DeleteUserCommand> {
 
   constructor(
-      @InjectModel('User') private userModel: Model<IUser>,
-  ) {}
+    @InjectModel('User') private userModel: Model<IUser>,
+  ) { }
 
   async execute(command: DeleteUserCommand): Promise<void> {
     try {
-      await this.userModel.deleteOne({_id: command.id}, {});
+      await this.userModel.deleteOne({ _id: command.id }, {});
     } catch (e) {
       throw new DeleteFailedException(command.id);
     }

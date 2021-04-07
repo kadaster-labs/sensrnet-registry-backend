@@ -1,0 +1,33 @@
+issuer: http://localhost:5556/dex
+
+storage:
+  type: sqlite3
+  config:
+    file: /data/dex.db
+
+web:
+  http: 0.0.0.0:5556
+  allowedOrigins: ['*']
+
+staticClients:
+- id: registry-frontend
+  redirectURIs:
+    - 'http://localhost:4200'
+    - 'http://127.0.0.1:4200'
+    - 'http://localhost:8080'
+    - 'http://127.0.0.1:8080'
+  name: 'Sensrnet Registry'
+  public: true
+
+enablePasswordDB: true
+
+staticPasswords:
+- email: "admin@sensrnet.nl"
+  hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"  # hash for: password
+  userID: "1"
+  username: "admin"
+  name: "Admin user"
+
+oauth2:
+  responseTypes: [ "code", "token", "id_token" ]
+  skipApprovalScreen: true

@@ -34,6 +34,7 @@ services:
     depends_on:
       - eventstore
       - mongo
+      - dex
     ports:
       - 3000:3000
     environment:
@@ -44,10 +45,25 @@ services:
       - EVENT_STORE_PORT=1113
       - EVENT_STORE_HOST=eventstore
       - REQUIRE_AUTHENTICATION=true
-      - JWT_ACCESS_EXPIRES_IN=86400
-      - JWT_SECRET=example-secret-key
-      - JWT_REFRESH_EXPIRES_IN=604800
+      - OIDC_ISSUER=http://localhost:5556/dex
+      - OIDC_JWKS_URL=http://dex:5556/dex/keys
+      - OIDC_AUDIENCE=registry-frontend
     links:
       - eventstore
     networks:
       - backend
+
+  dex:
+    image: ghcr.io/dexidp/dex:latest
+    user: root
+    command: dex serve /config.yml
+    ports:
+      - 5556:5556
+    volumes:
+      - ./dex.dev.yml:/config.yml
+      - dex-data:/data
+    networks:
+      - backend
+
+volumes:
+  dex-data:

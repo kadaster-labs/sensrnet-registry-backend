@@ -1,10 +1,11 @@
 import { Socket, Server } from 'socket.io';
-import { jwtConstants } from '../../auth/constants';
+
+import { JwtService } from '@nestjs/jwt';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage,
+    MessageBody } from '@nestjs/websockets';
+
 import { AuthService } from '../../auth/auth.service';
-import { AccessJwtStrategy } from '../../auth/strategy/access-jwt.strategy';
-import {
-    WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage, MessageBody,
-} from '@nestjs/websockets';
+import { UserService } from '../../user/user.service';
 
 @WebSocketGateway({
     namespace: 'sensrnet',
@@ -14,8 +15,9 @@ export class Gateway implements OnGatewayConnection {
     @WebSocketServer() server: Server;
 
     constructor(
-        private authService: AuthService,
-        private accessJwtStrategy: AccessJwtStrategy,
+        private readonly authService: AuthService,
+        private readonly jwtService: JwtService,
+        private readonly userService: UserService,
     ) {}
 
     setupRoom(client: Socket, legalEntityId?: string): void {
@@ -40,14 +42,15 @@ export class Gateway implements OnGatewayConnection {
     }
 
     async handleConnection(@ConnectedSocket() client: Socket): Promise<void> {
-        if (jwtConstants.enabled) {
+        if (process.env.REQUIRE_AUTHENTICATION) {
             const authHeader: string = client.handshake.headers.authorization;
             const authToken = authHeader && authHeader.length > 7 ? authHeader.substring(7, authHeader.length) : '';
 
             try {
-                const decodedToken = await this.authService.verifyToken(authToken);
-                const userInfo = await this.accessJwtStrategy.validate(decodedToken);
-                this.setupRoom(client, userInfo.legalEntityId);
+                const token = this.jwtService.decode(authToken);
+                const { legalEntityId } = await this.userService.findUserPermissions({ _id: token.sub });
+
+                this.setupRoom(client, legalEntityId);
             } catch {
                 client.disconnect(true);
             }

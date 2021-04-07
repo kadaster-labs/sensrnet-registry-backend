@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '../auth/auth.module';
@@ -30,6 +31,7 @@ import { CheckpointModule } from './service/checkpoint/checkpoint.module';
 
 @Module({
     imports: [
+        JwtModule.register({}),
         CqrsModule,
         AuthModule,
         CheckpointModule,
@@ -64,4 +66,4 @@ import { CheckpointModule } from './service/checkpoint/checkpoint.module';
     ],
 })
 
-export class QueryModule {}
+export class QueryModule { }

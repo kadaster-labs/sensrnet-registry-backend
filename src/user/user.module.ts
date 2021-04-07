@@ -7,9 +7,9 @@ import { UserController } from './controller/user.controller';
 import { CommandModule } from '../command/command.module';
 import { UpdateUserCommandHandler } from './handler/update-user.handler';
 import { DeleteUserCommandHandler } from './handler/delete-user.handler';
-import { RegisterUserCommandHandler } from './handler/register-user.handler';
 import { RetrieveUserQueryHandler } from './handler/retrieve-users.handler';
 import { UpdateUserRoleCommandHandler } from './handler/update-user-role.handler';
+import { RegisterOidcUserCommandHandler } from './handler/register-oidc-user.handler';
 
 @Module({
     imports: [
@@ -25,11 +25,11 @@ import { UpdateUserRoleCommandHandler } from './handler/update-user-role.handler
         RetrieveUserQueryHandler,
         DeleteUserCommandHandler,
         UpdateUserCommandHandler,
-        RegisterUserCommandHandler,
         UpdateUserRoleCommandHandler,
+        RegisterOidcUserCommandHandler,
     ], exports: [
         UserService,
     ],
 })
 
-export class UserModule {}
+export class UserModule { }

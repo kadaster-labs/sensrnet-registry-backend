@@ -17,12 +17,4 @@ export class UpdateUserBody {
         description: 'Whether to leave your legal entity.',
     })
     readonly leaveLegalEntity: boolean;
-
-    @IsString()
-    @IsOptional()
-    @ApiProperty({
-        type: String,
-        description: 'The user password.',
-    })
-    readonly password: string;
 }
