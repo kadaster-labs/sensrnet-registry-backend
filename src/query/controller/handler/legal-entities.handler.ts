@@ -18,7 +18,7 @@ export class LegalEntitiesQueryHandler implements IQueryHandler<LegalEntitiesQue
         const filter: FilterQuery<ILegalEntity> = {};
 
         if (query.deviceId) {
-            const relationDocs: Array<IRelation> = await this.relationModel.find({ targetId: query.deviceId });
+            const relationDocs: IRelation[] = await this.relationModel.find({ targetId: query.deviceId });
             filter._id = { $in: relationDocs.map(doc => doc.legalEntityId) };
         }
 

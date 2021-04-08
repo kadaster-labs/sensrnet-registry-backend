@@ -1,0 +1,16 @@
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { IObservationGoal } from '../../model/observation-goal.model';
+import { ObservationGoalQuery } from '../query/observation-goal.query';
+
+@QueryHandler(ObservationGoalQuery)
+export class ObservationGoalQueryHandler implements IQueryHandler<ObservationGoalQuery> {
+    constructor(
+        @InjectModel('ObservationGoal') private model: Model<IObservationGoal>,
+    ) {}
+
+    async execute(query: ObservationGoalQuery): Promise<any> {
+        return this.model.findOne({ _id: query.id });
+    }
+}
