@@ -21,6 +21,14 @@ export class ObservationGoalsQueryHandler implements IQueryHandler<ObservationGo
             filter.name = { $regex: `^${query.name}` };
         }
 
-        return this.model.find(filter, {}, { skip: start, limit: pageSize });
+        const options: Record<string, any> = {
+            skip: start, limit: pageSize,
+        };
+        if (query.sortField) {
+            options.sort = {};
+            options.sort[query.sortField] = query.sortDirection === 'DESCENDING' ? -1 : 1;
+        }
+
+        return this.model.find(filter, {}, options);
     }
 }

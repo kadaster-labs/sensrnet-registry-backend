@@ -80,4 +80,24 @@ export class RetrieveDevicesParams {
   })
   @Type(() => String)
   readonly legalEntityId: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    type: String,
+    required: false,
+    description: 'Field to sort.',
+  })
+  @Type(() => String)
+  readonly sortField: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    type: String,
+    required: false,
+    description: 'Direction to sort.',
+  })
+  @Type(() => String)
+  readonly sortDirection: string;
 }

@@ -29,6 +29,6 @@ export class ObservationGoalController {
   async retrieveObservationGoals(@Query() query: RetrieveObservationGoalsBody): Promise<any> {
     const pageSize = typeof query.pageSize === 'undefined' ? undefined : Number(query.pageSize);
     const pageIndex = typeof query.pageIndex === 'undefined' ? undefined : Number(query.pageIndex);
-    return await this.queryBus.execute(new ObservationGoalsQuery(query.name, pageIndex, pageSize));
+    return await this.queryBus.execute(new ObservationGoalsQuery(query.name, pageIndex, pageSize, query.sortField, query.sortDirection));
   }
 }

@@ -5,5 +5,7 @@ export class ObservationGoalsQuery implements IQuery {
         public readonly name?: string,
         public readonly pageIndex?: number,
         public readonly pageSize?: number,
+        public readonly sortField?: string,
+        public readonly sortDirection?: string,
     ) {}
 }
