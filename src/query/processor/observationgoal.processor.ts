@@ -1,13 +1,13 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IRelation } from '../model/relation.model';
+import { IDevice } from '../model/device.model';
+import { IRelation, RelationVariant, TargetVariant } from '../model/relation.model';
 import { AbstractProcessor } from './abstract.processor';
 import { IObservationGoal } from '../model/observation-goal.model';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { ObservationGoalEvent } from '../../core/events/observation-goal/observation-goal.event';
 import { ObservationGoalRegistered, ObservationGoalRemoved, ObservationGoalUpdated } from '../../core/events/observation-goal';
-import { IDevice } from '../model/device.model';
 
 @Injectable()
 export class ObservationGoalProcessor extends AbstractProcessor {
@@ -42,6 +42,7 @@ export class ObservationGoalProcessor extends AbstractProcessor {
 
     try {
       await new this.observationGoalModel(observationGoalData).save();
+      await this.saveRelation(event.legalEntityId, RelationVariant.ACCOUNTABLE, TargetVariant.OBSERVATION_GOAL, event.observationGoalId);
     } catch {
       this.errorCallback(event);
     }
@@ -71,20 +72,16 @@ export class ObservationGoalProcessor extends AbstractProcessor {
 
   async processObservationGoalRemoved(event: ObservationGoalRemoved): Promise<void> {
     try {
-      const deviceFilter = {
-        'dataStreams.observationGoalIds': event.observationGoalId,
-      };
-      const deviceUpdate = {
-        $pull: {'dataStreams.$.observationGoalIds': event.observationGoalId},
-      };
+      const deviceFilter = {'dataStreams.observationGoalIds': event.observationGoalId};
+      const deviceUpdate = {$pull: {'dataStreams.$.observationGoalIds': event.observationGoalId}};
       await this.deviceModel.updateMany(deviceFilter, deviceUpdate);
 
+      await this.deleteRelations(event.legalEntityId, TargetVariant.OBSERVATION_GOAL, event.observationGoalId);
       await this.observationGoalModel.deleteOne({ _id: event.observationGoalId });
-      await this.eventStore.deleteStream(ObservationGoalEvent.getStreamName(ObservationGoalEvent.streamRootValue,
-          event.observationGoalId));
+      const streamName = ObservationGoalEvent.getStreamName(ObservationGoalEvent.streamRootValue, event.observationGoalId);
+      await this.eventStore.deleteStream(streamName);
     } catch {
       this.errorCallback(event);
     }
   }
-
 }

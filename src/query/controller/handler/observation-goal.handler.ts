@@ -10,7 +10,7 @@ export class ObservationGoalQueryHandler implements IQueryHandler<ObservationGoa
         @InjectModel('ObservationGoal') private model: Model<IObservationGoal>,
     ) {}
 
-    async execute(query: ObservationGoalQuery): Promise<any> {
+    async execute(query: ObservationGoalQuery): Promise<IObservationGoal> {
         return this.model.findOne({ _id: query.id });
     }
 }

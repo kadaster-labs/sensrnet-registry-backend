@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { FilterQuery, Model, QueryOptions } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { IObservationGoal } from '../../model/observation-goal.model';
@@ -12,16 +12,16 @@ export class ObservationGoalsQueryHandler implements IQueryHandler<ObservationGo
         @InjectModel('ObservationGoal') private model: Model<IObservationGoal>,
     ) {}
 
-    async execute(query: ObservationGoalsQuery): Promise<any> {
+    async execute(query: ObservationGoalsQuery): Promise<IObservationGoal[]> {
         const pageSize = typeof query.pageSize === 'undefined' ? this.pageSize : query.pageSize;
         const start = typeof query.pageIndex === 'undefined' ? 0 : query.pageIndex * pageSize;
 
-        const filter: Record<string, any> = {};
+        const filter: FilterQuery<IObservationGoal> = {};
         if (query.name) {
             filter.name = { $regex: `^${query.name}` };
         }
 
-        const options: Record<string, any> = {
+        const options: QueryOptions = {
             skip: start, limit: pageSize,
         };
         if (query.sortField) {

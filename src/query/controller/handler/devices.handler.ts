@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { FilterQuery, Model, QueryOptions } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { IDevice } from '../../model/device.model';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
@@ -51,8 +51,8 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         }
         const myDeviceIdsSet = new Set(myDeviceIds);
 
-        let locationFilter: Record<string, any> = {};
-        const legalEntityFilter: Record<string, any> = {};
+        let locationFilter: FilterQuery<IDevice> = {};
+        const legalEntityFilter: FilterQuery<IDevice> = {};
 
         if (query.bottomLeftLongitude && query.bottomLeftLatitude &&
             query.upperRightLongitude && query.upperRightLatitude) {
@@ -93,7 +93,7 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         const pageSize = typeof query.pageSize === 'undefined' ? this.pageSize : query.pageSize;
         const start = typeof query.pageIndex === 'undefined' ? 0 : query.pageIndex * pageSize;
 
-        let deviceFilter: Record<string, any>;
+        let deviceFilter: FilterQuery<IDevice>;
         const hasLocationFilter = locationFilter && Object.keys(locationFilter).length;
         const hasLegalEntityFilter = legalEntityFilter && Object.keys(legalEntityFilter).length;
         if (hasLocationFilter && hasLegalEntityFilter) {
@@ -106,7 +106,7 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
             deviceFilter = {};
         }
 
-        const options: Record<string, any> = {
+        const options: QueryOptions = {
             skip: start, limit: pageSize,
         };
         if (query.sortField) {

@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         handleSigningKeyError: (err, cb) => {
           Logger.warn(`Could not verify token signature: ${JSON.stringify(err.name)}`);
           return cb(err);
-        }
+        },
       }),
       issuer: process.env.OIDC_ISSUER,
       audience: process.env.OIDC_AUDIENCE,
@@ -32,14 +32,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(idToken: Record<string, any>): Promise<ValidatedUser> {
-    let user: ValidatedUser;
-
     const userId: string = await this.authService.createOrLogin(idToken);
-    user = { userId };
+    const user: ValidatedUser = { userId };
 
     const permission: IUserPermissions = await this.userService.findUserPermissions({ _id: userId });
     if (permission && permission.legalEntityId) {
-      user['legalEntityId'] = permission.legalEntityId;
+      user.legalEntityId = permission.legalEntityId;
+      user.role = permission.role;
     }
 
     return user;

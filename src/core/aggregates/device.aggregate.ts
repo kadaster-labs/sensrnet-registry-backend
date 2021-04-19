@@ -17,6 +17,7 @@ import { getSensorAddedEvent, SensorAdded } from '../events/sensordevice/sensor/
 import { getSensorRemovedEvent, SensorRemoved } from '../events/sensordevice/sensor/removed';
 import { getSensorUpdatedEvent, SensorUpdated } from '../events/sensordevice/sensor/updated';
 import { DeviceState, DeviceStateImpl } from './device-state';
+import { NotLegalEntityException } from '../../command/handler/error/not-legalentity-exception';
 
 export class DeviceAggregate extends Aggregate {
 
@@ -36,12 +37,13 @@ export class DeviceAggregate extends Aggregate {
   }
 
   onDeviceRegistered(eventMessage: EventMessage): void {
-    getDeviceRegisteredEvent(eventMessage);
+    const event: DeviceRegistered = getDeviceRegisteredEvent(eventMessage);
+    this.state = new DeviceStateImpl(this.aggregateId, event.legalEntityId);
   }
 
   onDeviceLocated(eventMessage: EventMessage): void {
     const event: DeviceLocated = getDeviceLocatedEvent(eventMessage);
-    this.state = new DeviceStateImpl(this.aggregateId, event.location);
+    this.state.location = event.location;
   }
 
   updateDevice(legalEntityId: string, name: string, description: string, category: Category,
@@ -66,7 +68,11 @@ export class DeviceAggregate extends Aggregate {
   }
 
   removeDevice(legalEntityId: string): void {
-    this.simpleApply(new DeviceRemoved(this.aggregateId, legalEntityId));
+    if (this.state.legalEntityId === legalEntityId) {
+      this.simpleApply(new DeviceRemoved(this.aggregateId, legalEntityId));
+    } else {
+      throw new NotLegalEntityException(this.aggregateId);
+    }
   }
 
   onDeviceRemoved(eventMessage: EventMessage): void {

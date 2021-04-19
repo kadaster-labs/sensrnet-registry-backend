@@ -1,9 +1,10 @@
 import { Aggregate } from '../../event-store/aggregate';
 import { EventMessage } from '../../event-store/event-message';
-import { ObservationGoalState } from './observation-goal.state';
+import { ObservationGoalState, ObservationGoalStateImpl } from './observation-goal.state';
 import { getObservationGoalRegisteredEvent, ObservationGoalRegistered } from '../events/observation-goal/registered';
 import { getObservationGoalRemovedEvent, ObservationGoalRemoved } from '../events/observation-goal/removed';
 import { getObservationGoalUpdatedEvent, ObservationGoalUpdated } from '../events/observation-goal/updated';
+import { NotLegalEntityException } from '../../command/handler/error/not-legalentity-exception';
 
 export class ObservationGoalAggregate extends Aggregate {
 
@@ -19,9 +20,9 @@ export class ObservationGoalAggregate extends Aggregate {
     this.simpleApply(new ObservationGoalRegistered(this.aggregateId, legalEntityId, name, description, legalGround, legalGroundLink));
   }
 
-  onObservationGoalAdded(eventMessage: EventMessage): void {
+  onObservationGoalRegistered(eventMessage: EventMessage): void {
     const event: ObservationGoalRegistered = getObservationGoalRegisteredEvent(eventMessage);
-    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+    this.state = new ObservationGoalStateImpl(this.aggregateId, event.legalEntityId);
   }
 
   updateObservationGoal(legalEntityId: string, name: string, description: string, legalGround: string, legalGroundLink: string): void {
@@ -34,7 +35,11 @@ export class ObservationGoalAggregate extends Aggregate {
   }
 
   removeObservationGoal(legalEntityId: string): void {
-    this.simpleApply(new ObservationGoalRemoved(this.aggregateId, legalEntityId));
+    if (this.state.legalEntityId === legalEntityId) {
+      this.simpleApply(new ObservationGoalRemoved(this.aggregateId, legalEntityId));
+    } else {
+      throw new NotLegalEntityException(this.aggregateId);
+    }
   }
 
   onObservationGoalRemoved(eventMessage: EventMessage): void {

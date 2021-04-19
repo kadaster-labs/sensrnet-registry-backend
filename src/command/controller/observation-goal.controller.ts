@@ -54,7 +54,7 @@ export class ObservationGoalController {
 
   @Delete(':observationGoalId')
   @UseFilters(new DomainExceptionFilter())
-  @Roles(UserRole.SUPER_USER)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
   @ApiOperation({ summary: 'Remove observation goal' })
   @ApiResponse({ status: 200, description: 'Observation goal removed' })
   @ApiResponse({ status: 400, description: 'Observation goal removal failed' })
