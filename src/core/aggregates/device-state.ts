@@ -1,11 +1,15 @@
 export interface DeviceState {
   id: string;
-  location: number[];
+  legalEntityId: string;
+
+  location?: number[];
 }
 
 export class DeviceStateImpl implements DeviceState {
+  public location;
+
   constructor(
       public readonly id: string,
-      public readonly location: number[],
+      public readonly legalEntityId: string,
   ) {}
 }

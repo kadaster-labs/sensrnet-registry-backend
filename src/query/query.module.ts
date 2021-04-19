@@ -28,6 +28,9 @@ import { LegalEntityProcessor } from './processor/legal-entity.processor';
 import { ObservationGoalEsListener } from './processor/observationgoal.es.listener';
 import { ObservationGoalProcessor } from './processor/observationgoal.processor';
 import { CheckpointModule } from './service/checkpoint/checkpoint.module';
+import { ObservationGoalController } from './controller/observation-goal.controller';
+import { ObservationGoalQueryHandler } from './controller/handler/observation-goal.handler';
+import { ObservationGoalsQueryHandler } from './controller/handler/observation-goals.handler';
 
 @Module({
     imports: [
@@ -48,6 +51,7 @@ import { CheckpointModule } from './service/checkpoint/checkpoint.module';
         LegalEntityController,
         LegalEntitiesController,
         LegalEntityEsController,
+        ObservationGoalController,
         ObservationGoalEsController,
     ], providers: [
         Gateway,
@@ -61,6 +65,8 @@ import { CheckpointModule } from './service/checkpoint/checkpoint.module';
         ObservationGoalEsListener,
         RetrieveDeviceQueryHandler,
         RetrieveDevicesQueryHandler,
+        ObservationGoalQueryHandler,
+        ObservationGoalsQueryHandler,
         LegalEntityQueryHandler,
         LegalEntitiesQueryHandler,
     ],

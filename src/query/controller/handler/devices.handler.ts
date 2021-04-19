@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { FilterQuery, Model, QueryOptions } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { IDevice } from '../../model/device.model';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
@@ -37,11 +37,11 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         }
     }
 
-    async execute(retrieveDevicesQuery: RetrieveDevicesQuery): Promise<any> {
+    async execute(query: RetrieveDevicesQuery): Promise<any> {
         let myDeviceIds;
-        if (retrieveDevicesQuery.requestLegalEntityId) {
+        if (query.requestLegalEntityId) {
             const relationFilter = {
-                legalEntityId: retrieveDevicesQuery.requestLegalEntityId,
+                legalEntityId: query.requestLegalEntityId,
                 targetVariant: TargetVariant.DEVICE,
             };
             const myRelations = await this.relationModel.find(relationFilter);
@@ -51,26 +51,26 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         }
         const myDeviceIdsSet = new Set(myDeviceIds);
 
-        let locationFilter: Record<string, any> = {};
-        const legalEntityFilter: Record<string, any> = {};
+        let locationFilter: FilterQuery<IDevice> = {};
+        const legalEntityFilter: FilterQuery<IDevice> = {};
 
-        if (retrieveDevicesQuery.bottomLeftLongitude && retrieveDevicesQuery.bottomLeftLatitude &&
-            retrieveDevicesQuery.upperRightLongitude && retrieveDevicesQuery.upperRightLatitude) {
-            const pointDistance = this.getPointDistance(retrieveDevicesQuery.bottomLeftLatitude,
-                retrieveDevicesQuery.bottomLeftLongitude, retrieveDevicesQuery.upperRightLatitude,
-                retrieveDevicesQuery.upperRightLongitude);
+        if (query.bottomLeftLongitude && query.bottomLeftLatitude &&
+            query.upperRightLongitude && query.upperRightLatitude) {
+            const pointDistance = this.getPointDistance(query.bottomLeftLatitude,
+                query.bottomLeftLongitude, query.upperRightLatitude,
+                query.upperRightLongitude);
 
             locationFilter.location = {
                 $geoWithin: {
                     $box: [
-                        [retrieveDevicesQuery.bottomLeftLongitude, retrieveDevicesQuery.bottomLeftLatitude],
-                        [retrieveDevicesQuery.upperRightLongitude, retrieveDevicesQuery.upperRightLatitude],
+                        [query.bottomLeftLongitude, query.bottomLeftLatitude],
+                        [query.upperRightLongitude, query.upperRightLatitude],
                     ],
                 },
             };
 
             if (pointDistance > this.showDevicesDistance) {
-                if (retrieveDevicesQuery.requestLegalEntityId) {
+                if (query.requestLegalEntityId) {
                     legalEntityFilter._id = {
                         $in: myDeviceIds,
                     };
@@ -78,9 +78,9 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
                     locationFilter = null;
                 }
             }
-        } else if (retrieveDevicesQuery.legalEntityId) {
+        } else if (query.legalEntityId) {
             const relationFilter = {
-                legalEntityId: retrieveDevicesQuery.legalEntityId,
+                legalEntityId: query.legalEntityId,
                 targetVariant: TargetVariant.DEVICE,
             };
             const relations = await this.relationModel.find(relationFilter);
@@ -90,10 +90,10 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
             };
         }
 
-        const pageSize = typeof retrieveDevicesQuery.pageSize === 'undefined' ? this.pageSize : retrieveDevicesQuery.pageSize;
-        const start = typeof retrieveDevicesQuery.pageIndex === 'undefined' ? 0 : retrieveDevicesQuery.pageIndex * pageSize;
+        const pageSize = typeof query.pageSize === 'undefined' ? this.pageSize : query.pageSize;
+        const start = typeof query.pageIndex === 'undefined' ? 0 : query.pageIndex * pageSize;
 
-        let deviceFilter: Record<string, any>;
+        let deviceFilter: FilterQuery<IDevice>;
         const hasLocationFilter = locationFilter && Object.keys(locationFilter).length;
         const hasLegalEntityFilter = legalEntityFilter && Object.keys(legalEntityFilter).length;
         if (hasLocationFilter && hasLegalEntityFilter) {
@@ -106,9 +106,17 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
             deviceFilter = {};
         }
 
+        const options: QueryOptions = {
+            skip: start, limit: pageSize,
+        };
+        if (query.sortField) {
+            options.sort = {};
+            options.sort[query.sortField] = query.sortDirection === 'DESCENDING' ? -1 : 1;
+        }
+
         const devices = [];
         if (deviceFilter && Object.keys(deviceFilter).length) {
-            const mongoDevices = await this.model.find(deviceFilter, {}, { skip: start, limit: pageSize });
+            const mongoDevices = await this.model.find(deviceFilter, {}, options);
             for (const device of mongoDevices) {
                 devices.push({ canEdit: myDeviceIdsSet.has(device._id), ...device.toObject() });
             }

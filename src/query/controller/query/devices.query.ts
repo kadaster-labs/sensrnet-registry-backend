@@ -10,5 +10,7 @@ export class RetrieveDevicesQuery implements IQuery {
         public readonly pageIndex?: number,
         public readonly pageSize?: number,
         public readonly legalEntityId?: string,
+        public readonly sortField?: string,
+        public readonly sortDirection?: string,
     ) {}
 }

@@ -1,4 +1,3 @@
-import * as bcrypt from 'bcryptjs';
 import { Document, Schema } from 'mongoose';
 
 export enum UserRole {
