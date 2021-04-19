@@ -6,6 +6,8 @@ import { ObservationGoalIdParams } from './model/observationgoal-id-params';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RetrieveObservationGoalsBody } from './model/retrieve-observationgoals-body';
 import { IObservationGoal } from '../model/observation-goal.model';
+import { User } from '../../core/decorators/user.decorator';
+import { ValidatedUser } from '../../auth/validated-user';
 
 @ApiBearerAuth()
 @ApiTags('Observation Goal')
@@ -27,9 +29,13 @@ export class ObservationGoalController {
   @ApiOperation({ summary: 'Retrieve Observation Goals' })
   @ApiResponse({ status: 200, description: 'Observation goals retrieved' })
   @ApiResponse({ status: 400, description: 'Observation goals retrieval failed' })
-  async retrieveObservationGoals(@Query() query: RetrieveObservationGoalsBody): Promise<IObservationGoal[]> {
+  async retrieveObservationGoals(@User() user: ValidatedUser,
+                                 @Query() query: RetrieveObservationGoalsBody): Promise<IObservationGoal[]> {
+    const requestLegalEntityId = user ? user.legalEntityId : undefined;
+
     const pageSize = typeof query.pageSize === 'undefined' ? undefined : Number(query.pageSize);
     const pageIndex = typeof query.pageIndex === 'undefined' ? undefined : Number(query.pageIndex);
-    return this.queryBus.execute(new ObservationGoalsQuery(query.name, pageIndex, pageSize, query.sortField, query.sortDirection));
+    return this.queryBus.execute(new ObservationGoalsQuery(requestLegalEntityId, query.name, pageIndex, pageSize,
+        query.sortField, query.sortDirection));
   }
 }

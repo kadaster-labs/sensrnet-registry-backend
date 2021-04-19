@@ -26,7 +26,11 @@ export class ObservationGoalAggregate extends Aggregate {
   }
 
   updateObservationGoal(legalEntityId: string, name: string, description: string, legalGround: string, legalGroundLink: string): void {
-    this.simpleApply(new ObservationGoalUpdated(this.aggregateId, legalEntityId, name, description, legalGround, legalGroundLink));
+    if (this.state.legalEntityId === legalEntityId) {
+      this.simpleApply(new ObservationGoalUpdated(this.aggregateId, legalEntityId, name, description, legalGround, legalGroundLink));
+    } else {
+      throw new NotLegalEntityException(this.aggregateId);
+    }
   }
 
   onObservationGoalUpdated(eventMessage: EventMessage): void {

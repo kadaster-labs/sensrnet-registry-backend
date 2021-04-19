@@ -48,9 +48,13 @@ export class DeviceAggregate extends Aggregate {
 
   updateDevice(legalEntityId: string, name: string, description: string, category: Category,
                connectivity: string, location: UpdateLocationBody): void {
-    this.simpleApply(new DeviceUpdated(this.aggregateId, legalEntityId, name, description, category, connectivity));
-    if (location) {
-      this.relocateDevice(location);
+    if (this.state.legalEntityId === legalEntityId) {
+      this.simpleApply(new DeviceUpdated(this.aggregateId, legalEntityId, name, description, category, connectivity));
+      if (location) {
+        this.relocateDevice(location);
+      }
+    } else {
+      throw new NotLegalEntityException(this.aggregateId);
     }
   }
 
@@ -82,8 +86,12 @@ export class DeviceAggregate extends Aggregate {
 
   addSensor(sensorId: string, legalEntityId: string, name: string, description: string,
             type: string, manufacturer: string, supplier: string, documentation: string): void {
-    this.simpleApply(new SensorAdded(this.aggregateId, sensorId, legalEntityId, name, description,
-      type, manufacturer, supplier, documentation));
+    if (this.state.legalEntityId === legalEntityId) {
+      this.simpleApply(new SensorAdded(this.aggregateId, sensorId, legalEntityId, name, description,
+          type, manufacturer, supplier, documentation));
+    } else {
+      throw new NotLegalEntityException(this.aggregateId);
+    }
   }
 
   onSensorAdded(eventMessage: EventMessage): void {
@@ -93,8 +101,12 @@ export class DeviceAggregate extends Aggregate {
 
   updateSensor(sensorId: string, legalEntityId: string, name: string, description: string,
                type: string, manufacturer: string, supplier: string, documentation: string): void {
-    this.simpleApply(new SensorUpdated(this.aggregateId, sensorId, legalEntityId, name, description,
-      type, manufacturer, supplier, documentation));
+    if (this.state.legalEntityId === legalEntityId) {
+      this.simpleApply(new SensorUpdated(this.aggregateId, sensorId, legalEntityId, name, description,
+          type, manufacturer, supplier, documentation));
+    } else {
+      throw new NotLegalEntityException(this.aggregateId);
+    }
   }
 
   onSensorUpdated(eventMessage: EventMessage): void {
@@ -103,7 +115,11 @@ export class DeviceAggregate extends Aggregate {
   }
 
   removeSensor(sensorId: string, legalEntityId: string): void {
-    this.simpleApply(new SensorRemoved(this.aggregateId, sensorId, legalEntityId));
+    if (this.state.legalEntityId === legalEntityId) {
+      this.simpleApply(new SensorRemoved(this.aggregateId, sensorId, legalEntityId));
+    } else {
+      throw new NotLegalEntityException(this.aggregateId);
+    }
   }
 
   onSensorRemoved(eventMessage: EventMessage): void {
@@ -115,9 +131,13 @@ export class DeviceAggregate extends Aggregate {
                 description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
                 theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
                 containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
-    this.simpleApply(new DatastreamAdded(this.aggregateId, sensorId, legalEntityId, dataStreamId, name,
-      description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
-      containsPersonalInfoData, isReusable, documentation, dataLink));
+    if (this.state.legalEntityId === legalEntityId) {
+      this.simpleApply(new DatastreamAdded(this.aggregateId, sensorId, legalEntityId, dataStreamId, name,
+          description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
+          containsPersonalInfoData, isReusable, documentation, dataLink));
+    } else {
+      throw new NotLegalEntityException(this.aggregateId);
+    }
   }
 
   onDatastreamAdded(eventMessage: EventMessage): void {
@@ -129,9 +149,13 @@ export class DeviceAggregate extends Aggregate {
                    description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
                    theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
                    containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
-    this.simpleApply(new DatastreamUpdated(this.aggregateId, sensorId, legalEntityId, dataStreamId, name,
-      description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
-      containsPersonalInfoData, isReusable, documentation, dataLink));
+    if (this.state.legalEntityId === legalEntityId) {
+      this.simpleApply(new DatastreamUpdated(this.aggregateId, sensorId, legalEntityId, dataStreamId, name,
+          description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
+          containsPersonalInfoData, isReusable, documentation, dataLink));
+    } else {
+      throw new NotLegalEntityException(this.aggregateId);
+    }
   }
 
   onDatastreamUpdated(eventMessage: EventMessage): void {
@@ -140,7 +164,11 @@ export class DeviceAggregate extends Aggregate {
   }
 
   linkObservationGoal(sensorId: string, legalEntityId: string, dataStreamId: string, observationGoalId: string): void {
-    this.simpleApply(new ObservationGoalLinked(this.aggregateId, sensorId, legalEntityId, dataStreamId, observationGoalId));
+    if (this.state.legalEntityId === legalEntityId) {
+      this.simpleApply(new ObservationGoalLinked(this.aggregateId, sensorId, legalEntityId, dataStreamId, observationGoalId));
+    } else {
+      throw new NotLegalEntityException(this.aggregateId);
+    }
   }
 
   onObservationGoalLinked(eventMessage: EventMessage): void {
@@ -149,7 +177,11 @@ export class DeviceAggregate extends Aggregate {
   }
 
   unlinkObservationGoal(sensorId: string, legalEntityId: string, dataStreamId: string, observationGoalId: string): void {
-    this.simpleApply(new ObservationGoalUnlinked(this.aggregateId, sensorId, legalEntityId, dataStreamId, observationGoalId));
+    if (this.state.legalEntityId === legalEntityId) {
+      this.simpleApply(new ObservationGoalUnlinked(this.aggregateId, sensorId, legalEntityId, dataStreamId, observationGoalId));
+    } else {
+      throw new NotLegalEntityException(this.aggregateId);
+    }
   }
 
   onObservationGoalUnlinked(eventMessage: EventMessage): void {
@@ -158,7 +190,11 @@ export class DeviceAggregate extends Aggregate {
   }
 
   removeDataStream(sensorId: string, legalEntityId: string, dataStreamId: string): void {
-    this.simpleApply(new DatastreamRemoved(this.aggregateId, sensorId, legalEntityId, dataStreamId));
+    if (this.state.legalEntityId === legalEntityId) {
+      this.simpleApply(new DatastreamRemoved(this.aggregateId, sensorId, legalEntityId, dataStreamId));
+    } else {
+      throw new NotLegalEntityException(this.aggregateId);
+    }
   }
 
   onDatastreamRemoved(eventMessage: EventMessage): void {
