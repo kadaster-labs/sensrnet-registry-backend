@@ -1,4 +1,5 @@
 import { QueryBus } from '@nestjs/cqrs';
+import { Public } from '../../auth/public';
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ObservationGoalQuery } from './query/observation-goal.query';
 import { ObservationGoalsQuery } from './query/observation-goals.query';
@@ -18,6 +19,7 @@ export class ObservationGoalController {
       ) {}
 
   @Get(':observationGoalId')
+  @Public()
   @ApiOperation({ summary: 'Retrieve Observation Goal' })
   @ApiResponse({ status: 200, description: 'Observation goal retrieved' })
   @ApiResponse({ status: 400, description: 'Observation goal retrieval failed' })
