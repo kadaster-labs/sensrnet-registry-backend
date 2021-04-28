@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, MaxLength } from 'class-validator';
+import { IsString, IsOptional, MaxLength, Validate } from 'class-validator';
+import { OrganizationEmailValidator } from '../../validation/organization-email';
 
 export abstract class ContactDetailsBody {
     @IsString()
@@ -15,6 +16,7 @@ export abstract class ContactDetailsBody {
     @IsString()
     @IsOptional()
     @MaxLength(255)
+    @Validate(OrganizationEmailValidator)
     @ApiProperty({
         type: String,
         required: false,
