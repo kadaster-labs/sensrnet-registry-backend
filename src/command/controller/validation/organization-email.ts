@@ -1,10 +1,12 @@
 import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments } from 'class-validator';
-import { Logger } from '@nestjs/common';
 
 @ValidatorConstraint({ name: 'organizationEmailValidator', async: false })
 export class OrganizationEmailValidator implements ValidatorConstraintInterface {
-    public supportedDomainNames = ['info', 'sensor', 'beheer', 'privacy', 'kcc', 'service', 'klant', 'gemeente'];
-    public validatorRegex = new RegExp(`^.*(${this.supportedDomainNames.join('|')}).*@.+[.].+$`);
+    public supportedNames = [
+        'info', 'sensor', 'beheer', 'privacy', 'kcc', 'service', 'klant', 'gemeente', 'support', 'help', 'ondersteuning',
+        'informatie', 'management', 'team', 'afdeling', 'data',
+    ];
+    public validatorRegex = new RegExp(`^.*(${this.supportedNames.join('|')}).*@.+[.].+$`);
 
     validate(email: string): boolean {
         return this.validatorRegex.test(email);
@@ -13,14 +15,14 @@ export class OrganizationEmailValidator implements ValidatorConstraintInterface 
     defaultMessage(args: ValidationArguments): string {
         let stringValue = '';
 
-        const supportedDomainNamesLength = this.supportedDomainNames.length;
+        const supportedDomainNamesLength = this.supportedNames.length;
         for (let i = 0; i < supportedDomainNamesLength; i++) {
             if (i === supportedDomainNamesLength - 1) {
-                stringValue += `'${this.supportedDomainNames[i]}'`;
+                stringValue += `'${this.supportedNames[i]}'`;
             } else if (i === supportedDomainNamesLength - 2) {
-                stringValue += `'${this.supportedDomainNames[i]}' or `;
+                stringValue += `'${this.supportedNames[i]}' or `;
             } else {
-                stringValue += `'${this.supportedDomainNames[i]}', `;
+                stringValue += `'${this.supportedNames[i]}', `;
             }
         }
 
