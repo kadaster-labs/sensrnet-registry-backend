@@ -49,6 +49,12 @@ export class DeviceAggregate extends Aggregate {
   }
 
   validateObservationGoalId(dataStreamId: string, observationGoalId: string): void {
+    if (!this.state.hasObservationGoalId(dataStreamId, observationGoalId)) {
+      throw new UnknowObjectException(observationGoalId);
+    }
+  }
+
+  validateNoObservationGoalId(dataStreamId: string, observationGoalId: string): void {
     if (this.state.hasObservationGoalId(dataStreamId, observationGoalId)) {
       throw new AlreadyExistsException(observationGoalId);
     }
@@ -182,7 +188,9 @@ export class DeviceAggregate extends Aggregate {
 
   linkObservationGoal(sensorId: string, legalEntityId: string, dataStreamId: string, observationGoalId: string): void {
     this.validateLegalEntityId(legalEntityId);
-    this.validateObservationGoalId(dataStreamId, observationGoalId);
+    this.validateSensorId(sensorId);
+    this.validateDataStreamId(dataStreamId);
+    this.validateNoObservationGoalId(dataStreamId, observationGoalId);
 
     this.simpleApply(new ObservationGoalLinked(this.aggregateId, sensorId, legalEntityId, dataStreamId, observationGoalId));
   }
@@ -194,6 +202,9 @@ export class DeviceAggregate extends Aggregate {
 
   unlinkObservationGoal(sensorId: string, legalEntityId: string, dataStreamId: string, observationGoalId: string): void {
     this.validateLegalEntityId(legalEntityId);
+    this.validateSensorId(sensorId);
+    this.validateDataStreamId(dataStreamId);
+    this.validateObservationGoalId(dataStreamId, observationGoalId);
 
     this.simpleApply(new ObservationGoalUnlinked(this.aggregateId, sensorId, legalEntityId, dataStreamId, observationGoalId));
   }
