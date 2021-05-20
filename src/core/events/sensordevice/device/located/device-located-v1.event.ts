@@ -14,5 +14,4 @@ export class DeviceLocated extends SensorDeviceEvent {
         this.description = description;
         this.location = location;
     }
-
-}  
+}

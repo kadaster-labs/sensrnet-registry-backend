@@ -1,10 +1,10 @@
-import { UnknowObjectException } from '../../error/unknow-object-exception';
-import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { UpdateObservationGoalCommand } from '../../../command/observation-goal/update-observation-goal.command';
-import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
-import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
 import { validateLegalEntity } from '../../util/legal-entity.utils';
+import { UnknowObjectException } from '../../error/unknow-object-exception';
+import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
+import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
+import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
 import { ObservationGoalRepository } from '../../../../core/repositories/observation-goal.repository';
+import { UpdateObservationGoalCommand } from '../../../command/observation-goal/update-observation-goal.command';
 
 @CommandHandler(UpdateObservationGoalCommand)
 export class UpdateObservationGoalCommandHandler implements ICommandHandler<UpdateObservationGoalCommand> {

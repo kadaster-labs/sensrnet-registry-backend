@@ -1,11 +1,11 @@
+import { validateLegalEntity } from '../../util/legal-entity.utils';
 import { AlreadyExistsException } from '../../error/already-exists-exception';
-import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 import { DeviceAggregate } from '../../../../core/aggregates/device.aggregate';
+import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
+import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 import { DeviceRepository } from '../../../../core/repositories/device.repository';
 import { RegisterDeviceCommand } from '../../../command/device/register-device.command';
-import { validateLegalEntity } from '../../util/legal-entity.utils';
 import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
-import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
 
 @CommandHandler(RegisterDeviceCommand)
 export class RegisterDeviceCommandHandler implements ICommandHandler<RegisterDeviceCommand> {

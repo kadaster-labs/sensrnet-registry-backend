@@ -9,8 +9,8 @@ import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ObservationGoalIdParams } from './model/observation-goal/observation-goal-id.params';
 import { UpdateObservationGoalBody } from './model/observation-goal/update-observation-goal.body';
-import { RegisterObservationGoalBody } from './model/observation-goal/register-observation-goal.body';
 import { Controller, Param, Post, Put, Body, Delete, UseFilters, UseGuards } from '@nestjs/common';
+import { RegisterObservationGoalBody } from './model/observation-goal/register-observation-goal.body';
 import { UpdateObservationGoalCommand } from '../command/observation-goal/update-observation-goal.command';
 import { RemoveObservationGoalCommand } from '../command/observation-goal/remove-observation-goal.command';
 import { RegisterObservationGoalCommand } from '../command/observation-goal/register-observation-goal.command';

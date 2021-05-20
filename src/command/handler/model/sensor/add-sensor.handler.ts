@@ -1,9 +1,9 @@
+import { validateLegalEntity } from '../../util/legal-entity.utils';
 import { UnknowObjectException } from '../../error/unknow-object-exception';
 import { AddSensorCommand } from '../../../command/sensor/add-sensor.command';
 import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 import { DeviceRepository } from '../../../../core/repositories/device.repository';
-import { validateLegalEntity } from '../../util/legal-entity.utils';
 import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
 
 @CommandHandler(AddSensorCommand)

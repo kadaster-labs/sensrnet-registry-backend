@@ -1,12 +1,12 @@
+import { MongooseModule } from '@nestjs/mongoose';
+import { UserSchema } from '../user/model/user.model';
 import { Module, OnModuleInit } from '@nestjs/common';
 import { CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
-import { MongooseModule } from '@nestjs/mongoose';
 import { DeviceRepository } from '../core/repositories/device.repository';
 import { LegalEntityRepository } from '../core/repositories/legal-entity.repository';
 import { ObservationGoalRepository } from '../core/repositories/observation-goal.repository';
 import { EventStoreModule } from '../event-store/event-store.module';
 import { EventStorePublisher } from '../event-store/event-store.publisher';
-import { UserSchema } from '../user/model/user.model';
 import { DataStreamController } from './controller/data-stream.controller';
 import { DeviceController } from './controller/device.controller';
 import { LegalEntityController } from './controller/legal-entity.controller';
@@ -68,7 +68,7 @@ import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor
         AddSensorCommandHandler,
         UpdateSensorCommandHandler,
         RemoveSensorCommandHandler,
-        // datastream
+        // data-stream
         AddDataStreamCommandHandler,
         RemoveDataStreamCommandHandler,
         UpdateDataStreamCommandHandler,

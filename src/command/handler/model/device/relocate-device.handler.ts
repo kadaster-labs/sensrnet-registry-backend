@@ -25,7 +25,7 @@ export class RelocateDeviceCommandHandler implements ICommandHandler<RelocateDev
     if (aggregate) {
       aggregate = this.publisher.mergeObjectContext(aggregate);
 
-      aggregate.relocateDevice(command.location);
+      aggregate.relocateDevice(command.legalEntityId, command.location);
       aggregate.commit();
     } else {
       throw new UnknowObjectException(command.deviceId);

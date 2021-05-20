@@ -1,12 +1,12 @@
 import { Aggregate } from '../../event-store/aggregate';
 import { EventMessage } from '../../event-store/event-message';
-import { getPublicContactDetailsAddedEvent, PublicContactDetailsAdded } from '../events/legal-entity/contact-details/added';
+import { LegalEntityState, LegalEntityStateImpl } from './legal-entity-state';
+import { getLegalEntityRemovedEvent, LegalEntityRemoved } from '../events/legal-entity/removed';
+import { getOrganizationUpdatedEvent, OrganizationUpdated } from '../events/legal-entity/organization/updated';
 import { ContactDetailsRemoved, getContactDetailsRemovedEvent } from '../events/legal-entity/contact-details/removed';
 import { ContactDetailsUpdated, getContactDetailsUpdatedEvent } from '../events/legal-entity/contact-details/updated';
 import { getOrganizationRegisteredEvent, OrganizationRegistered } from '../events/legal-entity/organization/registered';
-import { getOrganizationUpdatedEvent, OrganizationUpdated } from '../events/legal-entity/organization/updated';
-import { getLegalEntityRemovedEvent, LegalEntityRemoved } from '../events/legal-entity/removed';
-import { LegalEntityState, LegalEntityStateImpl } from './legal-entity-state';
+import { getPublicContactDetailsAddedEvent, PublicContactDetailsAdded } from '../events/legal-entity/contact-details/added';
 
 export class LegalEntityAggregate extends Aggregate {
   state!: LegalEntityState;
