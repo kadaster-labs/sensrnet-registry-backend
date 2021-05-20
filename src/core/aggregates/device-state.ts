@@ -67,13 +67,13 @@ export class DeviceStateImpl implements DeviceState {
   addObservationGoalId(dataStreamId: string, observationGoalId: string): void {
     this.dataStreams
         .filter(x => x.dataStreamId === dataStreamId)
-        .map(x => x.observationGoalIds.push(observationGoalId));
+        .forEach(x => x.observationGoalIds.push(observationGoalId));
   }
 
   removeObservationGoalId(dataStreamId: string, observationGoalId: string): void {
     this.dataStreams
         .filter(x => x.dataStreamId === dataStreamId)
-        .map(x => x.observationGoalIds = x.observationGoalIds.filter(y => y !== observationGoalId));
+        .forEach(x => x.observationGoalIds = x.observationGoalIds.filter(y => y !== observationGoalId));
   }
 
   hasObservationGoalId(dataStreamId: string, observationGoalId: string): boolean {
