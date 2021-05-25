@@ -31,9 +31,9 @@ export interface DeviceState {
 }
 
 export class DeviceStateImpl implements DeviceState {
-  public location;
-  public sensors = [];
-  public dataStreams = [];
+  public location: number[];
+  public sensors: SensorState[] = [];
+  public dataStreams: DataStreamState[] = [];
 
   constructor(
       public readonly id: string,
