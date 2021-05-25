@@ -4,8 +4,6 @@ import { Event } from '../../event-store/event';
 
 export abstract class AbstractEventType {
 
-  constructor() { }
-
   public supportedTypes: Record<string, any> = {};
 
   getEvent(eventTypeName: ESEvent): Event {

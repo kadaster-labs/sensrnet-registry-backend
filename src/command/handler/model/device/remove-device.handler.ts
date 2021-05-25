@@ -1,10 +1,10 @@
+import { validateLegalEntity } from '../../util/legal-entity.utils';
 import { UnknowObjectException } from '../../error/unknow-object-exception';
+import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 import { DeviceRepository } from '../../../../core/repositories/device.repository';
 import { RemoveDeviceCommand } from '../../../command/device/remove-device.command';
 import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
-import { validateLegalEntity } from '../../util/legal-entity.utils';
-import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
 
 @CommandHandler(RemoveDeviceCommand)
 export class RemoveDeviceCommandHandler implements ICommandHandler<RemoveDeviceCommand> {

@@ -1,7 +1,7 @@
+import { UnknowObjectException } from '../../error/unknow-object-exception';
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
 import { AddPublicContactDetailsCommand } from '../../../command/legal-entity/add-public-contact-details.command';
-import { UnknowObjectException } from '../../error/unknow-object-exception';
 
 @CommandHandler(AddPublicContactDetailsCommand)
 export class AddPublicContactDetailsCommandHandler implements ICommandHandler<AddPublicContactDetailsCommand> {
@@ -21,5 +21,4 @@ export class AddPublicContactDetailsCommandHandler implements ICommandHandler<Ad
       throw new UnknowObjectException(command.legalEntityId);
     }
   }
-
 }

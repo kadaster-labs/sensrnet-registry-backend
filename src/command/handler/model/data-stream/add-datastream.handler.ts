@@ -1,7 +1,7 @@
 import { validateLegalEntity } from '../../util/legal-entity.utils';
 import { UnknowObjectException } from '../../error/unknow-object-exception';
-import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
+import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
 import { DeviceRepository } from '../../../../core/repositories/device.repository';
 import { AddDataStreamCommand } from '../../../command/data-stream/add-data-stream.command';
 import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';

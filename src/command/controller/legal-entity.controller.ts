@@ -9,16 +9,16 @@ import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter
 import { ContactDetailsBody } from './model/contact-details/contact-details.body';
 import { ContactDetailsParams } from './model/legal-entity/contact-details.params';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UpdateLegalEntityBody as UpdateOrganizationBody } from './model/legal-entity/update-organization.body';
 import { RegisterOrganizationBody } from './model/legal-entity/register-organization.body';
 import { DeleteLegalEntityParams } from './model/legal-entity/delete-legal-entity.params';
 import { UpdateLegalEntityCommand } from '../command/legal-entity/update-legal-entity.command';
 import { RemoveLegalEntityCommand } from '../command/legal-entity/remove-legal-entity.command';
+import { UseFilters, Controller, Post, Body, Put, Delete, UseGuards, Param } from '@nestjs/common';
 import { RegisterOrganizationCommand } from '../command/legal-entity/register-organization.command';
 import { RemoveContactDetailsCommand } from '../command/legal-entity/remove-contact-details.command';
-import { UseFilters, Controller, Post, Body, Put, Delete, UseGuards, Param } from '@nestjs/common';
 import { UpdateContactDetailsCommand } from '../command/legal-entity/update-contact-details.command copy';
 import { AddPublicContactDetailsCommand } from '../command/legal-entity/add-public-contact-details.command';
+import { UpdateLegalEntityBody as UpdateOrganizationBody } from './model/legal-entity/update-organization.body';
 
 @ApiTags('LegalEntity')
 @Controller('legalentity')

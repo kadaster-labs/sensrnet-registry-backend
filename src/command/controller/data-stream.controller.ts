@@ -16,8 +16,8 @@ import { AddDataStreamCommand } from '../command/data-stream/add-data-stream.com
 import { RemoveDataStreamCommand } from '../command/data-stream/remove-data-stream.command';
 import { UpdateDataStreamCommand } from '../command/data-stream/update-data-stream.command';
 import { LinkObservationGoalCommand } from '../command/data-stream/link-observationgoal.command';
-import { UnlinkObservationGoalCommand } from '../command/data-stream/unlink-observationgoal.command';
 import { Controller, Param, Post, Put, Body, Delete, UseFilters, UseGuards } from '@nestjs/common';
+import { UnlinkObservationGoalCommand } from '../command/data-stream/unlink-observationgoal.command';
 
 @ApiBearerAuth()
 @ApiTags('Datastream')
