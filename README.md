@@ -78,9 +78,6 @@ Stop entire stack:
 $ docker-compose stop
 ```
 
-## Deployment
-Once the images are available in the container registry, deployment can be done (on Kubernetes) by using Kustomize and the desired config, i.e.
-`kustomize build deployment/overlays/demo | kubectl apply -f -`
 
 ## Find Us
 
