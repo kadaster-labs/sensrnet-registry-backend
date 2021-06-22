@@ -6,7 +6,9 @@ import { DomainExceptionFilter } from './core/errors/domain-exception.filter';
 
 async function bootstrap() {
   const port = process.env.PORT || 3000;
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn'],
+  });
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new DomainExceptionFilter());
