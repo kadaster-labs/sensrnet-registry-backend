@@ -3,15 +3,19 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { DomainExceptionFilter } from './core/errors/domain-exception.filter';
+import * as helmet from 'helmet';
 
 async function bootstrap() {
   const port = process.env.PORT || 3000;
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn'],
   });
+  // WARNING the order matters because of the underlying platform !!
+  app.use(helmet());
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new DomainExceptionFilter());
+
   app.setGlobalPrefix('api');
 
   const documentOptions = new DocumentBuilder()
