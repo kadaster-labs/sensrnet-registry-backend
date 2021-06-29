@@ -11,10 +11,10 @@ async function bootstrap() {
     logger: ['error', 'warn'],
   });
   // WARNING the order matters because of the underlying platform !!
-  app.use(helmet())
+  app.use(helmet());
   app.enableCors();
-  app.useGlobalPipes(new ValidationPipe())
-  app.useGlobalFilters(new DomainExceptionFilter())
+  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new DomainExceptionFilter());
 
   app.setGlobalPrefix('api');
 
