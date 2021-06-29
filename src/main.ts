@@ -7,8 +7,9 @@ import * as helmet from 'helmet';
 
 async function bootstrap() {
   const port = process.env.PORT || 3000;
-  const app = await NestFactory.create(AppModule);
-
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn'],
+  });
   // WARNING the order matters because of the underlying platform !!
   app.use(helmet())
   app.enableCors();
