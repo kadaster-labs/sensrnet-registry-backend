@@ -12,5 +12,6 @@ export class RetrieveDevicesQuery implements IQuery {
         public readonly legalEntityId?: string,
         public readonly sortField?: string,
         public readonly sortDirection?: string,
+        public readonly name?: string,
     ) {}
 }
