@@ -100,4 +100,14 @@ export class RetrieveDevicesParams {
   })
   @Type(() => String)
   readonly sortDirection: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    type: String,
+    required: false,
+    description: 'Name filter.',
+  })
+  @Type(() => String)
+  readonly name: string;
 }

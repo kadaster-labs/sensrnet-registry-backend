@@ -51,6 +51,13 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         }
         const myDeviceIdsSet = new Set(myDeviceIds);
 
+        const nameFilter: FilterQuery<IDevice> = {};
+        if (query.name) {
+            nameFilter.name = {
+                $regex: `^${query.name}`,
+            };
+        }
+
         let locationFilter: FilterQuery<IDevice> = {};
         const legalEntityFilter: FilterQuery<IDevice> = {};
 
@@ -94,16 +101,27 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         const start = typeof query.pageIndex === 'undefined' ? 0 : query.pageIndex * pageSize;
 
         let deviceFilter: FilterQuery<IDevice>;
+        const hasNameFilter = nameFilter && Object.keys(nameFilter).length;
         const hasLocationFilter = locationFilter && Object.keys(locationFilter).length;
         const hasLegalEntityFilter = legalEntityFilter && Object.keys(legalEntityFilter).length;
-        if (hasLocationFilter && hasLegalEntityFilter) {
-            deviceFilter = { $and: [locationFilter, legalEntityFilter] };
-        } else if (hasLocationFilter) {
-            deviceFilter = locationFilter;
-        } else if (hasLegalEntityFilter) {
-            deviceFilter = legalEntityFilter;
-        } else {
+
+        const filters = [];
+        if (hasLocationFilter) {
+            filters.push(locationFilter);
+        }
+        if (hasLegalEntityFilter) {
+            filters.push(legalEntityFilter);
+        }
+        if (hasNameFilter) {
+            filters.push(nameFilter);
+        }
+
+        if (filters.length === 0) {
             deviceFilter = {};
+        } else if (filters.length === 1) {
+            deviceFilter = filters[0];
+        } else {
+            deviceFilter = { $and: filters };
         }
 
         const options: QueryOptions = {

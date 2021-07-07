@@ -38,6 +38,6 @@ export class DeviceController {
     const pageIndex = typeof devicesParams.pageIndex === 'undefined' ? undefined : Number(devicesParams.pageIndex);
     return await this.queryBus.execute(new RetrieveDevicesQuery(requestLegalEntityId, devicesParams.bottomLeftLongitude,
         devicesParams.bottomLeftLatitude, devicesParams.upperRightLongitude, devicesParams.upperRightLatitude,
-        pageIndex, pageSize, devicesParams.legalEntityId, devicesParams.sortField, devicesParams.sortDirection));
+        pageIndex, pageSize, devicesParams.legalEntityId, devicesParams.sortField, devicesParams.sortDirection, devicesParams.name));
   }
 }
