@@ -1,0 +1,44 @@
+version: '3.7'
+
+networks:
+  backend:
+    name: backend
+    driver: bridge
+
+services:
+  eventstore:
+    image: eventstore/eventstore:release-5.0.8
+    ports:
+      - 2113:2113
+      - 1113:1113
+    environment:
+      - EVENTSTORE_DEV=true
+      - EVENTSTORE_MEM_DB=false
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+    networks:
+      - backend
+    command:
+      --dev --enable-external-tcp --ext-ip=0.0.0.0 --int-ip=0.0.0.0 --disable-external-tcp-tls
+
+  mongo:
+    image: mongo:4.4.7
+    ports:
+      - 27017:27017
+    networks:
+      - backend
+
+  dex:
+    image: ghcr.io/dexidp/dex:v2.29.0
+    user: root
+    command: dex serve /config.yml
+    ports:
+      - 5556:5556
+    volumes:
+      - ./dex.dev.yml:/config.yml
+      - dex-data:/data
+    networks:
+      - backend
+
+volumes:
+  dex-data:
