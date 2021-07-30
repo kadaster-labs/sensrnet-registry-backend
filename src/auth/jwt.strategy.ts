@@ -9,6 +9,9 @@ import { ValidatedUser } from './validated-user';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+
+  protected logger: Logger = new Logger(this.constructor.name);
+
   constructor(
     private authService: AuthService,
     private userService: UserService,
@@ -21,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         jwksRequestsPerMinute: 5,
         jwksUri: process.env.OIDC_JWKS_URL,
         handleSigningKeyError: (err, cb) => {
-          Logger.warn(`Could not verify token signature: ${JSON.stringify(err.name)}`);
+          this.logger.warn(`Could not verify token signature: ${JSON.stringify(err.name)}`);
           return cb(err);
         },
       }),
@@ -35,12 +38,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     const userId: string = await this.authService.createOrLogin(idToken);
     const user: ValidatedUser = { userId };
 
-    const permission: IUserPermissions = await this.userService.findUserPermissions({ _id: userId });
+    const permission: IUserPermissions = await this.userService.retrieveUserPermissions(userId);
     if (permission && permission.legalEntityId) {
       user.legalEntityId = permission.legalEntityId;
       user.role = permission.role;
     }
 
+    this.logger.debug(`validated user: [${JSON.stringify(user)}]`);
     return user;
   }
 }

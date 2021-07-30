@@ -10,12 +10,15 @@ import { UserAlreadyExistsException } from '../../command/handler/error/user-alr
 
 @CommandHandler(RegisterOidcUserCommand)
 export class RegisterOidcUserCommandHandler implements ICommandHandler<RegisterOidcUserCommand> {
+
+  protected logger: Logger = new Logger(this.constructor.name);
+
   constructor(
     @InjectModel('User') private userModel: Model<IUser>,
   ) { }
 
   async execute(command: RegisterOidcUserCommand): Promise<{ id: string }> {
-    Logger.log('Going to register user');
+    this.logger.log('Going to register user');
     const userInstance = new this.userModel({
       _id: command.token.sub,
       email: command.token.email,
@@ -25,10 +28,10 @@ export class RegisterOidcUserCommandHandler implements ICommandHandler<RegisterO
 
     try {
       await userInstance.save();
-      Logger.log('User Created in DB');
+      this.logger.log('User Created in DB');
       return { id: userInstance._id };
     } catch (error) {
-      Logger.warn(error);
+      this.logger.warn(error);
       throw new UserAlreadyExistsException("");
     }
   }

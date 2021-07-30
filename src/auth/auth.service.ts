@@ -6,6 +6,9 @@ import { RegisterOidcUserCommand } from '../user/command/register-oidc-user.comm
 
 @Injectable()
 export class AuthService {
+
+    protected logger: Logger = new Logger(this.constructor.name);
+
     constructor(
         private commandBus: CommandBus,
         private usersService: UserService,
@@ -15,9 +18,10 @@ export class AuthService {
         let user: IUser = await this.usersService.findOne({ _id: idToken.sub });
         if (!user) {
             const userId: string = await this.commandBus.execute(new RegisterOidcUserCommand(idToken));
-            Logger.log(`Created new user ${JSON.stringify(userId)}`);
+            this.logger.log(`Created new user ${JSON.stringify(userId)}`);
             user = await this.usersService.findOne({ _id: idToken.sub });
         }
+        this.logger.debug(`login user: [${JSON.stringify(user.email)}]`);
 
         return user._id;
     }
