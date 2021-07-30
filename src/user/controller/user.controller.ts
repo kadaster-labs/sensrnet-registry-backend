@@ -1,19 +1,21 @@
-import { UserRole } from '../model/user.model';
+import { Body, Controller, Delete, Get, Param, Put, UseFilters, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { RetrieveUserQuery } from '../query/users.query';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { DomainException } from '../../core/errors/domain-exception';
 import { ValidatedUser } from '../../auth/validated-user';
+import { User } from '../../core/decorators/user.decorator';
+import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
 import { Roles } from '../../core/guards/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
-import { UpdateUserBody } from '../model/update-user.body';
-import { User } from '../../core/decorators/user.decorator';
-import { DeleteUserParams } from '../model/delete-user.params';
-import { UpdateUserCommand } from '../command/update-user.command';
 import { DeleteUserCommand } from '../command/delete-user.command';
-import { UpdateUserRoleBody } from '../model/update-user-role.body';
+import { JoinLegalEntityCommand } from '../command/join-legal-entity.command';
+import { LeaveLegalEntityCommand } from '../command/leave-legal-entity.command';
 import { UpdateUserRoleCommand } from '../command/update-user-role.command';
-import { DomainExceptionFilter } from '../../core/errors/domain-exception.filter';
-import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UseFilters, Controller, Delete, UseGuards, Param, Body, Put, Get } from '@nestjs/common';
+import { DeleteUserParams } from '../model/delete-user.params';
+import { UpdateUserRoleBody } from '../model/update-user-role.body';
+import { UpdateUserBody } from '../model/update-user.body';
+import { UserRole } from '../model/user.model';
+import { RetrieveUserQuery } from '../query/users.query';
 
 @ApiTags('User')
 @Controller('user')
@@ -40,7 +42,15 @@ export class UserController {
     @ApiResponse({ status: 200, description: 'User updated' })
     @ApiResponse({ status: 400, description: 'User update failed' })
     async updateUser(@User() user: ValidatedUser, @Body() userBody: UpdateUserBody): Promise<any> {
-        return await this.commandBus.execute(new UpdateUserCommand(user.userId, userBody.legalEntityId, userBody.leaveLegalEntity));
+        if (userBody.legalEntityId) {
+            return await this.commandBus.execute(new JoinLegalEntityCommand(user.userId, userBody.legalEntityId));
+        }
+        else if (userBody.leaveLegalEntity) {
+            return await this.commandBus.execute(new LeaveLegalEntityCommand(user.userId, user.legalEntityId));
+        }
+        else {
+            throw new DomainException('Unsupported combination of parameters');
+        }
     }
 
     @Put(':id')

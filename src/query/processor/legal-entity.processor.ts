@@ -71,8 +71,7 @@ export class LegalEntityProcessor extends AbstractProcessor {
       legalEntity = await new this.model(legalEntityData).save();
 
       if (!originSync) {
-        const userPermissions = {_id: event.userId, role: UserRole.ADMIN, legalEntityId: event.aggregateId};
-        await this.userService.updateUserPermissions({_id: event.userId}, userPermissions);
+        await this.userService.grantAdminPermissionForOrganization(event.userId, event.aggregateId);
       }
     } catch {
       this.errorCallback(event);
