@@ -22,7 +22,7 @@ services:
       --dev --enable-external-tcp --ext-ip=0.0.0.0 --int-ip=0.0.0.0 --disable-external-tcp-tls
 
   mongo:
-    image: mongo
+    image: mongo:4.4.7
     ports:
       - 27017:27017
     networks:
@@ -48,13 +48,14 @@ services:
       - OIDC_ISSUER=http://localhost:5556/dex
       - OIDC_JWKS_URL=http://dex:5556/dex/keys
       - OIDC_AUDIENCE=registry-frontend
+      - NODE_ENV=development
     links:
       - eventstore
     networks:
       - backend
 
   dex:
-    image: ghcr.io/dexidp/dex:latest
+    image: ghcr.io/dexidp/dex:v2.29.0
     user: root
     command: dex serve /config.yml
     ports:
