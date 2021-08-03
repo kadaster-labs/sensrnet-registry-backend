@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { UserPermissionsSchema, UserSchema } from './model/user.model';
+import { User, UserSchema } from './schema/user.schema';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserController } from './controller/user.controller';
@@ -10,13 +10,14 @@ import { DeleteUserCommandHandler } from './handler/delete-user.handler';
 import { RetrieveUserQueryHandler } from './handler/retrieve-users.handler';
 import { UpdateUserRoleCommandHandler } from './handler/update-user-role.handler';
 import { RegisterOidcUserCommandHandler } from './handler/register-oidc-user.handler';
+import { UserPermissions, UserPermissionsSchema } from './schema/user-permissions.schema';
 
 @Module({
     imports: [
         CqrsModule,
         CommandModule,
-        MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
-        MongooseModule.forFeature([{name: 'UserPermissions', schema: UserPermissionsSchema}]),
+        MongooseModule.forFeature([{name: User.name, schema: UserSchema}]),
+        MongooseModule.forFeature([{name: UserPermissions.name, schema: UserPermissionsSchema}]),
     ], controllers: [
         UserController,
     ], providers: [

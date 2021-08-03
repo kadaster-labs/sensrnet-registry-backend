@@ -1,32 +1,33 @@
 import { Model } from 'mongoose';
-import { IUser, IUserPermissions } from './model/user.model';
+import { User, UserDocument } from './schema/user.schema';
+import { UserPermissions, UserPermissionsDocument } from './schema/user-permissions.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectModel('User') private userModel: Model<IUser>,
-        @InjectModel('UserPermissions') private userPermissionsModel: Model<IUserPermissions>,
+        @InjectModel(User.name) private userModel: Model<UserDocument>,
+        @InjectModel(UserPermissions.name) private userPermissionsModel: Model<UserPermissionsDocument>,
     ) { }
 
-    async findOne(...args: any[]): Promise<IUser | undefined> {
+    async findOne(...args: any[]): Promise<User> {
         return this.userModel.findOne(...args);
     }
 
-    async find(...args: any[]): Promise<IUser[]> {
+    async find(...args: any[]): Promise<User[]> {
         return this.userModel.find(...args);
     }
 
-    async findUserPermissions(...args: any[]): Promise<IUserPermissions | undefined> {
+    async findUserPermissions(...args: any[]): Promise<UserPermissions> {
         return this.userPermissionsModel.findOne(...args);
     }
 
-    async updateUserPermissions(filter: Record<string, any>, update: Record<string, any>): Promise<IUserPermissions | undefined> {
+    async updateUserPermissions(filter: Record<string, any>, update: Record<string, any>): Promise<UserPermissions> {
         return this.userPermissionsModel.updateOne(filter, update, { new: true, upsert: true });
     }
 
-    async deleteUserPermissions(filter: Record<string, any>): Promise<IUserPermissions | undefined> {
+    async deleteUserPermissions(filter: Record<string, any>): Promise<UserPermissions> {
         return this.userPermissionsModel.deleteOne(filter);
     }
 

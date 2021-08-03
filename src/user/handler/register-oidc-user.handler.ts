@@ -4,14 +4,14 @@ import { Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 
-import { IUser } from '../model/user.model';
+import { User, UserDocument } from '../schema/user.schema';
 import { RegisterOidcUserCommand } from '../command/register-oidc-user.command';
 import { UserAlreadyExistsException } from '../../command/handler/error/user-already-exists-exception';
 
 @CommandHandler(RegisterOidcUserCommand)
 export class RegisterOidcUserCommandHandler implements ICommandHandler<RegisterOidcUserCommand> {
   constructor(
-    @InjectModel('User') private userModel: Model<IUser>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) { }
 
   async execute(command: RegisterOidcUserCommand): Promise<{ id: string }> {

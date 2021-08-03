@@ -4,7 +4,8 @@ import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '../auth/auth.module';
 import { EventStoreModule } from '../event-store/event-store.module';
-import { UserPermissionsSchema, UserSchema } from '../user/model/user.model';
+import { User, UserSchema } from '../user/schema/user.schema';
+import { UserPermissions, UserPermissionsSchema } from '../user/schema/user-permissions.schema';
 import { UserService } from '../user/user.service';
 import { DeviceController } from './controller/device-controller';
 import { DeviceEsController } from './controller/device.es.controller';
@@ -39,12 +40,12 @@ import { ObservationGoalsQueryHandler } from './controller/handler/observation-g
         AuthModule,
         CheckpointModule,
         EventStoreModule,
-        MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
+        MongooseModule.forFeature([{name: User.name, schema: UserSchema}]),
         MongooseModule.forFeature([{name: 'Device', schema: DeviceSchema}]),
         MongooseModule.forFeature([{name: 'Relation', schema: RelationSchema}]),
         MongooseModule.forFeature([{name: 'LegalEntity', schema: LegalEntitySchema}]),
         MongooseModule.forFeature([{name: 'ObservationGoal', schema: ObservationGoalSchema}]),
-        MongooseModule.forFeature([{name: 'UserPermissions', schema: UserPermissionsSchema}]),
+        MongooseModule.forFeature([{name: UserPermissions.name, schema: UserPermissionsSchema}]),
     ], controllers: [
         DeviceController,
         DeviceEsController,

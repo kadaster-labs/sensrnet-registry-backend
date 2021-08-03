@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 import { CommandBus } from '@nestjs/cqrs';
-import { UserRole } from '../../user/model/user.model';
+import { UserRole } from '../../user/schema/user-permissions.schema';
 import { ValidatedUser } from '../../auth/validated-user';
 import { Roles } from '../../core/guards/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';

@@ -23,7 +23,12 @@ const database = process.env.MONGO_DATABASE || 'sensrnet';
         QueryModule,
         CommandModule,
         CheckpointModule,
-        MongooseModule.forRoot(`mongodb://${host}:${port}/${database}`),
+        MongooseModule.forRoot(`mongodb://${host}:${port}/${database}`, {
+            useCreateIndex: true,
+            useNewUrlParser: true,
+            useFindAndModify: false,
+            useUnifiedTopology: true,
+        }),
         TerminusModule,
     ],
     controllers: [HealthController],

@@ -1,5 +1,5 @@
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserSchema } from '../user/model/user.model';
+import { User, UserSchema } from '../user/schema/user.schema';
 import { Module, OnModuleInit } from '@nestjs/common';
 import { CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
 import { DeviceRepository } from '../core/repositories/device.repository';
@@ -44,7 +44,7 @@ import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor
     ], imports: [
         CqrsModule,
         EventStoreModule,
-        MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     ], providers: [
         EventBus,
         EventPublisher,

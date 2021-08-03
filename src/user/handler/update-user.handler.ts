@@ -1,5 +1,5 @@
 import { UserService } from '../user.service';
-import { UserRole } from '../model/user.model';
+import { UserRole } from '../schema/user-permissions.schema';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 import { UpdateUserCommand } from '../command/update-user.command';
 import { validateLegalEntity } from '../../command/handler/util/legal-entity.utils';

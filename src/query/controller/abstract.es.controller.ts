@@ -1,6 +1,6 @@
 import { OffsetBody } from './model/offset-body';
 import { Get, Post, Body } from '@nestjs/common';
-import { UserRole } from '../../user/model/user.model';
+import { UserRole } from '../../user/schema/user-permissions.schema';
 import { Roles } from '../../core/guards/roles.decorator';
 import { ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AbstractEsListener } from '../processor/abstract.es.listener';

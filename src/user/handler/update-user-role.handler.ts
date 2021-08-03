@@ -1,6 +1,6 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { IUserPermissions, UserRole } from '../model/user.model';
+import { UserPermissions, UserPermissionsDocument, UserRole } from '../schema/user-permissions.schema';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 import { UpdateUserRoleCommand } from '../command/update-user-role.command';
 import { validateLegalEntity } from '../../command/handler/util/legal-entity.utils';
@@ -11,7 +11,7 @@ export class UpdateUserRoleCommandHandler implements ICommandHandler<UpdateUserR
 
   constructor(
       private readonly legalEntityRepository: LegalEntityRepository,
-      @InjectModel('UserPermissions') private userPermissionsModel: Model<IUserPermissions>,
+      @InjectModel(UserPermissions.name) private userPermissionsModel: Model<UserPermissionsDocument>,
   ) {}
 
   async execute(command: UpdateUserRoleCommand): Promise<void> {

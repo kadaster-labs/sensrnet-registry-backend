@@ -25,6 +25,7 @@ export abstract class AbstractProcessor {
 
     protected logError(event: Event): void {
         this.logger.error(`Error while updating projection for ${event.aggregateId}.`);
+        this.logger.error(JSON.stringify(event));
     }
 
     public async saveRelation(legalEntityId: string, relationVariant: number, targetVariant: number,

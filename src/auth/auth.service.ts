@@ -1,5 +1,5 @@
 import { CommandBus } from '@nestjs/cqrs';
-import { IUser } from '../user/model/user.model';
+import { User } from '../user/schema/user.schema';
 import { UserService } from '../user/user.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { RegisterOidcUserCommand } from '../user/command/register-oidc-user.command';
@@ -12,7 +12,7 @@ export class AuthService {
     ) { }
 
     async createOrLogin(idToken: Record<string, any>): Promise<string> {
-        let user: IUser = await this.usersService.findOne({ _id: idToken.sub });
+        let user: User = await this.usersService.findOne({ _id: idToken.sub });
         if (!user) {
             const userId: string = await this.commandBus.execute(new RegisterOidcUserCommand(idToken));
             Logger.log(`Created new user ${JSON.stringify(userId)}`);

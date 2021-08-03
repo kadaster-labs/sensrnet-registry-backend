@@ -1,4 +1,4 @@
-import { UserRole } from '../model/user.model';
+import { UserRole } from '../schema/user-permissions.schema';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { RetrieveUserQuery } from '../query/users.query';
 import { ValidatedUser } from '../../auth/validated-user';

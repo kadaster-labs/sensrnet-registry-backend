@@ -2,13 +2,14 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { RetrieveUserQuery } from '../query/users.query';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { IUser, IUserPermissions } from '../model/user.model';
+import { User, UserDocument } from '../schema/user.schema';
+import { UserPermissions, UserPermissionsDocument } from '../schema/user-permissions.schema';
 
 @QueryHandler(RetrieveUserQuery)
 export class RetrieveUserQueryHandler implements IQueryHandler<RetrieveUserQuery> {
   constructor(
-      @InjectModel('User') private userModel: Model<IUser>,
-      @InjectModel('UserPermissions') private userPermissionsModel: Model<IUserPermissions>,
+      @InjectModel(User.name) private userModel: Model<UserDocument>,
+      @InjectModel(UserPermissions.name) private userPermissionsModel: Model<UserPermissionsDocument>,
   ) {}
 
   async execute(query: RetrieveUserQuery): Promise<Array<Record<string, any>>> {

@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { IDevice } from '../model/device.model';
 import { IRelation } from '../model/relation.model';
 import { UserService } from '../../user/user.service';
-import { UserRole } from '../../user/model/user.model';
+import { UserRole } from '../../user/schema/user-permissions.schema';
 import { AbstractProcessor } from './abstract.processor';
 import { ILegalEntity } from '../model/legal-entity.model';
 import { EventStorePublisher } from '../../event-store/event-store.publisher';

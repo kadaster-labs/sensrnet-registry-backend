@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { passportJwtSecret } from 'jwks-rsa';
 import { AuthService } from './auth.service';
-import { IUserPermissions } from '../user/model/user.model';
+import { UserPermissions } from '../user/schema/user-permissions.schema';
 import { ValidatedUser } from './validated-user';
 
 @Injectable()
@@ -35,7 +35,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     const userId: string = await this.authService.createOrLogin(idToken);
     const user: ValidatedUser = { userId };
 
-    const permission: IUserPermissions = await this.userService.findUserPermissions({ _id: userId });
+    const permission: UserPermissions = await this.userService.findUserPermissions({ _id: userId });
     if (permission && permission.legalEntityId) {
       user.legalEntityId = permission.legalEntityId;
       user.role = permission.role;
