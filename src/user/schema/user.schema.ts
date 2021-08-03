@@ -3,9 +3,7 @@ import { Document } from 'mongoose';
 
 export type UserDocument = User & Document;
 
-@Schema({
-  autoCreate: true,
-})
+@Schema()
 export class User {
   @Prop({ required: true })
   _id: string;

@@ -10,7 +10,6 @@ export enum UserRole {
 export type UserPermissionsDocument = UserPermissions & Document;
 
 @Schema({
-  autoCreate: true,
   collection: 'userpermissions',  // for backwards compatibility, as default is classname + 's', which would be userpermissionss
 })
 export class UserPermissions {
@@ -20,7 +19,7 @@ export class UserPermissions {
   @Prop({ required: true, index: true })
   legalEntityId: string;
 
-  @Prop({ type: Number })
+  @Prop()
   role: UserRole;
 }
 
