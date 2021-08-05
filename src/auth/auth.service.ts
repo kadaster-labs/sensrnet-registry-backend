@@ -15,7 +15,7 @@ export class AuthService {
     ) { }
 
     async createOrLogin(idToken: Record<string, any>): Promise<string> {
-        let user: IUser = await this.userQryService.retrieveUser(idToken.sub).then(async (user) => {
+        const user: IUser = await this.userQryService.retrieveUser(idToken.sub).then(async (user) => {
             if (!user) {
                 await this.postRegisterCommand(idToken);
                 return await this.userQryService.retrieveUser(idToken.sub)

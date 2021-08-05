@@ -27,6 +27,16 @@ staticPasswords:
   userID: "1"
   username: "admin"
   name: "Admin user"
+- email: "marc@sensrnet.nl"
+  hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"  # hash for: password
+  userID: "2"
+  username: "marc"
+  name: "Marc user"
+- email: "stefan@sensrnet.nl"
+  hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"  # hash for: password
+  userID: "3"
+  username: "stefan"
+  name: "Stefan user"
 
 oauth2:
   responseTypes: [ "code", "token", "id_token" ]

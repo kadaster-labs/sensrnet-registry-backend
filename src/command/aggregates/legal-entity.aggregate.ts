@@ -40,7 +40,7 @@ export class LegalEntityAggregate extends Aggregate {
     this.simpleApply(new LegalEntityRemoved(this.aggregateId));
   }
 
-  validateLegalEntityHasNoDevices() {
+  validateLegalEntityHasNoDevices(): void {
     throw new DomainException('Currently the backend does not support removing organizations! Please vote for this issue (frontend#181) on GitHub.');
   }
 

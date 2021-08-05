@@ -23,7 +23,7 @@ export class LegalEntityProcessor extends AbstractProcessor {
 
   }
 
-  async processRegistered(event: OrganizationRegistered, originSync: boolean) {
+  async processRegistered(event: OrganizationRegistered, originSync: boolean): Promise<void> {
     try {
       if (!originSync) {
         await this.userService.grantAdminPermissionForOrganization(event.userId, event.aggregateId);

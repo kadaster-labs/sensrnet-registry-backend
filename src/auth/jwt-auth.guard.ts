@@ -23,7 +23,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return (await super.canActivate(context)) as boolean;
   }
 
-  handleRequest(err, user, info) {
+  handleRequest(err: any, user: any, info: any): any {
     // Can throw an exception based on either "info" or "err" arguments
     if (err || !user) {
       Logger.error(`Problem handling request: ${JSON.stringify(info.message)}`);
