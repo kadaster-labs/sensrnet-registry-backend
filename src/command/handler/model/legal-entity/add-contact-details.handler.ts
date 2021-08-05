@@ -1,7 +1,7 @@
 import { UnknowObjectException } from '../../error/unknow-object-exception';
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
-import { AddPublicContactDetailsCommand } from '../../../command/legal-entity/add-public-contact-details.command';
+import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
+import { AddPublicContactDetailsCommand } from '../../../model/legal-entity/add-public-contact-details.command';
 
 @CommandHandler(AddPublicContactDetailsCommand)
 export class AddPublicContactDetailsCommandHandler implements ICommandHandler<AddPublicContactDetailsCommand> {

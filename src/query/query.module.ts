@@ -1,50 +1,54 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
+import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UserModule } from 'src/commons/user/user.module';
+import { UserQueryService } from 'src/commons/user/user.qry-service';
 import { AuthModule } from '../auth/auth.module';
-import { EventStoreModule } from '../event-store/event-store.module';
-import { UserPermissionsSchema, UserSchema } from '../user/model/user.model';
-import { UserService } from '../user/user.service';
-import { DeviceController } from './controller/device-controller';
-import { DeviceEsController } from './controller/device.es.controller';
-import { RetrieveDeviceQueryHandler } from './controller/handler/device.handler';
-import { RetrieveDevicesQueryHandler } from './controller/handler/devices.handler';
-import { LegalEntitiesQueryHandler } from './controller/handler/legal-entities.handler';
-import { LegalEntityQueryHandler } from './controller/handler/legal-entity.handler';
-import { LegalEntitiesController } from './controller/legal-entities.controller';
-import { LegalEntityController } from './controller/legal-entity.controller';
-import { LegalEntityEsController } from './controller/legal-entity.es.controller';
-import { ObservationGoalEsController } from './controller/observation-goal.es.controller';
+import { EventStoreModule } from '../commons/event-store/event-store.module';
+import { UserPermissionsSchema, UserSchema } from '../commons/user/user.schema';
+import { DeviceController } from './api/device-controller';
+import { DeviceEsController } from './api/device.es.controller';
+import { RetrieveDeviceQueryHandler } from './handler/device.handler';
+import { RetrieveDevicesQueryHandler } from './handler/devices.handler';
+import { LegalEntitiesQueryHandler } from './handler/legal-entities.handler';
+import { LegalEntityQueryHandler } from './handler/legal-entity.handler';
+import { ObservationGoalQueryHandler } from './handler/observation-goal.handler';
+import { ObservationGoalsQueryHandler } from './handler/observation-goals.handler';
+import { LegalEntitiesController } from './api/legal-entities.controller';
+import { LegalEntityController } from './api/legal-entity.controller';
+import { LegalEntityEsController } from './api/legal-entity.es.controller';
+import { ObservationGoalController } from './api/observation-goal.controller';
+import { ObservationGoalEsController } from './api/observation-goal.es.controller';
 import { Gateway } from './gateway/gateway';
-import { DeviceSchema } from './model/device.model';
-import { LegalEntitySchema } from './model/legal-entity.model';
-import { ObservationGoalSchema } from './model/observation-goal.model';
-import { RelationSchema } from './model/relation.model';
+import { DeviceSchema } from './model/device.schema';
+import { LegalEntitySchema } from './model/legal-entity.schema';
+import { ObservationGoalSchema } from './model/observation-goal.schema';
+import { RelationSchema } from './model/relation.schema';
 import { DeviceEsListener } from './processor/device.es.listener';
 import { DeviceProcessor } from './processor/device.processor';
 import { LegalEntityEsListener } from './processor/legal-entity.es.listener';
 import { LegalEntityProcessor } from './processor/legal-entity.processor';
 import { ObservationGoalEsListener } from './processor/observationgoal.es.listener';
 import { ObservationGoalProcessor } from './processor/observationgoal.processor';
-import { CheckpointModule } from './service/checkpoint/checkpoint.module';
-import { ObservationGoalController } from './controller/observation-goal.controller';
-import { ObservationGoalQueryHandler } from './controller/handler/observation-goal.handler';
-import { ObservationGoalsQueryHandler } from './controller/handler/observation-goals.handler';
+import { EventProcessingModule } from '../commons/event-processing/event-processing.module';
+import { UserController } from './api/user.controller';
+import { RetrieveUserQueryHandler } from './handler/retrieve-users.handler';
 
 @Module({
     imports: [
         JwtModule.register({}),
         CqrsModule,
         AuthModule,
-        CheckpointModule,
+        UserModule,
+        EventProcessingModule,
         EventStoreModule,
-        MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
-        MongooseModule.forFeature([{name: 'Device', schema: DeviceSchema}]),
-        MongooseModule.forFeature([{name: 'Relation', schema: RelationSchema}]),
-        MongooseModule.forFeature([{name: 'LegalEntity', schema: LegalEntitySchema}]),
-        MongooseModule.forFeature([{name: 'ObservationGoal', schema: ObservationGoalSchema}]),
-        MongooseModule.forFeature([{name: 'UserPermissions', schema: UserPermissionsSchema}]),
+        MongooseModule.forFeature([{ name: 'Device', schema: DeviceSchema }]),
+        MongooseModule.forFeature([{ name: 'Relation', schema: RelationSchema }]),
+        MongooseModule.forFeature([{ name: 'LegalEntity', schema: LegalEntitySchema }]),
+        MongooseModule.forFeature([{ name: 'ObservationGoal', schema: ObservationGoalSchema }]),
+        MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+        MongooseModule.forFeature([{ name: 'UserPermissions', schema: UserPermissionsSchema }]),
     ], controllers: [
         DeviceController,
         DeviceEsController,
@@ -53,9 +57,10 @@ import { ObservationGoalsQueryHandler } from './controller/handler/observation-g
         LegalEntityEsController,
         ObservationGoalController,
         ObservationGoalEsController,
+        UserController,
     ], providers: [
         Gateway,
-        UserService,
+        UserQueryService,
         EventPublisher,
         DeviceProcessor,
         DeviceEsListener,
@@ -69,6 +74,7 @@ import { ObservationGoalsQueryHandler } from './controller/handler/observation-g
         ObservationGoalsQueryHandler,
         LegalEntityQueryHandler,
         LegalEntitiesQueryHandler,
+        RetrieveUserQueryHandler,
     ],
 })
 

@@ -27,23 +27,31 @@ In order to run this application containerized, you'll need docker installed.
 
 ### Architecture
 
-Module and runtime structures:
+The architecture is an event-sourced one. Simplified it looks like this:
+
+![Dependency Graph Simplified](docs/images/dependency-graph-simplified.png)
+
+The (almost) complete structure looks like this:
 
 ![Dependency Graph](docs/images/dependency-graph.png)
 
 #### Modules:
 
-- auth: Module to handle authentication.
-- command:
-    - Command controllers and features.
-    - Command, and handlers which generate events.
-- core: Event definitions, and supporting classes.
-- event-store: Interface to Eventstore.
-- health: Functionality to determine the application health.
+- auth: Module to handle authentication and creating users in the database (from external identity providers)
+- command: the 'command side' of the system processing requested changes; this is the most complex part with:
+  - controllers: the API
+  - command handlers: handling commands
+  - repositories: loading aggregates from events
+  - aggregates: validation and producing events
+  - query processors and service needed for validation
 - query:
-  - Query processor to update the MongoDB projection.
-  - Query controllers and features.
-- user: Module to administrate the application users.
+  - Query processor to update the MongoDB projection
+  - Query controllers and features
+- commons: module containing shared parts like:
+  - events: the 'core API' of the system
+  - event-store: interface to the EventStoreDB
+  - models: shared data models (e.g. User)
+  - health: Functionality to determine the application health
 
 The runtime is defined by multiple Docker containers / `Dockerfile`s. In case of scaling up or out, the `query processor` should be put in its own container (probably stays as a single container).
 

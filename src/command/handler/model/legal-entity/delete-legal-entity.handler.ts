@@ -1,7 +1,7 @@
 import { UnknowObjectException } from '../../error/unknow-object-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
-import { RemoveLegalEntityCommand } from '../../../command/legal-entity/remove-legal-entity.command';
+import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
+import { RemoveLegalEntityCommand } from '../../../model/legal-entity/remove-legal-entity.command';
 
 @CommandHandler(RemoveLegalEntityCommand)
 export class RemoveLegalEntityCommandHandler implements ICommandHandler<RemoveLegalEntityCommand> {

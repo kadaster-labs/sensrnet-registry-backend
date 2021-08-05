@@ -1,8 +1,8 @@
-import { CommandBus } from '@nestjs/cqrs';
-import { IUser } from '../user/model/user.model';
-import { UserService } from '../user/user.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { RegisterOidcUserCommand } from '../user/command/register-oidc-user.command';
+import { CommandBus } from '@nestjs/cqrs';
+import { UserQueryService } from 'src/commons/user/user.qry-service';
+import { RegisterOidcUserCommand } from '../commons/commands/register-oidc-user.command';
+import { IUser } from '../commons/user/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -11,18 +11,26 @@ export class AuthService {
 
     constructor(
         private commandBus: CommandBus,
-        private usersService: UserService,
+        private userQryService: UserQueryService,
     ) { }
 
     async createOrLogin(idToken: Record<string, any>): Promise<string> {
-        let user: IUser = await this.usersService.findOne({ _id: idToken.sub });
-        if (!user) {
-            const userId: string = await this.commandBus.execute(new RegisterOidcUserCommand(idToken));
-            this.logger.log(`Created new user ${JSON.stringify(userId)}`);
-            user = await this.usersService.findOne({ _id: idToken.sub });
-        }
-        this.logger.debug(`login user: [${JSON.stringify(user.email)}]`);
+        let user: IUser = await this.userQryService.retrieveUser(idToken.sub).then(async (user) => {
+            if (!user) {
+                await this.postRegisterCommand(idToken);
+                return await this.userQryService.retrieveUser(idToken.sub)
+            }
+            return user;
+        });
 
+        this.logger.debug(`successful login user: [${JSON.stringify(user._id)}]`);
         return user._id;
+    }
+
+    private async postRegisterCommand(idToken: Record<string, any>) {
+        await this.commandBus.execute(new RegisterOidcUserCommand(
+            idToken.sub,
+            idToken.email,
+            idToken));
     }
 }

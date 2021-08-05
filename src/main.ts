@@ -2,7 +2,7 @@ import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { DomainExceptionFilter } from './core/errors/domain-exception.filter';
+import { DomainExceptionFilter } from './commons/errors/domain-exception.filter';
 import * as helmet from 'helmet';
 
 async function bootstrap() {

@@ -1,7 +1,7 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { DeviceRepository } from '../../../../core/repositories/device.repository';
-import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
-import { RelocateDeviceCommand } from '../../../command/device/relocate-device.command';
+import { DeviceRepository } from '../../../repositories/device.repository';
+import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
+import { RelocateDeviceCommand } from '../../../model/device/relocate-device.command';
 import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
 import { UnknowObjectException } from '../../error/unknow-object-exception';
 import { validateLegalEntity } from '../../util/legal-entity.utils';

@@ -1,31 +1,28 @@
-import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IDevice } from '../model/device.model';
-import { IRelation } from '../model/relation.model';
-import { UserService } from '../../user/user.service';
-import { UserRole } from '../../user/model/user.model';
-import { AbstractProcessor } from './abstract.processor';
-import { ILegalEntity } from '../model/legal-entity.model';
-import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import { LegalEntityEvent } from '../../core/events/legal-entity/legal-entity.event';
-import { ContactDetailsUpdated } from '../../core/events/legal-entity/contact-details/updated';
-import { ContactDetailsRemoved } from '../../core/events/legal-entity/contact-details/removed';
-import { PublicContactDetailsAdded } from '../../core/events/legal-entity/contact-details/added';
-import { LegalEntityRemoved, OrganizationRegistered, OrganizationUpdated } from '../../core/events/legal-entity';
+import { Model } from 'mongoose';
+import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
+import { LegalEntityRemoved, OrganizationRegistered, OrganizationUpdated } from '../../commons/events/legal-entity';
+import { PublicContactDetailsAdded } from '../../commons/events/legal-entity/contact-details/added';
+import { ContactDetailsRemoved } from '../../commons/events/legal-entity/contact-details/removed';
+import { ContactDetailsUpdated } from '../../commons/events/legal-entity/contact-details/updated';
+import { LegalEntityEvent } from '../../commons/events/legal-entity/legal-entity.event';
 import { Gateway } from '../gateway/gateway';
+import { IDevice } from '../model/device.schema';
+import { ILegalEntity } from '../model/legal-entity.schema';
+import { IRelation } from '../model/relation.schema';
+import { AbstractQueryProcessor } from './abstract-query.processor';
 
 @Injectable()
-export class LegalEntityProcessor extends AbstractProcessor {
+export class LegalEntityProcessor extends AbstractQueryProcessor {
   /* This processor processes legal entity events. Events like soft-delete are not handled because they do not need to be processed. */
 
   constructor(
-      eventStore: EventStorePublisher,
-      private readonly gateway: Gateway,
-      private readonly userService: UserService,
-      @InjectModel('Device') public deviceModel: Model<IDevice>,
-      @InjectModel('LegalEntity') private model: Model<ILegalEntity>,
-      @InjectModel('Relation') public relationModel: Model<IRelation>,
+    eventStore: EventStorePublisher,
+    private readonly gateway: Gateway,
+    @InjectModel('Device') public deviceModel: Model<IDevice>,
+    @InjectModel('LegalEntity') private model: Model<ILegalEntity>,
+    @InjectModel('Relation') public relationModel: Model<IRelation>,
   ) {
     super(eventStore, relationModel);
   }
@@ -69,10 +66,6 @@ export class LegalEntityProcessor extends AbstractProcessor {
     let legalEntity;
     try {
       legalEntity = await new this.model(legalEntityData).save();
-
-      if (!originSync) {
-        await this.userService.grantAdminPermissionForOrganization(event.userId, event.aggregateId);
-      }
     } catch {
       this.errorCallback(event);
     }
@@ -82,16 +75,16 @@ export class LegalEntityProcessor extends AbstractProcessor {
 
   async processUpdated(event: OrganizationUpdated): Promise<ILegalEntity> {
     const legalEntityUpdate: Record<string, any> = {};
-    if (AbstractProcessor.defined(event.name)) {
+    if (AbstractQueryProcessor.defined(event.name)) {
       legalEntityUpdate.name = event.name;
     }
-    if (AbstractProcessor.defined(event.website)) {
+    if (AbstractQueryProcessor.defined(event.website)) {
       legalEntityUpdate.website = event.website;
     }
 
     let legalEntity;
     try {
-      legalEntity = await this.model.findOneAndUpdate({_id: event.aggregateId}, { $set: legalEntityUpdate }, { new: true });
+      legalEntity = await this.model.findOneAndUpdate({ _id: event.aggregateId }, { $set: legalEntityUpdate }, { new: true });
     } catch {
       this.errorCallback(event);
     }
@@ -102,9 +95,9 @@ export class LegalEntityProcessor extends AbstractProcessor {
   async processDeleted(event: LegalEntityRemoved): Promise<ILegalEntity> {
     let legalEntity;
     try {
-      this.relationModel.deleteMany({legalEntityId: event.aggregateId});
+      this.relationModel.deleteMany({ legalEntityId: event.aggregateId });
 
-      legalEntity = await this.model.findOneAndDelete({_id: event.aggregateId});
+      legalEntity = await this.model.findOneAndDelete({ _id: event.aggregateId });
       const legalEntityStreamName = LegalEntityEvent.getStreamName(LegalEntityEvent.streamRootValue, event.aggregateId);
       await this.eventStore.deleteStream(legalEntityStreamName);
     } catch {
@@ -125,12 +118,12 @@ export class LegalEntityProcessor extends AbstractProcessor {
 
     const legalEntityFilter = {
       '_id': event.legalEntityId,
-      'contactDetails._id': {$ne: event.contactDetailsId},
+      'contactDetails._id': { $ne: event.contactDetailsId },
     };
 
     let legalEntity;
     try {
-      legalEntity = await this.model.findOneAndUpdate(legalEntityFilter, {$push: {contactDetails: contactDetailsData}}, {new: true});
+      legalEntity = await this.model.findOneAndUpdate(legalEntityFilter, { $push: { contactDetails: contactDetailsData } }, { new: true });
     } catch {
       this.errorCallback(event);
     }
@@ -145,19 +138,19 @@ export class LegalEntityProcessor extends AbstractProcessor {
     };
 
     const contactDetailsUpdate: Record<string, any> = {};
-    if (AbstractProcessor.defined(event.name)) {
+    if (AbstractQueryProcessor.defined(event.name)) {
       contactDetailsUpdate['contactDetails.$.name'] = event.name;
     }
-    if (AbstractProcessor.defined(event.email)) {
+    if (AbstractQueryProcessor.defined(event.email)) {
       contactDetailsUpdate['contactDetails.$.email'] = event.email;
     }
-    if (AbstractProcessor.defined(event.phone)) {
+    if (AbstractQueryProcessor.defined(event.phone)) {
       contactDetailsUpdate['contactDetails.$.phone'] = event.phone;
     }
 
     let legalEntity;
     try {
-      legalEntity = await this.model.findOneAndUpdate(contactDetailsFilter, {$set: contactDetailsUpdate}, {new: true});
+      legalEntity = await this.model.findOneAndUpdate(contactDetailsFilter, { $set: contactDetailsUpdate }, { new: true });
     } catch {
       this.errorCallback(event);
     }
@@ -168,7 +161,7 @@ export class LegalEntityProcessor extends AbstractProcessor {
   async processContactDetailsRemoved(event: ContactDetailsRemoved): Promise<ILegalEntity> {
     let legalEntity;
     try {
-      legalEntity = await this.model.findOneAndUpdate({_id: event.legalEntityId}, {$pull: {contactDetails: {_id: event.contactDetailsId}}}, {new: true});
+      legalEntity = await this.model.findOneAndUpdate({ _id: event.legalEntityId }, { $pull: { contactDetails: { _id: event.contactDetailsId } } }, { new: true });
     } catch {
       this.errorCallback(event);
     }

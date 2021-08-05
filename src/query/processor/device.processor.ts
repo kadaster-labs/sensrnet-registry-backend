@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { DatastreamAdded, DatastreamRemoved, DatastreamUpdated, ObservationGoalLinked, ObservationGoalUnlinked } from '../../core/events/sensordevice/datastream';
-import { DeviceLocated, DeviceRegistered, DeviceRelocated, DeviceRemoved, DeviceUpdated } from '../../core/events/sensordevice/device';
-import { SensorAdded, SensorRemoved, SensorUpdated } from '../../core/events/sensordevice/sensor';
-import { SensorDeviceEvent } from '../../core/events/sensordevice/sensordevice.event';
-import { EventStorePublisher } from '../../event-store/event-store.publisher';
+import { DatastreamAdded, DatastreamRemoved, DatastreamUpdated, ObservationGoalLinked, ObservationGoalUnlinked } from '../../commons/events/sensordevice/datastream';
+import { DeviceLocated, DeviceRegistered, DeviceRelocated, DeviceRemoved, DeviceUpdated } from '../../commons/events/sensordevice/device';
+import { SensorAdded, SensorRemoved, SensorUpdated } from '../../commons/events/sensordevice/sensor';
+import { SensorDeviceEvent } from '../../commons/events/sensordevice/sensordevice.event';
+import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
 import { Gateway } from '../gateway/gateway';
-import { IDevice } from '../model/device.model';
-import { IObservationGoal } from '../model/observation-goal.model';
-import { IRelation, RelationVariant, TargetVariant } from '../model/relation.model';
-import { AbstractProcessor } from './abstract.processor';
+import { IDevice } from '../model/device.schema';
+import { IObservationGoal } from '../model/observation-goal.schema';
+import { IRelation, RelationVariant, TargetVariant } from '../model/relation.schema';
+import { AbstractQueryProcessor } from './abstract-query.processor';
 
 @Injectable()
-export class DeviceProcessor extends AbstractProcessor {
+export class DeviceProcessor extends AbstractQueryProcessor {
 
   constructor(
     eventStore: EventStorePublisher,
@@ -98,16 +98,16 @@ export class DeviceProcessor extends AbstractProcessor {
   async processDeviceUpdated(event: DeviceUpdated): Promise<IDevice> {
     const deviceUpdate: Record<string, any> = {};
 
-    if (AbstractProcessor.defined(event.name)) {
+    if (AbstractQueryProcessor.defined(event.name)) {
       deviceUpdate.name = event.name;
     }
-    if (AbstractProcessor.defined(event.description)) {
+    if (AbstractQueryProcessor.defined(event.description)) {
       deviceUpdate.description = event.description;
     }
-    if (AbstractProcessor.defined(event.category)) {
+    if (AbstractQueryProcessor.defined(event.category)) {
       deviceUpdate.category = event.category;
     }
-    if (AbstractProcessor.defined(event.connectivity)) {
+    if (AbstractQueryProcessor.defined(event.connectivity)) {
       deviceUpdate.connectivity = event.connectivity;
     }
 
@@ -125,16 +125,16 @@ export class DeviceProcessor extends AbstractProcessor {
     const deviceUpdate: Record<string, any> = {};
 
     const locationDetails: Record<string, any> = {};
-    if (AbstractProcessor.defined(event.name)) {
+    if (AbstractQueryProcessor.defined(event.name)) {
       locationDetails.name = event.name;
     }
-    if (AbstractProcessor.defined(event.description)) {
+    if (AbstractQueryProcessor.defined(event.description)) {
       locationDetails.description = event.description;
     }
     if (Object.keys(locationDetails).length) {
       deviceUpdate.locationDetails = locationDetails;
     }
-    if (AbstractProcessor.defined(event.location)) {
+    if (AbstractQueryProcessor.defined(event.location)) {
       deviceUpdate.location = {
         type: 'Point',
         coordinates: event.location,
@@ -200,22 +200,22 @@ export class DeviceProcessor extends AbstractProcessor {
     };
 
     const sensorUpdate: Record<string, any> = {};
-    if (AbstractProcessor.defined(event.name)) {
+    if (AbstractQueryProcessor.defined(event.name)) {
       sensorUpdate['sensors.$.name'] = event.name;
     }
-    if (AbstractProcessor.defined(event.description)) {
+    if (AbstractQueryProcessor.defined(event.description)) {
       sensorUpdate['sensors.$.description'] = event.description;
     }
-    if (AbstractProcessor.defined(event.type)) {
+    if (AbstractQueryProcessor.defined(event.type)) {
       sensorUpdate['sensors.$.type'] = event.type;
     }
-    if (AbstractProcessor.defined(event.manufacturer)) {
+    if (AbstractQueryProcessor.defined(event.manufacturer)) {
       sensorUpdate['sensors.$.manufacturer'] = event.manufacturer;
     }
-    if (AbstractProcessor.defined(event.supplier)) {
+    if (AbstractQueryProcessor.defined(event.supplier)) {
       sensorUpdate['sensors.$.supplier'] = event.supplier;
     }
-    if (AbstractProcessor.defined(event.documentation)) {
+    if (AbstractQueryProcessor.defined(event.documentation)) {
       sensorUpdate['sensors.$.documentation'] = event.documentation;
     }
 
@@ -274,43 +274,43 @@ export class DeviceProcessor extends AbstractProcessor {
     };
 
     const dataStreamUpdate: Record<string, any> = {};
-    if (AbstractProcessor.defined(event.name)) {
+    if (AbstractQueryProcessor.defined(event.name)) {
       dataStreamUpdate['dataStreams.$.name'] = event.name;
     }
-    if (AbstractProcessor.defined(event.description)) {
+    if (AbstractQueryProcessor.defined(event.description)) {
       dataStreamUpdate['dataStreams.$.description'] = event.description;
     }
-    if (AbstractProcessor.defined(event.unitOfMeasurement)) {
+    if (AbstractQueryProcessor.defined(event.unitOfMeasurement)) {
       dataStreamUpdate['dataStreams.$.unitOfMeasurement'] = event.unitOfMeasurement;
     }
-    if (AbstractProcessor.defined(event.observationArea)) {
+    if (AbstractQueryProcessor.defined(event.observationArea)) {
       dataStreamUpdate['dataStreams.$.observationArea'] = event.observationArea;
     }
-    if (AbstractProcessor.defined(event.theme)) {
+    if (AbstractQueryProcessor.defined(event.theme)) {
       dataStreamUpdate['dataStreams.$.theme'] = event.theme;
     }
-    if (AbstractProcessor.defined(event.dataQuality)) {
+    if (AbstractQueryProcessor.defined(event.dataQuality)) {
       dataStreamUpdate['dataStreams.$.dataQuality'] = event.dataQuality;
     }
-    if (AbstractProcessor.defined(event.isActive)) {
+    if (AbstractQueryProcessor.defined(event.isActive)) {
       dataStreamUpdate['dataStreams.$.isActive'] = !!event.isActive;
     }
-    if (AbstractProcessor.defined(event.isPublic)) {
+    if (AbstractQueryProcessor.defined(event.isPublic)) {
       dataStreamUpdate['dataStreams.$.isPublic'] = !!event.isPublic;
     }
-    if (AbstractProcessor.defined(event.isOpenData)) {
+    if (AbstractQueryProcessor.defined(event.isOpenData)) {
       dataStreamUpdate['dataStreams.$.isOpenData'] = !!event.isOpenData;
     }
-    if (AbstractProcessor.defined(event.containsPersonalInfoData)) {
+    if (AbstractQueryProcessor.defined(event.containsPersonalInfoData)) {
       dataStreamUpdate['dataStreams.$.containsPersonalInfoData'] = !!event.containsPersonalInfoData;
     }
-    if (AbstractProcessor.defined(event.isReusable)) {
+    if (AbstractQueryProcessor.defined(event.isReusable)) {
       dataStreamUpdate['dataStreams.$.isReusable'] = !!event.isReusable;
     }
-    if (AbstractProcessor.defined(event.documentation)) {
+    if (AbstractQueryProcessor.defined(event.documentation)) {
       dataStreamUpdate['dataStreams.$.documentation'] = event.documentation;
     }
-    if (AbstractProcessor.defined(event.dataLink)) {
+    if (AbstractQueryProcessor.defined(event.dataLink)) {
       dataStreamUpdate['dataStreams.$.dataLink'] = event.dataLink;
     }
 

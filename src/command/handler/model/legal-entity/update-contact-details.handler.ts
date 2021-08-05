@@ -1,6 +1,6 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
-import { UpdateContactDetailsCommand } from '../../../command/legal-entity/update-contact-details.command copy';
+import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
+import { UpdateContactDetailsCommand } from '../../../model/legal-entity/update-contact-details.command copy';
 import { UnknowObjectException } from '../../error/unknow-object-exception';
 
 @CommandHandler(UpdateContactDetailsCommand)

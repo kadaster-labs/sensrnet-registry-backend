@@ -1,4 +1,4 @@
-import { DomainException } from '../../../core/errors/domain-exception';
+import { DomainException } from '../../../commons/errors/domain-exception';
 
 export class AlreadyExistsException extends DomainException {
   constructor(name: string) {

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Event as ESEvent } from 'geteventstore-promise';
-import { observationGoalStreamRootValue } from '../../core/events/observation-goal';
-import { observationGoalEventType } from '../../core/events/observation-goal';
-import { ObservationGoalEvent } from '../../core/events/observation-goal/observation-goal.event';
-import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import { CheckpointService } from '../service/checkpoint/checkpoint.service';
-import { AbstractEsListener } from './abstract.es.listener';
+import { observationGoalStreamRootValue } from '../../commons/events/observation-goal';
+import { observationGoalEventType } from '../../commons/events/observation-goal';
+import { ObservationGoalEvent } from '../../commons/events/observation-goal/observation-goal.event';
+import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
+import { CheckpointService } from '../../commons/event-processing/checkpoint/checkpoint.service';
+import { AbstractEsListener } from '../../commons/event-processing/abstract.es.listener';
 import { ObservationGoalProcessor } from './observationgoal.processor';
 
 @Injectable()

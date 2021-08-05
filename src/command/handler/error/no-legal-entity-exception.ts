@@ -1,4 +1,4 @@
-import { DomainException } from '../../../core/errors/domain-exception';
+import { DomainException } from '../../../commons/errors/domain-exception';
 
 export class NoLegalEntityException extends DomainException {
     constructor() {

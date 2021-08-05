@@ -1,10 +1,10 @@
 import { UnknowObjectException } from '../../error/unknow-object-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { RemoveObservationGoalCommand } from '../../../command/observation-goal/remove-observation-goal.command';
+import { RemoveObservationGoalCommand } from '../../../model/observation-goal/remove-observation-goal.command';
 import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
 import { validateLegalEntity } from '../../util/legal-entity.utils';
-import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
-import { ObservationGoalRepository } from '../../../../core/repositories/observation-goal.repository';
+import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
+import { ObservationGoalRepository } from '../../../repositories/observation-goal.repository';
 
 @CommandHandler(RemoveObservationGoalCommand)
 export class RemoveObservationGoalCommandHandler implements ICommandHandler<RemoveObservationGoalCommand> {

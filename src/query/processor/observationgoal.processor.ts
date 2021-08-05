@@ -1,16 +1,16 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IDevice } from '../model/device.model';
-import { IRelation, RelationVariant, TargetVariant } from '../model/relation.model';
-import { AbstractProcessor } from './abstract.processor';
-import { IObservationGoal } from '../model/observation-goal.model';
-import { EventStorePublisher } from '../../event-store/event-store.publisher';
-import { ObservationGoalEvent } from '../../core/events/observation-goal/observation-goal.event';
-import { ObservationGoalRegistered, ObservationGoalRemoved, ObservationGoalUpdated } from '../../core/events/observation-goal';
+import { IDevice } from '../model/device.schema';
+import { IRelation, RelationVariant, TargetVariant } from '../model/relation.schema';
+import { AbstractQueryProcessor } from './abstract-query.processor';
+import { IObservationGoal } from '../model/observation-goal.schema';
+import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
+import { ObservationGoalEvent } from '../../commons/events/observation-goal/observation-goal.event';
+import { ObservationGoalRegistered, ObservationGoalRemoved, ObservationGoalUpdated } from '../../commons/events/observation-goal';
 
 @Injectable()
-export class ObservationGoalProcessor extends AbstractProcessor {
+export class ObservationGoalProcessor extends AbstractQueryProcessor {
 
   constructor(
     eventStore: EventStorePublisher,
@@ -50,16 +50,16 @@ export class ObservationGoalProcessor extends AbstractProcessor {
 
   async processObservationGoalUpdated(event: ObservationGoalUpdated): Promise<void> {
     const observationGoalUpdate: Record<string, any> = {};
-    if (AbstractProcessor.defined(event.name)) {
+    if (AbstractQueryProcessor.defined(event.name)) {
       observationGoalUpdate.name = event.name;
     }
-    if (AbstractProcessor.defined(event.description)) {
+    if (AbstractQueryProcessor.defined(event.description)) {
       observationGoalUpdate.description = event.description;
     }
-    if (AbstractProcessor.defined(event.legalGround)) {
+    if (AbstractQueryProcessor.defined(event.legalGround)) {
       observationGoalUpdate.legalGround = event.legalGround;
     }
-    if (AbstractProcessor.defined(event.legalGroundLink)) {
+    if (AbstractQueryProcessor.defined(event.legalGroundLink)) {
       observationGoalUpdate.legalGroundLink = event.legalGroundLink;
     }
 

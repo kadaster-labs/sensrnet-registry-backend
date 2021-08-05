@@ -1,9 +1,9 @@
 import { UnknowObjectException } from '../../error/unknow-object-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { DeviceRepository } from '../../../../core/repositories/device.repository';
-import { RemoveDataStreamCommand } from '../../../command/data-stream/remove-data-stream.command';
+import { DeviceRepository } from '../../../repositories/device.repository';
+import { RemoveDataStreamCommand } from '../../../model/data-stream/remove-data-stream.command';
 import { validateLegalEntity } from '../../util/legal-entity.utils';
-import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
+import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
 import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
 
 @CommandHandler(RemoveDataStreamCommand)

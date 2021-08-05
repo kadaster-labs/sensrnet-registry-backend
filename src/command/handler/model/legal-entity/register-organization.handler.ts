@@ -1,8 +1,8 @@
 import { AlreadyExistsException } from '../../error/already-exists-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { LegalEntityAggregate } from '../../../../core/aggregates/legal-entity.aggregate';
-import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
-import { RegisterOrganizationCommand } from '../../../command/legal-entity/register-organization.command';
+import { LegalEntityAggregate } from '../../../aggregates/legal-entity.aggregate';
+import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
+import { RegisterOrganizationCommand } from '../../../model/legal-entity/register-organization.command';
 
 @CommandHandler(RegisterOrganizationCommand)
 export class RegisterOrganizationCommandHandler implements ICommandHandler<RegisterOrganizationCommand> {

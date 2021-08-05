@@ -1,11 +1,11 @@
 import { UnknowObjectException } from '../../error/unknow-object-exception';
 import { ICommandHandler, EventPublisher, CommandHandler } from '@nestjs/cqrs';
-import { DeviceRepository } from '../../../../core/repositories/device.repository';
-import { LegalEntityRepository } from '../../../../core/repositories/legal-entity.repository';
+import { DeviceRepository } from '../../../repositories/device.repository';
+import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
 import { validateLegalEntity } from '../../util/legal-entity.utils';
 import { NoLegalEntityException } from '../../error/no-legal-entity-exception';
-import { LinkObservationGoalCommand } from '../../../command/data-stream/link-observationgoal.command';
-import { ObservationGoalRepository } from '../../../../core/repositories/observation-goal.repository';
+import { LinkObservationGoalCommand } from '../../../model/data-stream/link-observationgoal.command';
+import { ObservationGoalRepository } from '../../../repositories/observation-goal.repository';
 
 @CommandHandler(LinkObservationGoalCommand)
 export class LinkObservationGoalCommandHandler implements ICommandHandler<LinkObservationGoalCommand> {
