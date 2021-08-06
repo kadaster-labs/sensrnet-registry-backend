@@ -31,7 +31,7 @@ Content-Type: application/json
     "epsgCode": 28992,
     "baseObjectId": "string"
   },
-  "dataStreams": [
+  "datastreams": [
     {
       "name": "camera feed",
       "reason": "because",

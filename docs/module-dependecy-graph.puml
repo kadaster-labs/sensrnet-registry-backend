@@ -1,39 +1,67 @@
 @startuml "dependency-graph"
 !includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/release/1-0/C4_Component.puml
 
-Container(queryDBContainer, "query db", "mongodb container") {
-    ComponentDb(queryDB, "query db", "mongodb container")
-}
-Container(eventStoreContainer, "event store", "eventstore container") {
-    ComponentDb(eventStore, "event store", "eventstore container")
+Container_Boundary(databaseContainer, "database") {
+    ComponentDb(database, "database", "mongodb container")
 }
 
-Container(commandModule, "command module", "docker") {
-    Component(cmdController, "command controllers", "The controllers of the 'command side'")
-    Component(cmdHandler, "command handlers", "The Command Handlers processing commands and producing Events")
-
-    Rel(cmdController, cmdHandler, " ")
-    Rel(cmdHandler, eventStore, "publish")
+Container_Boundary(eventStoreContainer, "event store DB") {
+    ComponentDb(eventStoreDB, "event store DB", "eventstore container")
 }
 
-Container(queryModule, "query module", "docker") {
-    Component(qryController, "query controllers", "API for publishing data")
-    Rel(qryController, queryDB, "reads")
+Container_Boundary(backendContainer, "backend container") {
 
-    Component(qryProcessor, "query processor", "Processes the events and updates the database")
-    Rel(qryProcessor, queryDB, "updates")
-    Rel(qryProcessor, eventStore, "subscribe")
+    Container(commonsModule, "commons module", "module") {
+        Component(events, "events", "Definitions of the events (no runtime component)")
+        Component(eventStore, "event-store", "Code infrastructure to connect to EventStoreDB")
+        Component(cmmModel, "shared models", "Data models shared over multiple components")
+        Rel(cmmModel, database, " ")
+    }
+
+    Container(commandModule, "command module", "module") {
+        Component(cmdController, "command controllers", "API for changing data")
+        Component(cmdHandler, "command handlers", "The Command Handlers processing commands by instantiating and calling Aggregates")
+        Component(aggregate, "aggregates", "The Aggregates validating and producing Events")
+        Component(repository, "repositories", "Loading the Aggregates from Events streams")
+        Component(cmdProcessor, "command processor", "Processes the events and updates the database")
+        Component(cmdQueryService, "command query service", "Queries the database for validation in command handling")
+
+        Rel(aggregate, events, "include")
+        Rel(cmdController, cmdHandler, " ")
+        Rel_R(cmdHandler, aggregate, " ")
+        Rel(cmdHandler, repository, " ")
+        Rel(aggregate, cmdQueryService, " ")
+        Rel(aggregate, eventStore, "publish")
+        Lay_D(repository, cmdProcessor)
+        Rel(repository, eventStore, "subscribe")
+        Rel(cmdProcessor, eventStore, "subscribe")
+        Rel(cmdProcessor, database, "update")
+        Rel(cmdQueryService, database, "read")
+        Rel(aggregate, cmmModel, "use")
+    }
+
+    Container(queryModule, "query module", "module") {
+        Component(qryController, "query controllers", "API for published data")
+        Rel(qryController, database, "read")
+        Rel(qryController, cmmModel, "use")
+
+        Component(qryModel, "models", "Query data models")
+
+        Component(qryProcessor, "query processor", "Processes the events and updates the database")
+        Rel(qryProcessor, events, "include")
+        Rel(qryProcessor, qryModel, " ")
+        Rel(qryProcessor, cmmModel, "use")
+        Rel(qryController, qryModel, " ")
+        Rel(qryProcessor, database, "update")
+        Rel(qryProcessor, eventStore, "subscribe")
+    }
+
 }
-
-Container_Boundary(eventsModule, "events module") {
-    Component(events, "events", "Definitions of the events (no runtime component)")
-}
-
-Rel(cmdHandler, events, "includes")
-Rel(qryProcessor, events, "includes")
 
 System(client, "http client")
 Rel(client, cmdController, "call (post|put|delete)")
 Rel(client, qryController, "call (get)")
+
+Rel(eventStore, eventStoreDB, " ")
 
 @enduml

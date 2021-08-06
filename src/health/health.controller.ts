@@ -6,13 +6,11 @@ import { Public } from '../auth/public';
 @Public()
 @Controller('health')
 export class HealthController {
-  constructor(
-    private health: HealthCheckService,
-  ) { }
+    constructor(private health: HealthCheckService) {}
 
-  @Get()
-  @HealthCheck()
-  check(): Promise<HealthCheckResult> {
-    return this.health.check([]);
-  }
+    @Get()
+    @HealthCheck()
+    check(): Promise<HealthCheckResult> {
+        return this.health.check([]);
+    }
 }

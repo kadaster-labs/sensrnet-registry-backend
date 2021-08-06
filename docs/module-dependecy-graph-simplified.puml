@@ -1,0 +1,33 @@
+@startuml "dependency-graph-simplified"
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/release/1-0/C4_Component.puml
+
+
+Container_Boundary(databaseContainer, "database") {
+    ComponentDb(database, "database", "mongodb container")
+}
+
+Container_Boundary(eventStoreContainer, "event store DB") {
+    ComponentDb(eventStoreDB, "event store DB", "eventstore container")
+}
+
+Container_Boundary(backendContainer, "backend container") {
+
+    Component(commonsModule, "commons module", " ")
+
+    Component(commandModule, "command module", "docker")
+
+    Component(queryModule, "query module", "docker")
+
+}
+
+Rel(commandModule, commonsModule, "includes")
+Rel(queryModule, commonsModule, "includes")
+
+System(client, "http client")
+Rel(client, commandModule, "call (post|put|delete)")
+Rel(client, queryModule, "call (get)")
+
+Rel(commonsModule, eventStoreDB, " ")
+Rel(commonsModule, database, " ")
+
+@enduml

@@ -1,11 +1,14 @@
-import { Socket, Server } from 'socket.io';
-
 import { JwtService } from '@nestjs/jwt';
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket, SubscribeMessage,
-    MessageBody } from '@nestjs/websockets';
-
-import { AuthService } from '../../auth/auth.service';
-import { UserService } from '../../user/user.service';
+import {
+    ConnectedSocket,
+    MessageBody,
+    OnGatewayConnection,
+    SubscribeMessage,
+    WebSocketGateway,
+    WebSocketServer,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+import { UserQueryService } from '../../commons/user/user.qry-service';
 
 @WebSocketGateway({
     namespace: 'sensrnet',
@@ -14,11 +17,7 @@ import { UserService } from '../../user/user.service';
 export class Gateway implements OnGatewayConnection {
     @WebSocketServer() server: Server;
 
-    constructor(
-        private readonly authService: AuthService,
-        private readonly jwtService: JwtService,
-        private readonly userService: UserService,
-    ) {}
+    constructor(private readonly jwtService: JwtService, private readonly userQryService: UserQueryService) {}
 
     setupRoom(client: Socket, legalEntityId?: string): void {
         client.leaveAll();
@@ -48,7 +47,7 @@ export class Gateway implements OnGatewayConnection {
 
             try {
                 const token = this.jwtService.decode(authToken);
-                const { legalEntityId } = await this.userService.findUserPermissions({ _id: token.sub });
+                const { legalEntityId } = await this.userQryService.retrieveUserPermissions(token.sub);
 
                 this.setupRoom(client, legalEntityId);
             } catch {
