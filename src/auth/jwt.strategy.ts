@@ -40,7 +40,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
             user.role = permission.role;
         }
 
-        this.logger.debug(`validated user: [${JSON.stringify(user)}]`);
+        this.logger.verbose(`validated user: [${JSON.stringify(user)}]`);
         return user;
     }
 }
