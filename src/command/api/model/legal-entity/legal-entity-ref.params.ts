@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty } from 'class-validator';
 
-export class LegalEntityRefParams {
+export class LegalEntityReferenceParams {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({

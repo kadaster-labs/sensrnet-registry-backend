@@ -16,7 +16,7 @@ import { UpdateContactDetailsCommand } from '../model/legal-entity/update-contac
 import { UpdateLegalEntityCommand } from '../model/legal-entity/update-legal-entity.command';
 import { ContactDetailsBody } from './model/contact-details/contact-details.body';
 import { ContactDetailsParams } from './model/legal-entity/contact-details.params';
-import { LegalEntityRefParams } from './model/legal-entity/legal-entity-ref.params';
+import { LegalEntityReferenceParams } from './model/legal-entity/legal-entity-ref.params';
 import { RegisterOrganizationBody } from './model/legal-entity/register-organization.body';
 import { UpdateLegalEntityBody as UpdateOrganizationBody } from './model/legal-entity/update-organization.body';
 
@@ -124,7 +124,7 @@ export class LegalEntityController {
     @ApiOperation({ summary: 'Delete legal entity' })
     @ApiResponse({ status: 200, description: 'Legal entity deleted' })
     @ApiResponse({ status: 400, description: 'Legal entity delete failed' })
-    async deleteLegalEntityById(@Param() param: LegalEntityRefParams): Promise<any> {
+    async deleteLegalEntityById(@Param() param: LegalEntityReferenceParams): Promise<any> {
         return this.commandBus.execute(new RemoveLegalEntityCommand(param.id));
     }
 
