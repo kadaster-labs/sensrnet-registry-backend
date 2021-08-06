@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { RegisterOidcUserCommand } from '../commons/commands/register-oidc-user.command';
 import { UserQueryService } from '../commons/user/user.qry-service';
-import { IUser } from '../commons/user/user.schema';
+import { User } from '../commons/user/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -11,7 +11,7 @@ export class AuthService {
     constructor(private commandBus: CommandBus, private userQryService: UserQueryService) {}
 
     async createOrLogin(idToken: Record<string, any>): Promise<string> {
-        const user: IUser = await this.userQryService.retrieveUser(idToken.sub).then(async localScopeUser => {
+        const user: User = await this.userQryService.retrieveUser(idToken.sub).then(async localScopeUser => {
             if (!localScopeUser) {
                 await this.postRegisterCommand(idToken);
                 return this.userQryService.retrieveUser(idToken.sub);

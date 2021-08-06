@@ -26,7 +26,12 @@ mongoose.set('useFindAndModify', false);
         QueryModule,
         CommandModule,
         EventProcessingModule,
-        MongooseModule.forRoot(`mongodb://${host}:${port}/${database}`),
+        MongooseModule.forRoot(`mongodb://${host}:${port}/${database}`, {
+            useCreateIndex: true,
+            useNewUrlParser: true,
+            useFindAndModify: false,
+            useUnifiedTopology: true,
+        }),
         TerminusModule,
     ],
     controllers: [HealthController],

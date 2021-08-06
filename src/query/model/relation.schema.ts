@@ -1,4 +1,5 @@
-import { model, Schema, Document, Model } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
 export enum RelationVariant {
     ACCOUNTABLE = 0,
@@ -12,21 +13,23 @@ export enum TargetVariant {
     OBSERVATION_GOAL = 1,
 }
 
-export interface IRelation extends Document {
+export type RelationDocument = IRelation & Document;
+
+@Schema()
+export class IRelation {
+    @Prop({ required: true })
     _id: string;
+    @Prop({ required: true, index: true })
     legalEntityId: string;
+    @Prop({ required: true })
     relationVariant: number;
+    @Prop({ required: true })
     targetVariant: number;
+    @Prop({ required: true })
     targetId: string;
 }
 
-export const RelationSchema = new Schema({
-    legalEntityId: { type: String, required: true },
-    relationVariant: { type: Number, required: true },
-    targetVariant: { type: Number, required: true },
-    targetId: { type: String, required: true },
-});
-RelationSchema.index({ legalEntityId: 1 });
-RelationSchema.index({ targetVariant: 1, targetId: 1 });
+export const relationSchema = SchemaFactory.createForClass(IRelation);
+relationSchema.index({ targetVariant: 1, targetId: 1 });
 
-export const Relation = model<IRelation, Model<IRelation>>('Relation', RelationSchema);
+// export const Relation = model<IRelation, Model<IRelation>>('Relation', RelationSchema);

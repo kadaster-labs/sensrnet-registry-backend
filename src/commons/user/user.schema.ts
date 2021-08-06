@@ -1,38 +1,18 @@
-import { Document, Schema } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-export enum UserRole {
-    USER,
-    ADMIN,
-    SUPER_USER,
-}
+export type UserDocument = User & Document;
 
-export interface IUserPermissions extends Document {
+@Schema()
+export class User {
+    @Prop({ required: true })
     _id: string;
-    legalEntityId: string;
-    role: UserRole;
-}
 
-export const UserPermissionsSchema = new Schema({
-    _id: { type: String, required: true },
-    legalEntityId: { type: String, required: true },
-    role: { type: Number, required: false },
-});
-UserPermissionsSchema.index({ legalEntityId: 1 });
-
-export interface IUser extends Document {
-    _id: string;
+    @Prop({ required: true, index: true, unique: true })
     email: string;
+
+    @Prop({ type: Object })
     oidc: Record<string, any>;
 }
 
-export const UserSchema = new Schema(
-    {
-        _id: { type: String, required: true },
-        email: { type: String, required: true },
-        oidc: { type: Object, required: false },
-    },
-    {
-        autoCreate: true,
-    },
-);
-UserSchema.index({ email: 1 }, { unique: true });
+export const userSchema = SchemaFactory.createForClass(User);

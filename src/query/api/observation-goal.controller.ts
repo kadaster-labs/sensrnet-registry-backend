@@ -3,7 +3,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Public } from '../../auth/public';
 import { ValidatedUser } from '../../auth/validated-user';
-import { User } from '../../commons/decorators/user.decorator';
+import { InjectUser } from '../../commons/decorators/user.decorator';
 import { ObservationGoalQuery } from '../model/observation-goal.query';
 import { IObservationGoal } from '../model/observation-goal.schema';
 import { ObservationGoalsQuery } from '../model/observation-goals.query';
@@ -32,7 +32,7 @@ export class ObservationGoalController {
     @ApiResponse({ status: 200, description: 'Observation goals retrieved' })
     @ApiResponse({ status: 400, description: 'Observation goals retrieval failed' })
     async retrieveObservationGoals(
-        @User() user: ValidatedUser,
+        @InjectUser() user: ValidatedUser,
         @Query() query: RetrieveObservationGoalsBody,
     ): Promise<IObservationGoal[]> {
         const requestLegalEntityId = user ? user.legalEntityId : undefined;

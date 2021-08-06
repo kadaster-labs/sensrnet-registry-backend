@@ -4,8 +4,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { EventProcessingModule } from '../commons/event-processing/event-processing.module';
 import { EventStoreModule } from '../commons/event-store/event-store.module';
 import { EventStorePublisher } from '../commons/event-store/event-store.publisher';
+import { UserPermissions, UserPermissionsSchema } from '../commons/user/user-permissions.schema';
 import { UserModule } from '../commons/user/user.module';
-import { UserPermissionsSchema, UserSchema } from '../commons/user/user.schema';
+import { User, userSchema } from '../commons/user/user.schema';
 import { DatastreamController } from './api/data-stream.controller';
 import { DeviceController } from './api/device.controller';
 import { LegalEntityController } from './api/legal-entity.controller';
@@ -59,8 +60,8 @@ import { UserService } from './repositories/user.service';
         EventStoreModule,
         EventProcessingModule,
         UserModule,
-        MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
-        MongooseModule.forFeature([{ name: 'UserPermissions', schema: UserPermissionsSchema }]),
+        MongooseModule.forFeature([{ name: User.name, schema: userSchema }]),
+        MongooseModule.forFeature([{ name: UserPermissions.name, schema: UserPermissionsSchema }]),
     ],
     providers: [
         EventBus,

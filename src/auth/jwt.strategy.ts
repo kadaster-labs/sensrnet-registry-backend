@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { passportJwtSecret } from 'jwks-rsa';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { UserPermissions } from '../commons/user/user-permissions.schema';
 import { UserQueryService } from '../commons/user/user.qry-service';
-import { IUserPermissions } from '../commons/user/user.schema';
 import { AuthService } from './auth.service';
 import { ValidatedUser } from './validated-user';
 
@@ -34,7 +34,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         const userId: string = await this.authService.createOrLogin(idToken);
         const user: ValidatedUser = { userId };
 
-        const permission: IUserPermissions = await this.userQryService.retrieveUserPermissions(userId);
+        const permission: UserPermissions = await this.userQryService.retrieveUserPermissions(userId);
         if (permission && permission.legalEntityId) {
             user.legalEntityId = permission.legalEntityId;
             user.role = permission.role;

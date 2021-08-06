@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserService } from '../../../../command/repositories/user.service';
 import { UserQueryService } from '../../../../commons/user/user.qry-service';
-import { UserRole } from '../../../../commons/user/user.schema';
+import { UserRole } from '../../../../commons/user/user-permissions.schema';
 import { UpdateUserRoleCommand } from '../../../model/user/update-user-role.command';
 import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
 import { validateLegalEntity } from '../../util/legal-entity.utils';
