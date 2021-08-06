@@ -4,18 +4,19 @@ import {
     IsString, IsBoolean, IsUrl, IsUUID, IsOptional, ValidateIf,
     IsArray, IsObject, IsEnum,
 } from 'class-validator';
+import Datastream from '../../../interfaces/datastream.interface';
 
-export abstract class DatastreamBody {
+export abstract class DatastreamBody implements Datastream {
     @IsUUID(4)
     @IsOptional()
-    dataStreamId: string;
+    readonly datastreamId: string;
 
     @IsString()
     @IsOptional()
     @ApiProperty({
         type: String,
         required: false,
-        description: 'DataStream description.',
+        description: 'Datastream description.',
     })
     readonly description: string;
 
@@ -24,7 +25,7 @@ export abstract class DatastreamBody {
     @ApiProperty({
         type: Object,
         required: false,
-        description: 'DataStream unit of measurement.',
+        description: 'Datastream unit of measurement.',
     })
     readonly unitOfMeasurement: Record<string, any>;
 
@@ -38,7 +39,7 @@ export abstract class DatastreamBody {
     readonly observedArea: Record<string, any>;
 
     @IsArray()
-    @IsEnum(Theme, {each: true})
+    @IsEnum(Theme, { each: true })
     @IsOptional()
     @ApiProperty({
         type: String,
@@ -64,7 +65,7 @@ export abstract class DatastreamBody {
         type: Boolean,
         default: true,
         required: false,
-        description: 'Whether the DataStream is active.',
+        description: 'Whether the Datastream is active.',
     })
     readonly isActive: boolean;
 
@@ -74,7 +75,7 @@ export abstract class DatastreamBody {
         type: Boolean,
         default: true,
         required: false,
-        description: 'Whether the DataStream is public.',
+        description: 'Whether the Datastream is public.',
     })
     readonly isPublic: boolean;
 
@@ -84,7 +85,7 @@ export abstract class DatastreamBody {
         type: Boolean,
         default: true,
         required: false,
-        description: 'Whether the DataStream is considered open data.',
+        description: 'Whether the Datastream is considered open data.',
     })
     readonly isOpenData: boolean;
 
@@ -94,7 +95,7 @@ export abstract class DatastreamBody {
         type: Boolean,
         default: false,
         required: false,
-        description: 'Whether the DataStream can lead to a person.',
+        description: 'Whether the Datastream can lead to a person.',
     })
     readonly containsPersonalInfoData: boolean;
 
@@ -104,7 +105,7 @@ export abstract class DatastreamBody {
         type: Boolean,
         default: true,
         required: false,
-        description: 'Whether the DataStream is reusable.',
+        description: 'Whether the Datastream is reusable.',
     })
     readonly isReusable: boolean;
 

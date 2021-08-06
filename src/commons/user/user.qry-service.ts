@@ -12,13 +12,11 @@ export class UserQueryService {
     ) { }
 
     async retrieveUser(userId: string): Promise<IUser | undefined> {
-        const user = await this.userModel.findOne({ _id: userId });
-        return user;
+        return this.userModel.findOne({ _id: userId });
     }
 
     async retrieveUserPermissions(userId: string): Promise<IUserPermissions> {
-        const permissions = await this.userPermissionsModel.findOne({ _id: userId }) as IUserPermissions;
-        return permissions;
+        return this.userPermissionsModel.findOne({ _id: userId });
     }
 
 }

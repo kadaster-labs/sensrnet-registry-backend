@@ -31,7 +31,7 @@ export class UnlinkObservationGoalCommandHandler implements ICommandHandler<Unli
     if (aggregate) {
       aggregate = this.publisher.mergeObjectContext(aggregate);
 
-      aggregate.unlinkObservationGoal(command.sensorId, command.legalEntityId, command.dataStreamId,
+      aggregate.unlinkObservationGoal(command.sensorId, command.legalEntityId, command.datastreamId,
           command.observationGoalId);
       aggregate.commit();
     } else {

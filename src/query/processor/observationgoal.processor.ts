@@ -72,8 +72,8 @@ export class ObservationGoalProcessor extends AbstractQueryProcessor {
 
   async processObservationGoalRemoved(event: ObservationGoalRemoved): Promise<void> {
     try {
-      const deviceFilter = {'dataStreams.observationGoalIds': event.observationGoalId};
-      const deviceUpdate = {$pull: {'dataStreams.$.observationGoalIds': event.observationGoalId}};
+      const deviceFilter = {'datastreams.observationGoalIds': event.observationGoalId};
+      const deviceUpdate = {$pull: {'datastreams.$.observationGoalIds': event.observationGoalId}};
       await this.deviceModel.updateMany(deviceFilter, deviceUpdate);
 
       await this.deleteRelations(event.legalEntityId, TargetVariant.OBSERVATION_GOAL, event.observationGoalId);

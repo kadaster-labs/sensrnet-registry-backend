@@ -31,10 +31,10 @@ export class UserController {
     @ApiResponse({ status: 400, description: 'User update failed' })
     async updateUser(@User() user: ValidatedUser, @Body() userBody: UpdateUserBody): Promise<any> {
         if (userBody.legalEntityId) {
-            return await this.commandBus.execute(new JoinLegalEntityCommand(user.userId, userBody.legalEntityId));
+            return this.commandBus.execute(new JoinLegalEntityCommand(user.userId, userBody.legalEntityId));
         }
         else if (userBody.leaveLegalEntity) {
-            return await this.commandBus.execute(new LeaveLegalEntityCommand(user.userId, user.legalEntityId));
+            return this.commandBus.execute(new LeaveLegalEntityCommand(user.userId, user.legalEntityId));
         }
         else {
             throw new DomainException('Unsupported combination of parameters');
@@ -50,7 +50,7 @@ export class UserController {
     @ApiResponse({ status: 200, description: 'User updated' })
     @ApiResponse({ status: 400, description: 'User update failed' })
     async updateUserById(@User() user: ValidatedUser, @Param() param: DeleteUserParams, @Body() userBody: UpdateUserRoleBody): Promise<any> {
-        return await this.commandBus.execute(new UpdateUserRoleCommand(param.id, user.legalEntityId, userBody.role));
+        return this.commandBus.execute(new UpdateUserRoleCommand(param.id, user.legalEntityId, userBody.role));
     }
 
     @Delete()
@@ -60,7 +60,7 @@ export class UserController {
     @ApiResponse({ status: 200, description: 'User removed' })
     @ApiResponse({ status: 400, description: 'User removal failed' })
     async removeUser(@User() user: ValidatedUser): Promise<any> {
-        return await this.commandBus.execute(new DeleteUserCommand(user.userId));
+        return this.commandBus.execute(new DeleteUserCommand(user.userId));
     }
 
     @Delete(':id')
@@ -72,7 +72,7 @@ export class UserController {
     @ApiResponse({ status: 200, description: 'User removed' })
     @ApiResponse({ status: 400, description: 'User removal failed' })
     async removeUserById(@Param() param: DeleteUserParams): Promise<any> {
-        return await this.commandBus.execute(new DeleteUserCommand(param.id));
+        return this.commandBus.execute(new DeleteUserCommand(param.id));
     }
 
 }

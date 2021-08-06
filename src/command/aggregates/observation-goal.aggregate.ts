@@ -1,10 +1,10 @@
 import { Aggregate } from '../../commons/event-store/aggregate';
 import { EventMessage } from '../../commons/event-store/event-message';
-import { ObservationGoalState, ObservationGoalStateImpl } from './observation-goal.state';
 import { getObservationGoalRegisteredEvent, ObservationGoalRegistered } from '../../commons/events/observation-goal/registered';
 import { getObservationGoalRemovedEvent, ObservationGoalRemoved } from '../../commons/events/observation-goal/removed';
 import { getObservationGoalUpdatedEvent, ObservationGoalUpdated } from '../../commons/events/observation-goal/updated';
 import { NotLegalEntityException } from '../handler/error/not-legalentity-exception';
+import { ObservationGoalState, ObservationGoalStateImpl } from './observation-goal.state';
 
 export class ObservationGoalAggregate extends Aggregate {
 
@@ -35,7 +35,7 @@ export class ObservationGoalAggregate extends Aggregate {
 
   onObservationGoalUpdated(eventMessage: EventMessage): void {
     const event: ObservationGoalUpdated = getObservationGoalUpdatedEvent(eventMessage);
-    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+    this.logUnusedInAggregate(event);
   }
 
   removeObservationGoal(legalEntityId: string): void {
@@ -48,6 +48,6 @@ export class ObservationGoalAggregate extends Aggregate {
 
   onObservationGoalRemoved(eventMessage: EventMessage): void {
     const event: ObservationGoalRemoved = getObservationGoalRemovedEvent(eventMessage);
-    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+    this.logUnusedInAggregate(event);
   }
 }

@@ -25,10 +25,7 @@ export class LeaveLegalEntityCommandHandler implements ICommandHandler<LeaveLega
   async execute(command: LeaveLegalEntityCommand): Promise<void> {
     await validateLegalEntity(this.legalEntityRepository, command.legalEntityId);
 
-    if (await this.isUserNotAdmin(command.userId)) {
-      await this.usersService.revokeUserPermissionForOrganization(command.userId, command.legalEntityId);
-    }
-    else if (await this.isUserLastAdmin(command.legalEntityId)) {
+    if (await this.isUserAdmin(command.userId) && await this.isUserLastAdmin(command.legalEntityId)) {
       throw new LastAdminCannotLeaveOrganization();
     }
     else {
@@ -36,11 +33,11 @@ export class LeaveLegalEntityCommandHandler implements ICommandHandler<LeaveLega
     }
   }
 
-  private async isUserNotAdmin(userId: string): Promise<boolean> {
+  private async isUserAdmin(userId: string): Promise<boolean> {
     const permissions = await this.usersQryService.retrieveUserPermissions(userId);
-    const isUser = permissions.role === UserRole.USER
-    this.logger.debug(`checking for NOT admin role: [${isUser}] (permissions: [${JSON.stringify(permissions)}])`);
-    return isUser;
+    const isAdmin = permissions.role === UserRole.ADMIN
+    this.logger.debug(`isUserAdmin: ${isAdmin}`);
+    return isAdmin;
   }
 
   private async isUserLastAdmin(legalEntityId: string): Promise<boolean> {

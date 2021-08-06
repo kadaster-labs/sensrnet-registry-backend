@@ -8,7 +8,7 @@ export class UpdateDatastreamBody extends DatastreamBody {
     @ApiProperty({
         type: String,
         required: false,
-        description: 'DataStream name.',
+        description: 'Datastream name.',
     })
     readonly name: string;
 }

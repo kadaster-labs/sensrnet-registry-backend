@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { DeviceBody } from './device.body';
-import { Category } from '../category.body';
+import { Category } from '../../../model/category.model';
 import { ApiProperty } from '@nestjs/swagger';
 import { RegisterLocationBody } from '../location/register-location.body';
 import { IsString, IsNotEmpty, MaxLength, IsObject, ValidateNested, IsEnum } from 'class-validator';

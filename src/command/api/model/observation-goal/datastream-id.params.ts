@@ -16,5 +16,5 @@ export class DatastreamIdParams {
     type: String,
     description: 'The id of the datastream.',
   })
-  readonly dataStreamId: string;
+  readonly datastreamId: string;
 }

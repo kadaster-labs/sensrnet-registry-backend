@@ -22,8 +22,8 @@ import { Controller, Param, Post, Put, Body, Delete, UseFilters, UseGuards } fro
 @UseGuards(RolesGuard)
 export class SensorController {
   constructor(
-      private readonly commandBus: CommandBus,
-  ) {}
+    private readonly commandBus: CommandBus,
+  ) { }
 
   @Post(':deviceId/sensor')
   @UseFilters(new DomainExceptionFilter())
@@ -31,12 +31,11 @@ export class SensorController {
   @ApiResponse({ status: 200, description: 'Sensor registered' })
   @ApiResponse({ status: 400, description: 'Sensor registration failed' })
   async registerSensor(@User() user: ValidatedUser, @Param() params: DeviceIdParams,
-                       @Body() sensorBody: AddSensorBody): Promise<Record<string, any>> {
+    @Body() sensorBody: AddSensorBody): Promise<Record<string, any>> {
     const sensorId = v4();
 
-    await this.commandBus.execute(new AddSensorCommand(sensorId, user.legalEntityId, params.deviceId,
-        sensorBody.name, sensorBody.description, sensorBody.type, sensorBody.manufacturer, sensorBody.supplier,
-        sensorBody.documentation));
+    await this.commandBus.execute(new AddSensorCommand(params.deviceId, user.legalEntityId,
+      { sensorId, ...sensorBody }));
 
     return { sensorId };
   }
@@ -47,10 +46,9 @@ export class SensorController {
   @ApiResponse({ status: 200, description: 'Sensor updated' })
   @ApiResponse({ status: 400, description: 'Sensor update failed' })
   async updateSensor(@User() user: ValidatedUser, @Param() params: SensorIdParams,
-                     @Body() sensorBody: UpdateSensorBody): Promise<any> {
-    return await this.commandBus.execute(new UpdateSensorCommand(params.sensorId, user.legalEntityId, params.deviceId,
-        sensorBody.name, sensorBody.description, sensorBody.type, sensorBody.manufacturer, sensorBody.supplier,
-        sensorBody.documentation));
+    @Body() sensorBody: UpdateSensorBody): Promise<any> {
+    return this.commandBus.execute(new UpdateSensorCommand(params.deviceId, user.legalEntityId,
+      { sensorId: params.sensorId, ...sensorBody }));
   }
 
   @Delete(':deviceId/sensor/:sensorId')
@@ -60,6 +58,6 @@ export class SensorController {
   @ApiResponse({ status: 200, description: 'Sensor removed' })
   @ApiResponse({ status: 400, description: 'Sensor removal failed' })
   async removeSensor(@User() user: ValidatedUser, @Param() params: SensorIdParams): Promise<any> {
-    return await this.commandBus.execute(new RemoveSensorCommand(params.sensorId, user.legalEntityId, params.deviceId));
+    return this.commandBus.execute(new RemoveSensorCommand(params.sensorId, user.legalEntityId, params.deviceId));
   }
 }

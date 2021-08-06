@@ -5,12 +5,12 @@ export class DatastreamRemoved extends SensorDeviceEvent {
 
   public readonly sensorId: string;
   public readonly legalEntityId: string;
-  public readonly dataStreamId: string;
+  public readonly datastreamId: string;
 
-  constructor(sensorDeviceId: string, sensorId: string, legalEntityId: string, dataStreamId: string) {
+  constructor(sensorDeviceId: string, sensorId: string, legalEntityId: string, datastreamId: string) {
     super(sensorDeviceId, DatastreamRemoved.version);
     this.sensorId = sensorId;
     this.legalEntityId = legalEntityId;
-    this.dataStreamId = dataStreamId;
+    this.datastreamId = datastreamId;
   }
 }

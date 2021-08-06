@@ -54,7 +54,7 @@ export class LegalEntityController {
   @ApiResponse({ status: 200, description: 'Organization updated' })
   @ApiResponse({ status: 400, description: 'Organization update failed' })
   async updateOrganization(@User() user: ValidatedUser, @Body() updateOrganizationBody: UpdateOrganizationBody): Promise<any> {
-    return await this.commandBus.execute(new UpdateLegalEntityCommand(user.legalEntityId, updateOrganizationBody.name,
+    return this.commandBus.execute(new UpdateLegalEntityCommand(user.legalEntityId, updateOrganizationBody.name,
       updateOrganizationBody.website));
   }
 
@@ -68,7 +68,7 @@ export class LegalEntityController {
   @ApiResponse({ status: 400, description: 'Contact details update failed' })
   async updateContactDetails(@User() user: ValidatedUser, @Param() params: ContactDetailsParams,
     @Body() updateContactDetailsBody: ContactDetailsBody): Promise<any> {
-    return await this.commandBus.execute(new UpdateContactDetailsCommand(user.legalEntityId, params.contactDetailsId,
+    return this.commandBus.execute(new UpdateContactDetailsCommand(user.legalEntityId, params.contactDetailsId,
       updateContactDetailsBody.name, updateContactDetailsBody.email, updateContactDetailsBody.phone));
   }
 
@@ -81,7 +81,7 @@ export class LegalEntityController {
   @ApiResponse({ status: 200, description: 'Legal entity removed' })
   @ApiResponse({ status: 400, description: 'Legal entity removal failed' })
   async removeLegalEntity(@User() user: ValidatedUser): Promise<any> {
-    return await this.commandBus.execute(new RemoveLegalEntityCommand(user.legalEntityId));
+    return this.commandBus.execute(new RemoveLegalEntityCommand(user.legalEntityId));
   }
 
   @Delete(':id')
@@ -93,7 +93,7 @@ export class LegalEntityController {
   @ApiResponse({ status: 200, description: 'Legal entity deleted' })
   @ApiResponse({ status: 400, description: 'Legal entity delete failed' })
   async deleteLegalEntityById(@Param() param: LegalEntityRefParams): Promise<any> {
-    return await this.commandBus.execute(new RemoveLegalEntityCommand(param.id));
+    return this.commandBus.execute(new RemoveLegalEntityCommand(param.id));
   }
 
   @Delete('/contactdetails/:contactDetailsId')
@@ -105,6 +105,6 @@ export class LegalEntityController {
   @ApiResponse({ status: 200, description: 'Contact details removed' })
   @ApiResponse({ status: 400, description: 'Contact details removal failed' })
   async removeContactDetails(@User() user: ValidatedUser, @Param() params: ContactDetailsParams): Promise<any> {
-    return await this.commandBus.execute(new RemoveContactDetailsCommand(user.legalEntityId, params.contactDetailsId));
+    return this.commandBus.execute(new RemoveContactDetailsCommand(user.legalEntityId, params.contactDetailsId));
   }
 }

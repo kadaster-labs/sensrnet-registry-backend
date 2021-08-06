@@ -18,6 +18,6 @@ export class LegalEntityController {
   @ApiResponse({ status: 200, description: 'Legal Entity retrieved' })
   @ApiResponse({ status: 400, description: 'Legal Entity retrieval failed' })
   async retrieveOrganization(@User() user: ValidatedUser): Promise<any> {
-    return await this.queryBus.execute(new LegalEntityQuery(user.legalEntityId));
+    return this.queryBus.execute(new LegalEntityQuery(user.legalEntityId));
   }
 }

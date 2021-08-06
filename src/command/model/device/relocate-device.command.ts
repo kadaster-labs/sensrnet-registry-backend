@@ -1,10 +1,10 @@
 import { ICommand } from '@nestjs/cqrs';
-import { UpdateLocationBody } from '../../api/model/location/update-location.body';
+import Location from '../../interfaces/location.interface';
 
 export class RelocateDeviceCommand implements ICommand {
     constructor(
         public readonly deviceId: string,
         public readonly legalEntityId: string,
-        public readonly location: UpdateLocationBody,
+        public readonly location: Location,
     ) { }
 }

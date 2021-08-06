@@ -1,21 +1,21 @@
-import { v4 } from 'uuid';
+import { Body, Controller, Delete, Param, Post, Put, UseFilters, UseGuards } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { UserRole } from '../../commons/user/user.schema';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { v4 } from 'uuid';
 import { ValidatedUser } from '../../auth/validated-user';
+import { User } from '../../commons/decorators/user.decorator';
+import { DomainExceptionFilter } from '../../commons/errors/domain-exception.filter';
 import { Roles } from '../../commons/guards/roles.decorator';
 import { RolesGuard } from '../../commons/guards/roles.guard';
-import { User } from '../../commons/decorators/user.decorator';
-import { DeviceIdParams } from './model/device/device-id.params';
-import { UpdateDeviceBody } from './model/device/update-device.body';
-import { RegisterDeviceBody } from './model/device/register-device.body';
-import { UpdateLocationBody } from './model/location/update-location.body';
-import { RemoveDeviceCommand } from '../model/device/remove-device.command';
-import { UpdateDeviceCommand } from '../model/device/update-device.command';
-import { DomainExceptionFilter } from '../../commons/errors/domain-exception.filter';
+import { UserRole } from '../../commons/user/user.schema';
 import { RegisterDeviceCommand } from '../model/device/register-device.command';
 import { RelocateDeviceCommand } from '../model/device/relocate-device.command';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Delete, Param, Post, Put, UseFilters, UseGuards } from '@nestjs/common';
+import { RemoveDeviceCommand } from '../model/device/remove-device.command';
+import { UpdateDeviceCommand } from '../model/device/update-device.command';
+import { DeviceIdParams } from './model/device/device-id.params';
+import { RegisterDeviceBody } from './model/device/register-device.body';
+import { UpdateDeviceBody } from './model/device/update-device.body';
+import { UpdateLocationBody } from './model/location/update-location.body';
 
 @ApiBearerAuth()
 @ApiTags('Device')
@@ -24,7 +24,7 @@ import { Body, Controller, Delete, Param, Post, Put, UseFilters, UseGuards } fro
 export class DeviceController {
     constructor(
         private readonly commandBus: CommandBus,
-    ) {}
+    ) { }
 
     @Post()
     @UseFilters(new DomainExceptionFilter())
@@ -34,8 +34,7 @@ export class DeviceController {
     async registerDevice(@User() user: ValidatedUser, @Body() deviceBody: RegisterDeviceBody): Promise<Record<string, any>> {
         const deviceId = v4();
 
-        await this.commandBus.execute(new RegisterDeviceCommand(deviceId, user.legalEntityId, deviceBody.name,
-            deviceBody.description, deviceBody.category, deviceBody.connectivity, deviceBody.location));
+        await this.commandBus.execute(new RegisterDeviceCommand(user.legalEntityId, { deviceId, ...deviceBody }));
 
         return { deviceId };
     }
@@ -46,9 +45,9 @@ export class DeviceController {
     @ApiResponse({ status: 200, description: 'Device updated' })
     @ApiResponse({ status: 400, description: 'Device update failed' })
     async updateDevice(@User() user: ValidatedUser, @Param() params: DeviceIdParams,
-                       @Body() deviceBody: UpdateDeviceBody): Promise<any> {
-        return await this.commandBus.execute(new UpdateDeviceCommand(params.deviceId, user.legalEntityId,
-            deviceBody.name, deviceBody.description, deviceBody.category, deviceBody.connectivity, deviceBody.location));
+        @Body() deviceBody: UpdateDeviceBody): Promise<any> {
+        return this.commandBus.execute(new UpdateDeviceCommand(
+            user.legalEntityId, { deviceId: params.deviceId, ...deviceBody }));
     }
 
     @Put(':deviceId/location')
@@ -57,8 +56,8 @@ export class DeviceController {
     @ApiResponse({ status: 200, description: 'Device relocated' })
     @ApiResponse({ status: 400, description: 'Device relocation failed' })
     async relocateDevice(@User() user: ValidatedUser, @Param() params: DeviceIdParams,
-                         @Body() deviceBody: UpdateLocationBody): Promise<any> {
-        return await this.commandBus.execute(new RelocateDeviceCommand(params.deviceId, user.legalEntityId, deviceBody));
+        @Body() deviceBody: UpdateLocationBody): Promise<any> {
+        return this.commandBus.execute(new RelocateDeviceCommand(params.deviceId, user.legalEntityId, deviceBody));
     }
 
     @Delete(':deviceId')
@@ -68,6 +67,6 @@ export class DeviceController {
     @ApiResponse({ status: 200, description: 'Device removed' })
     @ApiResponse({ status: 400, description: 'Device removal failed' })
     async removeDevice(@User() user: ValidatedUser, @Param() params: DeviceIdParams): Promise<any> {
-        return await this.commandBus.execute(new RemoveDeviceCommand(params.deviceId, user.legalEntityId));
+        return this.commandBus.execute(new RemoveDeviceCommand(params.deviceId, user.legalEntityId));
     }
 }

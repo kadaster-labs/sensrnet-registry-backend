@@ -31,7 +31,7 @@ export class LinkObservationGoalCommandHandler implements ICommandHandler<LinkOb
     if (aggregate) {
       aggregate = this.publisher.mergeObjectContext(aggregate);
 
-      aggregate.linkObservationGoal(command.sensorId, command.legalEntityId, command.dataStreamId,
+      aggregate.linkObservationGoal(command.sensorId, command.legalEntityId, command.datastreamId,
           command.observationGoalId);
       aggregate.commit();
     } else {

@@ -30,6 +30,6 @@ export class EventStorePublisher implements IEventPublisher {
   }
 
   async deleteStream(streamName: string, hardDelete?: boolean): Promise<DeleteResult> {
-    return await this.eventStore.deleteStream(streamName, hardDelete);
+    return this.eventStore.deleteStream(streamName, hardDelete);
   }
 }

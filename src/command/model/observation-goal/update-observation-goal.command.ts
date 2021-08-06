@@ -1,12 +1,10 @@
-import { ICommand } from '@nestjs/cqrs';
+import ObservationGoal from "../../interfaces/observation-goal.interface";
+import { AbstractObservationGoalCommand } from "./abstract-observation-goal.command";
 
-export class UpdateObservationGoalCommand implements ICommand {
-    constructor(
-        public readonly observationGoalId: string,
-        public readonly legalEntityId: string,
-        public readonly name: string,
-        public readonly description: string,
-        public readonly legalGround: string,
-        public readonly legalGroundLink: string,
-    ) {}
+export class UpdateObservationGoalCommand extends AbstractObservationGoalCommand {
+
+    constructor(legalEntityId: string, observationGoal: ObservationGoal) {
+        super(legalEntityId, observationGoal);
+    }
+
 }

@@ -15,13 +15,14 @@ export class AuthService {
     ) { }
 
     async createOrLogin(idToken: Record<string, any>): Promise<string> {
-        const user: IUser = await this.userQryService.retrieveUser(idToken.sub).then(async (user) => {
-            if (!user) {
-                await this.postRegisterCommand(idToken);
-                return await this.userQryService.retrieveUser(idToken.sub)
-            }
-            return user;
-        });
+        const user: IUser = await this.userQryService.retrieveUser(idToken.sub).then(
+            async (localScopeUser) => {
+                if (!localScopeUser) {
+                    await this.postRegisterCommand(idToken);
+                    return this.userQryService.retrieveUser(idToken.sub)
+                }
+                return localScopeUser;
+            });
 
         this.logger.debug(`successful login user: [${JSON.stringify(user._id)}]`);
         return user._id;

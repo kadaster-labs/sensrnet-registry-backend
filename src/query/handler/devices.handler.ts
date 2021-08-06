@@ -1,7 +1,7 @@
-import { FilterQuery, Model, QueryOptions } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { IDevice } from '../model/device.schema';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model, QueryOptions } from 'mongoose';
+import { IDevice } from '../model/device.schema';
 import { RetrieveDevicesQuery } from '../model/devices.query';
 import { IRelation, TargetVariant } from '../model/relation.schema';
 
@@ -38,7 +38,7 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
     }
 
     async execute(query: RetrieveDevicesQuery): Promise<any> {
-        let myDeviceIds;
+        let myDeviceIds: string[];
         if (query.requestLegalEntityId) {
             const relationFilter = {
                 legalEntityId: query.requestLegalEntityId,
@@ -97,32 +97,41 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
             };
         }
 
-        const pageSize = typeof query.pageSize === 'undefined' ? this.pageSize : query.pageSize;
-        const start = typeof query.pageIndex === 'undefined' ? 0 : query.pageIndex * pageSize;
+        const filters = [locationFilter, legalEntityFilter, nameFilter].filter((filter) => this.isNotEmptyFilter(filter));
 
         let deviceFilter: FilterQuery<IDevice>;
-        const hasNameFilter = nameFilter && Object.keys(nameFilter).length;
-        const hasLocationFilter = locationFilter && Object.keys(locationFilter).length;
-        const hasLegalEntityFilter = legalEntityFilter && Object.keys(legalEntityFilter).length;
-
-        const filters = [];
-        if (hasLocationFilter) {
-            filters.push(locationFilter);
-        }
-        if (hasLegalEntityFilter) {
-            filters.push(legalEntityFilter);
-        }
-        if (hasNameFilter) {
-            filters.push(nameFilter);
+        switch (filters.length) {
+            case 0:
+                deviceFilter = {};
+                break;
+            case 1:
+                deviceFilter = filters[0];
+                break;
+            default:
+                deviceFilter = { $and: filters };
+                break;
         }
 
-        if (filters.length === 0) {
-            deviceFilter = {};
-        } else if (filters.length === 1) {
-            deviceFilter = filters[0];
-        } else {
-            deviceFilter = { $and: filters };
+        const options: QueryOptions = this.buildOptions(query);
+
+        const devices = [];
+        if (this.isNotEmptyFilter(deviceFilter)) {
+            const mongoDevices = await this.model.find(deviceFilter, {}, options);
+            for (const device of mongoDevices) {
+                devices.push({ canEdit: myDeviceIdsSet.has(device._id), ...device.toObject() });
+            }
         }
+
+        return devices;
+    }
+
+    getFilterOrUndefined(filter: FilterQuery<IDevice>): FilterQuery<IDevice> | undefined {
+        return this.isNotEmptyFilter(filter) ? filter : undefined;
+    }
+
+    private buildOptions(query: RetrieveDevicesQuery) {
+        const pageSize = typeof query.pageSize === 'undefined' ? this.pageSize : query.pageSize;
+        const start = typeof query.pageIndex === 'undefined' ? 0 : query.pageIndex * pageSize;
 
         const options: QueryOptions = {
             skip: start, limit: pageSize,
@@ -131,15 +140,10 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
             options.sort = {};
             options.sort[query.sortField] = query.sortDirection === 'DESCENDING' ? -1 : 1;
         }
+        return options;
+    }
 
-        const devices = [];
-        if (deviceFilter && Object.keys(deviceFilter).length) {
-            const mongoDevices = await this.model.find(deviceFilter, {}, options);
-            for (const device of mongoDevices) {
-                devices.push({ canEdit: myDeviceIdsSet.has(device._id), ...device.toObject() });
-            }
-        }
-
-        return devices;
+    private isNotEmptyFilter(filter: FilterQuery<IDevice>) {
+        return filter && Object.keys(filter).length;
     }
 }

@@ -1,6 +1,6 @@
 import { Document, Schema, Types } from 'mongoose';
 
-export interface IDataStream extends Document {
+export interface IDatastream extends Document {
     _id: string;
     sensorId: string;
     name: string;
@@ -47,10 +47,10 @@ export interface IDevice extends Document {
         coordinates: Types.Array<number>,
     };
     sensors: Types.Array<ISensor>;
-    dataStreams: Types.Array<IDataStream>;
+    datastreams: Types.Array<IDatastream>;
 }
 
-export const DataStreamSchema = new Schema({
+export const DatastreamSchema = new Schema({
     _id: { type: String, required: true },
     sensorId: { type: String, required: true },
     name: { type: String, required: true },
@@ -96,8 +96,8 @@ export const DeviceSchema = new Schema({
         type: { type: String, enum: ['Point'], required: false },
         coordinates: { type: [Number], required: false },
     },
-    dataStreams: [DataStreamSchema],
+    datastreams: [DatastreamSchema],
     sensors: [SensorSchema],
 });
 DeviceSchema.index({ location: '2dsphere' });
-DeviceSchema.index({ 'dataStreams.observationGoalIds': 1 });
+DeviceSchema.index({ 'datastreams.observationGoalIds': 1 });

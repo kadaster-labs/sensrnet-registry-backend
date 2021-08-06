@@ -23,7 +23,7 @@ export class DeviceController {
   @ApiResponse({ status: 200, description: 'Device retrieved' })
   @ApiResponse({ status: 400, description: 'Device retrieval failed' })
   async retrieveDevice(@Param() deviceIdParams: DeviceIdParams): Promise<any> {
-    return await this.queryBus.execute(new RetrieveDeviceQuery(deviceIdParams.deviceId));
+    return this.queryBus.execute(new RetrieveDeviceQuery(deviceIdParams.deviceId));
   }
 
   @Get()
@@ -36,7 +36,7 @@ export class DeviceController {
 
     const pageSize = typeof devicesParams.pageSize === 'undefined' ? undefined : Number(devicesParams.pageSize);
     const pageIndex = typeof devicesParams.pageIndex === 'undefined' ? undefined : Number(devicesParams.pageIndex);
-    return await this.queryBus.execute(new RetrieveDevicesQuery(requestLegalEntityId, devicesParams.bottomLeftLongitude,
+    return this.queryBus.execute(new RetrieveDevicesQuery(requestLegalEntityId, devicesParams.bottomLeftLongitude,
         devicesParams.bottomLeftLatitude, devicesParams.upperRightLongitude, devicesParams.upperRightLatitude,
         pageIndex, pageSize, devicesParams.legalEntityId, devicesParams.sortField, devicesParams.sortDirection, devicesParams.name));
   }

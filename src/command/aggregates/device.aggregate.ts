@@ -1,25 +1,24 @@
 import { Aggregate } from '../../commons/event-store/aggregate';
-import { DeviceState, DeviceStateImpl } from './device-state';
 import { EventMessage } from '../../commons/event-store/event-message';
-import { Category } from '../api/model/category.body';
-import { getSensorAddedEvent, SensorAdded } from '../../commons/events/sensordevice/sensor/added';
-import { DeviceLocated, getDeviceLocatedEvent } from '../../commons/events/sensordevice/device/located';
-import { DeviceRemoved, getDeviceRemovedEvent } from '../../commons/events/sensordevice/device/removed';
-import { DeviceUpdated, getDeviceUpdatedEvent } from '../../commons/events/sensordevice/device/updated';
-import { getSensorRemovedEvent, SensorRemoved } from '../../commons/events/sensordevice/sensor/removed';
-import { getSensorUpdatedEvent, SensorUpdated } from '../../commons/events/sensordevice/sensor/updated';
-import { NotLegalEntityException } from '../handler/error/not-legalentity-exception';
-import { UpdateLocationBody } from '../api/model/location/update-location.body';
 import { DatastreamAdded, getDatastreamAddedEvent } from '../../commons/events/sensordevice/datastream/added';
-import { DeviceRelocated, getDeviceRelocatedEvent } from '../../commons/events/sensordevice/device/relocated';
-import { RegisterLocationBody } from '../api/model/location/register-location.body';
-import { DeviceRegistered, getDeviceRegisteredEvent } from '../../commons/events/sensordevice/device/registered';
-import { DatastreamRemoved, getDatastreamRemovedEvent } from '../../commons/events/sensordevice/datastream/removed';
-import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../../commons/events/sensordevice/datastream/updated';
 import { getObservationGoalLinkedEvent, ObservationGoalLinked } from '../../commons/events/sensordevice/datastream/observation-goal-linked';
 import { ObservationGoalUnlinked } from '../../commons/events/sensordevice/datastream/observation-goal-unlinked/observation-goal-unlinked-v1.event';
-import { UnknowObjectException } from '../handler/error/unknow-object-exception';
+import { DatastreamRemoved, getDatastreamRemovedEvent } from '../../commons/events/sensordevice/datastream/removed';
+import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../../commons/events/sensordevice/datastream/updated';
+import { DeviceLocated, getDeviceLocatedEvent } from '../../commons/events/sensordevice/device/located';
+import { DeviceRegistered, getDeviceRegisteredEvent } from '../../commons/events/sensordevice/device/registered';
+import { DeviceRelocated, getDeviceRelocatedEvent } from '../../commons/events/sensordevice/device/relocated';
+import { DeviceRemoved, getDeviceRemovedEvent } from '../../commons/events/sensordevice/device/removed';
+import { DeviceUpdated, getDeviceUpdatedEvent } from '../../commons/events/sensordevice/device/updated';
+import { getSensorAddedEvent, SensorAdded } from '../../commons/events/sensordevice/sensor/added';
+import { getSensorRemovedEvent, SensorRemoved } from '../../commons/events/sensordevice/sensor/removed';
+import { getSensorUpdatedEvent, SensorUpdated } from '../../commons/events/sensordevice/sensor/updated';
 import { AlreadyExistsException } from '../handler/error/already-exists-exception';
+import { NotLegalEntityException } from '../handler/error/not-legalentity-exception';
+import { UnknowObjectException } from '../handler/error/unknow-object-exception';
+import Location from '../interfaces/location.interface';
+import { Category } from '../model/category.model';
+import { DeviceState, DeviceStateImpl } from './device-state';
 
 export class DeviceAggregate extends Aggregate {
   state!: DeviceState;
@@ -42,26 +41,26 @@ export class DeviceAggregate extends Aggregate {
     }
   }
 
-  validateDataStreamId(dataStreamId: string): void {
-    if (!this.state.hasDataStream(dataStreamId)) {
-      throw new UnknowObjectException(dataStreamId);
+  validateDatastreamId(datastreamId: string): void {
+    if (!this.state.hasDatastream(datastreamId)) {
+      throw new UnknowObjectException(datastreamId);
     }
   }
 
-  validateObservationGoalId(dataStreamId: string, observationGoalId: string): void {
-    if (!this.state.hasObservationGoalId(dataStreamId, observationGoalId)) {
+  validateObservationGoalId(datastreamId: string, observationGoalId: string): void {
+    if (!this.state.hasObservationGoalId(datastreamId, observationGoalId)) {
       throw new UnknowObjectException(observationGoalId);
     }
   }
 
-  validateNoObservationGoalId(dataStreamId: string, observationGoalId: string): void {
-    if (this.state.hasObservationGoalId(dataStreamId, observationGoalId)) {
+  validateNoObservationGoalId(datastreamId: string, observationGoalId: string): void {
+    if (this.state.hasObservationGoalId(datastreamId, observationGoalId)) {
       throw new AlreadyExistsException(observationGoalId);
     }
   }
 
   registerDevice(legalEntityId: string, name: string, description: string, category: Category,
-                 connectivity: string, location: RegisterLocationBody): void {
+    connectivity: string, location: Location): void {
     this.simpleApply(new DeviceRegistered(this.aggregateId, legalEntityId, name, description, category, connectivity));
     this.simpleApply(new DeviceLocated(this.aggregateId, location.name, location.description, location.location));
   }
@@ -77,7 +76,7 @@ export class DeviceAggregate extends Aggregate {
   }
 
   updateDevice(legalEntityId: string, name: string, description: string, category: Category,
-               connectivity: string, location: UpdateLocationBody): void {
+    connectivity: string, location: Location): void {
     this.validateLegalEntityId(legalEntityId);
 
     this.simpleApply(new DeviceUpdated(this.aggregateId, legalEntityId, name, description, category, connectivity));
@@ -86,7 +85,7 @@ export class DeviceAggregate extends Aggregate {
     }
   }
 
-  relocateDevice(legalEntityId: string, location: UpdateLocationBody): void {
+  relocateDevice(legalEntityId: string, location: Location): void {
     this.validateLegalEntityId(legalEntityId);
 
     this.simpleApply(new DeviceRelocated(this.aggregateId, location.name, location.description, location.location));
@@ -109,15 +108,15 @@ export class DeviceAggregate extends Aggregate {
 
   onDeviceRemoved(eventMessage: EventMessage): void {
     const event: DeviceRemoved = getDeviceRemovedEvent(eventMessage);
-    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+    this.logUnusedInAggregate(event);
   }
 
   addSensor(sensorId: string, legalEntityId: string, name: string, description: string,
-            type: string, manufacturer: string, supplier: string, documentation: string): void {
+    type: string, manufacturer: string, supplier: string, documentation: string): void {
     this.validateLegalEntityId(legalEntityId);
 
     this.simpleApply(new SensorAdded(this.aggregateId, sensorId, legalEntityId, name, description,
-        type, manufacturer, supplier, documentation));
+      type, manufacturer, supplier, documentation));
   }
 
   onSensorAdded(eventMessage: EventMessage): void {
@@ -126,17 +125,17 @@ export class DeviceAggregate extends Aggregate {
   }
 
   updateSensor(sensorId: string, legalEntityId: string, name: string, description: string,
-               type: string, manufacturer: string, supplier: string, documentation: string): void {
+    type: string, manufacturer: string, supplier: string, documentation: string): void {
     this.validateLegalEntityId(legalEntityId);
     this.validateSensorId(sensorId);
 
     this.simpleApply(new SensorUpdated(this.aggregateId, sensorId, legalEntityId, name, description,
-        type, manufacturer, supplier, documentation));
+      type, manufacturer, supplier, documentation));
   }
 
   onSensorUpdated(eventMessage: EventMessage): void {
     const event: SensorUpdated = getSensorUpdatedEvent(eventMessage);
-    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+    this.logUnusedInAggregate(event);
   }
 
   removeSensor(sensorId: string, legalEntityId: string): void {
@@ -151,79 +150,79 @@ export class DeviceAggregate extends Aggregate {
     this.state.removeSensor(event.sensorId);
   }
 
-  addDataStream(sensorId: string, legalEntityId: string, dataStreamId: string, name: string,
-                description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
-                theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
-                containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
+  addDatastream(sensorId: string, legalEntityId: string, datastreamId: string, name: string,
+    description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
+    theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
+    containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
     this.validateLegalEntityId(legalEntityId);
     this.validateSensorId(sensorId);
 
-    this.simpleApply(new DatastreamAdded(this.aggregateId, sensorId, legalEntityId, dataStreamId, name,
-        description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
-        containsPersonalInfoData, isReusable, documentation, dataLink));
+    this.simpleApply(new DatastreamAdded(this.aggregateId, sensorId, legalEntityId, datastreamId, name,
+      description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
+      containsPersonalInfoData, isReusable, documentation, dataLink));
   }
 
   onDatastreamAdded(eventMessage: EventMessage): void {
     const event: DatastreamAdded = getDatastreamAddedEvent(eventMessage);
-    this.state.addDataStream(event.dataStreamId);
+    this.state.addDatastream(event.datastreamId);
   }
 
-  updateDataStream(sensorId: string, legalEntityId: string, dataStreamId: string, name: string,
-                   description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
-                   theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
-                   containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
+  updateDatastream(sensorId: string, legalEntityId: string, datastreamId: string, name: string,
+    description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
+    theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
+    containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string): void {
     this.validateLegalEntityId(legalEntityId);
     this.validateSensorId(sensorId);
-    this.validateDataStreamId(dataStreamId);
+    this.validateDatastreamId(datastreamId);
 
-    this.simpleApply(new DatastreamUpdated(this.aggregateId, sensorId, legalEntityId, dataStreamId, name,
-        description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
-        containsPersonalInfoData, isReusable, documentation, dataLink));
+    this.simpleApply(new DatastreamUpdated(this.aggregateId, sensorId, legalEntityId, datastreamId, name,
+      description, unitOfMeasurement, observationArea, theme, dataQuality, isActive, isPublic, isOpenData,
+      containsPersonalInfoData, isReusable, documentation, dataLink));
   }
 
   onDatastreamUpdated(eventMessage: EventMessage): void {
     const event: DatastreamUpdated = getDatastreamUpdatedEvent(eventMessage);
-    this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
+    this.logUnusedInAggregate(event);
   }
 
-  linkObservationGoal(sensorId: string, legalEntityId: string, dataStreamId: string, observationGoalId: string): void {
+  linkObservationGoal(sensorId: string, legalEntityId: string, datastreamId: string, observationGoalId: string): void {
     this.validateLegalEntityId(legalEntityId);
     this.validateSensorId(sensorId);
-    this.validateDataStreamId(dataStreamId);
-    this.validateNoObservationGoalId(dataStreamId, observationGoalId);
+    this.validateDatastreamId(datastreamId);
+    this.validateNoObservationGoalId(datastreamId, observationGoalId);
 
-    this.simpleApply(new ObservationGoalLinked(this.aggregateId, sensorId, legalEntityId, dataStreamId, observationGoalId));
+    this.simpleApply(new ObservationGoalLinked(this.aggregateId, sensorId, legalEntityId, datastreamId, observationGoalId));
   }
 
   onObservationGoalLinked(eventMessage: EventMessage): void {
     const event: ObservationGoalLinked = getObservationGoalLinkedEvent(eventMessage);
-    this.state.addObservationGoalId(event.dataStreamId, event.observationGoalId);
+    this.state.addObservationGoalId(event.datastreamId, event.observationGoalId);
   }
 
-  unlinkObservationGoal(sensorId: string, legalEntityId: string, dataStreamId: string, observationGoalId: string): void {
+  unlinkObservationGoal(sensorId: string, legalEntityId: string, datastreamId: string, observationGoalId: string): void {
     this.validateLegalEntityId(legalEntityId);
     this.validateSensorId(sensorId);
-    this.validateDataStreamId(dataStreamId);
-    this.validateObservationGoalId(dataStreamId, observationGoalId);
+    this.validateDatastreamId(datastreamId);
+    this.validateObservationGoalId(datastreamId, observationGoalId);
 
-    this.simpleApply(new ObservationGoalUnlinked(this.aggregateId, sensorId, legalEntityId, dataStreamId, observationGoalId));
+    this.simpleApply(new ObservationGoalUnlinked(this.aggregateId, sensorId, legalEntityId, datastreamId, observationGoalId));
   }
 
   onObservationGoalUnlinked(eventMessage: EventMessage): void {
     const event: ObservationGoalLinked = getObservationGoalLinkedEvent(eventMessage);
-    this.state.removeObservationGoalId(event.dataStreamId, event.observationGoalId);
+    this.state.removeObservationGoalId(event.datastreamId, event.observationGoalId);
   }
 
-  removeDataStream(sensorId: string, legalEntityId: string, dataStreamId: string): void {
+  removeDatastream(sensorId: string, legalEntityId: string, datastreamId: string): void {
     this.validateLegalEntityId(legalEntityId);
     this.validateSensorId(sensorId);
-    this.validateDataStreamId(dataStreamId);
+    this.validateDatastreamId(datastreamId);
 
-    this.simpleApply(new DatastreamRemoved(this.aggregateId, sensorId, legalEntityId, dataStreamId));
+    this.simpleApply(new DatastreamRemoved(this.aggregateId, sensorId, legalEntityId, datastreamId));
   }
 
   onDatastreamRemoved(eventMessage: EventMessage): void {
     const event: DatastreamRemoved = getDatastreamRemovedEvent(eventMessage);
-    this.state.removeDataStream(event.dataStreamId);
+    this.state.removeDatastream(event.datastreamId);
   }
 }

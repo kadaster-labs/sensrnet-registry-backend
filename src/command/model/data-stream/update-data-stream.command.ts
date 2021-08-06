@@ -1,23 +1,14 @@
-import { ICommand } from '@nestjs/cqrs';
+import Datastream from '../../interfaces/datastream.interface';
+import { AbstractDatastreamCommand } from './abstract-datastream.command';
 
-export class UpdateDataStreamCommand implements ICommand {
+export class UpdateDatastreamCommand extends AbstractDatastreamCommand {
     constructor(
         public readonly deviceId: string,
         public readonly sensorId: string,
         public readonly legalEntityId: string,
-        public readonly dataStreamId: string,
-        public readonly name: string,
-        public readonly description: string,
-        public readonly unitOfMeasurement: Record<string, any>,
-        public readonly observationArea: Record<string, any>,
-        public readonly theme: string[],
-        public readonly dataQuality: string,
-        public readonly isActive: boolean,
-        public readonly isPublic: boolean,
-        public readonly isOpenData: boolean,
-        public readonly containsPersonalInfoData: boolean,
-        public readonly isReusable: boolean,
-        public readonly documentation: string,
-        public readonly dataLink: string,
-    ) {}
+        datastream: Datastream,
+    ) {
+        super(deviceId, sensorId, legalEntityId, datastream);
+    }
+
 }

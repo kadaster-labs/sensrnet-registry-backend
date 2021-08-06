@@ -2,8 +2,8 @@ interface SensorState {
   sensorId: string;
 }
 
-interface DataStreamState {
-  dataStreamId: string;
+interface DatastreamState {
+  datastreamId: string;
   observationGoalIds: string[];
 }
 
@@ -19,21 +19,21 @@ export interface DeviceState {
   removeSensor(sensorId: string): void;
   hasSensor(sensorId: string): boolean;
 
-  dataStreams: DataStreamState[];
+  datastreams: DatastreamState[];
 
-  addDataStream(dataStreamId: string): void;
-  removeDataStream(dataStreamId: string): void;
-  hasDataStream(dataStreamId: string): boolean;
+  addDatastream(datastreamId: string): void;
+  removeDatastream(datastreamId: string): void;
+  hasDatastream(datastreamId: string): boolean;
 
-  addObservationGoalId(dataStreamId: string, observationGoalId: string): void;
-  removeObservationGoalId(dataStreamId: string, observationGoalId: string): void;
-  hasObservationGoalId(dataStreamId: string, observationGoalId: string): boolean;
+  addObservationGoalId(datastreamId: string, observationGoalId: string): void;
+  removeObservationGoalId(datastreamId: string, observationGoalId: string): void;
+  hasObservationGoalId(datastreamId: string, observationGoalId: string): boolean;
 }
 
 export class DeviceStateImpl implements DeviceState {
   public location: number[];
   public sensors: SensorState[] = [];
-  public dataStreams: DataStreamState[] = [];
+  public datastreams: DatastreamState[] = [];
 
   constructor(
       public readonly id: string,
@@ -52,33 +52,33 @@ export class DeviceStateImpl implements DeviceState {
     return this.sensors.some(x => x.sensorId === sensorId);
   }
 
-  addDataStream(dataStreamId: string): void {
-    this.dataStreams.push({ dataStreamId, observationGoalIds: [] });
+  addDatastream(datastreamId: string): void {
+    this.datastreams.push({ datastreamId, observationGoalIds: [] });
   }
 
-  removeDataStream(dataStreamId: string): void {
-    this.dataStreams = this.dataStreams.filter(x => x.dataStreamId !== dataStreamId);
+  removeDatastream(datastreamId: string): void {
+    this.datastreams = this.datastreams.filter(x => x.datastreamId !== datastreamId);
   }
 
-  hasDataStream(dataStreamId: string): boolean {
-    return this.dataStreams.some(x => x.dataStreamId === dataStreamId);
+  hasDatastream(datastreamId: string): boolean {
+    return this.datastreams.some(x => x.datastreamId === datastreamId);
   }
 
-  addObservationGoalId(dataStreamId: string, observationGoalId: string): void {
-    this.dataStreams
-        .filter(x => x.dataStreamId === dataStreamId)
+  addObservationGoalId(datastreamId: string, observationGoalId: string): void {
+    this.datastreams
+        .filter(x => x.datastreamId === datastreamId)
         .forEach(x => x.observationGoalIds.push(observationGoalId));
   }
 
-  removeObservationGoalId(dataStreamId: string, observationGoalId: string): void {
-    this.dataStreams
-        .filter(x => x.dataStreamId === dataStreamId)
+  removeObservationGoalId(datastreamId: string, observationGoalId: string): void {
+    this.datastreams
+        .filter(x => x.datastreamId === datastreamId)
         .forEach(x => x.observationGoalIds = x.observationGoalIds.filter(y => y !== observationGoalId));
   }
 
-  hasObservationGoalId(dataStreamId: string, observationGoalId: string): boolean {
-    return this.dataStreams
-        .filter(x => x.dataStreamId === dataStreamId)
+  hasObservationGoalId(datastreamId: string, observationGoalId: string): boolean {
+    return this.datastreams
+        .filter(x => x.datastreamId === datastreamId)
         .some(x => x.observationGoalIds.includes(observationGoalId));
   }
 }

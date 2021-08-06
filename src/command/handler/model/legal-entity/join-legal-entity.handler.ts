@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UserService } from '../../../../command/repositories/user.service';
+import { UserService } from '../../../repositories/user.service';
 import { JoinLegalEntityCommand } from '../../../model/user/join-legal-entity.command';
 import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
 import { validateLegalEntity } from '../../util/legal-entity.utils';

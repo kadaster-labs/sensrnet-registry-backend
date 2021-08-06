@@ -1,19 +1,19 @@
-import { v4 } from 'uuid';
+import { Body, Controller, Delete, Param, Post, Put, UseFilters, UseGuards } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { UserRole } from '../../commons/user/user.schema';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { v4 } from 'uuid';
 import { ValidatedUser } from '../../auth/validated-user';
-import { Roles } from '../../commons/guards/roles.decorator';
-import { RolesGuard } from '../../commons/guards/roles.guard';
 import { User } from '../../commons/decorators/user.decorator';
 import { DomainExceptionFilter } from '../../commons/errors/domain-exception.filter';
-import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { ObservationGoalIdParams } from './model/observation-goal/observation-goal-id.params';
-import { UpdateObservationGoalBody } from './model/observation-goal/update-observation-goal.body';
-import { Controller, Param, Post, Put, Body, Delete, UseFilters, UseGuards } from '@nestjs/common';
-import { RegisterObservationGoalBody } from './model/observation-goal/register-observation-goal.body';
-import { UpdateObservationGoalCommand } from '../model/observation-goal/update-observation-goal.command';
-import { RemoveObservationGoalCommand } from '../model/observation-goal/remove-observation-goal.command';
+import { Roles } from '../../commons/guards/roles.decorator';
+import { RolesGuard } from '../../commons/guards/roles.guard';
+import { UserRole } from '../../commons/user/user.schema';
 import { RegisterObservationGoalCommand } from '../model/observation-goal/register-observation-goal.command';
+import { RemoveObservationGoalCommand } from '../model/observation-goal/remove-observation-goal.command';
+import { UpdateObservationGoalCommand } from '../model/observation-goal/update-observation-goal.command';
+import { ObservationGoalIdParams } from './model/observation-goal/observation-goal-id.params';
+import { RegisterObservationGoalBody } from './model/observation-goal/register-observation-goal.body';
+import { UpdateObservationGoalBody } from './model/observation-goal/update-observation-goal.body';
 
 @ApiBearerAuth()
 @UseGuards(RolesGuard)
@@ -21,8 +21,8 @@ import { RegisterObservationGoalCommand } from '../model/observation-goal/regist
 @Controller('observationgoal')
 export class ObservationGoalController {
   constructor(
-      private readonly commandBus: CommandBus,
-  ) {}
+    private readonly commandBus: CommandBus,
+  ) { }
 
   @Post()
   @UseFilters(new DomainExceptionFilter())
@@ -30,12 +30,11 @@ export class ObservationGoalController {
   @ApiResponse({ status: 200, description: 'Observation goal registered' })
   @ApiResponse({ status: 400, description: 'Observation goal registration failed' })
   async registerObservationGoal(@User() user: ValidatedUser,
-                                @Body() observationGoalBody: RegisterObservationGoalBody): Promise<Record<string, any>> {
+    @Body() observationGoalBody: RegisterObservationGoalBody): Promise<Record<string, any>> {
     const observationGoalId = v4();
 
-    await this.commandBus.execute(new RegisterObservationGoalCommand(observationGoalId, user.legalEntityId,
-        observationGoalBody.name, observationGoalBody.description, observationGoalBody.legalGround,
-        observationGoalBody.legalGroundLink));
+    await this.commandBus.execute(new RegisterObservationGoalCommand(user.legalEntityId,
+      { observationGoalId, ...observationGoalBody }));
 
     return { observationGoalId };
   }
@@ -46,10 +45,9 @@ export class ObservationGoalController {
   @ApiResponse({ status: 200, description: 'Observation goal updated' })
   @ApiResponse({ status: 400, description: 'Observation goal update failed' })
   async updateObservationGoal(@User() user: ValidatedUser, @Param() params: ObservationGoalIdParams,
-                              @Body() observationGoalBody: UpdateObservationGoalBody): Promise<any> {
-    return await this.commandBus.execute(new UpdateObservationGoalCommand(params.observationGoalId, user.legalEntityId,
-        observationGoalBody.name, observationGoalBody.description, observationGoalBody.legalGround,
-        observationGoalBody.legalGroundLink));
+    @Body() observationGoalBody: UpdateObservationGoalBody): Promise<any> {
+    return this.commandBus.execute(new UpdateObservationGoalCommand(user.legalEntityId,
+      { observationGoalId: params.observationGoalId, ...observationGoalBody }));
   }
 
   @Delete(':observationGoalId')
@@ -59,6 +57,7 @@ export class ObservationGoalController {
   @ApiResponse({ status: 200, description: 'Observation goal removed' })
   @ApiResponse({ status: 400, description: 'Observation goal removal failed' })
   async removeObservationGoal(@User() user: ValidatedUser, @Param() params: ObservationGoalIdParams): Promise<any> {
-    return await this.commandBus.execute(new RemoveObservationGoalCommand(params.observationGoalId, user.legalEntityId));
+    return this.commandBus.execute(new RemoveObservationGoalCommand(params.observationGoalId, user.legalEntityId));
   }
+
 }

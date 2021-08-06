@@ -18,11 +18,11 @@ export class EventStore {
   }
 
   async exists(streamName: string): Promise<boolean> {
-    return await this.client.checkStreamExists(streamName);
+    return this.client.checkStreamExists(streamName);
   }
 
   async createEvent(event: EventMessage): Promise<WriteResult> {
-    return await this.client.writeEvent(
+    return this.client.writeEvent(
         event.streamId,
         event.eventType,
         event.data,
@@ -31,17 +31,17 @@ export class EventStore {
   }
 
   async getEvents(streamName: string): Promise<Event[]> {
-    return await this.client.getAllStreamEvents(streamName);
+    return this.client.getAllStreamEvents(streamName);
   }
 
   async deleteStream(streamName: string, hardDelete?: boolean): Promise<DeleteResult> {
-    return await this.client.deleteStream(streamName, hardDelete);
+    return this.client.deleteStream(streamName, hardDelete);
   }
 
   async subscribeToStream(streamName: string,
                           onEventAppeared: MappedEventAppearedCallback<EventStoreSubscription>,
                           onDropped: SubscriptionDroppedCallback<EventStoreSubscription>): Promise<EventStoreSubscription> {
-    return await this.client.subscribeToStream(streamName, onEventAppeared, onDropped, true);
+    return this.client.subscribeToStream(streamName, onEventAppeared, onDropped, true);
   }
 
   async subscribeToStreamFrom(streamName: string, fromEventNumber: number,
@@ -53,6 +53,6 @@ export class EventStore {
       resolveLinkTos: true,
     };
 
-    return await this.client.subscribeToStreamFrom(streamName, fromEventNumber, onEventAppeared, onLiveProcessingStarted, onDropped, settings);
+    return this.client.subscribeToStreamFrom(streamName, fromEventNumber, onEventAppeared, onLiveProcessingStarted, onDropped, settings);
   }
 }

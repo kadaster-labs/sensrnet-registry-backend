@@ -1,15 +1,12 @@
-import { ICommand } from '@nestjs/cqrs';
+import Sensor from '../../interfaces/sensor.interface';
+import { AbstractSensorCommand } from './abstract-sensor.command';
 
-export class UpdateSensorCommand implements ICommand {
+export class UpdateSensorCommand extends AbstractSensorCommand {
   constructor(
-      public readonly sensorId: string,
-      public readonly legalEntityId: string,
-      public readonly deviceId: string,
-      public readonly name: string,
-      public readonly description: string,
-      public readonly type: string,
-      public readonly manufacturer: string,
-      public readonly supplier: string,
-      public readonly documentation: string,
-    ) {}
+    public readonly deviceId: string,
+    public readonly legalEntityId: string,
+    sensor: Sensor,
+  ) {
+    super(deviceId, legalEntityId, sensor);
+  }
 }

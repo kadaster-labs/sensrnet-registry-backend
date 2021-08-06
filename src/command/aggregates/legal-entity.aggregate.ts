@@ -24,6 +24,8 @@ export class LegalEntityAggregate extends Aggregate {
 
   onOrganizationRegistered(eventMessage: EventMessage): void {
     const event: OrganizationRegistered = getOrganizationRegisteredEvent(eventMessage);
+    this.logUnusedInAggregate(event);
+
     this.state = new LegalEntityStateImpl(this.aggregateId);
   }
 
@@ -33,6 +35,7 @@ export class LegalEntityAggregate extends Aggregate {
 
   onOrganizationUpdated(eventMessage: EventMessage): void {
     const event: OrganizationUpdated = getOrganizationUpdatedEvent(eventMessage);
+    this.logUnusedInAggregate(event);
   }
 
   remove(): void {
@@ -46,6 +49,7 @@ export class LegalEntityAggregate extends Aggregate {
 
   onLegalEntityRemoved(eventMessage: EventMessage): void {
     const event: LegalEntityRemoved = getLegalEntityRemovedEvent(eventMessage);
+    this.logUnusedInAggregate(event);
   }
 
   addPublicContactDetails(contactDetailsId: string, name: string, email: string, phone: string): void {
@@ -54,6 +58,7 @@ export class LegalEntityAggregate extends Aggregate {
 
   onPublicContactDetailsAdded(eventMessage: EventMessage): void {
     const event: PublicContactDetailsAdded = getPublicContactDetailsAddedEvent(eventMessage);
+    this.logUnusedInAggregate(event);
   }
 
   updateContactDetails(contactDetailsId: string, name: string, email: string, phone: string): void {
@@ -62,6 +67,7 @@ export class LegalEntityAggregate extends Aggregate {
 
   onContactDetailsUpdated(eventMessage: EventMessage): void {
     const event: ContactDetailsUpdated = getContactDetailsUpdatedEvent(eventMessage);
+    this.logUnusedInAggregate(event);
   }
 
   removeContactDetails(contactDetailsId: string): void {
@@ -70,6 +76,7 @@ export class LegalEntityAggregate extends Aggregate {
 
   onContactDetailsRemoved(eventMessage: EventMessage): void {
     const event: ContactDetailsRemoved = getContactDetailsRemovedEvent(eventMessage);
+    this.logUnusedInAggregate(event);
   }
 
 }

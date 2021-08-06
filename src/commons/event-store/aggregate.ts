@@ -1,7 +1,7 @@
-import { Event } from './event';
 import { Logger } from '@nestjs/common';
-import { isValidEvent } from './event-utils';
 import { AggregateRoot } from '@nestjs/cqrs';
+import { Event } from './event';
+import { isValidEvent } from './event-utils';
 
 export abstract class Aggregate extends AggregateRoot {
 
@@ -9,8 +9,8 @@ export abstract class Aggregate extends AggregateRoot {
 
   simpleApply(event: Event): void {
     super.apply(event.toEventMessage());
+    this.logApplyEvent(event);
   }
-
   protected getEventName(event: Event): string {
     if (isValidEvent(event)) {
       return event.eventType;
@@ -18,4 +18,13 @@ export abstract class Aggregate extends AggregateRoot {
       return super.getEventName(event);
     }
   }
+  
+  private logApplyEvent(event: Event) {
+    this.logger.verbose(`applying event [${event.constructor.name}]: ${JSON.stringify(event)}`);
+  }
+
+  protected logUnusedInAggregate(event: Event): void {
+    this.logger.verbose(`Unused in aggregate.eventHandler(${event.constructor.name})`);
+  }
+
 }
