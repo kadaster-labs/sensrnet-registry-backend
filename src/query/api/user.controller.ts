@@ -19,7 +19,7 @@ export class UserController {
     @ApiResponse({ status: 400, description: 'Users retrieval failed' })
     async retrieveUsers(@User() user: ValidatedUser): Promise<void> {
         return user.legalEntityId
-            ? await this.queryBus.execute(new RetrieveUserQuery(user.userId, user.legalEntityId))
+            ? this.queryBus.execute(new RetrieveUserQuery(user.userId, user.legalEntityId))
             : null;
     }
 }

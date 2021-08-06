@@ -19,7 +19,7 @@ export class AuthService {
             return localScopeUser;
         });
 
-        this.logger.debug(`successful login user: [${JSON.stringify(user._id)}]`);
+        this.logger.verbose(`successful login user: [${JSON.stringify(user._id)}]`);
         return user._id;
     }
 

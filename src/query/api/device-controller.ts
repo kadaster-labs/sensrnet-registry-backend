@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query, UseFilters } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ValidatedUser } from '../../auth/validated-user';
 import { User } from '../../commons/decorators/user.decorator';
 import { DomainExceptionFilter } from '../../commons/errors/domain-exception.filter';
@@ -35,19 +35,7 @@ export class DeviceController {
         const pageSize = typeof devicesParams.pageSize === 'undefined' ? undefined : Number(devicesParams.pageSize);
         const pageIndex = typeof devicesParams.pageIndex === 'undefined' ? undefined : Number(devicesParams.pageIndex);
         return this.queryBus.execute(
-            new RetrieveDevicesQuery(
-                requestLegalEntityId,
-                devicesParams.bottomLeftLongitude,
-                devicesParams.bottomLeftLatitude,
-                devicesParams.upperRightLongitude,
-                devicesParams.upperRightLatitude,
-                pageIndex,
-                pageSize,
-                devicesParams.legalEntityId,
-                devicesParams.sortField,
-                devicesParams.sortDirection,
-                devicesParams.name,
-            ),
+            new RetrieveDevicesQuery(devicesParams, requestLegalEntityId, pageIndex, pageSize),
         );
     }
 }

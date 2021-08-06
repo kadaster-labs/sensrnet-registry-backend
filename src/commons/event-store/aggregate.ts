@@ -7,8 +7,8 @@ export abstract class Aggregate extends AggregateRoot {
     protected logger: Logger = new Logger(this.constructor.name);
 
     simpleApply(event: Event): void {
-        super.apply(event.toEventMessage());
         this.logApplyEvent(event);
+        super.apply(event.toEventMessage());
     }
     protected getEventName(event: Event): string {
         if (isValidEvent(event)) {
@@ -19,7 +19,7 @@ export abstract class Aggregate extends AggregateRoot {
     }
 
     private logApplyEvent(event: Event) {
-        this.logger.verbose(`applying event [${event.constructor.name}]: ${JSON.stringify(event)}`);
+        this.logger.debug(`applying event [${event.constructor.name}]: ${JSON.stringify(event)}`);
     }
 
     protected logUnusedInAggregate(event: Event): void {
