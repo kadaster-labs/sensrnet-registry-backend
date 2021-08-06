@@ -1,36 +1,45 @@
-import { model, Schema, Document, Model, Types } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
 
-export interface IContactDetails extends Document {
+export type ContactDetailsDocument = IContactDetails & Document;
+
+@Schema()
+export class IContactDetails {
+    @Prop({ required: true })
     _id: string;
+
+    @Prop({ required: false })
     name?: string;
+
+    @Prop({ required: false })
     email?: string;
+
+    @Prop({ required: false })
     phone?: string;
+
+    @Prop({ required: true })
     isPublic: boolean;
 }
 
-export interface ILegalEntity extends Document {
+export const contactDetailsSchema = SchemaFactory.createForClass(IContactDetails);
+
+export type LegalEntityDocument = ILegalEntity & Document;
+
+export class ILegalEntity {
+    @Prop({ required: true })
     _id: string;
+
+    @Prop({ required: true, index: true })
     name: string;
+
+    @Prop({ required: false })
     website?: string;
+
+    @Prop({ required: false })
     originSync?: string;
+
+    @Prop({ type: [contactDetailsSchema], default: [] })
     contactDetails?: Types.Array<IContactDetails>;
 }
 
-export const ContactDetailsSchema = new Schema({
-    _id: { type: String, required: true },
-    name: { type: String, required: false },
-    email: { type: String, required: false },
-    phone: { type: String, required: false },
-    isPublic: { type: Boolean, required: true },
-});
-
-export const LegalEntitySchema = new Schema({
-    _id: { type: String, required: true },
-    name: { type: String, required: true },
-    website: { type: String, required: false },
-    originSync: { type: Boolean, required: false },
-    contactDetails: [ContactDetailsSchema],
-});
-LegalEntitySchema.index({ name: 1 });
-
-export const LegalEntity = model<ILegalEntity, Model<ILegalEntity>>('LegalEntity', LegalEntitySchema);
+// export const LegalEntity = model<ILegalEntity, Model<ILegalEntity>>('LegalEntity', LegalEntitySchema);

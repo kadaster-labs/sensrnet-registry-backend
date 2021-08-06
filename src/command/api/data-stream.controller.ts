@@ -3,11 +3,11 @@ import { CommandBus } from '@nestjs/cqrs';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { v4 } from 'uuid';
 import { ValidatedUser } from '../../auth/validated-user';
-import { User } from '../../commons/decorators/user.decorator';
+import { InjectUser } from '../../commons/decorators/user.decorator';
 import { DomainExceptionFilter } from '../../commons/errors/domain-exception.filter';
 import { Roles } from '../../commons/guards/roles.decorator';
 import { RolesGuard } from '../../commons/guards/roles.guard';
-import { UserRole } from '../../commons/user/user.schema';
+import { UserRole } from '../../commons/user/user-permissions.schema';
 import { AddDatastreamCommand } from '../model/data-stream/add-data-stream.command';
 import { LinkObservationGoalCommand } from '../model/data-stream/link-observationgoal.command';
 import { RemoveDatastreamCommand } from '../model/data-stream/remove-data-stream.command';
@@ -32,7 +32,7 @@ export class DatastreamController {
     @ApiResponse({ status: 200, description: 'Datastream added' })
     @ApiResponse({ status: 400, description: 'Datastream addition failed' })
     async addDatastream(
-        @User() user: ValidatedUser,
+        @InjectUser() user: ValidatedUser,
         @Param() params: SensorIdParams,
         @Body() datastreamBody: AddDatastreamBody,
     ): Promise<any> {
@@ -54,7 +54,7 @@ export class DatastreamController {
     @ApiResponse({ status: 200, description: 'Datastream updated' })
     @ApiResponse({ status: 400, description: 'Datastream update failed' })
     async updateDatastream(
-        @User() user: ValidatedUser,
+        @InjectUser() user: ValidatedUser,
         @Param() params: DatastreamIdParams,
         @Body() datastreamBody: UpdateDatastreamBody,
     ): Promise<any> {
@@ -72,7 +72,7 @@ export class DatastreamController {
     @ApiResponse({ status: 200, description: 'Observation goal linked' })
     @ApiResponse({ status: 400, description: 'Observation goal linking failed' })
     async linkObservationGoal(
-        @User() user: ValidatedUser,
+        @InjectUser() user: ValidatedUser,
         @Param() params: DatastreamIdParams,
         @Body() observationGoalBody: ObservationGoalBody,
     ): Promise<any> {
@@ -93,7 +93,7 @@ export class DatastreamController {
     @ApiResponse({ status: 200, description: 'Observation goal unlinked' })
     @ApiResponse({ status: 400, description: 'Observation goal unlinking failed' })
     async unlinkObservationGoal(
-        @User() user: ValidatedUser,
+        @InjectUser() user: ValidatedUser,
         @Param() params: DatastreamIdParams,
         @Body() observationGoalBody: ObservationGoalBody,
     ): Promise<any> {
@@ -114,7 +114,7 @@ export class DatastreamController {
     @ApiOperation({ summary: 'Remove datastream' })
     @ApiResponse({ status: 200, description: 'Datastream removed' })
     @ApiResponse({ status: 400, description: 'Datastream removal failed' })
-    async removeDatastream(@User() user: ValidatedUser, @Param() params: DatastreamIdParams): Promise<any> {
+    async removeDatastream(@InjectUser() user: ValidatedUser, @Param() params: DatastreamIdParams): Promise<any> {
         return this.commandBus.execute(
             new RemoveDatastreamCommand(params.deviceId, params.sensorId, user.legalEntityId, params.datastreamId),
         );

@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IUser, IUserPermissions, UserRole } from '../../commons/user/user.schema';
+import { UserPermissions, UserPermissionsDocument, UserRole } from '../../commons/user/user-permissions.schema';
+import { User, UserDocument } from '../../commons/user/user.schema';
 import { UserAlreadyExistsException } from '../handler/error/user-already-exists-exception';
 import { WrongLegalEntityException } from '../handler/error/wrong-legal-entity-exception';
 
@@ -10,8 +11,8 @@ export class UserService {
     protected logger: Logger = new Logger(this.constructor.name);
 
     constructor(
-        @InjectModel('User') private userModel: Model<IUser>,
-        @InjectModel('UserPermissions') private userPermissionsModel: Model<IUserPermissions>,
+        @InjectModel(User.name) private userModel: Model<UserDocument>,
+        @InjectModel(UserPermissions.name) private userPermissionsModel: Model<UserPermissionsDocument>,
     ) {}
 
     async saveUser(id: string, email: string, oidc: Record<string, any>): Promise<void> {
@@ -53,7 +54,7 @@ export class UserService {
 
     async revokeUserPermissionForOrganization(userId: string, legalEntityId: string): Promise<void> {
         this.logger.log(`revoke [user] permissions: [user: ${userId}] [organization: ${legalEntityId}]`);
-        const user = (await this.userPermissionsModel.findOne({ _id: userId })) as IUserPermissions;
+        const user = (await this.userPermissionsModel.findOne({ _id: userId })) as UserPermissions;
 
         if (user.legalEntityId === legalEntityId) {
             const filter = { _id: userId };
@@ -66,7 +67,7 @@ export class UserService {
     private async updateUserPermissions(
         filter: Record<string, any>,
         update: Record<string, any>,
-    ): Promise<IUserPermissions | undefined> {
+    ): Promise<UserPermissions | undefined> {
         return this.userPermissionsModel.updateOne(filter, update, { new: true, upsert: true });
     }
 }

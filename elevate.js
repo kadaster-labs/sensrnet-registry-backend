@@ -13,7 +13,7 @@ if (commandLineArgs.length > 1) {
         useNewUrlParser: true,
         useFindAndModify: false,
         useUnifiedTopology: true,
-    }
+    };
     mongoose.connect(url, connectOptions).then();
 
     const UserPermissionsSchema = new mongoose.Schema({
@@ -29,15 +29,18 @@ if (commandLineArgs.length > 1) {
 
     console.log(`Elevating ${userId} to ${role}.`);
 
-    const filterKwargs = {_id: userId};
-    const userPermissions = {_id: userId, legalEntityId: legalEntityId, role: role};
-    UserPermissionsModel.updateOne(filterKwargs, userPermissions).then(() => {
-        console.log(`Successfully elevated ${userId} to ${role}.`);
-        process.exit();
-    }, () => {
-        console.log(`Failed to elevate ${userId} to ${role}.`);
-        process.exit();
-    });
+    const filterKwargs = { _id: userId };
+    const userPermissions = { _id: userId, legalEntityId: legalEntityId, role: role };
+    UserPermissionsModel.updateOne(filterKwargs, userPermissions).then(
+        () => {
+            console.log(`Successfully elevated ${userId} to ${role}.`);
+            process.exit();
+        },
+        () => {
+            console.log(`Failed to elevate ${userId} to ${role}.`);
+            process.exit();
+        },
+    );
 } else {
     console.log('Supply command line arguments (1) email (2) role.');
     process.exit();

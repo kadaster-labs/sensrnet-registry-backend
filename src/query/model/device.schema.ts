@@ -1,103 +1,148 @@
-import { Document, Schema, Types } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-export interface IDatastream extends Document {
+export type DatastreamDocument = IDatastream & Document;
+
+@Schema()
+export class IDatastream {
+    @Prop({ required: true })
     _id: string;
+
+    @Prop({ required: true })
     sensorId: string;
+
+    @Prop({ required: true })
     name: string;
+
+    @Prop({ required: false })
     description?: string;
+
+    @Prop({ required: false })
     unitOfMeasurement?: Record<string, any>;
+
+    @Prop({ required: false })
     observationArea?: Record<string, any>;
+
+    @Prop({ required: false })
     theme?: string[];
+
+    @Prop({ required: false })
     dataQuality?: string;
+
+    @Prop({ required: false })
     isActive?: boolean;
+
+    @Prop({ required: false })
     isPublic?: boolean;
+
+    @Prop({ required: false })
     isOpenData?: boolean;
+
+    @Prop({ required: false })
     containsPersonalInfoData?: boolean;
+
+    @Prop({ required: false })
     isReusable?: boolean;
+
+    @Prop({ required: false })
     documentation?: string;
+
+    @Prop({ required: false })
     dataLink?: string;
+
+    @Prop({ required: false })
     observationGoalIds?: string[];
 }
 
-export interface ISensor extends Document {
+export const datastreamSchema = SchemaFactory.createForClass(IDatastream);
+
+export type SensorDocument = ISensor & Document;
+
+@Schema()
+export class ISensor {
+    @Prop({ required: true })
     _id: string;
+
+    @Prop({ required: false })
     name: string;
+
+    @Prop({ required: false })
     description?: string;
+
+    @Prop({ required: true })
     type?: string;
+
+    @Prop({ required: false })
     manufacturer?: string;
+
+    @Prop({ required: false })
     supplier?: string;
+
+    @Prop({ required: false })
     documentation?: string;
 }
 
-export interface ILocationDetails extends Document {
+export const sensorSchema = SchemaFactory.createForClass(ISensor);
+
+export type LocationDetailsDocument = ILocationDetails & Document;
+
+@Schema()
+export class ILocationDetails {
+    @Prop({ required: false })
     _id?: string;
+
+    @Prop({ required: false })
     name?: string;
+
+    @Prop({ required: false })
     description?: string;
 }
 
-export interface IDevice extends Document {
+export const locationDetailsSchema = SchemaFactory.createForClass(ILocationDetails);
+
+export type LocationDocument = Location & Document;
+
+@Schema()
+export class Location {
+    @Prop({ enum: ['Point'], required: false })
+    type: 'Point';
+
+    @Prop({ required: false })
+    coordinates: number[];
+}
+export const locationSchema = SchemaFactory.createForClass(Location);
+
+@Schema()
+export class IDevice {
+    @Prop({ required: true })
     _id: string;
+
+    @Prop({ required: true })
     name: string;
+
+    @Prop({ required: false })
     description?: string;
+
+    @Prop({ required: false })
     category?: string;
+
+    @Prop({ required: false })
     connectivity?: string;
+
+    @Prop({ required: false })
     locationDetails?: ILocationDetails;
-    location?: {
-        type: 'Point';
-        coordinates: Types.Array<number>;
-    };
-    sensors: Types.Array<ISensor>;
-    datastreams: Types.Array<IDatastream>;
+
+    @Prop({ type: locationSchema, required: false })
+    location?: Location;
+
+    @Prop({ type: [sensorSchema], default: [] })
+    sensors: ISensor[];
+
+    @Prop({ type: [datastreamSchema], default: [] })
+    datastreams: IDatastream[];
 }
 
-export const DatastreamSchema = new Schema({
-    _id: { type: String, required: true },
-    sensorId: { type: String, required: true },
-    name: { type: String, required: true },
-    description: { type: String, required: false },
-    unitOfMeasurement: { type: Object, required: false },
-    observationArea: { type: Object, required: false },
-    theme: { type: [String], required: false },
-    dataQuality: { type: String, required: false },
-    isActive: { type: Boolean, required: false },
-    isPublic: { type: Boolean, required: false },
-    isOpenData: { type: Boolean, required: false },
-    containsPersonalInfoData: { type: Boolean, required: false },
-    isReusable: { type: Boolean, required: false },
-    documentation: { type: String, required: false },
-    dataLink: { type: String, required: false },
-    observationGoalIds: { type: [String], required: false },
-});
+export const deviceSchema = SchemaFactory.createForClass(IDevice);
 
-export const SensorSchema = new Schema({
-    _id: { type: String, required: true },
-    name: { type: String, required: false },
-    description: { type: String, required: false },
-    type: { type: String, required: true },
-    manufacturer: { type: String, required: false },
-    supplier: { type: String, required: false },
-    documentation: { type: String, required: false },
-});
-
-export const LocationSchema = new Schema({
-    _id: { type: String, required: false },
-    name: { type: String, required: false },
-    description: { type: String, required: false },
-});
-
-export const DeviceSchema = new Schema({
-    _id: { type: String, required: true },
-    name: { type: String, required: true },
-    description: { type: String, required: false },
-    category: { type: String, required: false },
-    connectivity: { type: String, required: false },
-    locationDetails: { type: LocationSchema, required: false },
-    location: {
-        type: { type: String, enum: ['Point'], required: false },
-        coordinates: { type: [Number], required: false },
-    },
-    datastreams: [DatastreamSchema],
-    sensors: [SensorSchema],
-});
-DeviceSchema.index({ location: '2dsphere' });
-DeviceSchema.index({ 'datastreams.observationGoalIds': 1 });
+deviceSchema.index({ location: '2dsphere' });
+deviceSchema.index({ 'datastreams.observationGoalIds': 1 });
