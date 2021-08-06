@@ -1,5 +1,5 @@
 export interface ValidatedUser {
-  userId: string;
-  legalEntityId?: string;
-  role?: number;
+    userId: string;
+    legalEntityId?: string;
+    role?: number;
 }

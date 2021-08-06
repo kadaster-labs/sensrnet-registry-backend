@@ -1,9 +1,14 @@
 import { JwtService } from '@nestjs/jwt';
-import { ConnectedSocket, MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+    ConnectedSocket,
+    MessageBody,
+    OnGatewayConnection,
+    SubscribeMessage,
+    WebSocketGateway,
+    WebSocketServer,
+} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { UserQueryService } from 'src/commons/user/user.qry-service';
-
-
+import { UserQueryService } from '../../commons/user/user.qry-service';
 
 @WebSocketGateway({
     namespace: 'sensrnet',
@@ -12,10 +17,7 @@ import { UserQueryService } from 'src/commons/user/user.qry-service';
 export class Gateway implements OnGatewayConnection {
     @WebSocketServer() server: Server;
 
-    constructor(
-        private readonly jwtService: JwtService,
-        private readonly userQryService: UserQueryService,
-    ) { }
+    constructor(private readonly jwtService: JwtService, private readonly userQryService: UserQueryService) {}
 
     setupRoom(client: Socket, legalEntityId?: string): void {
         client.leaveAll();

@@ -19,9 +19,7 @@ import { UpdateUserBody } from './model/user/update-user.body';
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-    constructor(
-        private readonly commandBus: CommandBus,
-    ) { }
+    constructor(private readonly commandBus: CommandBus) {}
 
     @Put()
     @ApiBearerAuth()
@@ -32,11 +30,9 @@ export class UserController {
     async updateUser(@User() user: ValidatedUser, @Body() userBody: UpdateUserBody): Promise<any> {
         if (userBody.legalEntityId) {
             return this.commandBus.execute(new JoinLegalEntityCommand(user.userId, userBody.legalEntityId));
-        }
-        else if (userBody.leaveLegalEntity) {
+        } else if (userBody.leaveLegalEntity) {
             return this.commandBus.execute(new LeaveLegalEntityCommand(user.userId, user.legalEntityId));
-        }
-        else {
+        } else {
             throw new DomainException('Unsupported combination of parameters');
         }
     }
@@ -49,7 +45,11 @@ export class UserController {
     @ApiOperation({ summary: 'Update user' })
     @ApiResponse({ status: 200, description: 'User updated' })
     @ApiResponse({ status: 400, description: 'User update failed' })
-    async updateUserById(@User() user: ValidatedUser, @Param() param: DeleteUserParams, @Body() userBody: UpdateUserRoleBody): Promise<any> {
+    async updateUserById(
+        @User() user: ValidatedUser,
+        @Param() param: DeleteUserParams,
+        @Body() userBody: UpdateUserRoleBody,
+    ): Promise<any> {
         return this.commandBus.execute(new UpdateUserRoleCommand(param.id, user.legalEntityId, userBody.role));
     }
 
@@ -74,5 +74,4 @@ export class UserController {
     async removeUserById(@Param() param: DeleteUserParams): Promise<any> {
         return this.commandBus.execute(new DeleteUserCommand(param.id));
     }
-
 }

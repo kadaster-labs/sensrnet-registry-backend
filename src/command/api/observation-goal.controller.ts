@@ -20,44 +20,51 @@ import { UpdateObservationGoalBody } from './model/observation-goal/update-obser
 @ApiTags('Observation Goal')
 @Controller('observationgoal')
 export class ObservationGoalController {
-  constructor(
-    private readonly commandBus: CommandBus,
-  ) { }
+    constructor(private readonly commandBus: CommandBus) {}
 
-  @Post()
-  @UseFilters(new DomainExceptionFilter())
-  @ApiOperation({ summary: 'Register observation goal' })
-  @ApiResponse({ status: 200, description: 'Observation goal registered' })
-  @ApiResponse({ status: 400, description: 'Observation goal registration failed' })
-  async registerObservationGoal(@User() user: ValidatedUser,
-    @Body() observationGoalBody: RegisterObservationGoalBody): Promise<Record<string, any>> {
-    const observationGoalId = v4();
+    @Post()
+    @UseFilters(new DomainExceptionFilter())
+    @ApiOperation({ summary: 'Register observation goal' })
+    @ApiResponse({ status: 200, description: 'Observation goal registered' })
+    @ApiResponse({ status: 400, description: 'Observation goal registration failed' })
+    async registerObservationGoal(
+        @User() user: ValidatedUser,
+        @Body() observationGoalBody: RegisterObservationGoalBody,
+    ): Promise<Record<string, any>> {
+        const observationGoalId = v4();
 
-    await this.commandBus.execute(new RegisterObservationGoalCommand(user.legalEntityId,
-      { observationGoalId, ...observationGoalBody }));
+        await this.commandBus.execute(
+            new RegisterObservationGoalCommand(user.legalEntityId, { observationGoalId, ...observationGoalBody }),
+        );
 
-    return { observationGoalId };
-  }
+        return { observationGoalId };
+    }
 
-  @Put(':observationGoalId')
-  @UseFilters(new DomainExceptionFilter())
-  @ApiOperation({ summary: 'Update observation goal' })
-  @ApiResponse({ status: 200, description: 'Observation goal updated' })
-  @ApiResponse({ status: 400, description: 'Observation goal update failed' })
-  async updateObservationGoal(@User() user: ValidatedUser, @Param() params: ObservationGoalIdParams,
-    @Body() observationGoalBody: UpdateObservationGoalBody): Promise<any> {
-    return this.commandBus.execute(new UpdateObservationGoalCommand(user.legalEntityId,
-      { observationGoalId: params.observationGoalId, ...observationGoalBody }));
-  }
+    @Put(':observationGoalId')
+    @UseFilters(new DomainExceptionFilter())
+    @ApiOperation({ summary: 'Update observation goal' })
+    @ApiResponse({ status: 200, description: 'Observation goal updated' })
+    @ApiResponse({ status: 400, description: 'Observation goal update failed' })
+    async updateObservationGoal(
+        @User() user: ValidatedUser,
+        @Param() params: ObservationGoalIdParams,
+        @Body() observationGoalBody: UpdateObservationGoalBody,
+    ): Promise<any> {
+        return this.commandBus.execute(
+            new UpdateObservationGoalCommand(user.legalEntityId, {
+                observationGoalId: params.observationGoalId,
+                ...observationGoalBody,
+            }),
+        );
+    }
 
-  @Delete(':observationGoalId')
-  @UseFilters(new DomainExceptionFilter())
-  @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
-  @ApiOperation({ summary: 'Remove observation goal' })
-  @ApiResponse({ status: 200, description: 'Observation goal removed' })
-  @ApiResponse({ status: 400, description: 'Observation goal removal failed' })
-  async removeObservationGoal(@User() user: ValidatedUser, @Param() params: ObservationGoalIdParams): Promise<any> {
-    return this.commandBus.execute(new RemoveObservationGoalCommand(params.observationGoalId, user.legalEntityId));
-  }
-
+    @Delete(':observationGoalId')
+    @UseFilters(new DomainExceptionFilter())
+    @Roles(UserRole.ADMIN, UserRole.SUPER_USER)
+    @ApiOperation({ summary: 'Remove observation goal' })
+    @ApiResponse({ status: 200, description: 'Observation goal removed' })
+    @ApiResponse({ status: 400, description: 'Observation goal removal failed' })
+    async removeObservationGoal(@User() user: ValidatedUser, @Param() params: ObservationGoalIdParams): Promise<any> {
+        return this.commandBus.execute(new RemoveObservationGoalCommand(params.observationGoalId, user.legalEntityId));
+    }
 }

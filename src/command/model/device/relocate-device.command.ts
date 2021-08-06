@@ -6,5 +6,5 @@ export class RelocateDeviceCommand implements ICommand {
         public readonly deviceId: string,
         public readonly legalEntityId: string,
         public readonly location: Location,
-    ) { }
+    ) {}
 }

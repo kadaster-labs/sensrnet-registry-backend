@@ -1,7 +1,7 @@
-import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { ContactDetailsBody } from '../contact-details/contact-details.body';
+import { Type } from 'class-transformer';
 import { IsObject, IsOptional, IsUrl, MaxLength, ValidateIf } from 'class-validator';
+import { ContactDetailsBody } from '../contact-details/contact-details.body';
 
 export class RegisterOrganizationBody {
     @ValidateIf(e => e.name !== '')

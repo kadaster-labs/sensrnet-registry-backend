@@ -1,30 +1,30 @@
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { RetrieveUserQuery } from '../model/users.query';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { IUser, IUserPermissions } from '../../commons/user/user.schema';
+import { RetrieveUserQuery } from '../model/users.query';
 
 @QueryHandler(RetrieveUserQuery)
 export class RetrieveUserQueryHandler implements IQueryHandler<RetrieveUserQuery> {
-  constructor(
-      @InjectModel('User') private userModel: Model<IUser>,
-      @InjectModel('UserPermissions') private userPermissionsModel: Model<IUserPermissions>,
-  ) {}
+    constructor(
+        @InjectModel('User') private userModel: Model<IUser>,
+        @InjectModel('UserPermissions') private userPermissionsModel: Model<IUserPermissions>,
+    ) {}
 
-  async execute(query: RetrieveUserQuery): Promise<Array<Record<string, any>>> {
-    const userPermissions = await this.userPermissionsModel.find({legalEntityId: query.legalEntityId});
+    async execute(query: RetrieveUserQuery): Promise<Array<Record<string, any>>> {
+        const userPermissions = await this.userPermissionsModel.find({ legalEntityId: query.legalEntityId });
 
-    const userIdToPermissions = {};
-    for (const permissions of userPermissions) {
-      userIdToPermissions[permissions._id] = permissions.toObject();
+        const userIdToPermissions = {};
+        for (const permissions of userPermissions) {
+            userIdToPermissions[permissions._id] = permissions.toObject();
+        }
+        const mongoUsers = await this.userModel.find({ _id: { $in: Object.keys(userIdToPermissions) } }, { email: 1 });
+
+        const users = [];
+        for (const user of mongoUsers) {
+            users.push({ ...user.toObject(), ...userIdToPermissions[user._id] });
+        }
+
+        return users;
     }
-    const mongoUsers = await this.userModel.find({_id: {$in: Object.keys(userIdToPermissions)}}, {email: 1});
-
-    const users = [];
-    for (const user of mongoUsers) {
-      users.push({...user.toObject(), ...userIdToPermissions[user._id]});
-    }
-
-    return users;
-  }
 }

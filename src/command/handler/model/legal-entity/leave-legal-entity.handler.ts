@@ -12,39 +12,36 @@ import { validateLegalEntity } from '../../util/legal-entity.utils';
 
 @CommandHandler(LeaveLegalEntityCommand)
 export class LeaveLegalEntityCommandHandler implements ICommandHandler<LeaveLegalEntityCommand> {
+    protected logger: Logger = new Logger(this.constructor.name);
 
-  protected logger: Logger = new Logger(this.constructor.name);
+    constructor(
+        private readonly usersQryService: UserQueryService,
+        private readonly usersService: UserService,
+        private readonly legalEntityRepository: LegalEntityRepository,
+        @InjectModel('UserPermissions') private userPermissionsModel: Model<IUserPermissions>,
+    ) {}
 
-  constructor(
-    private readonly usersQryService: UserQueryService,
-    private readonly usersService: UserService,
-    private readonly legalEntityRepository: LegalEntityRepository,
-    @InjectModel('UserPermissions') private userPermissionsModel: Model<IUserPermissions>,
-  ) { }
+    async execute(command: LeaveLegalEntityCommand): Promise<void> {
+        await validateLegalEntity(this.legalEntityRepository, command.legalEntityId);
 
-  async execute(command: LeaveLegalEntityCommand): Promise<void> {
-    await validateLegalEntity(this.legalEntityRepository, command.legalEntityId);
-
-    if (await this.isUserAdmin(command.userId) && await this.isUserLastAdmin(command.legalEntityId)) {
-      throw new LastAdminCannotLeaveOrganization();
+        if ((await this.isUserAdmin(command.userId)) && (await this.isUserLastAdmin(command.legalEntityId))) {
+            throw new LastAdminCannotLeaveOrganization();
+        } else {
+            await this.usersService.revokeUserPermissionForOrganization(command.userId, command.legalEntityId);
+        }
     }
-    else {
-      await this.usersService.revokeUserPermissionForOrganization(command.userId, command.legalEntityId);
+
+    private async isUserAdmin(userId: string): Promise<boolean> {
+        const permissions = await this.usersQryService.retrieveUserPermissions(userId);
+        const isAdmin = permissions.role === UserRole.ADMIN;
+        this.logger.debug(`isUserAdmin: ${isAdmin}`);
+        return isAdmin;
     }
-  }
 
-  private async isUserAdmin(userId: string): Promise<boolean> {
-    const permissions = await this.usersQryService.retrieveUserPermissions(userId);
-    const isAdmin = permissions.role === UserRole.ADMIN
-    this.logger.debug(`isUserAdmin: ${isAdmin}`);
-    return isAdmin;
-  }
-
-  private async isUserLastAdmin(legalEntityId: string): Promise<boolean> {
-    const admins = await this.userPermissionsModel.find({ legalEntityId: legalEntityId, role: UserRole.ADMIN });
-    const lastAdmin = admins.length === 1;
-    this.logger.debug(`lastAdmin: ${lastAdmin} | [${admins.length}] of admins in organization [${legalEntityId}]`);
-    return lastAdmin;
-  }
-
+    private async isUserLastAdmin(legalEntityId: string): Promise<boolean> {
+        const admins = await this.userPermissionsModel.find({ legalEntityId: legalEntityId, role: UserRole.ADMIN });
+        const lastAdmin = admins.length === 1;
+        this.logger.debug(`lastAdmin: ${lastAdmin} | [${admins.length}] of admins in organization [${legalEntityId}]`);
+        return lastAdmin;
+    }
 }

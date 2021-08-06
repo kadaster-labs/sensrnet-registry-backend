@@ -1,9 +1,7 @@
 export interface LegalEntityState {
-  id: string;
+    id: string;
 }
 
 export class LegalEntityStateImpl implements LegalEntityState {
-  constructor(
-      public readonly id: string,
-  ) {}
+    constructor(public readonly id: string) {}
 }

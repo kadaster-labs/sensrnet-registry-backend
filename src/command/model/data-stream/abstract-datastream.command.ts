@@ -1,8 +1,7 @@
-import { ICommand } from "@nestjs/cqrs";
-import Datastream from "../../interfaces/datastream.interface";
+import { ICommand } from '@nestjs/cqrs';
+import Datastream from '../../interfaces/datastream.interface';
 
 export abstract class AbstractDatastreamCommand implements ICommand {
-
     public readonly datastreamId: string;
     public readonly name: string;
     public readonly description: string;
@@ -39,5 +38,4 @@ export abstract class AbstractDatastreamCommand implements ICommand {
         this.documentation = datastream.documentation;
         this.dataLink = datastream.dataLink;
     }
-
 }

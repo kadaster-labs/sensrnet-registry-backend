@@ -20,10 +20,25 @@ export class DatastreamAdded extends SensorDeviceEvent {
     readonly documentation: string;
     readonly dataLink: string;
 
-    constructor(sensorDeviceId: string, sensorId: string, legalEntityId: string, datastreamId: string, name: string,
-        description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
-        theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
-        containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string) {
+    constructor(
+        sensorDeviceId: string,
+        sensorId: string,
+        legalEntityId: string,
+        datastreamId: string,
+        name: string,
+        description: string,
+        unitOfMeasurement: Record<string, any>,
+        observationArea: Record<string, any>,
+        theme: string[],
+        dataQuality: string,
+        isActive: boolean,
+        isPublic: boolean,
+        isOpenData: boolean,
+        containsPersonalInfoData: boolean,
+        isReusable: boolean,
+        documentation: string,
+        dataLink: string,
+    ) {
         super(sensorDeviceId, DatastreamAdded.version);
         this.sensorId = sensorId;
         this.legalEntityId = legalEntityId;

@@ -8,8 +8,13 @@ export class ObservationGoalUnlinked extends SensorDeviceEvent {
     readonly datastreamId: string;
     readonly observationGoalId: string;
 
-    constructor(sensorDeviceId: string, sensorId: string, legalEntityId: string, datastreamId: string,
-                observationGoalId: string) {
+    constructor(
+        sensorDeviceId: string,
+        sensorId: string,
+        legalEntityId: string,
+        datastreamId: string,
+        observationGoalId: string,
+    ) {
         super(sensorDeviceId, ObservationGoalUnlinked.version);
         this.sensorId = sensorId;
         this.legalEntityId = legalEntityId;

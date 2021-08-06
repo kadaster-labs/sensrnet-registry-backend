@@ -1,6 +1,6 @@
-import { FilterQuery, Model, QueryOptions } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model, QueryOptions } from 'mongoose';
 import { IObservationGoal } from '../model/observation-goal.schema';
 import { ObservationGoalsQuery } from '../model/observation-goals.query';
 import { IRelation, TargetVariant } from '../model/relation.schema';
@@ -33,11 +33,12 @@ export class ObservationGoalsQueryHandler implements IQueryHandler<ObservationGo
 
         const filter: FilterQuery<IObservationGoal> = {};
         if (query.name) {
-            filter.name = { $regex: `^${query.name}` , $options : 'i' };
+            filter.name = { $regex: `^${query.name}`, $options: 'i' };
         }
 
         const options: QueryOptions = {
-            skip: start, limit: pageSize,
+            skip: start,
+            limit: pageSize,
         };
         if (query.sortField) {
             options.sort = {};
@@ -47,7 +48,10 @@ export class ObservationGoalsQueryHandler implements IQueryHandler<ObservationGo
         const observationGoals = [];
         const mongoObservationGoals = await this.model.find(filter, {}, options);
         for (const observationGoal of mongoObservationGoals) {
-            observationGoals.push({canEdit: myObservationGoalsIdsSet.has(observationGoal._id), ...observationGoal.toObject()});
+            observationGoals.push({
+                canEdit: myObservationGoalsIdsSet.has(observationGoal._id),
+                ...observationGoal.toObject(),
+            });
         }
 
         return observationGoals;

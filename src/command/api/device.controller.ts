@@ -22,16 +22,17 @@ import { UpdateLocationBody } from './model/location/update-location.body';
 @Controller('device')
 @UseGuards(RolesGuard)
 export class DeviceController {
-    constructor(
-        private readonly commandBus: CommandBus,
-    ) { }
+    constructor(private readonly commandBus: CommandBus) {}
 
     @Post()
     @UseFilters(new DomainExceptionFilter())
     @ApiOperation({ summary: 'Register device' })
     @ApiResponse({ status: 200, description: 'Device registered' })
     @ApiResponse({ status: 400, description: 'Device registration failed' })
-    async registerDevice(@User() user: ValidatedUser, @Body() deviceBody: RegisterDeviceBody): Promise<Record<string, any>> {
+    async registerDevice(
+        @User() user: ValidatedUser,
+        @Body() deviceBody: RegisterDeviceBody,
+    ): Promise<Record<string, any>> {
         const deviceId = v4();
 
         await this.commandBus.execute(new RegisterDeviceCommand(user.legalEntityId, { deviceId, ...deviceBody }));
@@ -44,10 +45,14 @@ export class DeviceController {
     @ApiOperation({ summary: 'Update device' })
     @ApiResponse({ status: 200, description: 'Device updated' })
     @ApiResponse({ status: 400, description: 'Device update failed' })
-    async updateDevice(@User() user: ValidatedUser, @Param() params: DeviceIdParams,
-        @Body() deviceBody: UpdateDeviceBody): Promise<any> {
-        return this.commandBus.execute(new UpdateDeviceCommand(
-            user.legalEntityId, { deviceId: params.deviceId, ...deviceBody }));
+    async updateDevice(
+        @User() user: ValidatedUser,
+        @Param() params: DeviceIdParams,
+        @Body() deviceBody: UpdateDeviceBody,
+    ): Promise<any> {
+        return this.commandBus.execute(
+            new UpdateDeviceCommand(user.legalEntityId, { deviceId: params.deviceId, ...deviceBody }),
+        );
     }
 
     @Put(':deviceId/location')
@@ -55,8 +60,11 @@ export class DeviceController {
     @ApiOperation({ summary: 'Relocate device' })
     @ApiResponse({ status: 200, description: 'Device relocated' })
     @ApiResponse({ status: 400, description: 'Device relocation failed' })
-    async relocateDevice(@User() user: ValidatedUser, @Param() params: DeviceIdParams,
-        @Body() deviceBody: UpdateLocationBody): Promise<any> {
+    async relocateDevice(
+        @User() user: ValidatedUser,
+        @Param() params: DeviceIdParams,
+        @Body() deviceBody: UpdateLocationBody,
+    ): Promise<any> {
         return this.commandBus.execute(new RelocateDeviceCommand(params.deviceId, user.legalEntityId, deviceBody));
     }
 

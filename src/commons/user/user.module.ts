@@ -7,11 +7,8 @@ import { UserPermissionsSchema, UserSchema } from './user.schema';
     imports: [
         MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
         MongooseModule.forFeature([{ name: 'UserPermissions', schema: UserPermissionsSchema }]),
-    ], providers: [
-        UserQueryService,
-    ], exports: [
-        UserQueryService,
     ],
+    providers: [UserQueryService],
+    exports: [UserQueryService],
 })
-
-export class UserModule { }
+export class UserModule {}

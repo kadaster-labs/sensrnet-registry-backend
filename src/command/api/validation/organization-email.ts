@@ -3,8 +3,22 @@ import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments 
 @ValidatorConstraint({ name: 'organizationEmailValidator', async: false })
 export class OrganizationEmailValidator implements ValidatorConstraintInterface {
     public supportedNames = [
-        'info', 'sensor', 'beheer', 'privacy', 'kcc', 'service', 'klant', 'gemeente', 'support', 'help', 'ondersteuning',
-        'informatie', 'management', 'team', 'afdeling', 'data',
+        'info',
+        'sensor',
+        'beheer',
+        'privacy',
+        'kcc',
+        'service',
+        'klant',
+        'gemeente',
+        'support',
+        'help',
+        'ondersteuning',
+        'informatie',
+        'management',
+        'team',
+        'afdeling',
+        'data',
     ];
     public validatorRegex = new RegExp(`^.*(${this.supportedNames.join('|')}).*@.+[.].+$`);
 

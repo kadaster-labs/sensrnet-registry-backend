@@ -10,5 +10,4 @@ export class UpdateDatastreamCommand extends AbstractDatastreamCommand {
     ) {
         super(deviceId, sensorId, legalEntityId, datastream);
     }
-
 }

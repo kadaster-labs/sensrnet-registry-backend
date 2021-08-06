@@ -2,11 +2,7 @@ import Sensor from '../../interfaces/sensor.interface';
 import { AbstractSensorCommand } from './abstract-sensor.command';
 
 export class AddSensorCommand extends AbstractSensorCommand {
-  constructor(
-    public readonly deviceId: string,
-    public readonly legalEntityId: string,
-    sensor: Sensor,
-  ) {
-    super(deviceId, legalEntityId, sensor);
-  }
+    constructor(public readonly deviceId: string, public readonly legalEntityId: string, sensor: Sensor) {
+        super(deviceId, legalEntityId, sensor);
+    }
 }

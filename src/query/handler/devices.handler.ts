@@ -13,23 +13,24 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
     constructor(
         @InjectModel('Device') private model: Model<IDevice>,
         @InjectModel('Relation') private relationModel: Model<IRelation>,
-    ) { }
+    ) {}
 
     getPointDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-        if ((lat1 === lat2) && (lon1 === lon2)) {
+        if (lat1 === lat2 && lon1 === lon2) {
             return 0;
         } else {
-            const radLat1 = Math.PI * lat1 / 180;
-            const radLat2 = Math.PI * lat2 / 180;
+            const radLat1 = (Math.PI * lat1) / 180;
+            const radLat2 = (Math.PI * lat2) / 180;
             const theta = lon1 - lon2;
-            const radTheta = Math.PI * theta / 180;
+            const radTheta = (Math.PI * theta) / 180;
 
-            let dist = Math.sin(radLat1) * Math.sin(radLat2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.cos(radTheta);
+            let dist =
+                Math.sin(radLat1) * Math.sin(radLat2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.cos(radTheta);
             if (dist > 1) {
                 dist = 1;
             }
             dist = Math.acos(dist);
-            dist = dist * 180 / Math.PI;
+            dist = (dist * 180) / Math.PI;
             dist = dist * 60 * 1.1515;
             dist = dist * 1609.344;
 
@@ -61,11 +62,18 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         let locationFilter: FilterQuery<IDevice> = {};
         const legalEntityFilter: FilterQuery<IDevice> = {};
 
-        if (query.bottomLeftLongitude && query.bottomLeftLatitude &&
-            query.upperRightLongitude && query.upperRightLatitude) {
-            const pointDistance = this.getPointDistance(query.bottomLeftLatitude,
-                query.bottomLeftLongitude, query.upperRightLatitude,
-                query.upperRightLongitude);
+        if (
+            query.bottomLeftLongitude &&
+            query.bottomLeftLatitude &&
+            query.upperRightLongitude &&
+            query.upperRightLatitude
+        ) {
+            const pointDistance = this.getPointDistance(
+                query.bottomLeftLatitude,
+                query.bottomLeftLongitude,
+                query.upperRightLatitude,
+                query.upperRightLongitude,
+            );
 
             locationFilter.location = {
                 $geoWithin: {
@@ -91,13 +99,13 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
                 targetVariant: TargetVariant.DEVICE,
             };
             const relations = await this.relationModel.find(relationFilter);
-            const deviceIds = relations.map((x) => x.targetId);
+            const deviceIds = relations.map(x => x.targetId);
             legalEntityFilter._id = {
                 $in: deviceIds,
             };
         }
 
-        const filters = [locationFilter, legalEntityFilter, nameFilter].filter((filter) => this.isNotEmptyFilter(filter));
+        const filters = [locationFilter, legalEntityFilter, nameFilter].filter(filter => this.isNotEmptyFilter(filter));
 
         let deviceFilter: FilterQuery<IDevice>;
         switch (filters.length) {
@@ -134,7 +142,8 @@ export class RetrieveDevicesQueryHandler implements IQueryHandler<RetrieveDevice
         const start = typeof query.pageIndex === 'undefined' ? 0 : query.pageIndex * pageSize;
 
         const options: QueryOptions = {
-            skip: start, limit: pageSize,
+            skip: start,
+            limit: pageSize,
         };
         if (query.sortField) {
             options.sort = {};

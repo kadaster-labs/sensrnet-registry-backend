@@ -1,11 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { AbstractProcessor } from 'src/commons/event-processing/abstract.processor';
+import { AbstractProcessor } from '../../commons/event-processing/abstract.processor';
 import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
 import { IRelation } from '../model/relation.schema';
 
 export abstract class AbstractQueryProcessor extends AbstractProcessor {
-
     protected constructor(
         protected readonly eventStore: EventStorePublisher,
         protected readonly relationModel: Model<IRelation>,
@@ -13,8 +12,12 @@ export abstract class AbstractQueryProcessor extends AbstractProcessor {
         super(eventStore);
     }
 
-    public async saveRelation(legalEntityId: string, relationVariant: number, targetVariant: number,
-        targetId: string): Promise<IRelation> {
+    public async saveRelation(
+        legalEntityId: string,
+        relationVariant: number,
+        targetVariant: number,
+        targetId: string,
+    ): Promise<IRelation> {
         let relation: IRelation;
         try {
             relation = await new this.relationModel({ legalEntityId, relationVariant, targetVariant, targetId }).save();
@@ -32,5 +35,4 @@ export abstract class AbstractQueryProcessor extends AbstractProcessor {
             Logger.error(e);
         }
     }
-
 }

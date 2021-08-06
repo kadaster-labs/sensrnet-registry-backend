@@ -9,9 +9,7 @@ import { RetrieveUserQuery } from '../model/users.query';
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-    constructor(
-        private readonly queryBus: QueryBus,
-    ) { }
+    constructor(private readonly queryBus: QueryBus) {}
 
     @Get()
     @ApiBearerAuth()
@@ -20,7 +18,8 @@ export class UserController {
     @ApiResponse({ status: 200, description: 'Users retrieved' })
     @ApiResponse({ status: 400, description: 'Users retrieval failed' })
     async retrieveUsers(@User() user: ValidatedUser): Promise<void> {
-        return user.legalEntityId ? await this.queryBus.execute(new RetrieveUserQuery(user.userId, user.legalEntityId)) : null;
+        return user.legalEntityId
+            ? await this.queryBus.execute(new RetrieveUserQuery(user.userId, user.legalEntityId))
+            : null;
     }
-
 }

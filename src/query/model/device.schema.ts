@@ -43,8 +43,8 @@ export interface IDevice extends Document {
     connectivity?: string;
     locationDetails?: ILocationDetails;
     location?: {
-        type: 'Point',
-        coordinates: Types.Array<number>,
+        type: 'Point';
+        coordinates: Types.Array<number>;
     };
     sensors: Types.Array<ISensor>;
     datastreams: Types.Array<IDatastream>;

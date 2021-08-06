@@ -4,13 +4,13 @@ import { getObservationGoalRemovedEvent, ObservationGoalRemoved } from './remove
 import { getObservationGoalUpdatedEvent, ObservationGoalUpdated } from './updated';
 
 class ObservationGoalEventType extends AbstractEventType {
-  constructor() {
-    super();
+    constructor() {
+        super();
 
-    this.add(ObservationGoalRegistered, getObservationGoalRegisteredEvent);
-    this.add(ObservationGoalUpdated, getObservationGoalUpdatedEvent);
-    this.add(ObservationGoalRemoved, getObservationGoalRemovedEvent);
-  }
+        this.add(ObservationGoalRegistered, getObservationGoalRegisteredEvent);
+        this.add(ObservationGoalUpdated, getObservationGoalUpdatedEvent);
+        this.add(ObservationGoalRemoved, getObservationGoalRemovedEvent);
+    }
 }
 
 export const observationGoalEventType = new ObservationGoalEventType();

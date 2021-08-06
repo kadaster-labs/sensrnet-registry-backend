@@ -4,7 +4,6 @@ import Location from '../../interfaces/location.interface';
 import { Category } from '../category.model';
 
 export abstract class AbstractDeviceCommand implements ICommand {
-
     public readonly deviceId: string;
     public readonly name: string;
     public readonly description: string;
@@ -12,10 +11,7 @@ export abstract class AbstractDeviceCommand implements ICommand {
     public readonly connectivity: string;
     public readonly location: Location;
 
-    constructor(
-        public readonly legalEntityId: string,
-        device: Device,
-    ) {
+    constructor(public readonly legalEntityId: string, device: Device) {
         this.deviceId = device.deviceId;
         this.name = device.name;
         this.description = device.description;

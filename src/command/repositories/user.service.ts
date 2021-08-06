@@ -12,7 +12,7 @@ export class UserService {
     constructor(
         @InjectModel('User') private userModel: Model<IUser>,
         @InjectModel('UserPermissions') private userPermissionsModel: Model<IUserPermissions>,
-    ) { }
+    ) {}
 
     async saveUser(id: string, email: string, oidc: Record<string, any>): Promise<void> {
         try {
@@ -27,7 +27,6 @@ export class UserService {
 
             await userInstance.save();
             this.logger.log(`saved user: [id: ${userInstance._id}]`);
-
         } catch (error) {
             this.logger.warn(error);
             throw new UserAlreadyExistsException(email);
@@ -54,19 +53,20 @@ export class UserService {
 
     async revokeUserPermissionForOrganization(userId: string, legalEntityId: string): Promise<void> {
         this.logger.log(`revoke [user] permissions: [user: ${userId}] [organization: ${legalEntityId}]`);
-        const user = await this.userPermissionsModel.findOne({ _id: userId }) as IUserPermissions;
+        const user = (await this.userPermissionsModel.findOne({ _id: userId })) as IUserPermissions;
 
         if (user.legalEntityId === legalEntityId) {
             const filter = { _id: userId };
             return this.userPermissionsModel.deleteOne(filter);
-        }
-        else {
+        } else {
             throw new WrongLegalEntityException();
         }
     }
 
-    private async updateUserPermissions(filter: Record<string, any>, update: Record<string, any>): Promise<IUserPermissions | undefined> {
+    private async updateUserPermissions(
+        filter: Record<string, any>,
+        update: Record<string, any>,
+    ): Promise<IUserPermissions | undefined> {
         return this.userPermissionsModel.updateOne(filter, update, { new: true, upsert: true });
     }
-
 }

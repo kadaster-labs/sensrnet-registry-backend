@@ -14,5 +14,4 @@ export class DeviceRelocated extends SensorDeviceEvent {
         this.description = description;
         this.location = location;
     }
-
-}  
+}

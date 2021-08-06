@@ -1,8 +1,8 @@
-import { FilterQuery, Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { ILegalEntity } from '../model/legal-entity.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { LegalEntitiesQuery } from '../model/legal-entities.query';
+import { ILegalEntity } from '../model/legal-entity.schema';
 import { IRelation } from '../model/relation.schema';
 
 @QueryHandler(LegalEntitiesQuery)
@@ -12,7 +12,7 @@ export class LegalEntitiesQueryHandler implements IQueryHandler<LegalEntitiesQue
     constructor(
         @InjectModel('LegalEntity') private legalEntityModel: Model<ILegalEntity>,
         @InjectModel('Relation') private relationModel: Model<IRelation>,
-    ) { }
+    ) {}
 
     async execute(query: LegalEntitiesQuery): Promise<ILegalEntity[]> {
         const filter: FilterQuery<ILegalEntity> = {};

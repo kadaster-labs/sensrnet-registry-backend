@@ -1,9 +1,9 @@
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { RolesGuard } from '../../commons/guards/roles.guard';
-import { AbstractEsController } from './abstract.es.controller';
 import { Controller, UseGuards, UseFilters } from '@nestjs/common';
-import { LegalEntityEsListener } from '../processor/legal-entity.es.listener';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { DomainExceptionFilter } from '../../commons/errors/domain-exception.filter';
+import { RolesGuard } from '../../commons/guards/roles.guard';
+import { LegalEntityEsListener } from '../processor/legal-entity.es.listener';
+import { AbstractEsController } from './abstract.es.controller';
 
 @ApiBearerAuth()
 @ApiTags('Legal Entity ES')
@@ -11,9 +11,7 @@ import { DomainExceptionFilter } from '../../commons/errors/domain-exception.fil
 @UseFilters(new DomainExceptionFilter())
 @UseGuards(RolesGuard)
 export class LegalEntityEsController extends AbstractEsController {
-  constructor(
-      protected readonly eventStoreListener: LegalEntityEsListener,
-  ) {
-    super(eventStoreListener);
-  }
+    constructor(protected readonly eventStoreListener: LegalEntityEsListener) {
+        super(eventStoreListener);
+    }
 }

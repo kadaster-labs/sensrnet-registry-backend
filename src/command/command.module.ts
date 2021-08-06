@@ -1,11 +1,11 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
-import { EventProcessingModule } from 'src/commons/event-processing/event-processing.module';
-import { UserModule } from 'src/commons/user/user.module';
-import { UserPermissionsSchema, UserSchema } from 'src/commons/user/user.schema';
+import { EventProcessingModule } from '../commons/event-processing/event-processing.module';
 import { EventStoreModule } from '../commons/event-store/event-store.module';
 import { EventStorePublisher } from '../commons/event-store/event-store.publisher';
+import { UserModule } from '../commons/user/user.module';
+import { UserPermissionsSchema, UserSchema } from '../commons/user/user.schema';
 import { DatastreamController } from './api/data-stream.controller';
 import { DeviceController } from './api/device.controller';
 import { LegalEntityController } from './api/legal-entity.controller';
@@ -53,14 +53,16 @@ import { UserService } from './repositories/user.service';
         LegalEntityController,
         ObservationGoalController,
         UserController,
-    ], imports: [
+    ],
+    imports: [
         CqrsModule,
         EventStoreModule,
         EventProcessingModule,
         UserModule,
         MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
         MongooseModule.forFeature([{ name: 'UserPermissions', schema: UserPermissionsSchema }]),
-    ], providers: [
+    ],
+    providers: [
         EventBus,
         EventPublisher,
         LegalEntityRepository,
@@ -102,16 +104,11 @@ import { UserService } from './repositories/user.service';
         LeaveLegalEntityCommandHandler,
         UpdateUserRoleCommandHandler,
         DeleteUserCommandHandler,
-    ], exports: [
-        LegalEntityRepository,
     ],
+    exports: [LegalEntityRepository],
 })
-
 export class CommandModule implements OnModuleInit {
-    constructor(
-        private readonly eventBus: EventBus,
-        private readonly eventStore: EventStorePublisher,
-    ) { }
+    constructor(private readonly eventBus: EventBus, private readonly eventStore: EventStorePublisher) {}
 
     onModuleInit(): void {
         this.eventBus.publisher = this.eventStore;

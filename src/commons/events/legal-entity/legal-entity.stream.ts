@@ -1,3 +1,3 @@
 export const legalEntityStreamRootValue = 'legalentity';
 
-export const legalEntityEventStreamName = `$ce-${legalEntityStreamRootValue}`
+export const legalEntityEventStreamName = `$ce-${legalEntityStreamRootValue}`;

@@ -5,11 +5,10 @@ import { IUser, IUserPermissions } from './user.schema';
 
 @Injectable()
 export class UserQueryService {
-
     constructor(
         @InjectModel('User') private userModel: Model<IUser>,
         @InjectModel('UserPermissions') private userPermissionsModel: Model<IUserPermissions>,
-    ) { }
+    ) {}
 
     async retrieveUser(userId: string): Promise<IUser | undefined> {
         return this.userModel.findOne({ _id: userId });
@@ -18,5 +17,4 @@ export class UserQueryService {
     async retrieveUserPermissions(userId: string): Promise<IUserPermissions> {
         return this.userPermissionsModel.findOne({ _id: userId });
     }
-
 }

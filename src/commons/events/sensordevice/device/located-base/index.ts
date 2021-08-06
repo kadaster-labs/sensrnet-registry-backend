@@ -5,5 +5,7 @@ import { DeviceLocatedAtBaseObject as V1 } from './device-located-at-base-v1.eve
 export { DeviceLocatedAtBaseObject } from './device-located-at-base-v1.event';
 
 export function getDeviceLocatedAtBaseObjectEvent(eventMessage: EventMessage): V1 {
-    return !eventMessage.metadata.version || eventMessage.metadata.version === V1.version ? plainToClass(V1, eventMessage.data) : null;
+    return !eventMessage.metadata.version || eventMessage.metadata.version === V1.version
+        ? plainToClass(V1, eventMessage.data)
+        : null;
 }

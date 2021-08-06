@@ -16,5 +16,4 @@ export class DeviceRelocatedAtBaseObject extends SensorDeviceEvent {
         this.location = location;
         this.baseObjectId = baseObjectId;
     }
-
-}  
+}

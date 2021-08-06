@@ -4,20 +4,20 @@ import { ContactDetailsRemoved, getContactDetailsRemovedEvent } from './contact-
 import { ContactDetailsUpdated, getContactDetailsUpdatedEvent } from './contact-details/updated';
 import { getOrganizationRegisteredEvent, OrganizationRegistered } from './organization/registered';
 import { getOrganizationUpdatedEvent, OrganizationUpdated } from './organization/updated';
-import { getLegalEntityRemovedEvent as getLegalEntityRemovedEvent, LegalEntityRemoved } from './removed';
+import { getLegalEntityRemovedEvent, LegalEntityRemoved } from './removed';
 
 class LegalEntityEventType extends AbstractEventType {
-  constructor() {
-    super();
+    constructor() {
+        super();
 
-    this.add(OrganizationRegistered, getOrganizationRegisteredEvent);
-    this.add(OrganizationUpdated, getOrganizationUpdatedEvent);
-    this.add(LegalEntityRemoved, getLegalEntityRemovedEvent);
+        this.add(OrganizationRegistered, getOrganizationRegisteredEvent);
+        this.add(OrganizationUpdated, getOrganizationUpdatedEvent);
+        this.add(LegalEntityRemoved, getLegalEntityRemovedEvent);
 
-    this.add(PublicContactDetailsAdded, getPublicContactDetailsAddedEvent);
-    this.add(ContactDetailsUpdated, getContactDetailsUpdatedEvent);
-    this.add(ContactDetailsRemoved, getContactDetailsRemovedEvent);
-  }
+        this.add(PublicContactDetailsAdded, getPublicContactDetailsAddedEvent);
+        this.add(ContactDetailsUpdated, getContactDetailsUpdatedEvent);
+        this.add(ContactDetailsRemoved, getContactDetailsRemovedEvent);
+    }
 }
 
 export const legalEntityEventType = new LegalEntityEventType();

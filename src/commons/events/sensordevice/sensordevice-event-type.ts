@@ -14,26 +14,26 @@ import { getSensorRemovedEvent, SensorRemoved } from './sensor/removed';
 import { getSensorUpdatedEvent, SensorUpdated } from './sensor/updated';
 
 class SensorDeviceEventType extends AbstractEventType {
-  constructor() {
-    super();
+    constructor() {
+        super();
 
-    this.add(DeviceRegistered, getDeviceRegisteredEvent);
-    this.add(DeviceUpdated, getDeviceUpdatedEvent);
-    this.add(DeviceRemoved, getDeviceRemovedEvent);
-    this.add(DeviceLocated, getDeviceLocatedEvent);
-    this.add(DeviceRelocated, getDeviceRelocatedEvent);
+        this.add(DeviceRegistered, getDeviceRegisteredEvent);
+        this.add(DeviceUpdated, getDeviceUpdatedEvent);
+        this.add(DeviceRemoved, getDeviceRemovedEvent);
+        this.add(DeviceLocated, getDeviceLocatedEvent);
+        this.add(DeviceRelocated, getDeviceRelocatedEvent);
 
-    this.add(SensorAdded, getSensorAddedEvent);
-    this.add(SensorUpdated, getSensorUpdatedEvent);
-    this.add(SensorRemoved, getSensorRemovedEvent);
+        this.add(SensorAdded, getSensorAddedEvent);
+        this.add(SensorUpdated, getSensorUpdatedEvent);
+        this.add(SensorRemoved, getSensorRemovedEvent);
 
-    this.add(DatastreamAdded, getDatastreamAddedEvent);
-    this.add(DatastreamUpdated, getDatastreamUpdatedEvent);
-    this.add(DatastreamRemoved, getDatastreamRemovedEvent);
+        this.add(DatastreamAdded, getDatastreamAddedEvent);
+        this.add(DatastreamUpdated, getDatastreamUpdatedEvent);
+        this.add(DatastreamRemoved, getDatastreamRemovedEvent);
 
-    this.add(ObservationGoalLinked, getObservationGoalLinkedEvent);
-    this.add(ObservationGoalUnlinked, getObservationGoalUnlinkedEvent);
-  }
+        this.add(ObservationGoalLinked, getObservationGoalLinkedEvent);
+        this.add(ObservationGoalUnlinked, getObservationGoalUnlinkedEvent);
+    }
 }
 
 export const sensorDeviceEventType = new SensorDeviceEventType();

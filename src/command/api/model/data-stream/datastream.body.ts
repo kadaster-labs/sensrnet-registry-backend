@@ -1,10 +1,7 @@
-import { Theme } from '../theme.body';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-    IsString, IsBoolean, IsUrl, IsUUID, IsOptional, ValidateIf,
-    IsArray, IsObject, IsEnum,
-} from 'class-validator';
+import { IsString, IsBoolean, IsUrl, IsUUID, IsOptional, ValidateIf, IsArray, IsObject, IsEnum } from 'class-validator';
 import Datastream from '../../../interfaces/datastream.interface';
+import { Theme } from '../theme.body';
 
 export abstract class DatastreamBody implements Datastream {
     @IsUUID(4)

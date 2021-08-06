@@ -2,7 +2,6 @@ import Datastream from '../../interfaces/datastream.interface';
 import { AbstractDatastreamCommand } from './abstract-datastream.command';
 
 export class AddDatastreamCommand extends AbstractDatastreamCommand {
-
     constructor(
         public readonly deviceId: string,
         public readonly sensorId: string,
@@ -11,5 +10,4 @@ export class AddDatastreamCommand extends AbstractDatastreamCommand {
     ) {
         super(deviceId, sensorId, legalEntityId, datastream);
     }
-
 }
