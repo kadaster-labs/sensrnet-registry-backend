@@ -1,6 +1,6 @@
 
 # First Stage: to install and build dependences
-FROM node:12.18.4 AS builder
+FROM node:16.5.0 AS builder
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ RUN npm run build && \
 
 
 # Second Stage: use lightweight alpine image and run as non-root
-FROM node:12.18.4-alpine3.12
+FROM node:16.5.0-alpine3.12
 
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 
