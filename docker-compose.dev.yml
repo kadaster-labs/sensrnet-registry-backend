@@ -28,32 +28,6 @@ services:
     networks:
       - backend
 
-  registry-backend:
-    build:
-      context: .
-    depends_on:
-      - eventstore
-      - mongo
-      - dex
-    ports:
-      - 3000:3000
-    environment:
-      - PORT=3000
-      - MONGO_HOST=mongo
-      - MONGO_PORT=27017
-      - MONGO_DATABASE=sensrnet
-      - EVENT_STORE_PORT=1113
-      - EVENT_STORE_HOST=eventstore
-      - REQUIRE_AUTHENTICATION=true
-      - OIDC_ISSUER=http://localhost:5556/dex
-      - OIDC_JWKS_URL=http://dex:5556/dex/keys
-      - OIDC_AUDIENCE=registry-frontend
-      - NODE_ENV=development
-    links:
-      - eventstore
-    networks:
-      - backend
-
   dex:
     image: ghcr.io/dexidp/dex:v2.29.0
     user: root

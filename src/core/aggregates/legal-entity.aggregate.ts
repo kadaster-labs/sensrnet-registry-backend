@@ -1,18 +1,19 @@
 import { Aggregate } from '../../event-store/aggregate';
 import { EventMessage } from '../../event-store/event-message';
-import { LegalEntityState, LegalEntityStateImpl } from './legal-entity-state';
-import { getLegalEntityRemovedEvent, LegalEntityRemoved } from '../events/legal-entity/removed';
-import { getOrganizationUpdatedEvent, OrganizationUpdated } from '../events/legal-entity/organization/updated';
+import { DomainException } from '../errors/domain-exception';
+import { getPublicContactDetailsAddedEvent, PublicContactDetailsAdded } from '../events/legal-entity/contact-details/added';
 import { ContactDetailsRemoved, getContactDetailsRemovedEvent } from '../events/legal-entity/contact-details/removed';
 import { ContactDetailsUpdated, getContactDetailsUpdatedEvent } from '../events/legal-entity/contact-details/updated';
 import { getOrganizationRegisteredEvent, OrganizationRegistered } from '../events/legal-entity/organization/registered';
-import { getPublicContactDetailsAddedEvent, PublicContactDetailsAdded } from '../events/legal-entity/contact-details/added';
+import { getOrganizationUpdatedEvent, OrganizationUpdated } from '../events/legal-entity/organization/updated';
+import { getLegalEntityRemovedEvent, LegalEntityRemoved } from '../events/legal-entity/removed';
+import { LegalEntityState, LegalEntityStateImpl } from './legal-entity-state';
 
 export class LegalEntityAggregate extends Aggregate {
   state!: LegalEntityState;
 
   constructor(
-    private readonly aggregateId: string,
+    public readonly aggregateId: string,
   ) {
     super();
   }
@@ -37,7 +38,12 @@ export class LegalEntityAggregate extends Aggregate {
   }
 
   remove(): void {
+    this.validateLegalEntityHasNoDevices()
     this.simpleApply(new LegalEntityRemoved(this.aggregateId));
+  }
+
+  validateLegalEntityHasNoDevices() {
+    throw new DomainException('Currently the backend does not support removing organizations! Please vote for this issue (frontend#181) on GitHub.');
   }
 
   onLegalEntityRemoved(eventMessage: EventMessage): void {
@@ -71,4 +77,5 @@ export class LegalEntityAggregate extends Aggregate {
     const event: ContactDetailsRemoved = getContactDetailsRemovedEvent(eventMessage);
     this.logger.debug(`Not implemented: aggregate.eventHandler(${event.constructor.name})`);
   }
+
 }

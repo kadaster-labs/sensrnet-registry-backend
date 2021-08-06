@@ -4,8 +4,9 @@ import { UserService } from './user.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { UserController } from './controller/user.controller';
 import { DeleteUserCommandHandler } from './handler/delete-user.handler';
-import { UpdateUserCommandHandler } from './handler/update-user.handler';
 import { LegalEntityRepository } from '../core/repositories/legal-entity.repository';
+import { JoinLegalEntityCommandHandler } from './handler/join-legal-entity.handler';
+import { LeaveLegalEntityCommandHandler } from './handler/leave-legal-entity.handler';
 
 const testUserOne = {_id: 'test-id', name: 'test-object'};
 const testUserTwo = {_id: 'test-id', name: 'test-object'};
@@ -50,7 +51,8 @@ describe('User (integration)', () => {
                 UserService,
                 // user
                 DeleteUserCommandHandler,
-                UpdateUserCommandHandler,
+                JoinLegalEntityCommandHandler,
+                LeaveLegalEntityCommandHandler,
                 {
                     provide: getModelToken('User'),
                     useValue: mockUserModel,

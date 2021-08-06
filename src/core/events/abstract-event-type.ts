@@ -4,6 +4,8 @@ import { Event } from '../../event-store/event';
 
 export abstract class AbstractEventType {
 
+  protected logger: Logger = new Logger(this.constructor.name);
+
   public supportedTypes: Record<string, any> = {};
 
   getEvent(eventTypeName: ESEvent): Event {
@@ -11,7 +13,7 @@ export abstract class AbstractEventType {
 
     const event = upcastFn ? upcastFn(eventTypeName) : undefined;
     if (!event) {
-      Logger.warn(`Unsupported event received! eventType: ${eventTypeName.eventType}`);
+      this.logger.warn(`Unsupported event received! eventType: ${JSON.stringify(eventTypeName)}`);
     }
 
     return event;

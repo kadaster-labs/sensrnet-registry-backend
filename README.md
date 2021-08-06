@@ -57,9 +57,18 @@ Eventstore:
 MongoDB:
 * Should be running. For instructions, view the [MongoDB Documentation](https://docs.mongodb.com/manual/installation/).
 
+Or by using the convenient separate docker compose file:
+
+```bash
+$ docker-compose -f docker-compose.dev.yml up
+```
+
 Backend App:
-* npm ci
-* npm start
+```bash
+$ npm ci
+
+$ npm start
+```
 
 #### Containerized
 
