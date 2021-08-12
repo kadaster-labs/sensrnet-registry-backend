@@ -1,4 +1,5 @@
 import random
+import secrets
 import requests
 import concurrent.futures
 
@@ -17,7 +18,7 @@ def get_random_point():
 
 
 def get_random_category():
-    return random.choice(category_options)
+    return secrets.choice(category_options)
 
 
 def perform_request(i):
