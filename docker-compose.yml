@@ -2,7 +2,7 @@ version: '3.7'
 
 networks:
   backend:
-    name: sensrnet-network
+    name: backend
     driver: bridge
     ipam:
       driver: default
