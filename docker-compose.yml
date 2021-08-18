@@ -2,24 +2,35 @@ version: '3.7'
 
 networks:
   backend:
-    name: backend
+    name: sensrnet-network
     driver: bridge
+    ipam:
+      driver: default
 
 services:
   eventstore:
-    image: eventstore/eventstore:release-5.0.8
-    ports:
-      - 2113:2113
-      - 1113:1113
+    image: eventstore/eventstore:20.10.2-buster-slim
     environment:
-      - EVENTSTORE_DEV=true
-      - EVENTSTORE_MEM_DB=false
+      - EVENTSTORE_CLUSTER_SIZE=1
       - EVENTSTORE_RUN_PROJECTIONS=All
       - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    ports:
+      - "1113:1113"
+      - "2113:2113"
+    volumes:
+      - type: volume
+        source: eventstore-volume-data
+        target: /var/lib/eventstore
+      - type: volume
+        source: eventstore-volume-logs
+        target: /var/log/eventstore
     networks:
       - backend
-    command:
-      --dev --enable-external-tcp --ext-ip=0.0.0.0 --int-ip=0.0.0.0 --disable-external-tcp-tls
 
   mongo:
     image: mongo:4.4.7
@@ -68,3 +79,5 @@ services:
 
 volumes:
   dex-data:
+  eventstore-volume-data:
+  eventstore-volume-logs:
