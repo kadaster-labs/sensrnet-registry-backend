@@ -112,6 +112,8 @@ export abstract class AbstractEsListener implements OnModuleInit {
                     null,
                     droppedCallback,
                 );
+                subscription[`_connection`].on('closed', reason => droppedCallback(null, reason));
+
                 clearTimeout(timeout);
                 this.setSubscription(subscription);
             } catch {
