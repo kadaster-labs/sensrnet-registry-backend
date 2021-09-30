@@ -33,6 +33,6 @@ export class RemoveLegalEntityCommandHandler implements ICommandHandler<RemoveLe
 
     private async hasDevices(legalEntityId: string): Promise<boolean> {
         const relationFilter = { legalEntityId, targetVariant: TargetVariant.DEVICE };
-        return await this.relationModel.exists(relationFilter);
+        return this.relationModel.exists(relationFilter);
     }
 }
