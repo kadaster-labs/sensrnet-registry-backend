@@ -55,12 +55,6 @@ export class LegalEntityAggregate extends Aggregate {
         this.simpleApply(new LegalEntityRemoved(this.aggregateId));
     }
 
-    validateLegalEntityHasNoDevices(): void {
-        throw new DomainException(
-            'Currently the backend does not support removing organizations! Please vote for this issue (frontend#181) on GitHub.',
-        );
-    }
-
     onLegalEntityRemoved(eventMessage: EventMessage): void {
         const event: LegalEntityRemoved = getLegalEntityRemovedEvent(eventMessage);
         this.logUnusedInAggregate(event);
