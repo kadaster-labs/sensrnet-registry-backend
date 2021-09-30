@@ -6,6 +6,7 @@ import { EventStoreModule } from '../commons/event-store/event-store.module';
 import { EventStorePublisher } from '../commons/event-store/event-store.publisher';
 import { UserModule } from '../commons/user/user.module';
 import { UserPermissionsSchema, UserSchema } from '../commons/user/user.schema';
+import { RelationSchema } from '../query/model/relation.schema';
 import { DatastreamController } from './api/data-stream.controller';
 import { DeviceController } from './api/device.controller';
 import { LegalEntityController } from './api/legal-entity.controller';
@@ -44,7 +45,6 @@ import { DeviceRepository } from './repositories/device.repository';
 import { LegalEntityRepository } from './repositories/legal-entity.repository';
 import { ObservationGoalRepository } from './repositories/observation-goal.repository';
 import { UserService } from './repositories/user.service';
-import { RelationSchema } from '../query/model/relation.schema';
 
 @Module({
     controllers: [
