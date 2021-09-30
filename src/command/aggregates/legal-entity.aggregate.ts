@@ -52,7 +52,6 @@ export class LegalEntityAggregate extends Aggregate {
     }
 
     remove(): void {
-        this.validateLegalEntityHasNoDevices();
         this.simpleApply(new LegalEntityRemoved(this.aggregateId));
     }
 

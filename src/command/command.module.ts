@@ -44,6 +44,7 @@ import { DeviceRepository } from './repositories/device.repository';
 import { LegalEntityRepository } from './repositories/legal-entity.repository';
 import { ObservationGoalRepository } from './repositories/observation-goal.repository';
 import { UserService } from './repositories/user.service';
+import { RelationSchema } from '../query/model/relation.schema';
 
 @Module({
     controllers: [
@@ -60,6 +61,7 @@ import { UserService } from './repositories/user.service';
         EventProcessingModule,
         UserModule,
         MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+        MongooseModule.forFeature([{ name: 'Relation', schema: RelationSchema }]),
         MongooseModule.forFeature([{ name: 'UserPermissions', schema: UserPermissionsSchema }]),
     ],
     providers: [
