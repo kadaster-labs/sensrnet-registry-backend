@@ -1,4 +1,3 @@
-import { DomainException } from '../../commons/errors/domain-exception';
 import { Aggregate } from '../../commons/event-store/aggregate';
 import { EventMessage } from '../../commons/event-store/event-message';
 import {
