@@ -40,8 +40,8 @@ import { DeleteUserCommandHandler } from './handler/model/user/delete-user.handl
 import { RegisterOidcUserCommandHandler } from './handler/model/user/register-oidc-user.handler';
 import { LegalEntityEsListener } from './processors/legal-entity.es.listener';
 import { LegalEntityProcessor } from './processors/legal-entity.processor';
-import { LegalentityDeviceCountListener } from './projections/listeners/legalentity-device-count.listener';
 import { LegalentityDeviceCountProjection } from './projections/legalentity-device-count.projection';
+import { LegalentityDeviceCountListener } from './projections/listeners/legalentity-device-count.listener';
 import { LegalEntityDeviceCountSchema } from './projections/models/legalentity-device-count.schema';
 import { DeviceRepository } from './repositories/device.repository';
 import { LegalEntityRepository } from './repositories/legal-entity.repository';
