@@ -8,7 +8,7 @@ import { UserService } from '../repositories/user.service';
 @Injectable()
 export class LegalEntityProcessor extends AbstractProcessor {
     constructor(eventStore: EventStorePublisher, private readonly userService: UserService) {
-        super(eventStore);
+        super();
     }
 
     async process(event: LegalEntityEvent, originSync: boolean): Promise<void> {

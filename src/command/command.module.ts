@@ -6,7 +6,6 @@ import { EventStoreModule } from '../commons/event-store/event-store.module';
 import { EventStorePublisher } from '../commons/event-store/event-store.publisher';
 import { UserModule } from '../commons/user/user.module';
 import { UserPermissionsSchema, UserSchema } from '../commons/user/user.schema';
-import { RelationSchema } from '../query/model/relation.schema';
 import { DatastreamController } from './api/data-stream.controller';
 import { DeviceController } from './api/device.controller';
 import { LegalEntityController } from './api/legal-entity.controller';
@@ -41,6 +40,9 @@ import { DeleteUserCommandHandler } from './handler/model/user/delete-user.handl
 import { RegisterOidcUserCommandHandler } from './handler/model/user/register-oidc-user.handler';
 import { LegalEntityEsListener } from './processors/legal-entity.es.listener';
 import { LegalEntityProcessor } from './processors/legal-entity.processor';
+import { LegalentityDeviceCountListener } from './projections/listeners/legalentity-device-count.listener';
+import { LegalentityDeviceCountProjection } from './projections/legalentity-device-count.projection';
+import { LegalEntityDeviceCountSchema } from './projections/models/legalentity-device-count.schema';
 import { DeviceRepository } from './repositories/device.repository';
 import { LegalEntityRepository } from './repositories/legal-entity.repository';
 import { ObservationGoalRepository } from './repositories/observation-goal.repository';
@@ -61,8 +63,8 @@ import { UserService } from './repositories/user.service';
         EventProcessingModule,
         UserModule,
         MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
-        MongooseModule.forFeature([{ name: 'Relation', schema: RelationSchema }]),
         MongooseModule.forFeature([{ name: 'UserPermissions', schema: UserPermissionsSchema }]),
+        MongooseModule.forFeature([{ name: 'LegalEntityDeviceCount', schema: LegalEntityDeviceCountSchema }]),
     ],
     providers: [
         EventBus,
@@ -72,6 +74,8 @@ import { UserService } from './repositories/user.service';
         ObservationGoalRepository,
         UserService,
         EventStorePublisher,
+        LegalEntityEsListener,
+        LegalEntityProcessor,
         // legal-entity
         RegisterOrganizationCommandHandler,
         UpdateLegalEntityCommandHandler,
@@ -79,8 +83,6 @@ import { UserService } from './repositories/user.service';
         AddPublicContactDetailsCommandHandler,
         UpdateContactDetailsCommandHandler,
         RemoveContactDetailsCommandHandler,
-        LegalEntityProcessor,
-        LegalEntityEsListener,
         // sensor-device
         RegisterDeviceCommandHandler,
         UpdateDeviceCommandHandler,
@@ -106,6 +108,9 @@ import { UserService } from './repositories/user.service';
         LeaveLegalEntityCommandHandler,
         UpdateUserRoleCommandHandler,
         DeleteUserCommandHandler,
+        // projection
+        LegalentityDeviceCountListener,
+        LegalentityDeviceCountProjection,
     ],
     exports: [LegalEntityRepository],
 })

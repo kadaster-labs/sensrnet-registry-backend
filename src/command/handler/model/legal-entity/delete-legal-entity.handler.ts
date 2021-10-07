@@ -1,8 +1,8 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IRelation, TargetVariant } from '../../../../query/model/relation.schema';
 import { RemoveLegalEntityCommand } from '../../../model/legal-entity/remove-legal-entity.command';
+import { ILegalEntityDeviceCount } from '../../../projections/models/legalentity-device-count.schema';
 import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
 import { OrganizationHasDevices } from '../../error/organization-has-devices';
 import { UnknowObjectException } from '../../error/unknow-object-exception';
@@ -12,7 +12,7 @@ export class RemoveLegalEntityCommandHandler implements ICommandHandler<RemoveLe
     constructor(
         private readonly publisher: EventPublisher,
         private readonly repository: LegalEntityRepository,
-        @InjectModel('Relation') public relationModel: Model<IRelation>,
+        @InjectModel('LegalEntityDeviceCount') private legalEntityDeviceCountModel: Model<ILegalEntityDeviceCount>,
     ) {}
 
     async execute(command: RemoveLegalEntityCommand): Promise<void> {
@@ -32,7 +32,11 @@ export class RemoveLegalEntityCommandHandler implements ICommandHandler<RemoveLe
     }
 
     private async hasDevices(legalEntityId: string): Promise<boolean> {
-        const relationFilter = { legalEntityId, targetVariant: TargetVariant.DEVICE };
-        return this.relationModel.exists(relationFilter);
+        const hasDevices = await this.legalEntityDeviceCountModel.findOne(
+            { _id: legalEntityId },
+            { _id: -1, count: 1 },
+        );
+
+        return hasDevices ? hasDevices.count > 0 : false;
     }
 }

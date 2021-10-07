@@ -23,13 +23,6 @@ services:
     ports:
       - "1113:1113"
       - "2113:2113"
-    volumes:
-      - type: volume
-        source: eventstore-volume-data
-        target: /var/lib/eventstore
-      - type: volume
-        source: eventstore-volume-logs
-        target: /var/log/eventstore
     networks:
       - backend
 
@@ -80,5 +73,3 @@ services:
 
 volumes:
   dex-data:
-  eventstore-volume-data:
-  eventstore-volume-logs:

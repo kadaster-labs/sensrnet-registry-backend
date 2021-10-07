@@ -9,7 +9,7 @@ export abstract class AbstractQueryProcessor extends AbstractProcessor {
         protected readonly eventStore: EventStorePublisher,
         protected readonly relationModel: Model<IRelation>,
     ) {
-        super(eventStore);
+        super();
     }
 
     public async saveRelation(
