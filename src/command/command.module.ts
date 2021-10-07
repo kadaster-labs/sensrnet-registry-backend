@@ -74,8 +74,6 @@ import { UserService } from './repositories/user.service';
         ObservationGoalRepository,
         UserService,
         EventStorePublisher,
-        LegalEntityEsListener,
-        LegalEntityProcessor,
         // legal-entity
         RegisterOrganizationCommandHandler,
         UpdateLegalEntityCommandHandler,
@@ -83,6 +81,8 @@ import { UserService } from './repositories/user.service';
         AddPublicContactDetailsCommandHandler,
         UpdateContactDetailsCommandHandler,
         RemoveContactDetailsCommandHandler,
+        LegalEntityEsListener,
+        LegalEntityProcessor,
         // sensor-device
         RegisterDeviceCommandHandler,
         UpdateDeviceCommandHandler,
