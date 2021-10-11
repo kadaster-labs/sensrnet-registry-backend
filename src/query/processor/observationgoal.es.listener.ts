@@ -12,10 +12,7 @@ import { ObservationGoalEvent } from '../../commons/events/observation-goal/obse
 
 @Injectable()
 export class ObservationGoalEsListener extends AbstractEsListener {
-    constructor(
-        eventStore: EventStorePublisher,
-        checkpointService: CheckpointService,
-    ) {
+    constructor(eventStore: EventStorePublisher, checkpointService: CheckpointService) {
         super(
             `backend-${observationGoalStreamRootValue}-es`,
             `${observationGoalEventStreamName}`,

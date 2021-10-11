@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
 import { Event as ESEvent } from 'geteventstore-promise';
 import { AbstractEsListener } from '../../commons/event-processing/abstract.es.listener';
 import { CheckpointService } from '../../commons/event-processing/checkpoint/checkpoint.service';
@@ -13,10 +12,7 @@ import { SensorDeviceEvent } from '../../commons/events/sensordevice/sensordevic
 
 @Injectable()
 export class DeviceEsListener extends AbstractEsListener {
-    constructor(
-        eventStore: EventStorePublisher,
-        checkpointService: CheckpointService,
-    ) {
+    constructor(eventStore: EventStorePublisher, checkpointService: CheckpointService) {
         super(
             `backend-${sensorDeviceStreamRootValue}-es`,
             `${sensorDeviceEventStreamName}`,

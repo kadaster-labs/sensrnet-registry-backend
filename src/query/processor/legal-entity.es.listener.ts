@@ -12,10 +12,7 @@ import { LegalEntityEvent } from '../../commons/events/legal-entity/legal-entity
 
 @Injectable()
 export class LegalEntityEsListener extends AbstractEsListener {
-    constructor(
-        eventStore: EventStorePublisher,
-        checkpointService: CheckpointService,
-    ) {
+    constructor(eventStore: EventStorePublisher, checkpointService: CheckpointService) {
         super(
             `backend-${legalEntityStreamRootValue}-es`,
             `${legalEntityEventStreamName}`,
