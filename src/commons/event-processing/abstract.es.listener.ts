@@ -1,6 +1,5 @@
 import { Logger, OnModuleInit } from '@nestjs/common';
 import { Event as ESEvent } from 'geteventstore-promise';
-import { Connection } from 'mongoose';
 import { EventStoreCatchUpSubscription } from 'node-eventstore-client';
 import { NoSubscriptionException } from '../errors/no-subscription-exception';
 import { SubscriptionExistsException } from '../errors/subscription-exists-exception';
@@ -20,7 +19,6 @@ export abstract class AbstractEsListener implements OnModuleInit {
         protected streamName: string,
         protected readonly eventStore: EventStorePublisher,
         protected readonly checkpointService: CheckpointService,
-        protected readonly connection: Connection,
     ) {}
 
     addProcessor(processor: AbstractProcessor): void {
@@ -101,22 +99,16 @@ export abstract class AbstractEsListener implements OnModuleInit {
                         );
                     };
 
-                    const session = await this.connection.startSession();
-                    session.startTransaction();
-
                     try {
                         const event = this.parseEvent(eventMessage);
                         const originSync = eventMessage.metadata && eventMessage.metadata.originSync;
 
-                        for (const processor of this.getProcessors()) {
-                            await processor.process(event, originSync);
-                        }
+                        const promises = this.getProcessors().map(x => x.process(event, originSync));
+                        await Promise.all(promises);
                     } catch (error) {
                         this.logger.error(error);
-                        await session.abortTransaction();
                     } finally {
                         await callback();
-                        session.endSession();
                     }
                 }
             };
