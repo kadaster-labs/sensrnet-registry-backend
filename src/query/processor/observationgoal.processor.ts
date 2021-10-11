@@ -8,11 +8,11 @@ import {
     ObservationGoalUpdated,
 } from '../../commons/events/observation-goal';
 import { ObservationGoalEvent } from '../../commons/events/observation-goal/observation-goal.event';
+import { ObservationGoalEsListener } from '../listeners/observationgoal.es.listener';
 import { IDevice } from '../model/device.schema';
 import { IObservationGoal } from '../model/observation-goal.schema';
 import { IRelation, RelationVariant, TargetVariant } from '../model/relation.schema';
 import { AbstractQueryProcessor } from './abstract-query.processor';
-import { ObservationGoalEsListener } from '../listeners/observationgoal.es.listener';
 
 @Injectable()
 export class ObservationGoalProcessor extends AbstractQueryProcessor {

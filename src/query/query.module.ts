@@ -24,15 +24,15 @@ import { LegalEntityQueryHandler } from './handler/legal-entity.handler';
 import { ObservationGoalQueryHandler } from './handler/observation-goal.handler';
 import { ObservationGoalsQueryHandler } from './handler/observation-goals.handler';
 import { RetrieveUserQueryHandler } from './handler/retrieve-users.handler';
+import { ObservationGoalEsListener } from './listeners/observationgoal.es.listener';
+import { QueryDeviceEsListener } from './listeners/query-device-es-listener.service';
+import { QueryLegalEntityEsListener } from './listeners/query-legal-entity-es-listener.service';
 import { DeviceSchema } from './model/device.schema';
 import { LegalEntitySchema } from './model/legal-entity.schema';
 import { ObservationGoalSchema } from './model/observation-goal.schema';
 import { RelationSchema } from './model/relation.schema';
-import { QueryDeviceEsListener } from './listeners/query-device-es-listener.service';
 import { DeviceProcessor } from './processor/device.processor';
-import { QueryLegalEntityEsListener } from './listeners/query-legal-entity-es-listener.service';
 import { LegalEntityProcessor } from './processor/legal-entity.processor';
-import { ObservationGoalEsListener } from './listeners/observationgoal.es.listener';
 import { ObservationGoalProcessor } from './processor/observationgoal.processor';
 
 @Module({

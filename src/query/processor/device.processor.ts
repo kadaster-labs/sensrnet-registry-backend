@@ -19,11 +19,11 @@ import {
 import { SensorAdded, SensorRemoved, SensorUpdated } from '../../commons/events/sensordevice/sensor';
 import { SensorDeviceEvent } from '../../commons/events/sensordevice/sensordevice.event';
 import { Gateway } from '../gateway/gateway';
+import { QueryDeviceEsListener } from '../listeners/query-device-es-listener.service';
 import { IDevice } from '../model/device.schema';
 import { IObservationGoal } from '../model/observation-goal.schema';
 import { IRelation, RelationVariant, TargetVariant } from '../model/relation.schema';
 import { AbstractQueryProcessor } from './abstract-query.processor';
-import { QueryDeviceEsListener } from '../listeners/query-device-es-listener.service';
 
 @Injectable()
 export class DeviceProcessor extends AbstractQueryProcessor {
