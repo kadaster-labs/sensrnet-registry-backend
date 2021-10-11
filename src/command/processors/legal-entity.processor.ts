@@ -3,7 +3,7 @@ import { AbstractProcessor } from '../../commons/event-processing/abstract.proce
 import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
 import { OrganizationRegistered } from '../../commons/events/legal-entity';
 import { LegalEntityEvent } from '../../commons/events/legal-entity/legal-entity.event';
-import { LegalEntityEsListener } from '../listeners/legal-entity.es.listener';
+import { CommandLegalEntityEsListener } from '../listeners/command-legal-entity-es-listener.service';
 import { UserService } from '../repositories/user.service';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class LegalEntityProcessor extends AbstractProcessor {
     constructor(
         eventStore: EventStorePublisher,
         private readonly userService: UserService,
-        protected readonly listener: LegalEntityEsListener,
+        protected readonly listener: CommandLegalEntityEsListener,
     ) {
         super(listener);
     }

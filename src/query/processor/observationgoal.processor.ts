@@ -12,7 +12,7 @@ import { IDevice } from '../model/device.schema';
 import { IObservationGoal } from '../model/observation-goal.schema';
 import { IRelation, RelationVariant, TargetVariant } from '../model/relation.schema';
 import { AbstractQueryProcessor } from './abstract-query.processor';
-import { ObservationGoalEsListener } from './observationgoal.es.listener';
+import { ObservationGoalEsListener } from '../listeners/observationgoal.es.listener';
 
 @Injectable()
 export class ObservationGoalProcessor extends AbstractQueryProcessor {

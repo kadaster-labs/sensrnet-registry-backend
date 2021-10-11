@@ -12,7 +12,7 @@ import { IDevice } from '../model/device.schema';
 import { ILegalEntity } from '../model/legal-entity.schema';
 import { IRelation } from '../model/relation.schema';
 import { AbstractQueryProcessor } from './abstract-query.processor';
-import { LegalEntityEsListener } from './legal-entity.es.listener';
+import { QueryLegalEntityEsListener } from '../listeners/query-legal-entity-es-listener.service';
 
 @Injectable()
 export class LegalEntityProcessor extends AbstractQueryProcessor {
@@ -21,7 +21,7 @@ export class LegalEntityProcessor extends AbstractQueryProcessor {
     constructor(
         eventStore: EventStorePublisher,
         private readonly gateway: Gateway,
-        protected readonly listener: LegalEntityEsListener,
+        protected readonly listener: QueryLegalEntityEsListener,
         @InjectModel('Device') public deviceModel: Model<IDevice>,
         @InjectModel('LegalEntity') private model: Model<ILegalEntity>,
         @InjectModel('Relation') public relationModel: Model<IRelation>,

@@ -28,11 +28,11 @@ import { DeviceSchema } from './model/device.schema';
 import { LegalEntitySchema } from './model/legal-entity.schema';
 import { ObservationGoalSchema } from './model/observation-goal.schema';
 import { RelationSchema } from './model/relation.schema';
-import { DeviceEsListener } from './processor/device.es.listener';
+import { QueryDeviceEsListener } from './listeners/query-device-es-listener.service';
 import { DeviceProcessor } from './processor/device.processor';
-import { LegalEntityEsListener } from './processor/legal-entity.es.listener';
+import { QueryLegalEntityEsListener } from './listeners/query-legal-entity-es-listener.service';
 import { LegalEntityProcessor } from './processor/legal-entity.processor';
-import { ObservationGoalEsListener } from './processor/observationgoal.es.listener';
+import { ObservationGoalEsListener } from './listeners/observationgoal.es.listener';
 import { ObservationGoalProcessor } from './processor/observationgoal.processor';
 
 @Module({
@@ -65,9 +65,9 @@ import { ObservationGoalProcessor } from './processor/observationgoal.processor'
         UserQueryService,
         EventPublisher,
         DeviceProcessor,
-        DeviceEsListener,
+        QueryDeviceEsListener,
         LegalEntityProcessor,
-        LegalEntityEsListener,
+        QueryLegalEntityEsListener,
         ObservationGoalProcessor,
         ObservationGoalEsListener,
         RetrieveDeviceQueryHandler,

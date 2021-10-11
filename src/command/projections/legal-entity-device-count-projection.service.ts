@@ -6,15 +6,15 @@ import { Event } from '../../commons/event-store/event';
 import { LegalEntityRemoved } from '../../commons/events/legal-entity/removed';
 import { DeviceRegistered } from '../../commons/events/sensordevice/device/registered';
 import { DeviceRemoved } from '../../commons/events/sensordevice/device/removed';
-import { DeviceEsListener } from '../listeners/device.es.listener';
-import { LegalEntityEsListener } from '../listeners/legal-entity.es.listener';
+import { CommandDeviceEsListener } from '../listeners/command-device-es-listener.service';
+import { CommandLegalEntityEsListener } from '../listeners/command-legal-entity-es-listener.service';
 import { ILegalEntityDeviceCount } from './models/legalentity-device-count.schema';
 
 @Injectable()
 export class LegalEntityDeviceCountProjection extends AbstractProcessor {
     constructor(
-        protected readonly deviceListener: DeviceEsListener,
-        protected readonly legalEntityListener: LegalEntityEsListener,
+        protected readonly deviceListener: CommandDeviceEsListener,
+        protected readonly legalEntityListener: CommandLegalEntityEsListener,
         @InjectModel('LegalEntityDeviceCount') private legalEntityDeviceCountModel: Model<ILegalEntityDeviceCount>,
     ) {
         super([deviceListener, legalEntityListener]);

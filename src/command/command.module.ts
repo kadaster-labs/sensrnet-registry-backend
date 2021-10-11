@@ -38,8 +38,8 @@ import { RemoveSensorCommandHandler } from './handler/model/sensor/remove-sensor
 import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor.handler';
 import { DeleteUserCommandHandler } from './handler/model/user/delete-user.handler';
 import { RegisterOidcUserCommandHandler } from './handler/model/user/register-oidc-user.handler';
-import { DeviceEsListener } from './listeners/device.es.listener';
-import { LegalEntityEsListener } from './listeners/legal-entity.es.listener';
+import { CommandDeviceEsListener } from './listeners/command-device-es-listener.service';
+import { CommandLegalEntityEsListener } from './listeners/command-legal-entity-es-listener.service';
 import { LegalEntityProcessor } from './processors/legal-entity.processor';
 import { LegalEntityDeviceCountProjection } from './projections/legal-entity-device-count-projection.service';
 import { LegalEntityDeviceCountSchema } from './projections/models/legalentity-device-count.schema';
@@ -81,7 +81,7 @@ import { UserService } from './repositories/user.service';
         AddPublicContactDetailsCommandHandler,
         UpdateContactDetailsCommandHandler,
         RemoveContactDetailsCommandHandler,
-        LegalEntityEsListener,
+        CommandLegalEntityEsListener,
         LegalEntityProcessor,
         // sensor-device
         RegisterDeviceCommandHandler,
@@ -109,7 +109,7 @@ import { UserService } from './repositories/user.service';
         UpdateUserRoleCommandHandler,
         DeleteUserCommandHandler,
         // projection
-        DeviceEsListener,
+        CommandDeviceEsListener,
         LegalEntityDeviceCountProjection,
     ],
     exports: [LegalEntityRepository],
