@@ -38,10 +38,11 @@ import { RemoveSensorCommandHandler } from './handler/model/sensor/remove-sensor
 import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor.handler';
 import { DeleteUserCommandHandler } from './handler/model/user/delete-user.handler';
 import { RegisterOidcUserCommandHandler } from './handler/model/user/register-oidc-user.handler';
-import { CommandDeviceEsListener } from './listeners/command-device-es-listener.service';
-import { CommandLegalEntityEsListener } from './listeners/command-legal-entity-es-listener.service';
+import { CommandLegalEntityEsListener } from './processors/command-legal-entity.listener';
 import { LegalEntityProcessor } from './processors/legal-entity.processor';
-import { LegalEntityDeviceCountProjection } from './projections/legal-entity-device-count-projection.service';
+import { DeviceCountDeviceEsListener } from './projections/devicecount-device.listener';
+import { DeviceCountLegalEntityEsListener } from './projections/devicecount-legal-entity.listener';
+import { DeviceCountLegalEntityProjection } from './projections/devicecount-legal-entity.projection';
 import { LegalEntityDeviceCountSchema } from './projections/models/legalentity-device-count.schema';
 import { DeviceRepository } from './repositories/device.repository';
 import { LegalEntityRepository } from './repositories/legal-entity.repository';
@@ -81,8 +82,9 @@ import { UserService } from './repositories/user.service';
         AddPublicContactDetailsCommandHandler,
         UpdateContactDetailsCommandHandler,
         RemoveContactDetailsCommandHandler,
-        CommandLegalEntityEsListener,
+        DeviceCountLegalEntityEsListener,
         LegalEntityProcessor,
+        CommandLegalEntityEsListener,
         // sensor-device
         RegisterDeviceCommandHandler,
         UpdateDeviceCommandHandler,
@@ -109,8 +111,8 @@ import { UserService } from './repositories/user.service';
         UpdateUserRoleCommandHandler,
         DeleteUserCommandHandler,
         // projection
-        CommandDeviceEsListener,
-        LegalEntityDeviceCountProjection,
+        DeviceCountDeviceEsListener,
+        DeviceCountLegalEntityProjection,
     ],
     exports: [LegalEntityRepository],
 })

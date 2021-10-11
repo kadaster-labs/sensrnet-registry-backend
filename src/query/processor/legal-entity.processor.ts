@@ -8,11 +8,11 @@ import { ContactDetailsRemoved } from '../../commons/events/legal-entity/contact
 import { ContactDetailsUpdated } from '../../commons/events/legal-entity/contact-details/updated';
 import { LegalEntityEvent } from '../../commons/events/legal-entity/legal-entity.event';
 import { Gateway } from '../gateway/gateway';
-import { QueryLegalEntityEsListener } from '../listeners/query-legal-entity-es-listener.service';
 import { IDevice } from '../model/device.schema';
 import { ILegalEntity } from '../model/legal-entity.schema';
 import { IRelation } from '../model/relation.schema';
 import { AbstractQueryProcessor } from './abstract-query.processor';
+import { QueryLegalEntityEsListener } from './query-legal-entity-es-listener.service';
 
 @Injectable()
 export class LegalEntityProcessor extends AbstractQueryProcessor {

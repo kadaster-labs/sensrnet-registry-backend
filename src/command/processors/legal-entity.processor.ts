@@ -3,8 +3,8 @@ import { AbstractProcessor } from '../../commons/event-processing/abstract.proce
 import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
 import { OrganizationRegistered } from '../../commons/events/legal-entity';
 import { LegalEntityEvent } from '../../commons/events/legal-entity/legal-entity.event';
-import { CommandLegalEntityEsListener } from '../listeners/command-legal-entity-es-listener.service';
 import { UserService } from '../repositories/user.service';
+import { CommandLegalEntityEsListener } from './command-legal-entity.listener';
 
 @Injectable()
 export class LegalEntityProcessor extends AbstractProcessor {

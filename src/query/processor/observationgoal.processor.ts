@@ -8,17 +8,17 @@ import {
     ObservationGoalUpdated,
 } from '../../commons/events/observation-goal';
 import { ObservationGoalEvent } from '../../commons/events/observation-goal/observation-goal.event';
-import { ObservationGoalEsListener } from '../listeners/observationgoal.es.listener';
 import { IDevice } from '../model/device.schema';
 import { IObservationGoal } from '../model/observation-goal.schema';
 import { IRelation, RelationVariant, TargetVariant } from '../model/relation.schema';
 import { AbstractQueryProcessor } from './abstract-query.processor';
+import { QueryObservationGoalEsListener } from './query-observationgoal.es.listener';
 
 @Injectable()
 export class ObservationGoalProcessor extends AbstractQueryProcessor {
     constructor(
         eventStore: EventStorePublisher,
-        protected readonly listener: ObservationGoalEsListener,
+        protected readonly listener: QueryObservationGoalEsListener,
         @InjectModel('Device') public deviceModel: Model<IDevice>,
         @InjectModel('Relation') public relationModel: Model<IRelation>,
         @InjectModel('ObservationGoal') private observationGoalModel: Model<IObservationGoal>,

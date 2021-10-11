@@ -5,8 +5,8 @@ import { EventStorePublisher } from '../../commons/event-store/event-store.publi
 import { sensorDeviceStreamRootValue } from '../../commons/events/sensordevice';
 
 @Injectable()
-export class CommandDeviceEsListener extends DeviceEsListener {
+export class DeviceCountDeviceEsListener extends DeviceEsListener {
     constructor(eventStore: EventStorePublisher, checkpointService: CheckpointService) {
-        super(`command-${sensorDeviceStreamRootValue}-es`, eventStore, checkpointService);
+        super(`devicecount-${sensorDeviceStreamRootValue}-es`, eventStore, checkpointService);
     }
 }
