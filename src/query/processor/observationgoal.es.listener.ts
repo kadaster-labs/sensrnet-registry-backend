@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { InjectConnection } from '@nestjs/mongoose';
 import { Event as ESEvent } from 'geteventstore-promise';
+import { Connection } from 'mongoose';
 import { AbstractEsListener } from '../../commons/event-processing/abstract.es.listener';
 import { CheckpointService } from '../../commons/event-processing/checkpoint/checkpoint.service';
 import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
@@ -9,21 +11,20 @@ import {
     observationGoalStreamRootValue,
 } from '../../commons/events/observation-goal';
 import { ObservationGoalEvent } from '../../commons/events/observation-goal/observation-goal.event';
-import { ObservationGoalProcessor } from './observationgoal.processor';
 
 @Injectable()
 export class ObservationGoalEsListener extends AbstractEsListener {
     constructor(
         eventStore: EventStorePublisher,
         checkpointService: CheckpointService,
-        processor: ObservationGoalProcessor,
+        @InjectConnection() protected readonly connection: Connection,
     ) {
         super(
             `backend-${observationGoalStreamRootValue}-es`,
             `${observationGoalEventStreamName}`,
             eventStore,
             checkpointService,
-            processor,
+            connection,
         );
     }
 

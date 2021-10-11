@@ -23,17 +23,19 @@ import { IDevice } from '../model/device.schema';
 import { IObservationGoal } from '../model/observation-goal.schema';
 import { IRelation, RelationVariant, TargetVariant } from '../model/relation.schema';
 import { AbstractQueryProcessor } from './abstract-query.processor';
+import { DeviceEsListener } from './device.es.listener';
 
 @Injectable()
 export class DeviceProcessor extends AbstractQueryProcessor {
     constructor(
         eventStore: EventStorePublisher,
         private readonly gateway: Gateway,
+        protected readonly listener: DeviceEsListener,
         @InjectModel('Device') private deviceModel: Model<IDevice>,
         @InjectModel('Relation') public relationModel: Model<IRelation>,
         @InjectModel('ObservationGoal') private observationGoalModel: Model<IObservationGoal>,
     ) {
-        super(eventStore, relationModel);
+        super(listener, eventStore, relationModel);
     }
 
     async process(event: SensorDeviceEvent): Promise<void> {

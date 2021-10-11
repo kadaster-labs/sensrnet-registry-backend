@@ -1,15 +1,17 @@
 import { Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
+import { AbstractEsListener } from '../../commons/event-processing/abstract.es.listener';
 import { AbstractProcessor } from '../../commons/event-processing/abstract.processor';
 import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
 import { IRelation } from '../model/relation.schema';
 
 export abstract class AbstractQueryProcessor extends AbstractProcessor {
     protected constructor(
+        protected readonly listener: AbstractEsListener,
         protected readonly eventStore: EventStorePublisher,
         protected readonly relationModel: Model<IRelation>,
     ) {
-        super();
+        super(listener);
     }
 
     public async saveRelation(

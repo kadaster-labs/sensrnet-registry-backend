@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { InjectConnection } from '@nestjs/mongoose';
 import { Event as ESEvent } from 'geteventstore-promise';
+import { Connection } from 'mongoose';
 import { AbstractEsListener } from '../../commons/event-processing/abstract.es.listener';
 import { CheckpointService } from '../../commons/event-processing/checkpoint/checkpoint.service';
 import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
@@ -9,21 +11,20 @@ import {
     legalEntityStreamRootValue,
 } from '../../commons/events/legal-entity';
 import { LegalEntityEvent } from '../../commons/events/legal-entity/legal-entity.event';
-import { LegalEntityProcessor } from './legal-entity.processor';
 
 @Injectable()
 export class LegalEntityEsListener extends AbstractEsListener {
     constructor(
         eventStore: EventStorePublisher,
         checkpointService: CheckpointService,
-        processor: LegalEntityProcessor,
+        @InjectConnection() protected readonly connection: Connection,
     ) {
         super(
-            `backend-${legalEntityStreamRootValue}-es`,
+            `command-${legalEntityStreamRootValue}-es`,
             `${legalEntityEventStreamName}`,
             eventStore,
             checkpointService,
-            processor,
+            connection,
         );
     }
 

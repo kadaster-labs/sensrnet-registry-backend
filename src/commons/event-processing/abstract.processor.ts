@@ -1,8 +1,14 @@
 import { Logger } from '@nestjs/common';
 import { Event } from '../event-store/event';
+import { AbstractEsListener } from './abstract.es.listener';
 
 export abstract class AbstractProcessor {
     protected logger: Logger = new Logger(this.constructor.name);
+
+    protected constructor(protected listener: AbstractEsListener | AbstractEsListener[]) {
+        const listeners = listener instanceof AbstractEsListener ? [listener] : listener;
+        listeners.forEach(x => x.addProcessor(this));
+    }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     protected static defined(value: any): boolean {

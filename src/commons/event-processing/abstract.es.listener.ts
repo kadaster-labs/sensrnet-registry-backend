@@ -1,5 +1,6 @@
 import { Logger, OnModuleInit } from '@nestjs/common';
 import { Event as ESEvent } from 'geteventstore-promise';
+import { Connection } from 'mongoose';
 import { EventStoreCatchUpSubscription } from 'node-eventstore-client';
 import { NoSubscriptionException } from '../errors/no-subscription-exception';
 import { SubscriptionExistsException } from '../errors/subscription-exists-exception';
@@ -9,6 +10,7 @@ import { AbstractProcessor } from './abstract.processor';
 import { CheckpointService } from './checkpoint/checkpoint.service';
 
 export abstract class AbstractEsListener implements OnModuleInit {
+    private processors: AbstractProcessor[] = [];
     private subscription: EventStoreCatchUpSubscription;
 
     protected logger: Logger = new Logger(this.constructor.name);
@@ -18,8 +20,16 @@ export abstract class AbstractEsListener implements OnModuleInit {
         protected streamName: string,
         protected readonly eventStore: EventStorePublisher,
         protected readonly checkpointService: CheckpointService,
-        protected readonly processor: AbstractProcessor,
+        protected readonly connection: Connection,
     ) {}
+
+    addProcessor(processor: AbstractProcessor): void {
+        this.processors.push(processor);
+    }
+
+    getProcessors(): AbstractProcessor[] {
+        return this.processors;
+    }
 
     getSubscription(): EventStoreCatchUpSubscription {
         return this.subscription;
@@ -91,13 +101,22 @@ export abstract class AbstractEsListener implements OnModuleInit {
                         );
                     };
 
-                    const event = this.parseEvent(eventMessage);
-                    const originSync = eventMessage.metadata && eventMessage.metadata.originSync;
+                    const session = await this.connection.startSession();
+                    session.startTransaction();
+
                     try {
-                        await this.processor.process(event, originSync);
+                        const event = this.parseEvent(eventMessage);
+                        const originSync = eventMessage.metadata && eventMessage.metadata.originSync;
+
+                        for (const processor of this.getProcessors()) {
+                            await processor.process(event, originSync);
+                        }
+                    } catch (error) {
+                        this.logger.error(error);
+                        await session.abortTransaction();
+                    } finally {
                         await callback();
-                    } catch {
-                        await callback();
+                        session.endSession();
                     }
                 }
             };

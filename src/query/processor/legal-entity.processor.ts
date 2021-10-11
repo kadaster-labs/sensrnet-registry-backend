@@ -12,6 +12,7 @@ import { IDevice } from '../model/device.schema';
 import { ILegalEntity } from '../model/legal-entity.schema';
 import { IRelation } from '../model/relation.schema';
 import { AbstractQueryProcessor } from './abstract-query.processor';
+import { LegalEntityEsListener } from './legal-entity.es.listener';
 
 @Injectable()
 export class LegalEntityProcessor extends AbstractQueryProcessor {
@@ -20,11 +21,12 @@ export class LegalEntityProcessor extends AbstractQueryProcessor {
     constructor(
         eventStore: EventStorePublisher,
         private readonly gateway: Gateway,
+        protected readonly listener: LegalEntityEsListener,
         @InjectModel('Device') public deviceModel: Model<IDevice>,
         @InjectModel('LegalEntity') private model: Model<ILegalEntity>,
         @InjectModel('Relation') public relationModel: Model<IRelation>,
     ) {
-        super(eventStore, relationModel);
+        super(listener, eventStore, relationModel);
     }
 
     async process(event: LegalEntityEvent, originSync: boolean): Promise<void> {

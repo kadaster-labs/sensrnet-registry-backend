@@ -38,10 +38,10 @@ import { RemoveSensorCommandHandler } from './handler/model/sensor/remove-sensor
 import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor.handler';
 import { DeleteUserCommandHandler } from './handler/model/user/delete-user.handler';
 import { RegisterOidcUserCommandHandler } from './handler/model/user/register-oidc-user.handler';
-import { LegalEntityEsListener } from './processors/legal-entity.es.listener';
+import { DeviceEsListener } from './listeners/device.es.listener';
+import { LegalEntityEsListener } from './listeners/legal-entity.es.listener';
 import { LegalEntityProcessor } from './processors/legal-entity.processor';
-import { LegalentityDeviceCountProjection } from './projections/legalentity-device-count.projection';
-import { LegalentityDeviceCountListener } from './projections/listeners/legalentity-device-count.listener';
+import { LegalEntityDeviceCountProjection } from './projections/legal-entity-device-count-projection.service';
 import { LegalEntityDeviceCountSchema } from './projections/models/legalentity-device-count.schema';
 import { DeviceRepository } from './repositories/device.repository';
 import { LegalEntityRepository } from './repositories/legal-entity.repository';
@@ -109,8 +109,8 @@ import { UserService } from './repositories/user.service';
         UpdateUserRoleCommandHandler,
         DeleteUserCommandHandler,
         // projection
-        LegalentityDeviceCountListener,
-        LegalentityDeviceCountProjection,
+        DeviceEsListener,
+        LegalEntityDeviceCountProjection,
     ],
     exports: [LegalEntityRepository],
 })

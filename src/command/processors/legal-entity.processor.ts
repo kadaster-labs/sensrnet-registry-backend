@@ -3,12 +3,17 @@ import { AbstractProcessor } from '../../commons/event-processing/abstract.proce
 import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
 import { OrganizationRegistered } from '../../commons/events/legal-entity';
 import { LegalEntityEvent } from '../../commons/events/legal-entity/legal-entity.event';
+import { LegalEntityEsListener } from '../listeners/legal-entity.es.listener';
 import { UserService } from '../repositories/user.service';
 
 @Injectable()
 export class LegalEntityProcessor extends AbstractProcessor {
-    constructor(eventStore: EventStorePublisher, private readonly userService: UserService) {
-        super();
+    constructor(
+        eventStore: EventStorePublisher,
+        private readonly userService: UserService,
+        protected readonly listener: LegalEntityEsListener,
+    ) {
+        super(listener);
     }
 
     async process(event: LegalEntityEvent, originSync: boolean): Promise<void> {

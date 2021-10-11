@@ -12,16 +12,18 @@ import { IDevice } from '../model/device.schema';
 import { IObservationGoal } from '../model/observation-goal.schema';
 import { IRelation, RelationVariant, TargetVariant } from '../model/relation.schema';
 import { AbstractQueryProcessor } from './abstract-query.processor';
+import { ObservationGoalEsListener } from './observationgoal.es.listener';
 
 @Injectable()
 export class ObservationGoalProcessor extends AbstractQueryProcessor {
     constructor(
         eventStore: EventStorePublisher,
+        protected readonly listener: ObservationGoalEsListener,
         @InjectModel('Device') public deviceModel: Model<IDevice>,
         @InjectModel('Relation') public relationModel: Model<IRelation>,
         @InjectModel('ObservationGoal') private observationGoalModel: Model<IObservationGoal>,
     ) {
-        super(eventStore, relationModel);
+        super(listener, eventStore, relationModel);
     }
 
     async process(event: ObservationGoalEvent): Promise<void> {

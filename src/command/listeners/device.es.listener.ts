@@ -6,29 +6,33 @@ import { AbstractEsListener } from '../../commons/event-processing/abstract.es.l
 import { CheckpointService } from '../../commons/event-processing/checkpoint/checkpoint.service';
 import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
 import {
-    legalEntityEventStreamName,
-    legalEntityEventType,
-    legalEntityStreamRootValue,
-} from '../../commons/events/legal-entity';
-import { LegalEntityEvent } from '../../commons/events/legal-entity/legal-entity.event';
+    sensorDeviceEventStreamName,
+    sensorDeviceEventType,
+    sensorDeviceStreamRootValue,
+} from '../../commons/events/sensordevice';
+import { SensorDeviceEvent } from '../../commons/events/sensordevice/sensordevice.event';
 
 @Injectable()
-export class LegalEntityEsListener extends AbstractEsListener {
+export class DeviceEsListener extends AbstractEsListener {
     constructor(
         eventStore: EventStorePublisher,
         checkpointService: CheckpointService,
         @InjectConnection() protected readonly connection: Connection,
     ) {
         super(
-            `backend-${legalEntityStreamRootValue}-es`,
-            `${legalEntityEventStreamName}`,
+            `command-${sensorDeviceStreamRootValue}-es`,
+            `${sensorDeviceEventStreamName}`,
             eventStore,
             checkpointService,
             connection,
         );
     }
 
-    parseEvent(eventMessage: ESEvent): LegalEntityEvent {
-        return legalEntityEventType.getEvent(eventMessage) as LegalEntityEvent;
+    parseEvent(eventMessage: ESEvent): SensorDeviceEvent {
+        return sensorDeviceEventType.getEvent(eventMessage) as SensorDeviceEvent;
+    }
+
+    async onModuleInit(): Promise<void> {
+        await this.openSubscription();
     }
 }
