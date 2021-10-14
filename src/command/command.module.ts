@@ -38,12 +38,13 @@ import { RemoveSensorCommandHandler } from './handler/model/sensor/remove-sensor
 import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor.handler';
 import { DeleteUserCommandHandler } from './handler/model/user/delete-user.handler';
 import { RegisterOidcUserCommandHandler } from './handler/model/user/register-oidc-user.handler';
-import { CommandLegalEntityEsListener } from './processors/command-legal-entity.listener';
-import { LegalEntityProcessor } from './processors/legal-entity.processor';
-import { DeviceCountDeviceEsListener } from './projections/devicecount-device.listener';
-import { DeviceCountLegalEntityEsListener } from './projections/devicecount-legal-entity.listener';
-import { DeviceCountLegalEntityProjection } from './projections/devicecount-legal-entity.projection';
-import { LegalEntityDeviceCountSchema } from './projections/models/legalentity-device-count.schema';
+import { DeviceCountDeviceEsListener } from './projections/device-count/device-count-device.listener';
+import { DeviceCountLegalEntityEsListener } from './projections/device-count/device-count-legal-entity.listener';
+import { DeviceCountProcessor } from './projections/device-count/device-count.processor';
+import { DeviceCountSchema } from './projections/device-count/device-count.schema';
+import { DeviceCountService } from './projections/device-count/device-count.service';
+import { GrantAdminRightsESListener } from './projections/grant-admin-rights/grand-admin-rights.listener';
+import { GrantAdminRightsProcessor } from './projections/grant-admin-rights/grant-admin-rights.processor';
 import { DeviceRepository } from './repositories/device.repository';
 import { LegalEntityRepository } from './repositories/legal-entity.repository';
 import { ObservationGoalRepository } from './repositories/observation-goal.repository';
@@ -65,7 +66,7 @@ import { UserService } from './repositories/user.service';
         UserModule,
         MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
         MongooseModule.forFeature([{ name: 'UserPermissions', schema: UserPermissionsSchema }]),
-        MongooseModule.forFeature([{ name: 'LegalEntityDeviceCount', schema: LegalEntityDeviceCountSchema }]),
+        MongooseModule.forFeature([{ name: 'DeviceCount', schema: DeviceCountSchema }]),
     ],
     providers: [
         EventBus,
@@ -83,8 +84,6 @@ import { UserService } from './repositories/user.service';
         UpdateContactDetailsCommandHandler,
         RemoveContactDetailsCommandHandler,
         DeviceCountLegalEntityEsListener,
-        LegalEntityProcessor,
-        CommandLegalEntityEsListener,
         // sensor-device
         RegisterDeviceCommandHandler,
         UpdateDeviceCommandHandler,
@@ -111,8 +110,11 @@ import { UserService } from './repositories/user.service';
         UpdateUserRoleCommandHandler,
         DeleteUserCommandHandler,
         // projection
+        GrantAdminRightsProcessor,
+        GrantAdminRightsESListener,
+        DeviceCountProcessor,
         DeviceCountDeviceEsListener,
-        DeviceCountLegalEntityProjection,
+        DeviceCountService,
     ],
     exports: [LegalEntityRepository],
 })
