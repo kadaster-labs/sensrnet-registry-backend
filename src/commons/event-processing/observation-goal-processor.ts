@@ -7,7 +7,7 @@ import { AbstractProcessor } from './abstract.processor';
 import { CheckpointService } from './checkpoint/checkpoint.service';
 
 @Injectable()
-export class ObservationGoalProcessor extends AbstractProcessor {
+export abstract class ObservationGoalProcessor extends AbstractProcessor {
     constructor(checkpointId: string, eventStore: EventStorePublisher, checkpointService: CheckpointService) {
         super(checkpointId, `${observationGoalEventStreamName}`, eventStore, checkpointService);
     }

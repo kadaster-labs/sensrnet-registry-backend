@@ -18,66 +18,20 @@ import {
 } from '../../commons/events/sensordevice/device';
 import { SensorAdded, SensorRemoved, SensorUpdated } from '../../commons/events/sensordevice/sensor';
 import { SensorDeviceEvent } from '../../commons/events/sensordevice/sensordevice.event';
-import { Gateway } from '../gateway/gateway';
 import { IDevice } from '../model/device.schema';
 import { IObservationGoal } from '../model/observation-goal.schema';
 import { IRelation, RelationVariant, TargetVariant } from '../model/relation.schema';
 import { AbstractQueryEsListener } from './abstract-query.es.listener';
-import { QueryDeviceProcessor } from './query-device.processor';
 
 @Injectable()
 export class DeviceEsListener extends AbstractQueryEsListener {
     constructor(
         eventStore: EventStorePublisher,
-        private readonly gateway: Gateway,
-        protected readonly processor: QueryDeviceProcessor,
         @InjectModel('Device') private deviceModel: Model<IDevice>,
         @InjectModel('Relation') public relationModel: Model<IRelation>,
         @InjectModel('ObservationGoal') private observationGoalModel: Model<IObservationGoal>,
     ) {
-        super(processor, eventStore, relationModel);
-    }
-
-    async process(event: SensorDeviceEvent): Promise<void> {
-        let device: IDevice;
-        let legalEntityIds: string[];
-
-        if (event instanceof DeviceRegistered) {
-            device = await this.processDeviceRegistered(event);
-            legalEntityIds = await this.getDeviceLegalEntityIds(event);
-        } else if (event instanceof DeviceUpdated) {
-            device = await this.processDeviceUpdated(event);
-            legalEntityIds = await this.getDeviceLegalEntityIds(event);
-        } else if (event instanceof DeviceRemoved) {
-            legalEntityIds = await this.getDeviceLegalEntityIds(event);
-            device = await this.processDeviceDeleted(event);
-        } else if (event instanceof DeviceLocated) {
-            device = await this.processDeviceLocated(event);
-            legalEntityIds = await this.getDeviceLegalEntityIds(event);
-        } else if (event instanceof DeviceRelocated) {
-            device = await this.processDeviceRelocated(event);
-            legalEntityIds = await this.getDeviceLegalEntityIds(event);
-        } else if (event instanceof SensorAdded) {
-            await this.processSensorAdded(event);
-        } else if (event instanceof SensorUpdated) {
-            await this.processSensorUpdated(event);
-        } else if (event instanceof SensorRemoved) {
-            await this.processSensorRemoved(event);
-        } else if (event instanceof DatastreamAdded) {
-            await this.processDatastreamAdded(event);
-        } else if (event instanceof DatastreamUpdated) {
-            await this.processDatastreamUpdated(event);
-        } else if (event instanceof DatastreamRemoved) {
-            await this.processDatastreamRemoved(event);
-        } else if (event instanceof ObservationGoalLinked) {
-            await this.processObservationGoalLinked(event);
-        } else if (event instanceof ObservationGoalUnlinked) {
-            await this.processObservationGoalUnlinked(event);
-        }
-
-        if (device && legalEntityIds) {
-            this.gateway.emit(event.constructor.name, legalEntityIds, { canEdit: true, ...device.toObject() });
-        }
+        super(eventStore, relationModel);
     }
 
     async getDeviceLegalEntityIds(eventRecord: Record<string, any>): Promise<string[]> {

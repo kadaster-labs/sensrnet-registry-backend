@@ -12,28 +12,16 @@ import { IDevice } from '../model/device.schema';
 import { IObservationGoal } from '../model/observation-goal.schema';
 import { IRelation, RelationVariant, TargetVariant } from '../model/relation.schema';
 import { AbstractQueryEsListener } from './abstract-query.es.listener';
-import { QueryObservationGoalProcessor } from './query-observation-goal.processor';
 
 @Injectable()
 export class ObservationGoalEsListener extends AbstractQueryEsListener {
     constructor(
         eventStore: EventStorePublisher,
-        protected readonly processor: QueryObservationGoalProcessor,
         @InjectModel('Device') public deviceModel: Model<IDevice>,
         @InjectModel('Relation') public relationModel: Model<IRelation>,
         @InjectModel('ObservationGoal') private observationGoalModel: Model<IObservationGoal>,
     ) {
-        super(processor, eventStore, relationModel);
-    }
-
-    async process(event: ObservationGoalEvent): Promise<void> {
-        if (event instanceof ObservationGoalRegistered) {
-            await this.processObservationGoalRegistered(event);
-        } else if (event instanceof ObservationGoalUpdated) {
-            await this.processObservationGoalUpdated(event);
-        } else if (event instanceof ObservationGoalRemoved) {
-            await this.processObservationGoalRemoved(event);
-        }
+        super(eventStore, relationModel);
     }
 
     async processObservationGoalRegistered(event: ObservationGoalRegistered): Promise<void> {
