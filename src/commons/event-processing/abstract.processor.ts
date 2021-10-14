@@ -5,11 +5,9 @@ import { NoSubscriptionException } from '../errors/no-subscription-exception';
 import { SubscriptionExistsException } from '../errors/subscription-exists-exception';
 import { Event } from '../event-store/event';
 import { EventStorePublisher } from '../event-store/event-store.publisher';
-import { AbstractEsListener } from './abstract.es.listener';
 import { CheckpointService } from './checkpoint/checkpoint.service';
 
 export abstract class AbstractProcessor implements OnModuleInit {
-    private listeners: AbstractEsListener[] = [];
     private subscription: EventStoreCatchUpSubscription;
 
     protected logger: Logger = new Logger(this.constructor.name);
@@ -21,13 +19,9 @@ export abstract class AbstractProcessor implements OnModuleInit {
         protected readonly checkpointService: CheckpointService,
     ) {}
 
-    addListener(listener: AbstractEsListener): void {
-        this.listeners.push(listener);
-    }
+    abstract parseEvent(eventMessage: ESEvent): Event;
 
-    getListeners(): AbstractEsListener[] {
-        return this.listeners;
-    }
+    abstract process(event: Event, originSync: boolean): Promise<void>;
 
     getSubscription(): EventStoreCatchUpSubscription {
         return this.subscription;
@@ -71,8 +65,6 @@ export abstract class AbstractProcessor implements OnModuleInit {
         }
     }
 
-    abstract parseEvent(eventMessage: ESEvent): Event;
-
     async subscribeToStreamFromLastOffset(streamName: string): Promise<void> {
         const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
 
@@ -103,8 +95,7 @@ export abstract class AbstractProcessor implements OnModuleInit {
                         const event = this.parseEvent(eventMessage);
                         const originSync = eventMessage.metadata && eventMessage.metadata.originSync;
 
-                        const promises = this.getListeners().map(x => x.process(event, originSync));
-                        await Promise.all(promises);
+                        await Promise.apply(this.process(event, originSync));
                     } catch (error) {
                         this.logger.error(error);
                     } finally {

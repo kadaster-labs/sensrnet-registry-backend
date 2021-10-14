@@ -5,7 +5,7 @@ import { LegalEntityEvent } from '../events/legal-entity/legal-entity.event';
 import { AbstractProcessor } from './abstract.processor';
 import { CheckpointService } from './checkpoint/checkpoint.service';
 
-export class LegalEntityProcessor extends AbstractProcessor {
+export abstract class LegalEntityProcessor extends AbstractProcessor {
     constructor(checkpointId: string, eventStore: EventStorePublisher, checkpointService: CheckpointService) {
         super(checkpointId, `${legalEntityEventStreamName}`, eventStore, checkpointService);
     }

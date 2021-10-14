@@ -7,12 +7,10 @@ import { PublicContactDetailsAdded } from '../../commons/events/legal-entity/con
 import { ContactDetailsRemoved } from '../../commons/events/legal-entity/contact-details/removed';
 import { ContactDetailsUpdated } from '../../commons/events/legal-entity/contact-details/updated';
 import { LegalEntityEvent } from '../../commons/events/legal-entity/legal-entity.event';
-import { Gateway } from '../gateway/gateway';
 import { IDevice } from '../model/device.schema';
 import { ILegalEntity } from '../model/legal-entity.schema';
 import { IRelation } from '../model/relation.schema';
 import { AbstractQueryEsListener } from './abstract-query.es.listener';
-import { QueryLegalEntityProcessor } from './query-legal-entity.processor';
 
 @Injectable()
 export class LegalEntityEsListener extends AbstractQueryEsListener {
@@ -20,41 +18,11 @@ export class LegalEntityEsListener extends AbstractQueryEsListener {
 
     constructor(
         eventStore: EventStorePublisher,
-        private readonly gateway: Gateway,
-        protected readonly processor: QueryLegalEntityProcessor,
         @InjectModel('Device') public deviceModel: Model<IDevice>,
         @InjectModel('LegalEntity') private model: Model<ILegalEntity>,
         @InjectModel('Relation') public relationModel: Model<IRelation>,
     ) {
-        super(processor, eventStore, relationModel);
-    }
-
-    async process(event: LegalEntityEvent, originSync: boolean): Promise<void> {
-        let legalEntity: Record<string, any>;
-        let legalEntityIds: string[];
-
-        if (event instanceof OrganizationRegistered) {
-            legalEntity = await this.processRegistered(event, originSync);
-        } else if (event instanceof OrganizationUpdated) {
-            legalEntity = await this.processUpdated(event);
-            legalEntityIds = [event.aggregateId];
-        } else if (event instanceof LegalEntityRemoved) {
-            legalEntity = await this.processDeleted(event);
-            legalEntityIds = [event.aggregateId];
-        } else if (event instanceof PublicContactDetailsAdded) {
-            legalEntity = await this.processPublicContactDetailsAdded(event);
-            legalEntityIds = [event.aggregateId];
-        } else if (event instanceof ContactDetailsUpdated) {
-            legalEntity = await this.processContactDetailsUpdated(event);
-            legalEntityIds = [event.aggregateId];
-        } else if (event instanceof ContactDetailsRemoved) {
-            legalEntity = await this.processContactDetailsRemoved(event);
-            legalEntityIds = [event.aggregateId];
-        }
-
-        if (legalEntity) {
-            this.gateway.emit(event.constructor.name, legalEntityIds, legalEntity.toObject());
-        }
+        super(eventStore, relationModel);
     }
 
     async processRegistered(event: OrganizationRegistered, originSync: boolean): Promise<ILegalEntity> {
