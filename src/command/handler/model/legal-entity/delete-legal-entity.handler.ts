@@ -1,8 +1,5 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { RemoveLegalEntityCommand } from '../../../model/legal-entity/remove-legal-entity.command';
-import { IDeviceCount } from '../../../model/legalentity-device-count.schema';
 import { DeviceCountService } from '../../../repositories/device-count.service';
 import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
 import { OrganizationHasDevices } from '../../error/organization-has-devices';

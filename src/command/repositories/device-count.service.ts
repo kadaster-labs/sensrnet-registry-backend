@@ -36,6 +36,6 @@ export class DeviceCountService {
         options: Record<string, unknown> = {},
     ): Promise<IDeviceCount> {
         const filter = { _id: legalEntityId };
-        return await this.deviceCountModel.findOneAndUpdate(filter, update, options);
+        return this.deviceCountModel.findOneAndUpdate(filter, update, options);
     }
 }

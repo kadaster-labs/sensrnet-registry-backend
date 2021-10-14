@@ -20,11 +20,11 @@ export class DeviceCountDeviceProcessor extends DeviceProcessor {
     async process(event: SensorDeviceEvent, originSync: boolean): Promise<void> {
         if (!originSync) {
             if (event instanceof DeviceRegistered) {
-                this.listener.processDeviceRegistered(event);
+                await this.listener.processDeviceRegistered(event);
             } else if (event instanceof DeviceRemoved) {
-                this.listener.processDeviceRemoved(event);
+                await this.listener.processDeviceRemoved(event);
             } else if (event instanceof LegalEntityRemoved) {
-                this.listener.processLegalEntityRemoved(event);
+                await this.listener.processLegalEntityRemoved(event);
             }
         }
     }

@@ -95,7 +95,7 @@ export abstract class AbstractProcessor implements OnModuleInit {
                         const event = this.parseEvent(eventMessage);
                         const originSync = eventMessage.metadata && eventMessage.metadata.originSync;
 
-                        await Promise.apply(this.process(event, originSync));
+                        await this.process(event, originSync);
                     } catch (error) {
                         this.logger.error(error);
                     } finally {
