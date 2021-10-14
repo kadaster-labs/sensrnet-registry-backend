@@ -1,12 +1,12 @@
 import { Get, Post, Body } from '@nestjs/common';
 import { ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { AbstractEsListener } from '../../commons/event-processing/abstract.es.listener';
+import { AbstractProcessor } from '../../commons/event-processing/abstract.processor';
 import { Roles } from '../../commons/guards/roles.decorator';
 import { UserRole } from '../../commons/user/user.schema';
 import { OffsetBody } from './model/offset-body';
 
 export abstract class AbstractEsController {
-    protected constructor(protected readonly eventStoreListener: AbstractEsListener) {}
+    protected constructor(protected readonly eventStoreListener: AbstractProcessor) {}
 
     @Roles(UserRole.SUPER_USER)
     @Post('subscription/open')

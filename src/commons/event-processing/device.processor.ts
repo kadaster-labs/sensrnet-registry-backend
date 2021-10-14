@@ -2,10 +2,10 @@ import { Event as ESEvent } from 'geteventstore-promise';
 import { EventStorePublisher } from '../event-store/event-store.publisher';
 import { sensorDeviceEventStreamName, sensorDeviceEventType } from '../events/sensordevice';
 import { SensorDeviceEvent } from '../events/sensordevice/sensordevice.event';
-import { AbstractEsListener } from './abstract.es.listener';
+import { AbstractProcessor } from './abstract.processor';
 import { CheckpointService } from './checkpoint/checkpoint.service';
 
-export class DeviceEsListener extends AbstractEsListener {
+export class DeviceProcessor extends AbstractProcessor {
     constructor(checkpointId: string, eventStore: EventStorePublisher, checkpointService: CheckpointService) {
         super(checkpointId, `${sensorDeviceEventStreamName}`, eventStore, checkpointService);
     }

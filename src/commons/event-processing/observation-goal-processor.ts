@@ -3,11 +3,11 @@ import { Event as ESEvent } from 'geteventstore-promise';
 import { EventStorePublisher } from '../event-store/event-store.publisher';
 import { observationGoalEventStreamName, observationGoalEventType } from '../events/observation-goal';
 import { ObservationGoalEvent } from '../events/observation-goal/observation-goal.event';
-import { AbstractEsListener } from './abstract.es.listener';
+import { AbstractProcessor } from './abstract.processor';
 import { CheckpointService } from './checkpoint/checkpoint.service';
 
 @Injectable()
-export class ObservationGoalEsListener extends AbstractEsListener {
+export class ObservationGoalProcessor extends AbstractProcessor {
     constructor(checkpointId: string, eventStore: EventStorePublisher, checkpointService: CheckpointService) {
         super(checkpointId, `${observationGoalEventStreamName}`, eventStore, checkpointService);
     }

@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { AbstractProcessor } from '../../commons/event-processing/abstract.processor';
-import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
+import { AbstractEsListener } from '../../commons/event-processing/abstract.es.listener';
 import { OrganizationRegistered } from '../../commons/events/legal-entity';
 import { LegalEntityEvent } from '../../commons/events/legal-entity/legal-entity.event';
 import { UserService } from '../repositories/user.service';
-import { CommandLegalEntityEsListener } from './command-legal-entity.listener';
+import { GrantRightsLegalEntityProcessor } from './grant-rights-legal-entity.processors';
 
 @Injectable()
-export class LegalEntityProcessor extends AbstractProcessor {
+export class GrantRightsLegalEntityEsListener extends AbstractEsListener {
     constructor(
-        eventStore: EventStorePublisher,
-        private readonly userService: UserService,
-        protected readonly listener: CommandLegalEntityEsListener,
+        protected readonly userService: UserService,
+        protected readonly processor: GrantRightsLegalEntityProcessor,
     ) {
-        super(listener);
+        super(processor);
     }
 
     async process(event: LegalEntityEvent, originSync: boolean): Promise<void> {

@@ -38,12 +38,12 @@ import { RemoveSensorCommandHandler } from './handler/model/sensor/remove-sensor
 import { UpdateSensorCommandHandler } from './handler/model/sensor/update-sensor.handler';
 import { DeleteUserCommandHandler } from './handler/model/user/delete-user.handler';
 import { RegisterOidcUserCommandHandler } from './handler/model/user/register-oidc-user.handler';
-import { CommandLegalEntityEsListener } from './processors/command-legal-entity.listener';
-import { LegalEntityProcessor } from './processors/legal-entity.processor';
-import { DeviceCountDeviceEsListener } from './projections/devicecount-device.listener';
-import { DeviceCountLegalEntityEsListener } from './projections/devicecount-legal-entity.listener';
-import { DeviceCountLegalEntityProjection } from './projections/devicecount-legal-entity.projection';
-import { LegalEntityDeviceCountSchema } from './projections/models/legalentity-device-count.schema';
+import { GrantRightsLegalEntityProcessor } from './processors/grant-rights-legal-entity.processors';
+import { GrantRightsLegalEntityEsListener } from './processors/grant-rights-legal-entity.es.listener';
+import { DeviceCountDeviceProcessor } from './processors/device-count-device.processor';
+import { DeviceCountLegalEntityProcessor } from './processors/device-count-legal-entity.processor';
+import { DeviceCountLegalEntityEsListener } from './processors/device-count-legal-entity.es.listener';
+import { LegalEntityDeviceCountSchema } from './model/legalentity-device-count.schema';
 import { DeviceRepository } from './repositories/device.repository';
 import { LegalEntityRepository } from './repositories/legal-entity.repository';
 import { ObservationGoalRepository } from './repositories/observation-goal.repository';
@@ -82,9 +82,9 @@ import { UserService } from './repositories/user.service';
         AddPublicContactDetailsCommandHandler,
         UpdateContactDetailsCommandHandler,
         RemoveContactDetailsCommandHandler,
-        DeviceCountLegalEntityEsListener,
-        LegalEntityProcessor,
-        CommandLegalEntityEsListener,
+        DeviceCountLegalEntityProcessor,
+        GrantRightsLegalEntityEsListener,
+        GrantRightsLegalEntityProcessor,
         // sensor-device
         RegisterDeviceCommandHandler,
         UpdateDeviceCommandHandler,
@@ -111,8 +111,8 @@ import { UserService } from './repositories/user.service';
         UpdateUserRoleCommandHandler,
         DeleteUserCommandHandler,
         // projection
-        DeviceCountDeviceEsListener,
-        DeviceCountLegalEntityProjection,
+        DeviceCountDeviceProcessor,
+        DeviceCountLegalEntityEsListener,
     ],
     exports: [LegalEntityRepository],
 })

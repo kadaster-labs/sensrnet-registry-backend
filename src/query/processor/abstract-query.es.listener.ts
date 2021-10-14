@@ -5,13 +5,13 @@ import { AbstractProcessor } from '../../commons/event-processing/abstract.proce
 import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
 import { IRelation } from '../model/relation.schema';
 
-export abstract class AbstractQueryProcessor extends AbstractProcessor {
+export abstract class AbstractQueryEsListener extends AbstractEsListener {
     protected constructor(
-        protected readonly listener: AbstractEsListener,
+        protected readonly processor: AbstractProcessor,
         protected readonly eventStore: EventStorePublisher,
         protected readonly relationModel: Model<IRelation>,
     ) {
-        super(listener);
+        super(processor);
     }
 
     public async saveRelation(

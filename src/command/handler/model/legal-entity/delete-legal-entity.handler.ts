@@ -2,7 +2,7 @@ import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RemoveLegalEntityCommand } from '../../../model/legal-entity/remove-legal-entity.command';
-import { ILegalEntityDeviceCount } from '../../../projections/models/legalentity-device-count.schema';
+import { ILegalEntityDeviceCount } from '../../../model/legalentity-device-count.schema';
 import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
 import { OrganizationHasDevices } from '../../error/organization-has-devices';
 import { UnknowObjectException } from '../../error/unknow-object-exception';
@@ -34,9 +34,9 @@ export class RemoveLegalEntityCommandHandler implements ICommandHandler<RemoveLe
     private async hasDevices(legalEntityId: string): Promise<boolean> {
         const hasDevices = await this.legalEntityDeviceCountModel.findOne(
             { _id: legalEntityId },
-            { _id: -1, count: 1 },
+            { _id: -1, deviceIds: 1 },
         );
 
-        return hasDevices ? hasDevices.count > 0 : false;
+        return hasDevices ? hasDevices.deviceIds.length > 0 : false;
     }
 }

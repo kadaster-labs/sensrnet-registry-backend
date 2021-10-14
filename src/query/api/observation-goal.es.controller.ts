@@ -2,7 +2,7 @@ import { Controller, UseGuards, UseFilters } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { DomainExceptionFilter } from '../../commons/errors/domain-exception.filter';
 import { RolesGuard } from '../../commons/guards/roles.guard';
-import { QueryObservationGoalEsListener } from '../processor/query-observationgoal.es.listener';
+import { QueryObservationGoalProcessor } from '../processor/query-observation-goal.processor';
 import { AbstractEsController } from './abstract.es.controller';
 
 @ApiBearerAuth()
@@ -11,7 +11,7 @@ import { AbstractEsController } from './abstract.es.controller';
 @UseFilters(new DomainExceptionFilter())
 @UseGuards(RolesGuard)
 export class ObservationGoalEsController extends AbstractEsController {
-    constructor(protected readonly eventStoreListener: QueryObservationGoalEsListener) {
+    constructor(protected readonly eventStoreListener: QueryObservationGoalProcessor) {
         super(eventStoreListener);
     }
 }

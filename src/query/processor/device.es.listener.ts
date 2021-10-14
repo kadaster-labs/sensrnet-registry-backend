@@ -22,20 +22,20 @@ import { Gateway } from '../gateway/gateway';
 import { IDevice } from '../model/device.schema';
 import { IObservationGoal } from '../model/observation-goal.schema';
 import { IRelation, RelationVariant, TargetVariant } from '../model/relation.schema';
-import { AbstractQueryProcessor } from './abstract-query.processor';
-import { QueryDeviceEsListener } from './query-device-es-listener.service';
+import { AbstractQueryEsListener } from './abstract-query.es.listener';
+import { QueryDeviceProcessor } from './query-device.processor';
 
 @Injectable()
-export class DeviceProcessor extends AbstractQueryProcessor {
+export class DeviceEsListener extends AbstractQueryEsListener {
     constructor(
         eventStore: EventStorePublisher,
         private readonly gateway: Gateway,
-        protected readonly listener: QueryDeviceEsListener,
+        protected readonly processor: QueryDeviceProcessor,
         @InjectModel('Device') private deviceModel: Model<IDevice>,
         @InjectModel('Relation') public relationModel: Model<IRelation>,
         @InjectModel('ObservationGoal') private observationGoalModel: Model<IObservationGoal>,
     ) {
-        super(listener, eventStore, relationModel);
+        super(processor, eventStore, relationModel);
     }
 
     async process(event: SensorDeviceEvent): Promise<void> {
@@ -116,16 +116,16 @@ export class DeviceProcessor extends AbstractQueryProcessor {
     async processDeviceUpdated(event: DeviceUpdated): Promise<IDevice> {
         const deviceUpdate: Record<string, any> = {};
 
-        if (AbstractQueryProcessor.defined(event.name)) {
+        if (AbstractQueryEsListener.defined(event.name)) {
             deviceUpdate.name = event.name;
         }
-        if (AbstractQueryProcessor.defined(event.description)) {
+        if (AbstractQueryEsListener.defined(event.description)) {
             deviceUpdate.description = event.description;
         }
-        if (AbstractQueryProcessor.defined(event.category)) {
+        if (AbstractQueryEsListener.defined(event.category)) {
             deviceUpdate.category = event.category;
         }
-        if (AbstractQueryProcessor.defined(event.connectivity)) {
+        if (AbstractQueryEsListener.defined(event.connectivity)) {
             deviceUpdate.connectivity = event.connectivity;
         }
 
@@ -147,16 +147,16 @@ export class DeviceProcessor extends AbstractQueryProcessor {
         const deviceUpdate: Record<string, any> = {};
 
         const locationDetails: Record<string, any> = {};
-        if (AbstractQueryProcessor.defined(event.name)) {
+        if (AbstractQueryEsListener.defined(event.name)) {
             locationDetails.name = event.name;
         }
-        if (AbstractQueryProcessor.defined(event.description)) {
+        if (AbstractQueryEsListener.defined(event.description)) {
             locationDetails.description = event.description;
         }
         if (Object.keys(locationDetails).length) {
             deviceUpdate.locationDetails = locationDetails;
         }
-        if (AbstractQueryProcessor.defined(event.location)) {
+        if (AbstractQueryEsListener.defined(event.location)) {
             deviceUpdate.location = {
                 type: 'Point',
                 coordinates: event.location,
@@ -228,22 +228,22 @@ export class DeviceProcessor extends AbstractQueryProcessor {
         };
 
         const sensorUpdate: Record<string, any> = {};
-        if (AbstractQueryProcessor.defined(event.name)) {
+        if (AbstractQueryEsListener.defined(event.name)) {
             sensorUpdate['sensors.$.name'] = event.name;
         }
-        if (AbstractQueryProcessor.defined(event.description)) {
+        if (AbstractQueryEsListener.defined(event.description)) {
             sensorUpdate['sensors.$.description'] = event.description;
         }
-        if (AbstractQueryProcessor.defined(event.type)) {
+        if (AbstractQueryEsListener.defined(event.type)) {
             sensorUpdate['sensors.$.type'] = event.type;
         }
-        if (AbstractQueryProcessor.defined(event.manufacturer)) {
+        if (AbstractQueryEsListener.defined(event.manufacturer)) {
             sensorUpdate['sensors.$.manufacturer'] = event.manufacturer;
         }
-        if (AbstractQueryProcessor.defined(event.supplier)) {
+        if (AbstractQueryEsListener.defined(event.supplier)) {
             sensorUpdate['sensors.$.supplier'] = event.supplier;
         }
-        if (AbstractQueryProcessor.defined(event.documentation)) {
+        if (AbstractQueryEsListener.defined(event.documentation)) {
             sensorUpdate['sensors.$.documentation'] = event.documentation;
         }
 
@@ -302,43 +302,43 @@ export class DeviceProcessor extends AbstractQueryProcessor {
         };
 
         const datastreamUpdate: Record<string, any> = {};
-        if (AbstractQueryProcessor.defined(event.name)) {
+        if (AbstractQueryEsListener.defined(event.name)) {
             datastreamUpdate['datastreams.$.name'] = event.name;
         }
-        if (AbstractQueryProcessor.defined(event.description)) {
+        if (AbstractQueryEsListener.defined(event.description)) {
             datastreamUpdate['datastreams.$.description'] = event.description;
         }
-        if (AbstractQueryProcessor.defined(event.unitOfMeasurement)) {
+        if (AbstractQueryEsListener.defined(event.unitOfMeasurement)) {
             datastreamUpdate['datastreams.$.unitOfMeasurement'] = event.unitOfMeasurement;
         }
-        if (AbstractQueryProcessor.defined(event.observationArea)) {
+        if (AbstractQueryEsListener.defined(event.observationArea)) {
             datastreamUpdate['datastreams.$.observationArea'] = event.observationArea;
         }
-        if (AbstractQueryProcessor.defined(event.theme)) {
+        if (AbstractQueryEsListener.defined(event.theme)) {
             datastreamUpdate['datastreams.$.theme'] = event.theme;
         }
-        if (AbstractQueryProcessor.defined(event.dataQuality)) {
+        if (AbstractQueryEsListener.defined(event.dataQuality)) {
             datastreamUpdate['datastreams.$.dataQuality'] = event.dataQuality;
         }
-        if (AbstractQueryProcessor.defined(event.isActive)) {
+        if (AbstractQueryEsListener.defined(event.isActive)) {
             datastreamUpdate['datastreams.$.isActive'] = !!event.isActive;
         }
-        if (AbstractQueryProcessor.defined(event.isPublic)) {
+        if (AbstractQueryEsListener.defined(event.isPublic)) {
             datastreamUpdate['datastreams.$.isPublic'] = !!event.isPublic;
         }
-        if (AbstractQueryProcessor.defined(event.isOpenData)) {
+        if (AbstractQueryEsListener.defined(event.isOpenData)) {
             datastreamUpdate['datastreams.$.isOpenData'] = !!event.isOpenData;
         }
-        if (AbstractQueryProcessor.defined(event.containsPersonalInfoData)) {
+        if (AbstractQueryEsListener.defined(event.containsPersonalInfoData)) {
             datastreamUpdate['datastreams.$.containsPersonalInfoData'] = !!event.containsPersonalInfoData;
         }
-        if (AbstractQueryProcessor.defined(event.isReusable)) {
+        if (AbstractQueryEsListener.defined(event.isReusable)) {
             datastreamUpdate['datastreams.$.isReusable'] = !!event.isReusable;
         }
-        if (AbstractQueryProcessor.defined(event.documentation)) {
+        if (AbstractQueryEsListener.defined(event.documentation)) {
             datastreamUpdate['datastreams.$.documentation'] = event.documentation;
         }
-        if (AbstractQueryProcessor.defined(event.dataLink)) {
+        if (AbstractQueryEsListener.defined(event.dataLink)) {
             datastreamUpdate['datastreams.$.dataLink'] = event.dataLink;
         }
 

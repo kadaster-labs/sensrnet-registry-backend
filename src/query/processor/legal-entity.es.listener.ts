@@ -11,22 +11,22 @@ import { Gateway } from '../gateway/gateway';
 import { IDevice } from '../model/device.schema';
 import { ILegalEntity } from '../model/legal-entity.schema';
 import { IRelation } from '../model/relation.schema';
-import { AbstractQueryProcessor } from './abstract-query.processor';
-import { QueryLegalEntityEsListener } from './query-legal-entity-es-listener.service';
+import { AbstractQueryEsListener } from './abstract-query.es.listener';
+import { QueryLegalEntityProcessor } from './query-legal-entity.processor';
 
 @Injectable()
-export class LegalEntityProcessor extends AbstractQueryProcessor {
+export class LegalEntityEsListener extends AbstractQueryEsListener {
     /* This processor processes legal entity events. Events like soft-delete are not handled because they do not need to be processed. */
 
     constructor(
         eventStore: EventStorePublisher,
         private readonly gateway: Gateway,
-        protected readonly listener: QueryLegalEntityEsListener,
+        protected readonly processor: QueryLegalEntityProcessor,
         @InjectModel('Device') public deviceModel: Model<IDevice>,
         @InjectModel('LegalEntity') private model: Model<ILegalEntity>,
         @InjectModel('Relation') public relationModel: Model<IRelation>,
     ) {
-        super(listener, eventStore, relationModel);
+        super(processor, eventStore, relationModel);
     }
 
     async process(event: LegalEntityEvent, originSync: boolean): Promise<void> {
@@ -77,10 +77,10 @@ export class LegalEntityProcessor extends AbstractQueryProcessor {
 
     async processUpdated(event: OrganizationUpdated): Promise<ILegalEntity> {
         const legalEntityUpdate: Record<string, any> = {};
-        if (AbstractQueryProcessor.defined(event.name)) {
+        if (AbstractQueryEsListener.defined(event.name)) {
             legalEntityUpdate.name = event.name;
         }
-        if (AbstractQueryProcessor.defined(event.website)) {
+        if (AbstractQueryEsListener.defined(event.website)) {
             legalEntityUpdate.website = event.website;
         }
 
@@ -151,13 +151,13 @@ export class LegalEntityProcessor extends AbstractQueryProcessor {
         };
 
         const contactDetailsUpdate: Record<string, any> = {};
-        if (AbstractQueryProcessor.defined(event.name)) {
+        if (AbstractQueryEsListener.defined(event.name)) {
             contactDetailsUpdate['contactDetails.$.name'] = event.name;
         }
-        if (AbstractQueryProcessor.defined(event.email)) {
+        if (AbstractQueryEsListener.defined(event.email)) {
             contactDetailsUpdate['contactDetails.$.email'] = event.email;
         }
-        if (AbstractQueryProcessor.defined(event.phone)) {
+        if (AbstractQueryEsListener.defined(event.phone)) {
             contactDetailsUpdate['contactDetails.$.phone'] = event.phone;
         }
 

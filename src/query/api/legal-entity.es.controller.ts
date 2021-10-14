@@ -2,7 +2,7 @@ import { Controller, UseGuards, UseFilters } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { DomainExceptionFilter } from '../../commons/errors/domain-exception.filter';
 import { RolesGuard } from '../../commons/guards/roles.guard';
-import { QueryLegalEntityEsListener } from '../processor/query-legal-entity-es-listener.service';
+import { QueryLegalEntityProcessor } from '../processor/query-legal-entity.processor';
 import { AbstractEsController } from './abstract.es.controller';
 
 @ApiBearerAuth()
@@ -11,7 +11,7 @@ import { AbstractEsController } from './abstract.es.controller';
 @UseFilters(new DomainExceptionFilter())
 @UseGuards(RolesGuard)
 export class LegalEntityEsController extends AbstractEsController {
-    constructor(protected readonly eventStoreListener: QueryLegalEntityEsListener) {
+    constructor(protected readonly eventStoreListener: QueryLegalEntityProcessor) {
         super(eventStoreListener);
     }
 }

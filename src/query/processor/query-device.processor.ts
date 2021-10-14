@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CheckpointService } from '../../commons/event-processing/checkpoint/checkpoint.service';
-import { LegalEntityEsListener } from '../../commons/event-processing/legal-entity.es.listener';
+import { DeviceProcessor } from '../../commons/event-processing/device.processor';
 import { EventStorePublisher } from '../../commons/event-store/event-store.publisher';
-import { legalEntityStreamRootValue } from '../../commons/events/legal-entity';
+import { sensorDeviceStreamRootValue } from '../../commons/events/sensordevice';
 
 @Injectable()
-export class QueryLegalEntityEsListener extends LegalEntityEsListener {
+export class QueryDeviceProcessor extends DeviceProcessor {
     constructor(eventStore: EventStorePublisher, checkpointService: CheckpointService) {
-        super(`backend-${legalEntityStreamRootValue}-es`, eventStore, checkpointService);
+        super(`backend-${sensorDeviceStreamRootValue}-es`, eventStore, checkpointService);
     }
 }
