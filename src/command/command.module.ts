@@ -83,7 +83,6 @@ import { UserService } from './repositories/user.service';
         AddPublicContactDetailsCommandHandler,
         UpdateContactDetailsCommandHandler,
         RemoveContactDetailsCommandHandler,
-        DeviceCountLegalEntityProcessor,
         // sensor-device
         RegisterDeviceCommandHandler,
         UpdateDeviceCommandHandler,
@@ -112,6 +111,7 @@ import { UserService } from './repositories/user.service';
         // projection
         GrantRightsLegalEntityEsListener,
         GrantRightsLegalEntityProcessor,
+        DeviceCountLegalEntityProcessor,
         DeviceCountDeviceProcessor,
         DeviceCountEsListener,
         DeviceCountService,
