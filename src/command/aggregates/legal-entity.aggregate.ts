@@ -1,4 +1,3 @@
-import { DomainException } from '../../commons/errors/domain-exception';
 import { Aggregate } from '../../commons/event-store/aggregate';
 import { EventMessage } from '../../commons/event-store/event-message';
 import {
@@ -52,14 +51,7 @@ export class LegalEntityAggregate extends Aggregate {
     }
 
     remove(): void {
-        this.validateLegalEntityHasNoDevices();
         this.simpleApply(new LegalEntityRemoved(this.aggregateId));
-    }
-
-    validateLegalEntityHasNoDevices(): void {
-        throw new DomainException(
-            'Currently the backend does not support removing organizations! Please vote for this issue (frontend#181) on GitHub.',
-        );
     }
 
     onLegalEntityRemoved(eventMessage: EventMessage): void {

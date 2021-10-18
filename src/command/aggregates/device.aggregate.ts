@@ -5,7 +5,7 @@ import {
     getObservationGoalLinkedEvent,
     ObservationGoalLinked,
 } from '../../commons/events/sensordevice/datastream/observation-goal-linked';
-import { ObservationGoalUnlinked } from '../../commons/events/sensordevice/datastream/observation-goal-unlinked/observation-goal-unlinked-v1.event';
+import { ObservationGoalUnlinked } from '../../commons/events/sensordevice/datastream/observation-goal-unlinked';
 import { DatastreamRemoved, getDatastreamRemovedEvent } from '../../commons/events/sensordevice/datastream/removed';
 import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../../commons/events/sensordevice/datastream/updated';
 import { DeviceLocated, getDeviceLocatedEvent } from '../../commons/events/sensordevice/device/located';

@@ -2,11 +2,11 @@ import { Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserService } from '../../../../command/repositories/user.service';
 import { UserQueryService } from '../../../../commons/user/user.qry-service';
 import { IUserPermissions, UserRole } from '../../../../commons/user/user.schema';
 import { LeaveLegalEntityCommand } from '../../../model/user/leave-legal-entity.command';
 import { LegalEntityRepository } from '../../../repositories/legal-entity.repository';
+import { UserService } from '../../../repositories/user.service';
 import { LastAdminCannotLeaveOrganization } from '../../error/last-admin-cannot-leave-organization';
 import { validateLegalEntity } from '../../util/legal-entity.utils';
 
@@ -39,7 +39,7 @@ export class LeaveLegalEntityCommandHandler implements ICommandHandler<LeaveLega
     }
 
     private async isUserLastAdmin(legalEntityId: string): Promise<boolean> {
-        const admins = await this.userPermissionsModel.find({ legalEntityId: legalEntityId, role: UserRole.ADMIN });
+        const admins = await this.userPermissionsModel.find({ legalEntityId, role: UserRole.ADMIN });
         const lastAdmin = admins.length === 1;
         this.logger.debug(`lastAdmin: ${lastAdmin} | [${admins.length}] of admins in organization [${legalEntityId}]`);
         return lastAdmin;

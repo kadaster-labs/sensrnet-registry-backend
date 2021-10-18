@@ -11,10 +11,10 @@ import { ObservationGoalEvent } from '../../commons/events/observation-goal/obse
 import { IDevice } from '../model/device.schema';
 import { IObservationGoal } from '../model/observation-goal.schema';
 import { IRelation, RelationVariant, TargetVariant } from '../model/relation.schema';
-import { AbstractQueryProcessor } from './abstract-query.processor';
+import { AbstractQueryEsListener } from './abstract-query.es.listener';
 
 @Injectable()
-export class ObservationGoalProcessor extends AbstractQueryProcessor {
+export class ObservationGoalEsListener extends AbstractQueryEsListener {
     constructor(
         eventStore: EventStorePublisher,
         @InjectModel('Device') public deviceModel: Model<IDevice>,
@@ -22,16 +22,6 @@ export class ObservationGoalProcessor extends AbstractQueryProcessor {
         @InjectModel('ObservationGoal') private observationGoalModel: Model<IObservationGoal>,
     ) {
         super(eventStore, relationModel);
-    }
-
-    async process(event: ObservationGoalEvent): Promise<void> {
-        if (event instanceof ObservationGoalRegistered) {
-            await this.processObservationGoalRegistered(event);
-        } else if (event instanceof ObservationGoalUpdated) {
-            await this.processObservationGoalUpdated(event);
-        } else if (event instanceof ObservationGoalRemoved) {
-            await this.processObservationGoalRemoved(event);
-        }
     }
 
     async processObservationGoalRegistered(event: ObservationGoalRegistered): Promise<void> {
@@ -58,16 +48,16 @@ export class ObservationGoalProcessor extends AbstractQueryProcessor {
 
     async processObservationGoalUpdated(event: ObservationGoalUpdated): Promise<void> {
         const observationGoalUpdate: Record<string, any> = {};
-        if (AbstractQueryProcessor.defined(event.name)) {
+        if (AbstractQueryEsListener.defined(event.name)) {
             observationGoalUpdate.name = event.name;
         }
-        if (AbstractQueryProcessor.defined(event.description)) {
+        if (AbstractQueryEsListener.defined(event.description)) {
             observationGoalUpdate.description = event.description;
         }
-        if (AbstractQueryProcessor.defined(event.legalGround)) {
+        if (AbstractQueryEsListener.defined(event.legalGround)) {
             observationGoalUpdate.legalGround = event.legalGround;
         }
-        if (AbstractQueryProcessor.defined(event.legalGroundLink)) {
+        if (AbstractQueryEsListener.defined(event.legalGroundLink)) {
             observationGoalUpdate.legalGroundLink = event.legalGroundLink;
         }
 

@@ -29,11 +29,11 @@ import { LegalEntitySchema } from './model/legal-entity.schema';
 import { ObservationGoalSchema } from './model/observation-goal.schema';
 import { RelationSchema } from './model/relation.schema';
 import { DeviceEsListener } from './processor/device.es.listener';
-import { DeviceProcessor } from './processor/device.processor';
 import { LegalEntityEsListener } from './processor/legal-entity.es.listener';
-import { LegalEntityProcessor } from './processor/legal-entity.processor';
-import { ObservationGoalEsListener } from './processor/observationgoal.es.listener';
-import { ObservationGoalProcessor } from './processor/observationgoal.processor';
+import { ObservationGoalEsListener } from './processor/observation-goal.es.listener';
+import { QueryDeviceProcessor } from './processor/query-device.processor';
+import { QueryLegalEntityProcessor } from './processor/query-legal-entity.processor';
+import { QueryObservationGoalProcessor } from './processor/query-observation-goal.processor';
 
 @Module({
     imports: [
@@ -64,12 +64,12 @@ import { ObservationGoalProcessor } from './processor/observationgoal.processor'
         Gateway,
         UserQueryService,
         EventPublisher,
-        DeviceProcessor,
         DeviceEsListener,
-        LegalEntityProcessor,
+        QueryDeviceProcessor,
         LegalEntityEsListener,
-        ObservationGoalProcessor,
+        QueryLegalEntityProcessor,
         ObservationGoalEsListener,
+        QueryObservationGoalProcessor,
         RetrieveDeviceQueryHandler,
         RetrieveDevicesQueryHandler,
         ObservationGoalQueryHandler,
