@@ -46,8 +46,10 @@ export class UserService {
     }
 
     async grantUserPermissionForOrganization(userId: string, legalEntityId: string): Promise<void> {
+        const userCount = await this.countUserPermissions({ legalEntityId });
+        const role = userCount ? UserRole.USER : UserRole.ADMIN;
         this.logger.log(`grant [user] permissions: [user: ${userId}] [organization: ${legalEntityId}]`);
-        const userPermissions = { _id: userId, role: UserRole.USER, legalEntityId: legalEntityId };
+        const userPermissions = { _id: userId, role, legalEntityId };
         await this.updateUserPermissions({ _id: userId }, userPermissions);
     }
 
@@ -68,5 +70,9 @@ export class UserService {
         update: Record<string, any>,
     ): Promise<IUserPermissions | undefined> {
         return this.userPermissionsModel.updateOne(filter, update, { new: true, upsert: true });
+    }
+
+    private async countUserPermissions(filter: Record<string, any>): Promise<number> {
+        return this.userPermissionsModel.count(filter);
     }
 }
