@@ -20,8 +20,8 @@ export class UserService {
 
             const userInstance = new this.userModel({
                 _id: id,
-                email: email,
-                oidc: oidc,
+                email,
+                oidc,
                 role: 'user',
             });
 
@@ -35,21 +35,19 @@ export class UserService {
 
     async grantAdminPermissionForOrganization(userId: string, legalEntityId: string): Promise<void> {
         this.logger.log(`grant [admin] permissions: [user: ${userId}] [organization: ${legalEntityId}]`);
-        const userPermissions = { _id: userId, role: UserRole.ADMIN, legalEntityId: legalEntityId };
+        const userPermissions = { _id: userId, role: UserRole.ADMIN, legalEntityId };
         await this.updateUserPermissions({ _id: userId }, userPermissions);
     }
 
     async revokeAdminPermissionForOrganization(userId: string, legalEntityId: string): Promise<void> {
         this.logger.log(`revoke [admin] permissions: [user: ${userId}] [organization: ${legalEntityId}]`);
-        const userPermissions = { _id: userId, role: UserRole.USER, legalEntityId: legalEntityId };
+        const userPermissions = { _id: userId, role: UserRole.USER, legalEntityId };
         await this.updateUserPermissions({ _id: userId }, userPermissions);
     }
 
     async grantUserPermissionForOrganization(userId: string, legalEntityId: string): Promise<void> {
-        const userCount = await this.countUserPermissions({ legalEntityId });
-        const role = userCount ? UserRole.USER : UserRole.ADMIN;
         this.logger.log(`grant [user] permissions: [user: ${userId}] [organization: ${legalEntityId}]`);
-        const userPermissions = { _id: userId, role, legalEntityId };
+        const userPermissions = { _id: userId, role: UserRole.USER, legalEntityId };
         await this.updateUserPermissions({ _id: userId }, userPermissions);
     }
 
@@ -72,7 +70,7 @@ export class UserService {
         return this.userPermissionsModel.updateOne(filter, update, { new: true, upsert: true });
     }
 
-    private async countUserPermissions(filter: Record<string, any>): Promise<number> {
-        return this.userPermissionsModel.count(filter);
+    async hasAdmins(legalEntityId: string): Promise<boolean> {
+        return (await this.userPermissionsModel.count({ legalEntityId, role: UserRole.ADMIN })) > 0;
     }
 }
