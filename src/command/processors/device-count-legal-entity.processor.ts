@@ -19,7 +19,7 @@ export class DeviceCountLegalEntityProcessor extends LegalEntityProcessor {
     async process(event: LegalEntityEvent, originSync: boolean): Promise<void> {
         if (!originSync) {
             if (event instanceof LegalEntityRemoved) {
-                this.listener.processLegalEntityRemoved(event);
+                await this.listener.processLegalEntityRemoved(event);
             }
         }
     }

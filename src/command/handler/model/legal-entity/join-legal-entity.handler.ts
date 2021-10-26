@@ -14,6 +14,10 @@ export class JoinLegalEntityCommandHandler implements ICommandHandler<JoinLegalE
     async execute(command: JoinLegalEntityCommand): Promise<void> {
         await validateLegalEntity(this.legalEntityRepository, command.legalEntityId);
 
-        await this.usersService.grantUserPermissionForOrganization(command.userId, command.legalEntityId);
+        if (await this.usersService.hasAdmins(command.legalEntityId)) {
+            await this.usersService.grantUserPermissionForOrganization(command.userId, command.legalEntityId);
+        } else {
+            await this.usersService.grantAdminPermissionForOrganization(command.userId, command.legalEntityId);
+        }
     }
 }

@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UserService } from '../../../../command/repositories/user.service';
 import { RegisterOidcUserCommand } from '../../../../commons/commands/register-oidc-user.command';
+import { UserService } from '../../../repositories/user.service';
 
 @CommandHandler(RegisterOidcUserCommand)
 export class RegisterOidcUserCommandHandler implements ICommandHandler<RegisterOidcUserCommand> {
