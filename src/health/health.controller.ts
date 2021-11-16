@@ -1,16 +1,21 @@
 import { Controller, Get } from '@nestjs/common';
-import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
-import { HealthCheckResult } from '@nestjs/terminus/dist/health-check/health-check-result.interface';
+import { HealthCheck, HealthCheckService, HttpHealthIndicator, MongooseHealthIndicator } from '@nestjs/terminus';
 import { Public } from '../auth/public';
-
 @Public()
 @Controller('health')
 export class HealthController {
-    constructor(private health: HealthCheckService) {}
+    constructor(
+        private health: HealthCheckService,
+        private mongoose: MongooseHealthIndicator,
+        private http: HttpHealthIndicator,
+    ) {}
 
     @Get()
     @HealthCheck()
-    check(): Promise<HealthCheckResult> {
-        return this.health.check([]);
+    healthCheck() {
+        return this.health.check([
+            async () => this.mongoose.pingCheck('mongodb'),
+            () => this.http.pingCheck('eventstore', 'http://localhost:2113'),
+        ]);
     }
 }

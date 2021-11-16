@@ -21,6 +21,7 @@ async function bootstrap() {
     app.useGlobalFilters(new DomainExceptionFilter());
 
     app.setGlobalPrefix('api');
+    app.enableShutdownHooks();
 
     const documentOptions = new DocumentBuilder()
         .setTitle('SensRNet Backend API')
