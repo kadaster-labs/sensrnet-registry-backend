@@ -316,8 +316,12 @@ export class DeviceEsListener extends AbstractQueryEsListener {
     async processObservationGoalLinked(event: ObservationGoalLinked): Promise<void> {
         const datastreamFilter = {
             _id: event.deviceId,
-            'datastreams._id': event.datastreamId,
-            'datastreams.observationGoalIds': { $ne: event.observationGoalId },
+            datastreams: {
+                $elemMatch: {
+                    _id: event.datastreamId,
+                    observationGoalIds: { $ne: event.observationGoalId },
+                },
+            },
         };
 
         const datastreamUpdate = {
