@@ -1,6 +1,6 @@
 {
   "name": "sensrnet-registery-backend",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "SensRNet Registery Backend Application",
   "author": "https://github.com/kadaster-labs/sensrnet-home/blob/main/MAINTAINERS.md",
   "license": "EUPL-1.2",
