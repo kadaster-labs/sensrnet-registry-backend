@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
     IsString,
     IsBoolean,
@@ -14,8 +15,6 @@ import {
 import Datastream from '../../../interfaces/datastream.interface';
 import { Theme } from '../theme.body';
 import { ObservedAreaBody } from './observed-area.body';
-import { RegisterLocationBody } from '../location/register-location.body';
-import { Type } from 'class-transformer';
 
 export abstract class DatastreamBody implements Datastream {
     @IsUUID(4)
