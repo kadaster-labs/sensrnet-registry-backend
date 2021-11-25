@@ -218,7 +218,7 @@ export class DeviceEsListener extends AbstractQueryEsListener {
         await this.deviceModel.updateOne({ _id: event.deviceId }, sensorDelete);
     }
 
-    async processDatastreamAdded(event: DatastreamAdded): Promise<void> {
+    async processDatastreamAdded(event: DatastreamAdded): Promise<IDevice> {
         const datastreamData = {
             _id: event.datastreamId,
             sensorId: event.sensorId,
@@ -242,14 +242,21 @@ export class DeviceEsListener extends AbstractQueryEsListener {
             'datastreams._id': { $ne: event.datastreamId },
         };
 
+        let device;
         try {
-            await this.deviceModel.updateOne(datastreamFilter, { $push: { datastreams: datastreamData } });
+            device = await this.deviceModel.findOneAndUpdate(
+                datastreamFilter,
+                { $push: { datastreams: datastreamData } },
+                { new: true },
+            );
         } catch {
             this.errorCallback(event);
         }
+
+        return device;
     }
 
-    async processDatastreamUpdated(event: DatastreamUpdated): Promise<void> {
+    async processDatastreamUpdated(event: DatastreamUpdated): Promise<IDevice> {
         const datastreamFilter = {
             _id: event.deviceId,
             'datastreams._id': event.datastreamId,
@@ -296,21 +303,32 @@ export class DeviceEsListener extends AbstractQueryEsListener {
             datastreamUpdate['datastreams.$.dataLink'] = event.dataLink;
         }
 
+        let device;
         try {
-            await this.deviceModel.updateOne(datastreamFilter, { $set: datastreamUpdate });
+            device = await this.deviceModel.findOneAndUpdate(
+                datastreamFilter,
+                { $set: datastreamUpdate },
+                { new: true },
+            );
         } catch {
             this.errorCallback(event);
         }
+
+        return device;
     }
 
-    async processDatastreamRemoved(event: DatastreamRemoved): Promise<void> {
+    async processDatastreamRemoved(event: DatastreamRemoved): Promise<IDevice> {
         const datastreamFilter = { _id: event.deviceId };
         const datastreamRemove = { $pull: { datastreams: { _id: event.datastreamId } } };
+
+        let device;
         try {
-            await this.deviceModel.updateOne(datastreamFilter, datastreamRemove);
+            device = await this.deviceModel.findOneAndUpdate(datastreamFilter, datastreamRemove, { new: true });
         } catch {
             this.errorCallback(event);
         }
+
+        return device;
     }
 
     async processObservationGoalLinked(event: ObservationGoalLinked): Promise<void> {
