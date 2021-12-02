@@ -99,6 +99,7 @@ export class DeviceEsListener extends AbstractQueryEsListener {
 
     async processDeviceLocated(event: DeviceLocated): Promise<IDevice> {
         const deviceUpdate: Record<string, any> = {};
+        const deviceUnset: Record<string, any> = {};
 
         const locationDetails: Record<string, any> = {};
         if (AbstractQueryEsListener.defined(event.name)) {
@@ -115,15 +116,19 @@ export class DeviceEsListener extends AbstractQueryEsListener {
                 type: 'Point',
                 coordinates: event.location,
             };
+            deviceUnset['datastreams.$[].observationArea'] = 1;
         }
 
         let device;
         try {
-            device = await this.deviceModel.findOneAndUpdate(
-                { _id: event.deviceId },
-                { $set: deviceUpdate },
-                { new: true },
-            );
+            const filter = { _id: event.deviceId };
+
+            let update: Record<string, any> = { $set: deviceUpdate };
+            if (Object.keys(deviceUnset).length) {
+                update = { ...update, $unset: deviceUnset };
+            }
+
+            device = await this.deviceModel.findOneAndUpdate(filter, update, { new: true });
         } catch {
             this.errorCallback(event);
         }
