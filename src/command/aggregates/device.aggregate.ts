@@ -1,4 +1,3 @@
-import * as circleToPolygon from 'circle-to-polygon';
 import { Aggregate } from '../../commons/event-store/aggregate';
 import { EventMessage } from '../../commons/event-store/event-message';
 import {
@@ -215,19 +214,6 @@ export class DeviceAggregate extends Aggregate {
         this.state.removeSensor(event.sensorId);
     }
 
-    getPolygon(observationArea) {
-        let polygon = null;
-        if (observationArea && this.state.location && this.state.location.length) {
-            try {
-                polygon = circleToPolygon(this.state.location, observationArea.radius);
-            } catch (e) {
-                this.logger.error(e.message);
-            }
-        }
-
-        return polygon;
-    }
-
     addDatastream(
         sensorId: string,
         legalEntityId: string,
@@ -258,7 +244,7 @@ export class DeviceAggregate extends Aggregate {
                 name,
                 description,
                 unitOfMeasurement,
-                this.getPolygon(observationArea),
+                observationArea,
                 theme,
                 dataQuality,
                 isActive,
@@ -308,7 +294,7 @@ export class DeviceAggregate extends Aggregate {
                 name,
                 description,
                 unitOfMeasurement,
-                this.getPolygon(observationArea),
+                observationArea,
                 theme,
                 dataQuality,
                 isActive,

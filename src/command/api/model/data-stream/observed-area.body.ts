@@ -1,13 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString, IsArray } from 'class-validator';
 
 export class ObservedAreaBody {
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
     @ApiProperty({
-        type: Number,
+        type: String,
         required: true,
-        description: 'Observed area radius.',
+        description: 'GeoJSON Object Type.',
     })
-    readonly radius: number;
+    readonly type: string;
+
+    @IsArray()
+    @IsNotEmpty()
+    @ApiProperty({
+        type: Array,
+        required: true,
+        description: 'GeoJSON Object Coordinates.',
+    })
+    readonly coordinates: any[];
 }
