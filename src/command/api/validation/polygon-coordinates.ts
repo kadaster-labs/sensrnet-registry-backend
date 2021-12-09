@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
+import { isLatLong } from './location';
 
 // Code inspired by https://gitlab.com/mjbecze/GeoJSON-Validation/-/blob/master/index.js
 
@@ -67,6 +68,10 @@ function isPosition(position, trace = false) {
                 errors.push('Position must only contain numbers. Item ' + pos + ' at index ' + index + ' is invalid.');
             }
         });
+
+        if (!isLatLong(position)) {
+            errors.push('Position outside LatLong bounds');
+        }
     } else {
         errors.push('Position must be an array');
     }
