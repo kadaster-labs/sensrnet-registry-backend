@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsEnum, IsArray } from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsArray, Validate } from 'class-validator';
+import { PolygonCoordinates } from '../../validation/polygon-coordinates';
 
 export enum GeoJSONType {
     polygon = 'Polygon',
@@ -16,6 +17,7 @@ export class ObservedAreaBody {
     })
     readonly type: GeoJSONType;
 
+    @Validate(PolygonCoordinates)
     @IsArray()
     @IsNotEmpty()
     @ApiProperty({
@@ -23,5 +25,5 @@ export class ObservedAreaBody {
         required: true,
         description: 'GeoJSON Object Coordinates.',
     })
-    readonly coordinates: any[];
+    readonly coordinates: number[][][];
 }
