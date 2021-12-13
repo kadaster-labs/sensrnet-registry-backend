@@ -60,11 +60,14 @@ export class QueryDeviceProcessor extends DeviceProcessor {
         } else if (event instanceof SensorRemoved) {
             await this.deviceListener.processSensorRemoved(event);
         } else if (event instanceof DatastreamAdded) {
-            await this.deviceListener.processDatastreamAdded(event);
+            device = await this.deviceListener.processDatastreamAdded(event);
+            legalEntityIds = await this.deviceListener.getDeviceLegalEntityIds(event);
         } else if (event instanceof DatastreamUpdated) {
-            await this.deviceListener.processDatastreamUpdated(event);
+            device = await this.deviceListener.processDatastreamUpdated(event);
+            legalEntityIds = await this.deviceListener.getDeviceLegalEntityIds(event);
         } else if (event instanceof DatastreamRemoved) {
-            await this.deviceListener.processDatastreamRemoved(event);
+            device = await this.deviceListener.processDatastreamRemoved(event);
+            legalEntityIds = await this.deviceListener.getDeviceLegalEntityIds(event);
         } else if (event instanceof ObservationGoalLinked) {
             await this.deviceListener.processObservationGoalLinked(event);
         } else if (event instanceof ObservationGoalUnlinked) {

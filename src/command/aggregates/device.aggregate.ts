@@ -1,21 +1,32 @@
 import { Aggregate } from '../../commons/event-store/aggregate';
 import { EventMessage } from '../../commons/event-store/event-message';
-import { DatastreamAdded, getDatastreamAddedEvent } from '../../commons/events/sensordevice/datastream/added';
 import {
+    DatastreamAdded,
+    getDatastreamAddedEvent,
     getObservationGoalLinkedEvent,
     ObservationGoalLinked,
-} from '../../commons/events/sensordevice/datastream/observation-goal-linked';
-import { ObservationGoalUnlinked } from '../../commons/events/sensordevice/datastream/observation-goal-unlinked';
-import { DatastreamRemoved, getDatastreamRemovedEvent } from '../../commons/events/sensordevice/datastream/removed';
-import { DatastreamUpdated, getDatastreamUpdatedEvent } from '../../commons/events/sensordevice/datastream/updated';
-import { DeviceLocated, getDeviceLocatedEvent } from '../../commons/events/sensordevice/device/located';
-import { DeviceRegistered, getDeviceRegisteredEvent } from '../../commons/events/sensordevice/device/registered';
-import { DeviceRelocated, getDeviceRelocatedEvent } from '../../commons/events/sensordevice/device/relocated';
-import { DeviceRemoved, getDeviceRemovedEvent } from '../../commons/events/sensordevice/device/removed';
-import { DeviceUpdated, getDeviceUpdatedEvent } from '../../commons/events/sensordevice/device/updated';
-import { getSensorAddedEvent, SensorAdded } from '../../commons/events/sensordevice/sensor/added';
-import { getSensorRemovedEvent, SensorRemoved } from '../../commons/events/sensordevice/sensor/removed';
-import { getSensorUpdatedEvent, SensorUpdated } from '../../commons/events/sensordevice/sensor/updated';
+    ObservationGoalUnlinked,
+    DatastreamRemoved,
+    getDatastreamRemovedEvent,
+    DatastreamUpdated,
+    getDatastreamUpdatedEvent,
+    DeviceLocated,
+    getDeviceLocatedEvent,
+    DeviceRegistered,
+    getDeviceRegisteredEvent,
+    DeviceRelocated,
+    getDeviceRelocatedEvent,
+    DeviceRemoved,
+    getDeviceRemovedEvent,
+    DeviceUpdated,
+    getDeviceUpdatedEvent,
+    getSensorAddedEvent,
+    SensorAdded,
+    getSensorRemovedEvent,
+    SensorRemoved,
+    getSensorUpdatedEvent,
+    SensorUpdated,
+} from '../../commons/events/sensordevice';
 import { AlreadyExistsException } from '../handler/error/already-exists-exception';
 import { NotLegalEntityException } from '../handler/error/not-legalentity-exception';
 import { UnknowObjectException } from '../handler/error/unknow-object-exception';

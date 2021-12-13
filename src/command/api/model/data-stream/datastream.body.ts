@@ -1,7 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsUrl, IsUUID, IsOptional, ValidateIf, IsArray, IsObject, IsEnum } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+    IsString,
+    IsBoolean,
+    IsUrl,
+    IsUUID,
+    IsOptional,
+    ValidateIf,
+    IsArray,
+    IsObject,
+    IsEnum,
+    ValidateNested,
+} from 'class-validator';
 import Datastream from '../../../interfaces/datastream.interface';
 import { Theme } from '../theme.body';
+import { ObservedAreaBody } from './observed-area.body';
 
 export abstract class DatastreamBody implements Datastream {
     @IsUUID(4)
@@ -28,12 +41,14 @@ export abstract class DatastreamBody implements Datastream {
 
     @IsObject()
     @IsOptional()
+    @ValidateNested()
     @ApiProperty({
-        type: Object,
         required: false,
+        type: ObservedAreaBody,
         description: 'Bounding box of the observed area.',
     })
-    readonly observedArea: Record<string, any>;
+    @Type(() => ObservedAreaBody)
+    readonly observedArea: ObservedAreaBody;
 
     @IsArray()
     @IsEnum(Theme, { each: true })
