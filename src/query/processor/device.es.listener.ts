@@ -108,9 +108,10 @@ export class DeviceEsListener extends AbstractQueryEsListener {
         if (AbstractQueryEsListener.defined(event.description)) {
             locationDetails.description = event.description;
         }
-        if (Object.keys(locationDetails).length) {
-            deviceUpdate.locationDetails = locationDetails;
+        for (const [key, value] of Object.entries(locationDetails)) {
+            deviceUpdate[`locationDetails.${key}`] = value;
         }
+        this.logger.warn(deviceUpdate);
         if (AbstractQueryEsListener.defined(event.location)) {
             deviceUpdate.location = {
                 type: 'Point',
@@ -129,6 +130,7 @@ export class DeviceEsListener extends AbstractQueryEsListener {
             }
 
             device = await this.deviceModel.findOneAndUpdate(filter, update, { new: true });
+            this.logger.warn(device);
         } catch {
             this.errorCallback(event);
         }
