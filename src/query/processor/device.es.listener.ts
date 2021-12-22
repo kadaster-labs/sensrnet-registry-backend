@@ -101,15 +101,11 @@ export class DeviceEsListener extends AbstractQueryEsListener {
         const deviceUpdate: Record<string, any> = {};
         const deviceUnset: Record<string, any> = {};
 
-        const locationDetails: Record<string, any> = {};
         if (AbstractQueryEsListener.defined(event.name)) {
-            locationDetails.name = event.name;
+            deviceUpdate['locationDetails.name'] = event.name;
         }
         if (AbstractQueryEsListener.defined(event.description)) {
-            locationDetails.description = event.description;
-        }
-        if (Object.keys(locationDetails).length) {
-            deviceUpdate.locationDetails = locationDetails;
+            deviceUpdate['locationDetails.description'] = event.description;
         }
         if (AbstractQueryEsListener.defined(event.location)) {
             deviceUpdate.location = {
