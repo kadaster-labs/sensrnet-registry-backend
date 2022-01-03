@@ -15,6 +15,7 @@ import {
 import Datastream from '../../../interfaces/datastream.interface';
 import { Theme } from '../theme.body';
 import { ObservedAreaBody } from './observed-area.body';
+import { UnitOfMeasurementBody } from './unit-of-measurement.body';
 
 export abstract class DatastreamBody implements Datastream {
     @IsUUID(4)
@@ -32,12 +33,14 @@ export abstract class DatastreamBody implements Datastream {
 
     @IsObject()
     @IsOptional()
+    @ValidateNested()
     @ApiProperty({
-        type: Object,
         required: false,
+        type: UnitOfMeasurementBody,
         description: 'Datastream unit of measurement.',
     })
-    readonly unitOfMeasurement: Record<string, any>;
+    @Type(() => UnitOfMeasurementBody)
+    readonly unitOfMeasurement: UnitOfMeasurementBody;
 
     @IsObject()
     @IsOptional()
