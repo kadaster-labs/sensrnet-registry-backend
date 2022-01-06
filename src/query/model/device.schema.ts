@@ -6,7 +6,7 @@ export interface IDatastream extends Document {
     name: string;
     description?: string;
     unitOfMeasurement?: Record<string, any>;
-    observationArea?: Record<string, any>;
+    observedArea?: Record<string, any>;
     theme?: string[];
     dataQuality?: string;
     isActive?: boolean;
@@ -56,7 +56,7 @@ export const DatastreamSchema = new Schema({
     name: { type: String, required: true },
     description: { type: String, required: false },
     unitOfMeasurement: { type: Object, required: false },
-    observationArea: { type: Object, required: false },
+    observedArea: { type: Object, required: false },
     theme: { type: [String], required: false },
     dataQuality: { type: String, required: false },
     isActive: { type: Boolean, required: false },

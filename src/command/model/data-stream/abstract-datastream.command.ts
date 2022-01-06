@@ -6,7 +6,7 @@ export abstract class AbstractDatastreamCommand implements ICommand {
     public readonly name: string;
     public readonly description: string;
     public readonly unitOfMeasurement: Record<string, any>;
-    public readonly observationArea: Record<string, any>;
+    public readonly observedArea: Record<string, any>;
     public readonly theme: string[];
     public readonly dataQuality: string;
     public readonly isActive: boolean;
@@ -27,7 +27,7 @@ export abstract class AbstractDatastreamCommand implements ICommand {
         this.name = datastream.name;
         this.description = datastream.description;
         this.unitOfMeasurement = datastream.unitOfMeasurement;
-        this.observationArea = datastream.observedArea;
+        this.observedArea = datastream.observedArea;
         this.theme = datastream.theme;
         this.dataQuality = datastream.dataQuality;
         this.isActive = datastream.isActive;

@@ -8,15 +8,15 @@ import {
     DatastreamUpdated,
     ObservationGoalLinked,
     ObservationGoalUnlinked,
-} from '../../commons/events/sensordevice/datastream';
-import {
     DeviceLocated,
     DeviceRegistered,
     DeviceRelocated,
     DeviceRemoved,
     DeviceUpdated,
-} from '../../commons/events/sensordevice/device';
-import { SensorAdded, SensorRemoved, SensorUpdated } from '../../commons/events/sensordevice/sensor';
+    SensorAdded,
+    SensorRemoved,
+    SensorUpdated,
+} from '../../commons/events/sensordevice';
 import { SensorDeviceEvent } from '../../commons/events/sensordevice/sensordevice.event';
 import { IDevice } from '../model/device.schema';
 import { IObservationGoal } from '../model/observation-goal.schema';
@@ -112,7 +112,7 @@ export class DeviceEsListener extends AbstractQueryEsListener {
                 type: 'Point',
                 coordinates: event.location,
             };
-            deviceUnset['datastreams.$[].observationArea'] = 1;
+            deviceUnset['datastreams.$[].observedArea'] = 1;
         }
 
         let device;
@@ -226,7 +226,7 @@ export class DeviceEsListener extends AbstractQueryEsListener {
             name: event.name,
             description: event.description,
             unitOfMeasurement: event.unitOfMeasurement,
-            observationArea: event.observationArea,
+            observedArea: event.observedArea,
             theme: event.theme,
             dataQuality: event.dataQuality,
             isActive: !!event.isActive,
@@ -273,8 +273,8 @@ export class DeviceEsListener extends AbstractQueryEsListener {
         if (AbstractQueryEsListener.defined(event.unitOfMeasurement)) {
             datastreamUpdate['datastreams.$.unitOfMeasurement'] = event.unitOfMeasurement;
         }
-        if (AbstractQueryEsListener.defined(event.observationArea)) {
-            datastreamUpdate['datastreams.$.observationArea'] = event.observationArea;
+        if (AbstractQueryEsListener.defined(event.observedArea)) {
+            datastreamUpdate['datastreams.$.observedArea'] = event.observedArea;
         }
         if (AbstractQueryEsListener.defined(event.theme)) {
             datastreamUpdate['datastreams.$.theme'] = event.theme;

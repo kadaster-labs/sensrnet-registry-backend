@@ -32,7 +32,7 @@ export class UpdateDatastreamCommandHandler implements ICommandHandler<UpdateDat
                 command.name,
                 command.description,
                 command.unitOfMeasurement,
-                command.observationArea,
+                command.observedArea,
                 command.theme,
                 command.dataQuality,
                 command.isActive,

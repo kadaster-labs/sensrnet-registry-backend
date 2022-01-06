@@ -32,7 +32,7 @@ export class AddDatastreamCommandHandler implements ICommandHandler<AddDatastrea
                 command.name,
                 command.description,
                 command.unitOfMeasurement,
-                command.observationArea,
+                command.observedArea,
                 command.theme,
                 command.dataQuality,
                 command.isActive,
