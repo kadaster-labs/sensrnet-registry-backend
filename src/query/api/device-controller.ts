@@ -23,7 +23,7 @@ export class DeviceController {
     @ApiResponse({ status: 400, description: 'Device retrieval failed' })
     async retrieveDevice(@Param() deviceIdParams: DeviceIdParams): Promise<IDevice> {
         const device: IDevice = await this.queryBus.execute(new RetrieveDeviceQuery(deviceIdParams.deviceId));
-        if (!device) throw new NotFoundException('User not found');
+        if (!device) throw new NotFoundException('Device not found');
         return device;
     }
 
