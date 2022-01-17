@@ -1,10 +1,11 @@
-import { Controller, Get, Param, Query, UseFilters } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, Query, UseFilters } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ValidatedUser } from '../../auth/validated-user';
 import { User } from '../../commons/decorators/user.decorator';
 import { DomainExceptionFilter } from '../../commons/errors/domain-exception.filter';
 import { RetrieveDeviceQuery } from '../model/device.query';
+import { IDevice } from '../model/device.schema';
 import { RetrieveDevicesQuery } from '../model/devices.query';
 import { DeviceIdParams } from './model/device-id-params';
 import { RetrieveDevicesParams } from './model/retrieve-devices-params';
@@ -20,8 +21,10 @@ export class DeviceController {
     @ApiOperation({ summary: 'Retrieve Device' })
     @ApiResponse({ status: 200, description: 'Device retrieved' })
     @ApiResponse({ status: 400, description: 'Device retrieval failed' })
-    async retrieveDevice(@Param() deviceIdParams: DeviceIdParams): Promise<any> {
-        return this.queryBus.execute(new RetrieveDeviceQuery(deviceIdParams.deviceId));
+    async retrieveDevice(@Param() deviceIdParams: DeviceIdParams): Promise<IDevice> {
+        const device: IDevice = await this.queryBus.execute(new RetrieveDeviceQuery(deviceIdParams.deviceId));
+        if (!device) throw new NotFoundException('User not found');
+        return device;
     }
 
     @Get()
