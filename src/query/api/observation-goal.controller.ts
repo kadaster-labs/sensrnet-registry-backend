@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Public } from '../../auth/public';
@@ -24,7 +24,11 @@ export class ObservationGoalController {
     async retrieveObservationGoal(
         @Param() observationGoalIdParams: ObservationGoalIdParams,
     ): Promise<IObservationGoal> {
-        return this.queryBus.execute(new ObservationGoalQuery(observationGoalIdParams.observationGoalId));
+        const observationGoal: IObservationGoal = await this.queryBus.execute(
+            new ObservationGoalQuery(observationGoalIdParams.observationGoalId),
+        );
+        if (!observationGoal) throw new NotFoundException('Observation Goal not found');
+        return observationGoal;
     }
 
     @Get()

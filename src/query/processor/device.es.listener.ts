@@ -51,7 +51,7 @@ export class DeviceEsListener extends AbstractQueryEsListener {
             connectivity: event.connectivity,
         };
 
-        let device;
+        let device: IDevice;
         try {
             device = await new this.deviceModel(deviceData).save();
             await this.saveRelation(
@@ -64,7 +64,7 @@ export class DeviceEsListener extends AbstractQueryEsListener {
             this.errorCallback(event);
         }
 
-        return device as IDevice;
+        return device;
     }
 
     async processDeviceUpdated(event: DeviceUpdated): Promise<IDevice> {
