@@ -8,7 +8,7 @@ import { IDevice } from '../model/device.schema';
 export class RetrieveDeviceQueryHandler implements IQueryHandler<RetrieveDeviceQuery> {
     constructor(@InjectModel('Device') private model: Model<IDevice>) {}
 
-    async execute(query: RetrieveDeviceQuery): Promise<any> {
-        return this.model.findOne({ _id: query.id });
+    async execute(query: RetrieveDeviceQuery): Promise<IDevice> {
+        return this.model.findById(query.id);
     }
 }

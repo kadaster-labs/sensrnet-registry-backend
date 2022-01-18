@@ -9,6 +9,6 @@ export class LegalEntityQueryHandler implements IQueryHandler<LegalEntityQuery> 
     constructor(@InjectModel('LegalEntity') private model: Model<ILegalEntity>) {}
 
     async execute(query: LegalEntityQuery): Promise<any> {
-        return this.model.findOne({ _id: query.id });
+        return this.model.findById(query.id);
     }
 }

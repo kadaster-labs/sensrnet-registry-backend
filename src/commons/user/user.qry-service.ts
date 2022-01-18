@@ -11,10 +11,10 @@ export class UserQueryService {
     ) {}
 
     async retrieveUser(userId: string): Promise<IUser | undefined> {
-        return this.userModel.findOne({ _id: userId });
+        return this.userModel.findById(userId);
     }
 
     async retrieveUserPermissions(userId: string): Promise<IUserPermissions> {
-        return this.userPermissionsModel.findOne({ _id: userId });
+        return this.userPermissionsModel.findById(userId);
     }
 }

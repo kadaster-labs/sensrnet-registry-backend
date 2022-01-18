@@ -53,7 +53,7 @@ export class UserService {
 
     async revokeUserPermissionForOrganization(userId: string, legalEntityId: string): Promise<void> {
         this.logger.log(`revoke [user] permissions: [user: ${userId}] [organization: ${legalEntityId}]`);
-        const user = (await this.userPermissionsModel.findOne({ _id: userId })) as IUserPermissions;
+        const user: IUserPermissions = await this.userPermissionsModel.findById(userId);
 
         if (user.legalEntityId === legalEntityId) {
             const filter = { _id: userId };
