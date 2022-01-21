@@ -40,7 +40,7 @@ export class DatastreamController {
 
         await this.commandBus.execute(
             new AddDatastreamCommand(params.deviceId, params.sensorId, user.legalEntityId, {
-                datastreamId: datastreamId,
+                datastreamId,
                 ...datastreamBody,
             }),
         );
