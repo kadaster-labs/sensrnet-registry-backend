@@ -18,7 +18,7 @@ RUN npm run build && \
 
 
 # Second Stage: use lightweight alpine image and run as non-root
-FROM node:16.5.0-alpine3.12
+FROM node:16.13.2-alpine3.15
 
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 
