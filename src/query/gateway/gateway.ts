@@ -20,11 +20,17 @@ export class Gateway implements OnGatewayConnection {
     constructor(private readonly jwtService: JwtService, private readonly userQryService: UserQueryService) {}
 
     setupRoom(client: Socket, legalEntityId?: string): void {
-        client.leaveAll();
         if (legalEntityId) {
+            // if user switches organization, they're still member of the old socket room
+            // therefore, just leave existing rooms and only join the desired (current) one
+            client.rooms.forEach((room: string) => {
+                client.leave(room);
+            });
+
             client.join(legalEntityId);
         }
     }
+
     emit(event: string, legalEntityIds: string[], eventMessage: Record<string, any>): void {
         if (legalEntityIds) {
             for (const legalEntityId of legalEntityIds) {

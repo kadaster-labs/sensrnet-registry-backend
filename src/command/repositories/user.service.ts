@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, UpdateWriteOpResult } from 'mongoose';
 import { IUser, IUserPermissions, UserRole } from '../../commons/user/user.schema';
 import { UserAlreadyExistsException } from '../handler/error/user-already-exists-exception';
 import { WrongLegalEntityException } from '../handler/error/wrong-legal-entity-exception';
@@ -51,7 +51,7 @@ export class UserService {
         await this.updateUserPermissions({ _id: userId }, userPermissions);
     }
 
-    async revokeUserPermissionForOrganization(userId: string, legalEntityId: string): Promise<void> {
+    async revokeUserPermissionForOrganization(userId: string, legalEntityId: string): Promise<any> {
         this.logger.log(`revoke [user] permissions: [user: ${userId}] [organization: ${legalEntityId}]`);
         const user: IUserPermissions = await this.userPermissionsModel.findById(userId);
 
@@ -66,7 +66,7 @@ export class UserService {
     private async updateUserPermissions(
         filter: Record<string, any>,
         update: Record<string, any>,
-    ): Promise<IUserPermissions | undefined> {
+    ): Promise<UpdateWriteOpResult> {
         return this.userPermissionsModel.updateOne(filter, update, { new: true, upsert: true });
     }
 
