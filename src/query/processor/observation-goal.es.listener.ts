@@ -74,7 +74,7 @@ export class ObservationGoalEsListener extends AbstractQueryEsListener {
     async processObservationGoalRemoved(event: ObservationGoalRemoved): Promise<void> {
         try {
             const deviceFilter = { 'datastreams.observationGoalIds': event.observationGoalId };
-            const deviceUpdate = { $pull: { 'datastreams.$.observationGoalIds': event.observationGoalId } };
+            const deviceUpdate = { $pull: { 'datastreams.$[].observationGoalIds': event.observationGoalId } };
             await this.deviceModel.updateMany(deviceFilter, deviceUpdate);
 
             await this.deleteRelations(event.legalEntityId, TargetVariant.OBSERVATION_GOAL, event.observationGoalId);
